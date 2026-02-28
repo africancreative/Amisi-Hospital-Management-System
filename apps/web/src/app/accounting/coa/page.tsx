@@ -9,7 +9,7 @@ import {
     AlertCircle
 } from 'lucide-react';
 import Link from 'next/link';
-import { getAccounts } from '../../actions/accounting-actions';
+import { getAccounts } from '@/app/actions/accounting-actions';
 
 export default async function ChartOfAccountsPage() {
     const accounts = await getAccounts();

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Plus, User, Search, Calendar, ChevronRight, UserPlus } from 'lucide-react';
-import { getPatients } from '../actions/ehr-actions';
+import { getPatients } from '@/app/actions/ehr-actions';
 
 export default async function PatientsPage({
     searchParams,

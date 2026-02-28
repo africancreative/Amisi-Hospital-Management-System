@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { ArrowLeft, Stethoscope, Save, Heart, Activity, Thermometer, Scale, ClipboardEdit } from 'lucide-react';
-import { createEncounter } from '../../../actions/ehr-actions';
+import { createEncounter } from '@/app/actions/ehr-actions';
 
 export default function NewEncounterPage({ params }: { params: { id: string } }) {
     const patientId = params.id;

@@ -11,7 +11,7 @@ import {
     Printer,
     FileText
 } from 'lucide-react';
-import { getPatientById } from '../../actions/ehr-actions';
+import { getPatientById } from '@/app/actions/ehr-actions';
 
 export default async function PatientLabHistoryPage({ params }: { params: { id: string } }) {
     const patient = await getPatientById(params.id);
@@ -93,7 +93,7 @@ export default async function PatientLabHistoryPage({ params }: { params: { id: 
                                                 <td className="px-4 py-4 text-center">
                                                     {res.flag && (
                                                         <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest ${res.flag === 'Normal' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
-                                                                'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                                                            'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
                                                             }`}>
                                                             {res.flag}
                                                         </span>
@@ -139,8 +139,8 @@ function StatusPill({ status }: { status: string }) {
 
     return (
         <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${isCompleted ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
-                isPending ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' :
-                    'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+            isPending ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' :
+                'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
             }`}>
             {isCompleted ? <CheckCircle2 className="h-3 w-3" /> : <AlertCircle className="h-3 w-3" />}
             {status}

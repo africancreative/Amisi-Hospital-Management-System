@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { ArrowLeft, UserPlus, User, Calendar, Activity, HeartPulse } from 'lucide-react';
-import { createPatient } from '../../actions/ehr-actions';
+import { createPatient } from '@/app/actions/ehr-actions';
 
 export default function NewPatientPage() {
     return (

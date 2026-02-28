@@ -14,7 +14,7 @@ import {
     Layers
 } from 'lucide-react';
 import Link from 'next/link';
-import { getRecentJournalEntries, getTrialBalance } from '../actions/accounting-actions';
+import { getRecentJournalEntries, getTrialBalance } from '@/app/actions/accounting-actions';
 
 export default async function AccountingDashboard() {
     const entries = await getRecentJournalEntries();

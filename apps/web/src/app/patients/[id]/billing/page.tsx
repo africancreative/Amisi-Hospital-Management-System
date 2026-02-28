@@ -11,8 +11,8 @@ import {
     FileText,
     Wallet
 } from 'lucide-react';
-import { getPatientById } from '../../actions/ehr-actions';
-import { recordPayment } from '../../actions/billing-actions';
+import { getPatientById } from '@/app/actions/ehr-actions';
+import { recordPayment } from '@/app/actions/billing-actions';
 import { revalidatePath } from 'next/cache';
 
 export default async function PatientBillingPage({ params }: { params: { id: string } }) {
@@ -138,8 +138,8 @@ function StatusPill({ status }: { status: string }) {
 
     return (
         <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${isPaid ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
-                isPending ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' :
-                    'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+            isPending ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' :
+                'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
             }`}>
             {isPaid ? <CheckCircle2 className="h-3 w-3" /> : <AlertCircle className="h-3 w-3" />}
             {status}

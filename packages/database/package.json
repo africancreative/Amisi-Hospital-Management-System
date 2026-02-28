@@ -4,6 +4,10 @@
     "description": "Shared Prisma Database Library for Amisi Hospital SaaS",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
+    "exports": {
+        ".": "./dist/index.js",
+        "./*": "./dist/*.js"
+    },
     "scripts": {
         "build": "pnpm db:generate && tsc",
         "db:generate": "pnpm db:generate:control && pnpm db:generate:tenant",

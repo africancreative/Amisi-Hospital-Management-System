@@ -8,7 +8,7 @@ import {
     AlertCircle
 } from 'lucide-react';
 import Link from 'next/link';
-import { getTrialBalance } from '../../actions/accounting-actions';
+import { getTrialBalance } from '@/app/actions/accounting-actions';
 
 export default async function TrialBalancePage() {
     const trialBalance = await getTrialBalance();

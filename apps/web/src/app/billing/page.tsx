@@ -11,8 +11,8 @@ import {
     Plus
 } from 'lucide-react';
 import ExportInvoiceButton from '@/components/ExportInvoiceButton';
-import { getHospitalRevenueStats } from '../actions/billing-actions';
-import { getHospitalSettings } from '../actions/hospital-actions';
+import { getHospitalRevenueStats } from '@/app/actions/billing-actions';
+import { getHospitalSettings } from '@/app/actions/hospital-actions';
 
 export default async function BillingPage() {
     const stats = await getHospitalRevenueStats();
