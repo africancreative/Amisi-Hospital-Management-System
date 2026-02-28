@@ -1,0 +1,495 @@
+// By default this needs a placeholder URL to pass validation during generation.
+// In practice, this is injected dynamically per-tenant at runtime.
+datasource db {
+  provider = "postgresql"
+  url      = env("LOCAL_EDGE_DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../node_modules/@amisi/tenant-client"
+}
+
+enum SystemStatus {
+  ACTIVE
+  SUSPENDED
+  MAINTENANCE
+}
+
+model HospitalSettings {
+  id             String   @id @default(uuid())
+  hospitalName   String   @map("hospital_name")
+  systemStatus   SystemStatus @default(ACTIVE) @map("system_status")
+  address         String?
+  phone           String?
+  detailedAddress String?  @map("detailed_address")
+  taxId           String?  @map("tax_id")
+  marketingSlogan String?  @map("marketing_slogan")
+  contactEmail    String?  @map("contact_email")
+  logoUrl         String?  @map("logo_url")
+  timezone        String   @default("UTC")
+  lastSyncedAt   DateTime? @map("last_synced_at")
+
+  // Module Toggles
+  ehrEnabled      Boolean @default(true) @map("ehr_enabled")
+  billingEnabled  Boolean @default(true) @map("billing_enabled")
+  labEnabled      Boolean @default(false) @map("lab_enabled")
+  pharmacyEnabled Boolean @default(false) @map("pharmacy_enabled")
+  hrEnabled       Boolean @default(false) @map("hr_enabled")
+
+  @@map("hospital_settings")
+}
+
+model Patient {
+  id        String   @id @default(uuid())
+  firstName String   @map("first_name")
+  lastName  String   @map("last_name")
+  dob       DateTime
+  gender    String?
+  
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  conflictStatus String? @map("conflict_status") // 'NONE', 'PENDING_MERGE'
+  
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  financialRecords FinancialRecord[]
+  labOrders        LabOrder[]
+  prescriptions    Prescription[]
+  vitals           Vitals[]
+  allergies        Allergy[]
+  encounters       Encounter[]
+  chats            ChatMessage[]
+
+  @@map("patients")
+}
+
+model ChatMessage {
+  id        String   @id @default(uuid())
+  content   String?  @db.Text
+  patientId String   @map("patient_id")
+  patient   Patient  @relation(fields: [patientId], references: [id])
+  authorId  String   @map("author_id")
+  authorName String  @map("author_name")
+  authorRole String  @map("author_role")
+  timestamp DateTime @default(now())
+  
+  attachments Attachment[]
+
+  @@index([patientId])
+  @@map("chat_messages")
+}
+
+model Attachment {
+  id        String   @id @default(uuid())
+  messageId String   @map("message_id")
+  message   ChatMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  type      String   // 'image', 'voice', 'video', 'document'
+  url       String   @db.Text
+  fileName  String?  @map("file_name")
+  fileSize  Int?     @map("file_size")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([messageId])
+  @@map("attachments")
+}
+
+model Encounter {
+  id        String   @id @default(uuid())
+  patientId String   @map("patient_id")
+  patient   Patient  @relation(fields: [patientId], references: [id])
+  
+  doctorName String  @map("doctor_name")
+  type       String  // e.g., 'Checkup', 'Emergency', 'Follow-up'
+  notes      String? @db.Text
+  plan       String? @db.Text
+  
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  conflictStatus String? @map("conflict_status") // 'NONE', 'PENDING_MERGE'
+  conflictData   Json?   @map("conflict_data")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  vitals          Vitals?
+  diagnoses       Diagnosis[]
+  financialRecord FinancialRecord?
+  labOrders       LabOrder[]
+  prescriptions   Prescription[]
+
+  @@map("encounters")
+}
+
+// Pharmacy & Inventory
+model InventoryItem {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  category    String   // 'Drug', 'Supply', 'Equipment'
+  sku         String?  @unique
+  quantity    Int      @default(0)
+  unit        String   // 'tablet', 'vial', 'box'
+  minLevel    Int      @default(10) @map("min_level")
+  expiryDate  DateTime? @map("expiry_date")
+  
+  price       Decimal  @db.Decimal(10, 2)
+  
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  dispensingRecords DispensingRecord[]
+
+  @@map("inventory_items")
+}
+
+model Prescription {
+  id          String    @id @default(uuid())
+  patientId   String    @map("patient_id")
+  patient     Patient   @relation(fields: [patientId], references: [id])
+  encounterId String?   @map("encounter_id")
+  encounter   Encounter? @relation(fields: [encounterId], references: [id])
+
+  orderedBy   String    @map("ordered_by")
+  status      String    @default("pending") // 'pending', 'dispensed', 'cancelled'
+  notes       String?   @db.Text
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  items             PrescriptionItem[]
+  dispensingRecords DispensingRecord[]
+
+  @@map("prescriptions")
+}
+
+model PrescriptionItem {
+  id             String       @id @default(uuid())
+  prescriptionId String       @map("prescription_id")
+  prescription   Prescription @relation(fields: [prescriptionId], references: [id])
+  
+  drugName       String       @map("drug_name")
+  dosage         String       // e.g., '500mg'
+  frequency      String       // e.g., 'TID'
+  duration       String       // e.g., '5 days'
+  quantity       Int
+  
+  @@map("prescription_items")
+}
+
+model DispensingRecord {
+  id             String       @id @default(uuid())
+  prescriptionId String?      @map("prescription_id")
+  prescription   Prescription? @relation(fields: [prescriptionId], references: [id])
+  itemId         String       @map("item_id")
+  inventoryItem  InventoryItem @relation(fields: [itemId], references: [id])
+  
+  quantityDispensed Int       @map("quantity_dispensed")
+  dispensedBy       String    @map("dispensed_by")
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("dispensing_records")
+}
+
+enum Role {
+  DOCTOR
+  NURSE
+  PHARMACIST
+  LAB_TECH
+  ACCOUNTANT
+  HR
+  ADMIN
+}
+
+model Employee {
+  id          String   @id @default(uuid())
+  employeeId  String   @unique @map("employee_id")
+  firstName   String   @map("first_name")
+  lastName    String   @map("last_name")
+  role        Role     @default(DOCTOR)
+  department  String
+  permissions Json     @default("[]")
+  email       String   @unique
+  passwordHash String?  @map("password_hash")
+  phone       String?
+  status      String   @default("active") // 'active', 'on_leave', 'terminated'
+  
+  dateJoined  DateTime @default(now()) @map("date_joined")
+  baseSalary  Decimal  @map("base_salary") @db.Decimal(10, 2)
+  
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  payrollRecords PayrollRecord[]
+
+  @@map("employees")
+}
+
+model PayrollRecord {
+  id          String   @id @default(uuid())
+  employeeId  String   @map("employee_id")
+  employee    Employee @relation(fields: [employeeId], references: [id])
+  
+  periodMonth Int      @map("period_month")
+  periodYear  Int      @map("period_year")
+  
+  baseAmount      Decimal @map("base_amount") @db.Decimal(10, 2)
+  bonusAmount     Decimal @default(0) @map("bonus_amount") @db.Decimal(10, 2)
+  deductionAmount Decimal @default(0) @map("deduction_amount") @db.Decimal(10, 2)
+  netAmount       Decimal @map("net_amount") @db.Decimal(10, 2)
+  
+  status      String   @default("draft") // 'draft', 'processed', 'paid'
+  paidAt      DateTime? @map("paid_at")
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("payroll_records")
+}
+
+model LabOrder {
+  id          String    @id @default(uuid())
+  patientId   String    @map("patient_id")
+  patient     Patient   @relation(fields: [patientId], references: [id])
+  encounterId String?   @map("encounter_id")
+  encounter   Encounter? @relation(fields: [encounterId], references: [id])
+
+  testName    String    @map("test_name")
+  priority    String    @default("routine") // 'routine', 'stat', 'urgent'
+  status      String    @default("pending") // 'pending', 'collected', 'in_progress', 'completed', 'cancelled'
+  orderedBy   String    @map("ordered_by")
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  results   LabResult[]
+
+  @@map("lab_orders")
+}
+
+model LabResult {
+  id          String   @id @default(uuid())
+  labOrderId  String   @map("lab_order_id")
+  labOrder    LabOrder @relation(fields: [labOrderId], references: [id])
+
+  parameter      String  // e.g., 'Hemoglobin', 'Glucose'
+  value          String
+  unit           String?
+  referenceRange String? @map("reference_range")
+  flag           String? // e.g., 'Normal', 'High', 'Low', 'Critical'
+  
+  performedBy    String? @map("performed_by")
+  verifiedBy     String? @map("verified_by")
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("lab_results")
+}
+
+model Vitals {
+  id          String    @id @default(uuid())
+  patientId   String    @map("patient_id")
+  patient     Patient   @relation(fields: [patientId], references: [id])
+  encounterId String?   @unique @map("encounter_id")
+  encounter   Encounter? @relation(fields: [encounterId], references: [id])
+
+  bloodPressure String? @map("blood_pressure") // e.g., '120/80'
+  heartRate     Int?    @map("heart_rate")
+  temperature   Decimal?
+  respiratoryRate Int?  @map("respiratory_rate")
+  spO2          Int?
+  weight        Decimal?
+  height        Decimal?
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("vitals")
+}
+
+model Diagnosis {
+  id          String    @id @default(uuid())
+  encounterId String    @map("encounter_id")
+  encounter   Encounter @relation(fields: [encounterId], references: [id])
+
+  code        String    // e.g., ICD-10 Code
+  description String
+  category    String?   // e.g., 'Primary', 'Secondary'
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("diagnoses")
+}
+
+model Allergy {
+  id        String   @id @default(uuid())
+  patientId String   @map("patient_id")
+  patient   Patient  @relation(fields: [patientId], references: [id])
+
+  substance String
+  reaction  String?
+  severity  String? // e.g., 'Mild', 'Moderate', 'Severe'
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("allergies")
+}
+
+model FinancialRecord {
+  id          String   @id @default(uuid())
+  patientId   String   @map("patient_id")
+  patient     Patient  @relation(fields: [patientId], references: [id])
+  encounterId String?  @unique @map("encounter_id")
+  encounter   Encounter? @relation(fields: [encounterId], references: [id])
+
+  totalAmount   Decimal  @map("total_amount")
+  balanceDue    Decimal  @map("balance_due")
+  status        String   @default("pending") // e.g., 'pending', 'partial', 'paid', 'void'
+  
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  items     InvoiceItem[]
+  payments  Payment[]
+
+  @@map("financial_records")
+}
+
+model InvoiceItem {
+  id                String   @id @default(uuid())
+  financialRecordId String   @map("financial_record_id")
+  financialRecord   FinancialRecord @relation(fields: [financialRecordId], references: [id])
+
+  description String
+  quantity    Int      @default(1)
+  unitPrice   Decimal  @map("unit_price")
+  subtotal    Decimal
+  
+  paymentMode   String   @default("POSTPAID") @map("payment_mode") // PREPAID, POSTPAID
+  isTaxable     Boolean  @default(false) @map("is_taxable")
+  taxRate       Decimal  @default(0) @map("tax_rate") @db.Decimal(5, 2)
+  paymentStatus String   @default("UNPAID") @map("payment_status") // UNPAID, PARTIAL, PAID
+  paidAmount    Decimal  @default(0) @map("paid_amount") @db.Decimal(10, 2)
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("invoice_items")
+}
+
+model Payment {
+  id                String   @id @default(uuid())
+  financialRecordId String   @map("financial_record_id")
+  financialRecord   FinancialRecord @relation(fields: [financialRecordId], references: [id])
+
+  amount    Decimal
+  method    String   // e.g., 'cash', 'card', 'insurance', 'mobile_money'
+  reference String?  // e.g., Transaction ID
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("payments")
+}
+
+// Accounting Core (IFRS Compliant)
+model Account {
+  id          String   @id @default(uuid())
+  code        String   @unique // e.g., '1010', '4000'
+  name        String
+  type        String   // 'ASSET', 'LIABILITY', 'EQUITY', 'REVENUE', 'EXPENSE'
+  description String?
+  
+  isActive    Boolean  @default(true) @map("is_active")
+  
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  journalLines JournalLine[]
+
+  @@map("accounts")
+}
+
+model JournalEntry {
+  id          String   @id @default(uuid())
+  date        DateTime @default(now())
+  description String   @db.Text
+  reference   String?  // e.g., Invoice ID, Payroll ID
+  status      String   @default("POSTED") // 'DRAFT', 'POSTED', 'REVERSED'
+  
+  sourceType  String?  @map("source_type") // 'BILLING', 'PAYROLL', 'MANUAL'
+  sourceId    String?  @map("source_id")
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  lines     JournalLine[]
+
+  @@map("journal_entries")
+}
+
+model JournalLine {
+  id             String       @id @default(uuid())
+  journalEntryId String       @map("journal_entry_id")
+  journalEntry   JournalEntry @relation(fields: [journalEntryId], references: [id])
+  
+  accountId      String       @map("account_id")
+  account        Account      @relation(fields: [accountId], references: [id])
+  
+  description    String?      @db.Text
+  debit          Decimal      @default(0) @db.Decimal(15, 2)
+  credit         Decimal      @default(0) @db.Decimal(15, 2)
+
+  @@map("journal_lines")
+}
+
+model EventJournal {
+  id               String   @id @default(uuid())
+  entityType       String   @map("entity_type")
+  entityId         String   @map("entity_id")
+  action           String   // 'CREATE', 'UPDATE', 'DELETE'
+  payload          Json?
+  encryptedPayload String?  @map("encrypted_payload") @db.Text
+  timestamp        DateTime @default(now())
+  signature        String?
+  publicKeyId      String?  @map("public_key_id")
+  isSynced         Boolean  @default(false) @map("is_synced")
+
+  @@map("event_journal")
+}

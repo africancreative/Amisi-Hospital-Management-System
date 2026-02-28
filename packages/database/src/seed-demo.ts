@@ -1,0 +1,195 @@
+import { ControlClient, TenantClient, Decimal } from './index';
+
+async function seed() {
+    console.log('Starting demo seed...');
+    const controlDb = new ControlClient();
+
+    console.log('--- SEEDING CONTROL PLANE ---');
+
+    // 1. Ensure Tenant Exists
+    const tenantId = 'demo-hospital-id';
+    console.log(`Checking for tenant: ${tenantId}...`);
+    const tenant = await controlDb.tenant.upsert({
+        where: { id: tenantId },
+        update: {},
+        create: {
+            id: tenantId,
+            name: 'Amisi Premier Hospital',
+            dbUrl: process.env.LOCAL_EDGE_DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/amisi_tenant',
+            encryptionKeyReference: 'demo-key-ref',
+            region: 'East Africa',
+            status: 'active',
+            enabledModules: {
+                EHR: true,
+                BILLING: true,
+                LAB: true,
+                PHARMACY: true,
+                ACCOUNTING: true,
+                HR: true
+            }
+        }
+    });
+    console.log(`Tenant ${tenant.name} resolved.`);
+
+    // 2. Ensure Modules are registered
+    console.log('Registering modules and entitlements...');
+    const modules = [
+        { code: 'EHR', name: 'Electronic Health Records', basePrice: new Decimal(100) },
+        { code: 'BILLING', name: 'Financial & Billing', basePrice: new Decimal(50) },
+        { code: 'LAB', name: 'Laboratory Information', basePrice: new Decimal(75) },
+        { code: 'PHARMACY', name: 'Pharmacy & Inventory', basePrice: new Decimal(75) },
+        { code: 'ACCOUNTING', name: 'IFRS Accounting', basePrice: new Decimal(80) },
+        { code: 'HR', name: 'Human Resources', basePrice: new Decimal(60) }
+    ];
+
+    for (const m of modules) {
+        const mod = await controlDb.module.upsert({
+            where: { code: m.code },
+            update: { name: m.name, basePrice: m.basePrice },
+            create: { code: m.code, name: m.name, basePrice: m.basePrice }
+        });
+
+        await controlDb.tenantModule.upsert({
+            where: { tenantId_moduleId: { tenantId: tenant.id, moduleId: mod.id } },
+            update: { isEnabled: true },
+            create: { tenantId: tenant.id, moduleId: mod.id, isEnabled: true }
+        });
+    }
+
+    console.log('Control Plane seeded successfully.');
+
+    console.log('--- SEEDING TENANT DATA ---');
+    const tenantDb = new TenantClient({
+        datasources: {
+            db: {
+                url: tenant.dbUrl
+            }
+        }
+    });
+
+    // 3. Hospital Settings
+    console.log('Updating hospital settings...');
+    await tenantDb.hospitalSettings.upsert({
+        where: { id: 'default-settings' },
+        update: {},
+        create: {
+            id: 'default-settings',
+            hospitalName: 'Amisi Premier Hospital',
+            address: '123 Medical Plaza, Nairobi',
+            phone: '+254 700 000 000',
+            detailedAddress: 'Block C, 4th Floor, Healthcare District',
+            taxId: 'KRA-PIN-2024-HMS',
+            marketingSlogan: 'Excellence in Digital Healthcare',
+            contactEmail: 'info@amisi-premier.com',
+            ehrEnabled: true,
+            billingEnabled: true,
+            labEnabled: true,
+            pharmacyEnabled: true,
+            hrEnabled: true
+        }
+    });
+
+    // 4. Seeding Staff (Employees)
+    console.log('Seeding employees...');
+    const staff = [
+        {
+            employeeId: 'EMP-001',
+            firstName: 'Amisi',
+            lastName: 'Amoi',
+            email: 'amisiaimoi@gmail.com',
+            passwordHash: '@theVerge#2047', // Plain for demo as requested
+            role: 'ADMIN',
+            department: 'Administration',
+            baseSalary: new Decimal(5000),
+            permissions: ['ALL']
+        },
+        {
+            employeeId: 'EMP-002',
+            firstName: 'Sarah',
+            lastName: 'Amisi',
+            email: 'sarah.amisi@demo.com',
+            role: 'DOCTOR',
+            department: 'Clinical',
+            baseSalary: new Decimal(4500)
+        },
+        {
+            employeeId: 'EMP-003',
+            firstName: 'Joy',
+            lastName: 'Nurse',
+            email: 'joy.nurse@demo.com',
+            role: 'NURSE',
+            department: 'Nursing',
+            baseSalary: new Decimal(2500)
+        },
+        {
+            employeeId: 'EMP-004',
+            firstName: 'Alex',
+            lastName: 'Accountant',
+            email: 'alex.finance@demo.com',
+            role: 'ACCOUNTANT',
+            department: 'Finance',
+            baseSalary: new Decimal(3000)
+        }
+    ];
+
+    for (const s of staff) {
+        await tenantDb.employee.upsert({
+            where: { email: s.email },
+            update: { ...s },
+            create: { ...s as any }
+        });
+    }
+
+    // 5. Seeding Demo Patients
+    console.log('Seeding patients...');
+    const patientsCount = await tenantDb.patient.count();
+    if (patientsCount === 0) {
+        const patients = [
+            {
+                firstName: 'John',
+                lastName: 'Doe',
+                dob: new Date('1985-05-15'),
+                gender: 'Male'
+            },
+            {
+                firstName: 'Jane',
+                lastName: 'Smith',
+                dob: new Date('1992-11-20'),
+                gender: 'Female'
+            }
+        ];
+
+        for (const p of patients) {
+            await tenantDb.patient.create({
+                data: p
+            });
+        }
+    }
+
+    // 6. Base Chart of Accounts
+    console.log('Seeding chart of accounts...');
+    const accounts = [
+        { code: '1010', name: 'Cash & Bank', type: 'ASSET' },
+        { code: '1200', name: 'Accounts Receivable', type: 'ASSET' },
+        { code: '4000', name: 'Patient Service Revenue', type: 'REVENUE' },
+        { code: '5000', name: 'Salary & Wage Expense', type: 'EXPENSE' },
+        { code: '5100', name: 'Tax Expense', type: 'EXPENSE' }
+    ];
+
+    for (const acc of accounts) {
+        await tenantDb.account.upsert({
+            where: { code: acc.code },
+            update: acc,
+            create: acc
+        });
+    }
+
+    console.log('Tenant Data seeded successfully.');
+
+    process.exit(0);
+}
+
+seed().catch(err => {
+    console.error('Seed error:', err);
+    process.exit(1);
+});

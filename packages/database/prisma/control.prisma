@@ -1,0 +1,74 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("NEON_DATABASE_URL") // System of record
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../node_modules/@amisi/control-client"
+}
+
+enum TenantStatus {
+  active
+  suspended
+  terminated
+}
+
+enum DeploymentTier {
+  CLINIC
+  GENERAL
+  RESEARCH
+}
+
+model Tenant {
+  id                     String         @id @default(uuid())
+  name                   String
+  slug                   String         @unique
+  dbUrl                  String         @map("db_url")
+  encryptionKeyReference String         @map("encryption_key_reference")
+  tier                   DeploymentTier @default(CLINIC)
+  region                 String
+  status                 TenantStatus   @default(active)
+  suspensionReason       String?        @map("suspension_reason")
+  suspendedAt            DateTime?      @map("suspended_at")
+  enabledModules         Json           @map("enabled_modules") @default("{}")
+  publicKeySpki          String?        @map("public_key_spki") @db.Text
+  sharedSecret           String?        @map("shared_secret") @db.Text
+  createdAt              DateTime       @default(now()) @map("created_at")
+  updatedAt              DateTime       @updatedAt @map("updated_at")
+
+  entitlements           TenantModule[]
+
+  @@map("tenants")
+}
+
+model Module {
+  id          String   @id @default(uuid())
+  name        String
+  code        String   @unique // e.g., 'LAB', 'PHARMACY', 'HR', 'ACCOUNTING'
+  description String?
+  basePrice   Decimal  @default(0) @map("base_price") @db.Decimal(10, 2)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  tenants     TenantModule[]
+
+  @@map("modules")
+}
+
+model TenantModule {
+  id        String   @id @default(uuid())
+  tenantId  String   @map("tenant_id")
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+  moduleId  String   @map("module_id")
+  module    Module   @relation(fields: [moduleId], references: [id])
+  
+  isEnabled Boolean  @default(true) @map("is_enabled")
+  validUntil DateTime? @map("valid_until")
+  
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([tenantId, moduleId])
+  @@map("tenant_modules")
+}

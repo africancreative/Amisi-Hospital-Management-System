@@ -1,0 +1,12 @@
+node_modules
+.env*
+.turbo
+.next
+dist
+build
+*.log
+.DS_Store
+.vscode
+.idea
+*.sublime-project
+*.sublime-workspace

@@ -1,0 +1,28 @@
+{
+    "name": "@amisi/database",
+    "version": "1.0.0",
+    "description": "Shared Prisma Database Library for Amisi Hospital SaaS",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "build": "tsc",
+        "db:generate": "pnpm db:generate:control && pnpm db:generate:tenant",
+        "db:generate:control": "prisma generate --schema=./prisma/control.prisma",
+        "db:generate:tenant": "prisma generate --schema=./prisma/tenant.prisma",
+        "db:push:control": "prisma db push --schema=./prisma/control.prisma",
+        "db:push:tenant": "prisma db push --schema=./prisma/tenant.prisma",
+        "db:studio:control": "prisma studio --schema=./prisma/control.prisma",
+        "db:studio:tenant": "prisma studio --schema=./prisma/tenant.prisma",
+        "db:seed:demo": "npx tsx src/seed-demo.ts"
+    },
+    "dependencies": {
+        "@prisma/client": "^5.13.0",
+        "zod": "^3.23.8",
+        "dotenv": "^16.4.5"
+    },
+    "devDependencies": {
+        "prisma": "^5.13.0",
+        "typescript": "^5.4.5",
+        "@types/node": "^20.12.7"
+    }
+}
