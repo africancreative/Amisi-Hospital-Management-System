@@ -12,7 +12,7 @@ import {
     CreditCard
 } from 'lucide-react';
 import Link from 'next/link';
-import { getPayrollHistory } from '../../actions/hr-actions';
+import { getPayrollHistory } from '@/app/actions/hr-actions';
 
 export default async function PayrollPage() {
     const history = await getPayrollHistory();
@@ -126,8 +126,8 @@ export default async function PayrollPage() {
                                     </td>
                                     <td className="px-4 py-5 text-center">
                                         <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${record.status === 'paid' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400' :
-                                                record.status === 'draft' ? 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400' :
-                                                    'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-400'
+                                            record.status === 'draft' ? 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400' :
+                                                'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-400'
                                             }`}>
                                             {record.status === 'paid' ? <CheckCircle2 className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
                                             {record.status}

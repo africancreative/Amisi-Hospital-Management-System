@@ -13,7 +13,7 @@ import {
     DollarSign
 } from 'lucide-react';
 import Link from 'next/link';
-import { getEmployees } from '../actions/hr-actions';
+import { getEmployees } from '@/app/actions/hr-actions';
 
 export default async function HRDashboardPage() {
     const employees = await getEmployees();

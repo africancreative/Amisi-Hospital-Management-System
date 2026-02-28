@@ -8,7 +8,7 @@ import {
     User,
     ClipboardList
 } from 'lucide-react';
-import { getLabOrderWithResults, recordLabResult } from '../../actions/lab-actions';
+import { getLabOrderWithResults, recordLabResult } from '@/app/actions/lab-actions';
 
 export default async function LabEntryPage({ params }: { params: { id: string } }) {
     const order = await getLabOrderWithResults(params.id);

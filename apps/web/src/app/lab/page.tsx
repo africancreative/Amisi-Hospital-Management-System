@@ -10,8 +10,7 @@ import {
     Search
 } from 'lucide-react';
 import Link from 'next/link';
-import { getPendingLabOrders } from '../actions/lab-actions';
-import { updateLabOrderStatus } from '../actions/lab-actions';
+import { getPendingLabOrders, updateLabOrderStatus } from '@/app/actions/lab-actions';
 
 export default async function LabDashboardPage() {
     const orders = await getPendingLabOrders();

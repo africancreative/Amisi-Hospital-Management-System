@@ -22,6 +22,17 @@ export async function createLabOrder(patientId: string, encounterId: string | nu
     return order;
 }
 
+export async function getLabOrderWithResults(orderId: string) {
+    const db = await getTenantDb();
+    return db.labOrder.findUnique({
+        where: { id: orderId },
+        include: {
+            patient: true,
+            results: true,
+        }
+    });
+}
+
 export async function getPendingLabOrders() {
     const db = await getTenantDb();
     return db.labOrder.findMany({

@@ -10,7 +10,7 @@ import {
     TrendingDown,
     Layers
 } from 'lucide-react';
-import { getInventoryItems } from '../actions/pharmacy-actions';
+import { getInventoryItems } from '@/app/actions/pharmacy-actions';
 
 export default async function InventoryPage() {
     const items = await getInventoryItems();

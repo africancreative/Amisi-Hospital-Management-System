@@ -16,11 +16,11 @@ import {
     FileText,
     MessageCircle
 } from 'lucide-react';
-import { getPatientById } from '../../actions/ehr-actions';
-import { getHospitalSettings } from '../../actions/hospital-actions';
+import { getPatientById } from '@/app/actions/ehr-actions';
+import { getHospitalSettings } from '@/app/actions/hospital-actions';
 import { notFound } from 'next/navigation';
-import ClinicalChat from '../../../components/ClinicalChat';
-import ExportPatientButton from '../../../components/ExportPatientButton';
+import ClinicalChat from '@/components/ClinicalChat';
+import ExportPatientButton from '@/components/ExportPatientButton';
 
 export default async function PatientDetailPage({ params }: { params: { id: string } }) {
     const patient = await getPatientById(params.id);

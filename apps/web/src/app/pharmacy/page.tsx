@@ -11,7 +11,7 @@ import {
     Stethoscope
 } from 'lucide-react';
 import Link from 'next/link';
-import { getPendingPrescriptions } from '../actions/pharmacy-actions';
+import { getPendingPrescriptions } from '@/app/actions/pharmacy-actions';
 
 export default async function PharmacyPage() {
     const prescriptions = await getPendingPrescriptions();
