@@ -12,8 +12,7 @@
     },
     "scripts": {
         "build": "pnpm db:generate && tsc",
-        "db:generate": "pnpm db:generate:control && pnpm db:generate:tenant && pnpm db:prepare",
-        "db:prepare": "node scripts/prepare-clients.js",
+        "db:generate": "pnpm db:generate:control && pnpm db:generate:tenant",
         "db:generate:control": "prisma generate --schema=./prisma/control.prisma",
         "db:generate:tenant": "prisma generate --schema=./prisma/tenant.prisma",
         "db:push:control": "prisma db push --schema=./prisma/control.prisma",

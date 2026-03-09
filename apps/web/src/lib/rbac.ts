@@ -1,4 +1,4 @@
-import { Role } from '@amisi/tenant-client';
+import { Role } from '@amisi/database';
 
 /**
  * Capability-based permissions for fine-grained access control.

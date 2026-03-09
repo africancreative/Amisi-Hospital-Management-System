@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers';
-import { Role } from '@amisi/tenant-client';
+import { Role } from '@amisi/database';
 import { Permission, hasPermission as checkPermission } from './rbac';
 
 /**
