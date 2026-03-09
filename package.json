@@ -5,7 +5,7 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
-    "postinstall": "pnpm --filter @amisi/database db:generate"
+    "postinstall": "pnpm --filter @amisi/database db:generate && pnpm --filter @amisi/database db:prepare"
   },
   "devDependencies": {
     "turbo": "latest"
