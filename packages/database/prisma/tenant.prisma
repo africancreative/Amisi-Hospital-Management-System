@@ -7,7 +7,7 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/tenant-client"
+  output   = "../dist/generated/tenant-client"
 }
 
 enum SystemStatus {
