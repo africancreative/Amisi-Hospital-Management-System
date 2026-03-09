@@ -59,7 +59,7 @@ export default async function PatientsPage({
                                         {patient.lastName}, {patient.firstName}
                                     </h3>
                                     <div className="flex items-center gap-3 mt-1 text-sm text-gray-500">
-                                        <span className="flex items-center gap-1">
+                                        <span className="flex items-center gap-1" suppressHydrationWarning>
                                             <Calendar className="h-3.5 w-3.5" />
                                             DOB: {new Date(patient.dob).toLocaleDateString()}
                                         </span>

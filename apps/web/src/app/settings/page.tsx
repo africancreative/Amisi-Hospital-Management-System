@@ -1,6 +1,8 @@
-import { getHospitalSettings } from '@/app/actions/hospital-actions';
+﻿import { getHospitalSettings } from '@/app/actions/hospital-actions';
 import HospitalBrandingForm from '@/components/HospitalBrandingForm';
 import { Settings, ShieldCheck } from 'lucide-react';
+
+export const dynamic = 'force-dynamic';
 
 export default async function SettingsPage() {
     const settings = await getHospitalSettings();
@@ -48,3 +50,4 @@ export default async function SettingsPage() {
         </div>
     );
 }
+

@@ -5,8 +5,10 @@
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "exports": {
-        ".": "./dist/index.js",
-        "./*": "./dist/*.js"
+        ".": {
+            "types": "./dist/index.d.ts",
+            "default": "./dist/index.js"
+        }
     },
     "scripts": {
         "build": "pnpm db:generate && tsc",
@@ -17,7 +19,8 @@
         "db:push:tenant": "prisma db push --schema=./prisma/tenant.prisma",
         "db:studio:control": "prisma studio --schema=./prisma/control.prisma",
         "db:studio:tenant": "prisma studio --schema=./prisma/tenant.prisma",
-        "db:seed:demo": "npx tsx src/seed-demo.ts"
+        "db:seed:demo": "npx tsx src/seed-demo.ts",
+        "db:seed:all": "npx tsx src/seed-all-tenants.ts"
     },
     "dependencies": {
         "@prisma/client": "^5.13.0",

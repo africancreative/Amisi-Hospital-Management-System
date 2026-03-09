@@ -15,6 +15,7 @@ async function seed() {
         create: {
             id: tenantId,
             name: 'Amisi Premier Hospital',
+            slug: 'amisi-premier',
             dbUrl: process.env.LOCAL_EDGE_DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/amisi_tenant',
             encryptionKeyReference: 'demo-key-ref',
             region: 'East Africa',
@@ -80,7 +81,7 @@ async function seed() {
             detailedAddress: 'Block C, 4th Floor, Healthcare District',
             taxId: 'KRA-PIN-2024-HMS',
             marketingSlogan: 'Excellence in Digital Healthcare',
-            contactEmail: 'info@amisi-premier.com',
+            contactEmail: 'info@amisi-premier.amisigenuine.com',
             ehrEnabled: true,
             billingEnabled: true,
             labEnabled: true,
@@ -107,7 +108,7 @@ async function seed() {
             employeeId: 'EMP-002',
             firstName: 'Sarah',
             lastName: 'Amisi',
-            email: 'sarah.amisi@demo.com',
+            email: 'sarah.amisi@amisigenuine.com',
             role: 'DOCTOR',
             department: 'Clinical',
             baseSalary: new Decimal(4500)
@@ -116,7 +117,7 @@ async function seed() {
             employeeId: 'EMP-003',
             firstName: 'Joy',
             lastName: 'Nurse',
-            email: 'joy.nurse@demo.com',
+            email: 'joy.nurse@amisigenuine.com',
             role: 'NURSE',
             department: 'Nursing',
             baseSalary: new Decimal(2500)
@@ -125,7 +126,7 @@ async function seed() {
             employeeId: 'EMP-004',
             firstName: 'Alex',
             lastName: 'Accountant',
-            email: 'alex.finance@demo.com',
+            email: 'alex.finance@amisigenuine.com',
             role: 'ACCOUNTANT',
             department: 'Finance',
             baseSalary: new Decimal(3000)

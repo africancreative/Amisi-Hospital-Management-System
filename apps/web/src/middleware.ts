@@ -24,14 +24,48 @@ const DOMAIN_ROLE_MAP: Record<string, string[]> = {
 export function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
-    // 1. Resolve Tenant ID
+    // 1. Resolve Tenant ID and User Role
     const tenantId = request.headers.get('x-tenant-id') || request.cookies.get('amisi-tenant-id')?.value;
+    const userRole = request.cookies.get('amisi-user-role')?.value;
+    const isSystemAdmin = request.cookies.get('amisi-is-system-admin')?.value === 'true';
+
+    // 2. Auth Exception Paths (Allow login and static assets)
+    const authPaths = ['/login', '/system/login', '/lockout'];
+    if (authPaths.some(path => pathname.startsWith(path))) {
+        return NextResponse.next();
+    }
+
+    // 3. Authentication Check
+    if (!userRole) {
+        // Redirect to appropriate login
+        if (pathname.startsWith('/hospitals') || pathname.startsWith('/users')) {
+            return NextResponse.redirect(new URL('/system/login', request.url));
+        }
+        return NextResponse.redirect(new URL('/login', request.url));
+    }
 
     // 2. Module Guard
     const matchingModulePath = Object.keys(MODULE_ROUTE_MAP).find(path => pathname.startsWith(path));
 
-    // 3. Suspension Guard (Simulated/Mocked for dev, should fetch from cache/DB in prod)
-    // We'll check for a header 'x-tenant-status' which would be injected by a previous layer or resolved here.
+    // 3. RBAC Guard
+    const domainPath = Object.keys(DOMAIN_ROLE_MAP).find(path => pathname.startsWith(path));
+    if (domainPath) {
+        const allowedRoles = DOMAIN_ROLE_MAP[domainPath];
+        if (!allowedRoles.includes(userRole)) {
+            // Redirect to a specialized 'suspended' or 'unauthorized' page or home
+            // For now, redirecting to home with a query param
+            return NextResponse.redirect(new URL('/?error=unauthorized', request.url));
+        }
+    }
+
+    // 4. System Admin Guard (Restrict /hospitals and /users strictly to ADMIN)
+    if (pathname.startsWith('/hospitals') || pathname.startsWith('/users')) {
+        if (userRole !== 'ADMIN') {
+            return NextResponse.redirect(new URL('/?error=system_admin_only', request.url));
+        }
+    }
+
+    // 5. Suspension Guard
     const tenantStatus = request.headers.get('x-tenant-status');
 
     if (tenantStatus === 'suspended' && !pathname.startsWith('/lockout') && !pathname.startsWith('/api')) {
@@ -43,13 +77,6 @@ export function middleware(request: NextRequest) {
             status: 403,
             headers: { 'Content-Type': 'application/json' }
         });
-    }
-
-    if (matchingModulePath && tenantId) {
-        // In a real production scenario, we would check a JWT or a cache (Redis)
-        // For this implementation, we assume if a tenantId is present, we check their specific entitlements.
-        // For demonstration, we'll allow all if it's the 'default' dev tenant, but in implementation
-        // we will check the 'enabled_modules' header or similar.
     }
 
     const response = NextResponse.next();

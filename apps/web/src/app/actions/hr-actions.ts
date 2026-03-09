@@ -2,18 +2,22 @@
 
 import { getTenantDb } from '@/lib/db';
 import { revalidatePath } from 'next/cache';
+import { ensureRole } from '@/lib/auth-utils';
 
 import { getStandardAccount, postJournalEntry } from './accounting-actions';
+import { Role } from '@amisi/database';
 
 // Employee Actions
 export async function getEmployees() {
+    await ensureRole(['HR', 'ADMIN']);
     const db = await getTenantDb();
     return db.employee.findMany({
         orderBy: { lastName: 'asc' }
     });
 }
 
-export async function createEmployee(data: { employeeId: string, firstName: string, lastName: string, role: string, department: string, email: string, baseSalary: number }) {
+export async function createEmployee(data: { employeeId: string, firstName: string, lastName: string, role: Role, department: string, email: string, baseSalary: number }) {
+    await ensureRole(['HR', 'ADMIN']);
     const db = await getTenantDb();
     const employee = await db.employee.create({
         data: {
@@ -28,6 +32,7 @@ export async function createEmployee(data: { employeeId: string, firstName: stri
 
 // Payroll Actions
 export async function generatePayroll(month: number, year: number) {
+    await ensureRole(['HR', 'ADMIN']);
     const db = await getTenantDb();
     const employees = await db.employee.findMany({ where: { status: 'active' } });
 
@@ -65,6 +70,7 @@ export async function getPayrollHistory(month?: number, year?: number) {
 }
 
 export async function processPayment(payrollId: string) {
+    await ensureRole(['HR', 'ADMIN']);
     const db = await getTenantDb();
 
     const currentRecord = await db.payrollRecord.findUnique({

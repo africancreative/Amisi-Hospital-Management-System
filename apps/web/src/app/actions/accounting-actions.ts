@@ -2,6 +2,7 @@
 
 import { getTenantDb } from '@/lib/db';
 import { revalidatePath } from 'next/cache';
+import { ensureRole } from '@/lib/auth-utils';
 import { Decimal } from '@amisi/database';
 
 export type JournalLineInput = {
@@ -23,6 +24,7 @@ export async function postJournalEntry(data: {
     sourceId?: string;
     lines: JournalLineInput[];
 }) {
+    await ensureRole(['ACCOUNTANT', 'ADMIN']);
     const db = await getTenantDb();
 
     // 1. Validate Debit/Credit balance
@@ -79,6 +81,7 @@ export async function getAccounts() {
 }
 
 export async function createAccount(data: { code: string, name: string, type: string, description?: string }) {
+    await ensureRole(['ACCOUNTANT', 'ADMIN']);
     const db = await getTenantDb();
     const account = await db.account.create({
         data
@@ -88,6 +91,7 @@ export async function createAccount(data: { code: string, name: string, type: st
 }
 
 export async function getTrialBalance() {
+    await ensureRole(['ACCOUNTANT', 'ADMIN']);
     const db = await getTenantDb();
     const accounts = await db.account.findMany({
         include: {
@@ -117,6 +121,7 @@ export async function getTrialBalance() {
 }
 
 export async function getRecentJournalEntries() {
+    await ensureRole(['ACCOUNTANT', 'ADMIN']);
     const db = await getTenantDb();
     return db.journalEntry.findMany({
         take: 20,

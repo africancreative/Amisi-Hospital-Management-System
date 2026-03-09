@@ -1,7 +1,9 @@
-import { getPatients } from '@/app/actions/ehr-actions';
+﻿import { getPatients } from '@/app/actions/ehr-actions';
 import ServiceInvoiceForm from '@/components/ServiceInvoiceForm';
 import { Receipt, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+
+export const dynamic = 'force-dynamic';
 
 export default async function NewInvoicePage() {
     const patients = await getPatients();
@@ -29,3 +31,4 @@ export default async function NewInvoicePage() {
         </div>
     );
 }
+

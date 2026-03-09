@@ -2,11 +2,13 @@
 
 import { getTenantDb } from '@/lib/db';
 import { revalidatePath } from 'next/cache';
+import { ensureRole } from '@/lib/auth-utils';
 import { Decimal } from '@amisi/database';
 
 import { getStandardAccount, postJournalEntry } from './accounting-actions';
 
 export async function getHospitalRevenueStats() {
+    await ensureRole(['ACCOUNTANT', 'ADMIN']);
     const db = await getTenantDb();
     const records = await db.financialRecord.findMany({
         include: { payments: true, items: true },
@@ -27,6 +29,7 @@ export async function getHospitalRevenueStats() {
 }
 
 export async function getInvoiceById(id: string) {
+    await ensureRole(['ACCOUNTANT', 'ADMIN']);
     const db = await getTenantDb();
     return await db.financialRecord.findUnique({
         where: { id },
@@ -50,6 +53,7 @@ export async function createInvoice(
         taxRate?: number
     }[]
 ) {
+    await ensureRole(['ACCOUNTANT', 'ADMIN']);
     const db = await getTenantDb();
 
     // Calculate total including tax per item
@@ -110,6 +114,7 @@ export async function createInvoice(
 }
 
 export async function recordPayment(financialRecordId: string, amount: number, method: string) {
+    await ensureRole(['ACCOUNTANT', 'ADMIN']);
     const db = await getTenantDb();
 
     const payment = await db.payment.create({

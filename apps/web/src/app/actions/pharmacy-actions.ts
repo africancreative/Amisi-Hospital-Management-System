@@ -2,6 +2,7 @@
 
 import { getTenantDb } from '@/lib/db';
 import { revalidatePath } from 'next/cache';
+import { ensureRole } from '@/lib/auth-utils';
 
 // Inventory Actions
 export async function getInventoryItems() {
@@ -12,6 +13,7 @@ export async function getInventoryItems() {
 }
 
 export async function updateInventoryStock(itemId: string, quantityChange: number, description?: string) {
+    await ensureRole(['PHARMACIST', 'ADMIN']);
     const db = await getTenantDb();
 
     const item = await db.inventoryItem.update({
@@ -28,6 +30,7 @@ export async function updateInventoryStock(itemId: string, quantityChange: numbe
 
 // Prescription Actions
 export async function createPrescription(patientId: string, encounterId: string | null, orderedBy: string, items: { drugName: string, dosage: string, frequency: string, duration: string, quantity: number }[]) {
+    await ensureRole(['DOCTOR', 'ADMIN']);
     const db = await getTenantDb();
 
     const prescription = await db.prescription.create({
@@ -67,6 +70,7 @@ export async function getPendingPrescriptions() {
 
 // Dispensing Actions
 export async function dispensePrescription(prescriptionId: string, dispensedBy: string, itemDispensations: { itemId: string, quantity: number }[]) {
+    await ensureRole(['PHARMACIST', 'ADMIN']);
     const db = await getTenantDb();
 
     // Transactional dispensing

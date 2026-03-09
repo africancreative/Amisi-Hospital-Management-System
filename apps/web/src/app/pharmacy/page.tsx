@@ -55,11 +55,11 @@ export default async function PharmacyPage() {
                                     <div>
                                         <h3 className="text-2xl font-black tracking-tight">{px.patient.lastName}, {px.patient.firstName}</h3>
                                         <div className="flex flex-wrap gap-4 mt-2 text-xs font-bold text-gray-500">
-                                            <span className="flex items-center gap-1.5 border-r border-gray-200 dark:border-gray-800 pr-4">
+                                            <span className="flex items-center gap-1.5 border-r border-gray-200 dark:border-gray-800 pr-4" suppressHydrationWarning>
                                                 <Calendar className="h-3.5 w-3.5" />
                                                 Age: {calculateAge(px.patient.dob)}
                                             </span>
-                                            <span className="flex items-center gap-1.5 border-r border-gray-200 dark:border-gray-800 pr-4">
+                                            <span className="flex items-center gap-1.5 border-r border-gray-200 dark:border-gray-800 pr-4" suppressHydrationWarning>
                                                 <Clock className="h-3.5 w-3.5" />
                                                 Ordered {new Date(px.createdAt).toLocaleTimeString()}
                                             </span>

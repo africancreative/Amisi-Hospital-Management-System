@@ -55,7 +55,7 @@ export default async function LabDashboardPage() {
                                                 Patient: {order.patient.lastName}, {order.patient.firstName} • Order ID: {order.id.slice(0, 8)}
                                             </p>
                                             <div className="flex flex-wrap gap-4 text-xs font-bold text-gray-500">
-                                                <span className="flex items-center gap-1.5"><Clock className="h-3.5 w-3.5" /> Ordered {new Date(order.createdAt).toLocaleTimeString()}</span>
+                                                <span className="flex items-center gap-1.5" suppressHydrationWarning><Clock className="h-3.5 w-3.5" /> Ordered {new Date(order.createdAt).toLocaleTimeString()}</span>
                                                 <span className="flex items-center gap-1.5"><Beaker className="h-3.5 w-3.5" /> Dr. {order.orderedBy}</span>
                                             </div>
                                         </div>

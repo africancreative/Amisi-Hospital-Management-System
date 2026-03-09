@@ -33,7 +33,7 @@ export default async function TrialBalancePage() {
                             <Scale className="h-10 w-10 text-violet-500" />
                             Trial Balance
                         </h1>
-                        <p className="text-gray-500 font-medium mt-2 uppercase text-xs tracking-[0.2em]">
+                        <p className="text-gray-500 font-medium mt-2 uppercase text-xs tracking-[0.2em]" suppressHydrationWarning>
                             Consolidated Ledger Verification • {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
                         </p>
                     </div>

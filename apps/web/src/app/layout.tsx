@@ -22,28 +22,50 @@ export default async function RootLayout({
   let userRole = 'ADMIN';
   try {
     const cookieStore = await cookies();
-    const headerList = await headers();
-    const tenantId = headerList.get('x-tenant-id') || cookieStore.get('amisi-tenant-id')?.value;
-    userRole = cookieStore.get('amisi-user-role')?.value || 'ADMIN';
+    const headersList = await headers();
+    const tenantId = headersList.get('x-tenant-id') || cookieStore.get('amisi-tenant-id')?.value;
+    const userRoleObj = cookieStore.get('amisi-user-role');
+    const userName = cookieStore.get('amisi-user-name')?.value || 'User';
+    userRole = userRoleObj?.value || 'ADMIN';
+    const isLoggedIn = !!userRoleObj;
+    const isSystemAdmin = cookieStore.get('amisi-is-system-admin')?.value === 'true';
 
     if (tenantId) {
       const moduleSet = await getTenantModules(tenantId);
       enabledModules = Array.from(moduleSet);
     }
+
+    return (
+      <html lang="en" className="dark" suppressHydrationWarning>
+        <body
+          className={`${inter.className} bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 flex min-h-screen`}
+          suppressHydrationWarning
+        >
+          {isLoggedIn && (
+            <Sidebar
+              enabledModules={enabledModules}
+              userRole={userRole}
+              userName={userName}
+              isSystemAdmin={isSystemAdmin}
+            />
+          )}
+          <main className="flex-1 flex flex-col h-screen overflow-hidden">
+            {children}
+          </main>
+          {isLoggedIn && <RoleSwitcher />}
+        </body>
+      </html>
+    );
   } catch (error: any) {
     console.error('[RootLayout] Error Caught:', error);
-    // Fallback
+    return (
+      <html lang="en" className="dark">
+        <body className={`${inter.className} bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 flex min-h-screen`}>
+          <main className="flex-1 flex flex-col h-screen overflow-hidden">
+            {children}
+          </main>
+        </body>
+      </html>
+    );
   }
-
-  return (
-    <html lang="en" className="dark">
-      <body className={`${inter.className} bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 flex min-h-screen`}>
-        <Sidebar enabledModules={enabledModules} userRole={userRole} />
-        <main className="flex-1 flex flex-col h-screen overflow-hidden">
-          {children}
-        </main>
-        <RoleSwitcher />
-      </body>
-    </html>
-  );
 }

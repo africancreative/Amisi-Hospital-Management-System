@@ -72,3 +72,13 @@ model TenantModule {
   @@unique([tenantId, moduleId])
   @@map("tenant_modules")
 }
+model SystemAdmin {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("system_admins")
+}

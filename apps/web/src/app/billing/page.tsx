@@ -91,10 +91,10 @@ export default async function BillingPage() {
                                                 <td className="px-4 py-4 font-mono text-sm">
                                                     #{inv.id.slice(0, 8)}
                                                 </td>
-                                                <td className="px-4 py-4 font-black text-sm">
+                                                <td className="px-4 py-4 font-black text-sm" suppressHydrationWarning>
                                                     ${Number(inv.totalAmount).toLocaleString()}
                                                 </td>
-                                                <td className="px-4 py-4 text-xs text-gray-500 font-medium">
+                                                <td className="px-4 py-4 text-xs text-gray-500 font-medium" suppressHydrationWarning>
                                                     {new Date(inv.createdAt).toLocaleDateString()}
                                                 </td>
                                                 <td className="px-8 py-4 text-right flex items-center justify-end gap-3">
@@ -152,7 +152,7 @@ function StatCard({ label, value, trend, icon: Icon, color }: { label: string, v
                 <Icon className={`h-6 w-6 ${textColor}`} />
             </div>
             <p className="text-xs font-black uppercase tracking-[0.2em] text-gray-400 mb-1">{label}</p>
-            <h4 className="text-3xl font-black">{value}</h4>
+            <h4 className="text-3xl font-black" suppressHydrationWarning>{value}</h4>
             <p className="mt-4 text-xs font-bold flex items-center gap-1 opacity-70">
                 {trend}
             </p>

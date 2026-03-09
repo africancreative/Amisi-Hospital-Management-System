@@ -1,11 +1,16 @@
-import { getTenantDb as getTenantDbFromPackage, getControlDb } from '@amisi/database';
+import { getTenantDb as getTenantDbFromPackage, getControlDb, type TenantClient } from '@amisi/database';
 import { headers } from 'next/headers';
+export { getControlDb, type TenantClient };
 
 /**
  * Utility to get the current tenant's database client.
  * This reads the tenant ID injected by the middleware and resolves the client.
  */
-export async function getTenantDb() {
+export async function getTenantDb(providedTenantId?: string) {
+    if (providedTenantId) {
+        return await getTenantDbFromPackage(providedTenantId);
+    }
+
     const headerList = await headers();
     let tenantId = headerList.get('x-resolved-tenant-id');
 

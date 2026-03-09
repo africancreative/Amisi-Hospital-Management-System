@@ -52,7 +52,7 @@ export default async function PatientBillingPage({ params }: { params: { id: str
                             </div>
                             <div>
                                 <p className="text-[10px] font-black uppercase tracking-widest text-gray-500">Total Balance Due</p>
-                                <h2 className="text-3xl font-black text-orange-500">${totalBalance.toLocaleString()}</h2>
+                                <h2 className="text-3xl font-black text-orange-500" suppressHydrationWarning>${totalBalance.toLocaleString()}</h2>
                             </div>
                         </div>
                     </div>
@@ -89,8 +89,8 @@ export default async function PatientBillingPage({ params }: { params: { id: str
                                             <td className="px-4 py-5 text-sm font-medium text-gray-500">
                                                 {record.encounterId ? 'Clinical Visit' : 'Service Only'}
                                             </td>
-                                            <td className="px-4 py-5 text-sm font-bold">${Number(record.totalAmount).toLocaleString()}</td>
-                                            <td className="px-4 py-5 text-sm font-black text-orange-500">
+                                            <td className="px-4 py-5 text-sm font-bold" suppressHydrationWarning>${Number(record.totalAmount).toLocaleString()}</td>
+                                            <td className="px-4 py-5 text-sm font-black text-orange-500" suppressHydrationWarning>
                                                 ${Number(record.balanceDue).toLocaleString()}
                                             </td>
                                             <td className="px-8 py-5 text-right">

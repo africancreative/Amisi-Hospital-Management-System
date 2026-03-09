@@ -56,7 +56,7 @@ export default async function HospitalsPage() {
                                 <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
                                     <div className="flex flex-col items-end">
                                         <StatusBadge status={tenant.status} />
-                                        <p className="text-xs text-gray-400 mt-1">
+                                        <p className="text-xs text-gray-400 mt-1" suppressHydrationWarning>
                                             Joined {new Date(tenant.createdAt).toLocaleDateString()}
                                         </p>
                                     </div>
@@ -70,7 +70,7 @@ export default async function HospitalsPage() {
                             </div>
 
                             <div className="mt-6 flex flex-wrap gap-2 border-t border-gray-100 dark:border-gray-900 pt-4">
-                                {Object.entries(tenant.enabledModules as any).map(([key, value]) => (
+                                {Object.entries(tenant.enabledModules as Record<string, boolean>).map(([key, value]) => (
                                     value && (
                                         <span
                                             key={key}

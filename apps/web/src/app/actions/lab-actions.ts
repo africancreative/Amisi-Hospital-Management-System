@@ -2,8 +2,10 @@
 
 import { getTenantDb } from '@/lib/db';
 import { revalidatePath } from 'next/cache';
+import { ensureRole } from '@/lib/auth-utils';
 
 export async function createLabOrder(patientId: string, encounterId: string | null, testName: string, priority: string, orderedBy: string) {
+    await ensureRole(['DOCTOR', 'NURSE', 'ADMIN']);
     const db = await getTenantDb();
 
     const order = await db.labOrder.create({
@@ -48,6 +50,7 @@ export async function getPendingLabOrders() {
 }
 
 export async function updateLabOrderStatus(orderId: string, status: string) {
+    await ensureRole(['LAB_TECH', 'ADMIN']);
     const db = await getTenantDb();
     const order = await db.labOrder.update({
         where: { id: orderId },
@@ -59,6 +62,7 @@ export async function updateLabOrderStatus(orderId: string, status: string) {
 }
 
 export async function recordLabResult(orderId: string, results: { parameter: string, value: string, unit?: string, range?: string, flag?: string }[], technicianName: string) {
+    await ensureRole(['LAB_TECH', 'ADMIN']);
     const db = await getTenantDb();
 
     // Create results

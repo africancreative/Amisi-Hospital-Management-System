@@ -1,4 +1,4 @@
-import {
+﻿import {
     Package,
     Plus,
     Search,
@@ -11,6 +11,8 @@ import {
     Layers
 } from 'lucide-react';
 import { getInventoryItems } from '@/app/actions/pharmacy-actions';
+
+export const dynamic = 'force-dynamic';
 
 export default async function InventoryPage() {
     const items = await getInventoryItems();
@@ -168,7 +170,7 @@ function StatCard({ icon: Icon, label, value, trend, trendUp, color, alert }: an
             </div>
             <h3 className="text-xs font-black uppercase tracking-widest text-gray-400 mb-2">{label}</h3>
             <div className="flex items-end gap-3">
-                <span className="text-3xl font-black">{value}</span>
+                <span className="text-3xl font-black" suppressHydrationWarning>{value}</span>
                 <span className={`text-[10px] font-black uppercase tracking-tighter mb-1.5 flex items-center gap-1 ${trendUp ? 'text-emerald-500' : 'text-red-500'}`}>
                     {trendUp ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
                     {trend}
@@ -177,3 +179,4 @@ function StatCard({ icon: Icon, label, value, trend, trendUp, color, alert }: an
         </div>
     );
 }
+

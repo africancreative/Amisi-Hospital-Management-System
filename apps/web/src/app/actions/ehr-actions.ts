@@ -2,9 +2,11 @@
 
 import { getTenantDb } from '@/lib/db';
 import { revalidatePath } from 'next/cache';
+import { ensureRole } from '@/lib/auth-utils';
 
 // Patient Actions
 export async function getPatients(query?: string) {
+    await ensureRole(['DOCTOR', 'NURSE', 'ADMIN']);
     const db = await getTenantDb();
     return await db.patient.findMany({
         where: query ? {
@@ -18,6 +20,7 @@ export async function getPatients(query?: string) {
 }
 
 export async function getPatientById(id: string) {
+    await ensureRole(['DOCTOR', 'NURSE', 'ADMIN']);
     const db = await getTenantDb();
     return await db.patient.findUnique({
         where: { id },
@@ -50,6 +53,7 @@ export async function getPatientById(id: string) {
 }
 
 export async function createPatient(formData: FormData) {
+    await ensureRole(['DOCTOR', 'NURSE', 'ADMIN']);
     const firstName = formData.get('firstName') as string;
     const lastName = formData.get('lastName') as string;
     const dob = new Date(formData.get('dob') as string);
@@ -66,11 +70,11 @@ export async function createPatient(formData: FormData) {
     });
 
     revalidatePath('/patients');
-    return patient;
 }
 
 // Encounter Actions
 export async function createEncounter(patientId: string, formData: FormData) {
+    await ensureRole(['DOCTOR', 'NURSE', 'ADMIN']);
     const doctorName = formData.get('doctorName') as string;
     const type = formData.get('type') as string;
     const notes = formData.get('notes') as string;
@@ -103,5 +107,4 @@ export async function createEncounter(patientId: string, formData: FormData) {
     }
 
     revalidatePath(`/patients/${patientId}`);
-    return encounter;
 }

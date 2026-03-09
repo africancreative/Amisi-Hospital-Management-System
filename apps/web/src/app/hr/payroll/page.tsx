@@ -1,4 +1,4 @@
-import {
+﻿import {
     DollarSign,
     ArrowLeft,
     Calendar,
@@ -13,6 +13,8 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { getPayrollHistory } from '@/app/actions/hr-actions';
+
+export const dynamic = 'force-dynamic';
 
 export default async function PayrollPage() {
     const history = await getPayrollHistory();
@@ -59,7 +61,7 @@ export default async function PayrollPage() {
                         </div>
                         <h3 className="text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Current Period</h3>
                         <div className="flex items-baseline gap-2">
-                            <span className="text-2xl font-black">{new Date().toLocaleString('default', { month: 'long' })} {currentYear}</span>
+                            <span className="text-2xl font-black" suppressHydrationWarning>{new Date().toLocaleString('default', { month: 'long' })} {currentYear}</span>
                         </div>
                     </div>
                     <div className="bg-white dark:bg-gray-950 p-8 rounded-3xl border border-gray-200 dark:border-gray-800 shadow-sm">
@@ -77,7 +79,7 @@ export default async function PayrollPage() {
                         </div>
                         <h3 className="text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Monthly Outflow</h3>
                         <div className="flex items-baseline gap-2">
-                            <span className="text-2xl font-black">${totalOutflow.toLocaleString()}</span>
+                            <span className="text-2xl font-black" suppressHydrationWarning>${totalOutflow.toLocaleString()}</span>
                         </div>
                     </div>
                 </div>
@@ -117,9 +119,9 @@ export default async function PayrollPage() {
                                         </div>
                                     </td>
                                     <td className="px-4 py-5">
-                                        <span className="text-xs font-bold text-gray-600 dark:text-gray-400">
+                                        <div className="text-[10px] font-black uppercase tracking-widest text-gray-500" suppressHydrationWarning>
                                             {new Date(0, record.periodMonth - 1).toLocaleString('default', { month: 'short' })} {record.periodYear}
-                                        </span>
+                                        </div>
                                     </td>
                                     <td className="px-4 py-5">
                                         <span className="text-sm font-black text-gray-900 dark:text-white">${Number(record.netAmount).toLocaleString()}</span>
@@ -163,3 +165,4 @@ export default async function PayrollPage() {
         </div>
     );
 }
+

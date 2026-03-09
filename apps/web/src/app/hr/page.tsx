@@ -15,6 +15,8 @@ import {
 import Link from 'next/link';
 import { getEmployees } from '@/app/actions/hr-actions';
 
+export const dynamic = 'force-dynamic';
+
 export default async function HRDashboardPage() {
     const employees = await getEmployees();
 
@@ -106,7 +108,7 @@ export default async function HRDashboardPage() {
                                     <Mail className="h-4 w-4 opacity-40" />
                                     {emp.email}
                                 </div>
-                                <div className="flex items-center gap-3 text-sm font-bold text-gray-500">
+                                <div className="flex items-center gap-3 text-sm font-bold text-gray-500" suppressHydrationWarning>
                                     <Calendar className="h-4 w-4 opacity-40" />
                                     Joined {new Date(emp.dateJoined).toLocaleDateString()}
                                 </div>
@@ -115,7 +117,7 @@ export default async function HRDashboardPage() {
                             <div className="pt-8 border-t border-gray-100 dark:border-gray-900 flex justify-between items-center">
                                 <div className="flex flex-col">
                                     <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Base Salary</span>
-                                    <span className="text-lg font-black tracking-tight">${Number(emp.baseSalary).toLocaleString()}</span>
+                                    <span className="text-lg font-black tracking-tight" suppressHydrationWarning>${Number(emp.baseSalary).toLocaleString()}</span>
                                 </div>
                                 <button className="p-3 rounded-2xl bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                                     <MoreHorizontal className="h-5 w-5 text-gray-400" />

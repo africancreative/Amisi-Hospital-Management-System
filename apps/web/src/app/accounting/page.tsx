@@ -1,4 +1,4 @@
-import {
+﻿import {
     BookOpen,
     Plus,
     TrendingUp,
@@ -15,6 +15,8 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { getRecentJournalEntries, getTrialBalance } from '@/app/actions/accounting-actions';
+
+export const dynamic = 'force-dynamic';
 
 export default async function AccountingDashboard() {
     const entries = await getRecentJournalEntries();
@@ -107,13 +109,13 @@ export default async function AccountingDashboard() {
                                                         </div>
                                                         <div>
                                                             <p className="text-sm font-black text-gray-900 dark:text-white">{entry.description}</p>
-                                                            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-0.5">{new Date(entry.date).toLocaleDateString()} • REF: {entry.reference || 'N/A'}</p>
+                                                            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-0.5" suppressHydrationWarning>{new Date(entry.date).toLocaleDateString()} â€¢ REF: {entry.reference || 'N/A'}</p>
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td className="px-4 py-6 text-right">
                                                     <div className="flex flex-col items-end">
-                                                        <span className="text-sm font-black text-gray-900 dark:text-white">
+                                                        <span className="text-sm font-black text-gray-900 dark:text-white" suppressHydrationWarning>
                                                             ${entry.lines.reduce((sum: number, l: any) => sum + Number(l.debit), 0).toLocaleString()}
                                                         </span>
                                                         <span className="text-[9px] font-black uppercase tracking-widest text-emerald-500">Balanced</span>
@@ -174,7 +176,7 @@ function FinStatCard({ icon: Icon, label, value, color, trend }: any) {
             </div>
             <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2">{label}</h3>
             <div className="flex items-baseline gap-2">
-                <span className="text-2xl font-black tracking-tight">{value}</span>
+                <span className="text-2xl font-black tracking-tight" suppressHydrationWarning>{value}</span>
                 {trend && <span className="text-[9px] font-black uppercase tracking-widest text-violet-500">{trend}</span>}
             </div>
         </div>
@@ -192,3 +194,4 @@ function ReportLink({ label, icon: Icon, href }: any) {
         </Link>
     );
 }
+

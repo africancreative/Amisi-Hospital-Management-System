@@ -3,8 +3,10 @@
 import { getControlDb, DeploymentTier } from '@amisi/database';
 import { revalidatePath } from 'next/cache';
 import { provisionTenant } from '@amisi/database';
+import { ensureSuperAdmin } from '@/lib/auth-utils';
 
 export async function getTenants() {
+    await ensureSuperAdmin();
     const db = getControlDb();
     return await db.tenant.findMany({
         orderBy: { createdAt: 'desc' },
@@ -12,6 +14,7 @@ export async function getTenants() {
 }
 
 export async function getTenantById(idOrSlug: string) {
+    await ensureSuperAdmin();
     const db = getControlDb();
     // Try UUID match first
     const byId = await db.tenant.findUnique({
@@ -26,6 +29,7 @@ export async function getTenantById(idOrSlug: string) {
 }
 
 export async function createTenant(formData: FormData) {
+    await ensureSuperAdmin();
     const name = formData.get('name') as string;
     const slug = formData.get('slug') as string;
     const region = formData.get('region') as string;
@@ -83,6 +87,7 @@ export async function createTenant(formData: FormData) {
 }
 
 export async function updateTenantStatus(id: string, status: 'active' | 'suspended' | 'terminated') {
+    await ensureSuperAdmin();
     const db = getControlDb();
     await db.tenant.update({
         where: { id },
@@ -94,6 +99,7 @@ export async function updateTenantStatus(id: string, status: 'active' | 'suspend
 }
 
 export async function updateEnabledModules(id: string, modules: any) {
+    await ensureSuperAdmin();
     const db = getControlDb();
     await db.tenant.update({
         where: { id },

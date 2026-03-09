@@ -62,7 +62,7 @@ export default async function PatientDetailPage({ params }: { params: { id: stri
                             <div>
                                 <h1 className="text-4xl font-black tracking-tight">{patient.lastName}, {patient.firstName}</h1>
                                 <div className="flex items-center gap-3 mt-1 text-gray-500 font-medium">
-                                    <span>{new Date(patient.dob).toLocaleDateString()}</span>
+                                    <span suppressHydrationWarning>{new Date(patient.dob).toLocaleDateString()}</span>
                                     <span>•</span>
                                     <span className="uppercase">{patient.gender || 'N/A'}</span>
                                     <span>•</span>
@@ -122,7 +122,7 @@ export default async function PatientDetailPage({ params }: { params: { id: stri
                                                 <span className={`text-[10px] font-black uppercase tracking-widest ${event.eventType === 'CHAT' ? 'text-blue-500' : 'text-emerald-500'}`}>
                                                     {event.eventType === 'CHAT' ? 'Communication' : event.type}
                                                 </span>
-                                                <h3 className="text-lg font-bold mt-1">{new Date(event.createdAt).toLocaleDateString(undefined, { dateStyle: 'long' })}</h3>
+                                                <h3 className="text-lg font-bold mt-1" suppressHydrationWarning>{new Date(event.createdAt).toLocaleDateString(undefined, { dateStyle: 'long' })}</h3>
                                                 <p className="text-sm text-gray-500 mt-1 font-medium italic">
                                                     {event.eventType === 'CHAT' ? event.authorName : `Dr. ${event.doctorName}`}
                                                 </p>
@@ -215,7 +215,7 @@ export default async function PatientDetailPage({ params }: { params: { id: stri
                                                             {order.status}
                                                         </span>
                                                     </td>
-                                                    <td className="px-6 py-4 text-right text-xs text-gray-500">
+                                                    <td className="px-6 py-4 text-right text-xs text-gray-500" suppressHydrationWarning>
                                                         {new Date(order.createdAt).toLocaleDateString()}
                                                     </td>
                                                 </tr>

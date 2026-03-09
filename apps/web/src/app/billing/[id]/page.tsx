@@ -81,7 +81,7 @@ export default function InvoiceDetailPage() {
                         </div>
                         <div className="flex items-center gap-4 mt-3 text-sm text-gray-500 font-medium">
                             <span className="flex items-center gap-1.5"><User className="h-4 w-4" /> {invoice.patient.lastName}, {invoice.patient.firstName}</span>
-                            <span className="flex items-center gap-1.5"><Calendar className="h-4 w-4" /> {new Date(invoice.createdAt).toLocaleDateString()}</span>
+                            <span className="flex items-center gap-1.5" suppressHydrationWarning><Calendar className="h-4 w-4" /> {new Date(invoice.createdAt).toLocaleDateString()}</span>
                         </div>
                     </div>
 
@@ -166,7 +166,7 @@ export default function InvoiceDetailPage() {
                                                 </div>
                                                 <div>
                                                     <div className="text-sm font-black">{pay.method} Payment</div>
-                                                    <div className="text-[10px] text-gray-500">{new Date(pay.createdAt).toLocaleString()}</div>
+                                                    <div className="text-[10px] text-gray-500" suppressHydrationWarning>{new Date(pay.createdAt).toLocaleString()}</div>
                                                 </div>
                                             </div>
                                             <div className="text-right font-black text-emerald-600">

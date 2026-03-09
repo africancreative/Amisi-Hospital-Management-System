@@ -59,8 +59,8 @@ export default async function PatientLabHistoryPage({ params }: { params: { id: 
                                     <div>
                                         <h3 className="font-black text-lg">{order.testName}</h3>
                                         <div className="flex gap-4 text-[10px] font-black uppercase tracking-widest text-gray-500">
-                                            <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> {new Date(order.createdAt).toLocaleDateString()}</span>
-                                            <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {new Date(order.createdAt).toLocaleTimeString()}</span>
+                                            <span className="flex items-center gap-1" suppressHydrationWarning><Calendar className="h-3 w-3" /> {new Date(order.createdAt).toLocaleDateString()}</span>
+                                            <span className="flex items-center gap-1" suppressHydrationWarning><Clock className="h-3 w-3" /> {new Date(order.createdAt).toLocaleTimeString()}</span>
                                             <span className="flex items-center gap-1"><User className="h-3 w-3" /> Ref: Dr. {order.orderedBy}</span>
                                         </div>
                                     </div>
