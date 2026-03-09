@@ -1,4 +1,4 @@
-import { PrismaClient } from '../generated/control-client';
+import { PrismaClient } from './generated/control-client';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
 

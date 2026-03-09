@@ -1,5 +1,5 @@
 import { getControlDb, TenantClient } from './index';
-import { DeploymentTier } from '../generated/control-client';
+import { DeploymentTier } from './generated/control-client';
 import { execSync } from 'child_process';
 import crypto from 'crypto';
 import path from 'path';
