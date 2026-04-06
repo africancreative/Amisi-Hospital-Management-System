@@ -7,7 +7,7 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../../node_modules/@amisi/tenant-client"
+  output   = "../../tenant-client"
 }
 
 enum SystemStatus {
