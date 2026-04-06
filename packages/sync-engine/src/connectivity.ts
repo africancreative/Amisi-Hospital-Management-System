@@ -1,4 +1,3 @@
-import { TenantClient as PrismaClient } from '@amisi/database';
 import axios from 'axios';
 
 /**

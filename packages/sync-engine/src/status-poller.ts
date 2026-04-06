@@ -1,6 +1,4 @@
-import { TenantClient } from '@amisi/database';
-
-const tenantDb = new TenantClient();
+import { getTenantDb } from '@amisi/database';
 
 /**
  * Status Poller Worker
@@ -8,6 +6,8 @@ const tenantDb = new TenantClient();
  */
 export async function startStatusPoller(cloudBaseUrl: string, tenantId: string, intervalMs: number = 60000) {
     console.log(`[StatusPoller] Started for tenant ${tenantId}. Checking every ${intervalMs}ms...`);
+
+    const tenantDb = await getTenantDb(tenantId);
 
     setInterval(async () => {
         try {

@@ -56,7 +56,7 @@ async function performPushSync(tenantId: string, edgeDb: TenantClient) {
 
     if (unsyncedEvents.length === 0) return;
 
-    const batch = unsyncedEvents.map(event => {
+    const batch = unsyncedEvents.map((event: any) => {
         const payloadString = JSON.stringify(event.payload);
         const message = `${event.entityType}:${event.entityId}:${event.action}:${payloadString}`;
         const signature = crypto

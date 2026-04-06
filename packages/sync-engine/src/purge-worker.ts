@@ -1,6 +1,5 @@
 import cron from 'node-cron';
-import { getTenantDb } from '@amisi/database';
-import { TenantClient as PrismaClient } from '@amisi/database';
+import { getTenantDb, type TenantClient } from '@amisi/database';
 
 /**
  * Purge worker that runs every day at midnight.
@@ -15,7 +14,7 @@ export async function startPurgeWorker(tenantId: string) {
     });
 }
 
-async function purgeOldData(db: PrismaClient) {
+async function purgeOldData(db: TenantClient) {
     const fiveDaysAgo = new Date();
     fiveDaysAgo.setDate(fiveDaysAgo.getDate() - 5);
 

@@ -13,3 +13,6 @@ export type { default as ControlClient } from '@prisma/client';
 
 // Type exports for DeploymentTier - needs to be defined here since it's a local type
 export type DeploymentTier = 'CLINIC' | 'GENERAL' | 'RESEARCH';
+
+// TenantClient is just a type alias for PrismaClient (for isolated tenant DBs)
+export type TenantClient = ReturnType<typeof getTenantDb>;
