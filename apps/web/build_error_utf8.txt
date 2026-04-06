@@ -1,0 +1,172 @@
+﻿Γû▓ Next.js 16.1.6 (Turbopack)
+- Environments: .env
+
+  Creating an optimized production build ...
+npx : 
+At line:1 char:1
++ npx next build > build_error.txt 2>&1
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], Re    
+moteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+> Build error occurred
+Error: Turbopack build failed with 3 errors:
+./apps/web/src/app/system/hospitals/new/OnboardingForm.tsx:5:1
+Export createTenantWithModules doesn't exist in target module
+[0m [90m 3 |[39m [36mimport[39m { useState } 
+[36mfrom[39m [32m'react'[39m[33m;[39m
+ [90m 4 |[39m [36mimport[39m { [33mServer[39m[33m,[39m 
+[33mShieldAlert[39m[33m,[39m 
+[33mCheckCircle2[39m[33m,[39m [33mBox[39m[33m,[39m 
+[33mActivity[39m[33m,[39m [33mDollarSign[39m } 
+[36mfrom[39m [32m'lucide-react'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 5 |[39m [36mimport[39m { 
+createTenantWithModules } [36mfrom[39m 
+[32m'@/app/actions/system-actions'[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1
+m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[
+22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m
+[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31
+m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1
+m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[
+22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m
+[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31
+m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1
+m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[
+22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m
+[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31
+m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1
+m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[
+22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m
+[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31
+m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1
+m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[
+22m[39m[31m[1m^[22m[39m
+ [90m 6 |[39m [36mimport[39m { useRouter } [36mfrom[39m 
+[32m'next/navigation'[39m[33m;[39m
+ [90m 7 |[39m
+ [90m 8 |[39m [36mexport[39m [36mdefault[39m 
+[36mfunction[39m [33mOnboardingForm[39m({ availableModules 
+}[33m:[39m { availableModules[33m:[39m any[] }) {[0m
+
+The export createTenantWithModules was not found in module 
+[project]/apps/web/src/app/actions/system-actions.ts 
+[app-client] (ecmascript).
+Did you mean to import testMpesaConnection?
+All exports of the module are statically known (It doesn't have 
+dynamic exports). So it's known statically that the requested 
+export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./apps/web/src/app/system/hospitals/new/OnboardingForm.tsx
+    ./apps/web/src/app/system/hospitals/new/page.tsx
+
+
+./apps/web/src/app/system/hospitals/new/OnboardingForm.tsx:5:1
+Export createTenantWithModules doesn't exist in target module
+[0m [90m 3 |[39m [36mimport[39m { useState } 
+[36mfrom[39m [32m'react'[39m[33m;[39m
+ [90m 4 |[39m [36mimport[39m { [33mServer[39m[33m,[39m 
+[33mShieldAlert[39m[33m,[39m 
+[33mCheckCircle2[39m[33m,[39m [33mBox[39m[33m,[39m 
+[33mActivity[39m[33m,[39m [33mDollarSign[39m } 
+[36mfrom[39m [32m'lucide-react'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 5 |[39m [36mimport[39m { 
+createTenantWithModules } [36mfrom[39m 
+[32m'@/app/actions/system-actions'[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1
+m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[
+22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m
+[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31
+m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1
+m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[
+22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m
+[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31
+m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1
+m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[
+22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m
+[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31
+m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1
+m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[
+22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m
+[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31
+m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1
+m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[
+22m[39m[31m[1m^[22m[39m
+ [90m 6 |[39m [36mimport[39m { useRouter } [36mfrom[39m 
+[32m'next/navigation'[39m[33m;[39m
+ [90m 7 |[39m
+ [90m 8 |[39m [36mexport[39m [36mdefault[39m 
+[36mfunction[39m [33mOnboardingForm[39m({ availableModules 
+}[33m:[39m { availableModules[33m:[39m any[] }) {[0m
+
+The export createTenantWithModules was not found in module 
+[project]/apps/web/src/app/actions/system-actions.ts [app-ssr] 
+(ecmascript).
+Did you mean to import testMpesaConnection?
+All exports of the module are statically known (It doesn't have 
+dynamic exports). So it's known statically that the requested 
+export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./apps/web/src/app/system/hospitals/new/OnboardingForm.tsx
+    ./apps/web/src/app/system/hospitals/new/page.tsx
+
+
+./apps/web/src/app/system/hospitals/new/page.tsx:1:1
+Export fetchModules doesn't exist in target module
+[0m[31m[1m>[22m[39m[90m 1 |[39m [36mimport[39m { 
+fetchModules } [36mfrom[39m 
+[32m'@/app/actions/system-actions'[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1
+m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[
+22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m
+[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31
+m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1
+m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[
+22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m
+[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31
+m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1
+m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[
+22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m
+[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31
+m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1
+m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[
+22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m
+[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 2 |[39m [36mimport[39m [33mOnboardingForm[39m 
+[36mfrom[39m [32m'./OnboardingForm'[39m[33m;[39m
+ [90m 3 |[39m
+ [90m 4 |[39m [36mexport[39m [36mdefault[39m 
+[36masync[39m [36mfunction[39m [33mNewHospitalPage[39m() 
+{[0m
+
+The export fetchModules was not found in module 
+[project]/apps/web/src/app/actions/system-actions.ts [app-rsc] 
+(ecmascript).
+Did you mean to import updateGlobalSettings?
+All exports of the module are statically known (It doesn't have 
+dynamic exports). So it's known statically that the requested 
+export doesn't exist.
+
+
+    at <unknown> 
+(./apps/web/src/app/system/hospitals/new/OnboardingForm.tsx:5:1)
+    at <unknown> 
+(./apps/web/src/app/system/hospitals/new/OnboardingForm.tsx:5:1)
+    at <unknown> 
+(./apps/web/src/app/system/hospitals/new/page.tsx:1:1)

@@ -3,7 +3,7 @@
 import { getTenantDb } from '@/lib/db';
 import { ensureRole } from '@/lib/auth-utils';
 import { revalidatePath } from 'next/cache';
-import { Decimal } from '@amisi/database';
+import { Decimal, Role } from '@amisi/database';
 
 export async function getEmployees() {
     await ensureRole(['ADMIN']);
@@ -18,7 +18,7 @@ export async function addEmployee(data: {
     firstName: string;
     lastName: string;
     email: string;
-    role: any;
+    role: Role;
     department: string;
     baseSalary: number;
 }) {

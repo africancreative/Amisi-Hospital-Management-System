@@ -8,7 +8,7 @@ import { format } from 'date-fns';
  */
 
 const BRANDING_TEXT = 'System designed by amisigenuine.com';
-const LOGO_PATH = '/branding/logo.png'; // Must exist in apps/web/public/branding/
+const LOGO_PATH = '/media__1775407355702.png'; 
 
 export async function createReport(title: string, hospitalSettings: any) {
     const doc = new jsPDF() as any;

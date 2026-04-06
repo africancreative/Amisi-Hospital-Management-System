@@ -14,6 +14,18 @@
                 ".next/**",
                 "!.next/cache/**",
                 "dist/**"
+            ],
+            "env": [
+                "DATABASE_URL",
+                "JWT_SECRET",
+                "CLOUD_SYNC_URL",
+                "NODE_ENV"
+            ]
+        },
+        "build-mobile": {
+            "cache": false,
+            "inputs": [
+                "apps/mobile/**"
             ]
         },
         "lint": {

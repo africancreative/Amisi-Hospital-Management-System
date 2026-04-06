@@ -1,0 +1,25 @@
+﻿Γû▓ Next.js 16.1.6 (Turbopack)
+- Environments: .env
+
+  Creating an optimized production build ...
+Γ£ô Compiled successfully in 16.0s
+  Running TypeScript ...
+npx : Failed to compile.
+At line:1 char:36
++ ... Item -Recurse -Force .next; npx next build > build_error_v12.txt 2>&1
++                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Failed to compile.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+./src/app/actions/billing-actions.ts:194:41
+Type error: Argument of type '"PAYMENT_RECEIVED"' is not assignable to parameter of type 'RealtimeEventType'.
+
+[0m [90m 192 |[39m     [36mconst[39m tenantId [33m=[39m [36mawait[39m getResolvedTenantId()[33m;[39m
+ [90m 193 |[39m     [36mif[39m (tenantId) {
+[31m[1m>[22m[39m[90m 194 |[39m         realtimeHub[33m.[39mbroadcast(tenantId[33m,[39m [32m'PAYMENT_RECEIVED'[39m[33m,[39m [32m'FinancialRecord'[39m[33m,[39m data[33m.[39mfinancialRecordId)[33m;[39m
+ [90m     |[39m                                         [31m[1m^[22m[39m
+ [90m 195 |[39m     }
+ [90m 196 |[39m
+ [90m 197 |[39m     revalidatePath([32m'/billing'[39m)[33m;[39m[0m
+Next.js build worker exited with code: 1 and signal: null

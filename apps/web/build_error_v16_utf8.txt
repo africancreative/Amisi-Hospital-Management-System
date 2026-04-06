@@ -1,0 +1,26 @@
+﻿Γû▓ Next.js 16.1.6 (Turbopack)
+- Environments: .env
+
+  Creating an optimized production build ...
+Γ£ô Compiled successfully in 11.1s
+  Running TypeScript ...
+npx : Failed to compile.
+At line:1 char:36
++ ... Item -Recurse -Force .next; npx next build > build_error_v16.txt 2>&1
++                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Failed to compile.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+./src/app/actions/tenant-actions.ts:3:79
+Type error: Module '"@amisi/database"' has no exported member 'syncTenantSettings'.
+
+[0m [90m 1 |[39m [32m'use server'[39m[33m;[39m
+ [90m 2 |[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { getControlDb[33m,[39m [33mDeploymentTier[39m[33m,[39m createTenantDatabase[33m,[39m provisionTenant[33m,[39m syncTenantSettings } [36mfrom[39m 
+[32m'@amisi/database'[39m[33m;[39m
+ [90m   |[39m                                                                               [31m[1m^[22m[39m
+ [90m 4 |[39m [36mimport[39m { revalidatePath } [36mfrom[39m [32m'next/cache'[39m[33m;[39m
+ [90m 5 |[39m [36mimport[39m { ensureSuperAdmin } [36mfrom[39m [32m'@/lib/auth-utils'[39m[33m;[39m
+ [90m 6 |[39m [36mimport[39m { hashPassword } [36mfrom[39m [32m'@amisi/auth'[39m[33m;[39m[0m
+Next.js build worker exited with code: 1 and signal: null

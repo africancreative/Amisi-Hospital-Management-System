@@ -38,6 +38,7 @@ model Tenant {
   updatedAt              DateTime       @updatedAt @map("updated_at")
 
   entitlements           TenantModule[]
+  payments               SystemPayment[]
 
   @@map("tenants")
 }
@@ -82,3 +83,67 @@ model SystemAdmin {
 
   @@map("system_admins")
 }
+
+model GlobalSettings {
+  id                     String   @id @default("singleton")
+  platformName           String   @default("Amisi HealthOS") @map("platform_name")
+  platformLogoUrl        String?  @map("platform_logo_url")
+  platformSlogan         String?  @map("platform_slogan")
+  
+  // Frontend CMS Content
+  heroTitle              String?  @map("hero_title")
+  heroSubtitle           String?  @map("hero_subtitle")
+  heroCTA                String?  @map("hero_cta")
+  heroImageUrl           String?  @map("hero_image_url")
+  
+  showHero               Boolean  @default(true) @map("show_hero")
+  showFeatures           Boolean  @default(true) @map("show_features")
+  
+  feature1Title          String?  @map("feature1_title")
+  feature1Desc           String?  @map("feature1_desc")
+  feature1Icon           String?  @map("feature1_icon")
+  
+  feature2Title          String?  @map("feature2_title")
+  feature2Desc           String?  @map("feature2_desc")
+  feature2Icon           String?  @map("feature2_icon")
+  
+  feature3Title          String?  @map("feature3_title")
+  feature3Desc           String?  @map("feature3_desc")
+  feature3Icon           String?  @map("feature3_icon")
+  
+  // PayPal Settings
+  paypalClientId         String?  @map("paypal_client_id")
+  paypalClientSecret     String?  @map("paypal_client_secret")
+  paypalEnv              String   @default("sandbox") @map("paypal_env")
+  
+  // M-Pesa (Daraja) Settings
+  mpesaConsumerKey       String?  @map("mpesa_consumer_key")
+  mpesaConsumerSecret    String?  @map("mpesa_consumer_secret")
+  mpesaPasskey           String?  @map("mpesa_passkey")
+  mpesaShortcode         String?  @map("mpesa_shortcode")
+  
+  updatedAt              DateTime @updatedAt @map("updated_at")
+
+  @@map("global_settings")
+}
+
+model SystemPayment {
+  id              String   @id @default(uuid())
+  tenantId        String?  @map("tenant_id")
+  tenant          Tenant?  @relation(fields: [tenantId], references: [id])
+  
+  amount          Decimal  @db.Decimal(10, 2)
+  currency        String   @default("USD")
+  method          String   // 'PAYPAL' | 'MPESA'
+  status          String   // 'COMPLETED' | 'PENDING' | 'FAILED'
+  reference       String   @unique // Provider Transaction ID
+  
+  customerEmail   String   @map("customer_email")
+  customerName    String   @map("customer_name")
+  
+  description     String?
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  @@map("system_payments")
+}
+

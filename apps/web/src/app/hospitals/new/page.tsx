@@ -29,6 +29,7 @@ import {
     Globe
 } from 'lucide-react';
 import { createTenant } from '@/app/actions/tenant-actions';
+import { PayPalCheckoutButton } from '@/components/billing/PayPalCheckoutButton';
 
 const DOMAINS = [
     {
@@ -103,6 +104,8 @@ export default function NewHospitalPage() {
     const [slug, setSlug] = useState('');
     const [tier, setTier] = useState<string>('CLINIC');
     const [selectedModules, setSelectedModules] = useState<string[]>(TIER_DEFAULTS.CLINIC);
+    const [isPaid, setIsPaid] = useState(false);
+    const [showPayment, setShowPayment] = useState(false);
 
     // Auto-generate slug from name
     useEffect(() => {
@@ -331,6 +334,13 @@ export default function NewHospitalPage() {
                                 <input type="email" id="contactEmail" name="contactEmail" required className="w-full rounded-xl border border-gray-100 dark:border-gray-900 bg-gray-50 dark:bg-gray-950 px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-emerald-500 transition-all" />
                             </div>
                             <div className="space-y-2">
+                                <label htmlFor="taxId" className="text-[10px] font-black uppercase text-gray-500">Hospital Tax PIN / KRA PIN</label>
+                                <input type="text" id="taxId" name="taxId" required className="w-full rounded-xl border border-gray-100 dark:border-gray-900 bg-gray-50 dark:bg-gray-950 px-4 py-2.5 text-sm font-mono outline-none focus:ring-2 focus:ring-emerald-500 transition-all uppercase" placeholder="e.g. PIN-A12345678" />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
                                 <label htmlFor="phone" className="text-[10px] font-black uppercase text-gray-500">Phone Number</label>
                                 <input type="tel" id="phone" name="phone" required className="w-full rounded-xl border border-gray-100 dark:border-gray-900 bg-gray-50 dark:bg-gray-950 px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-emerald-500 transition-all" />
                             </div>
@@ -342,14 +352,41 @@ export default function NewHospitalPage() {
                         </div>
                     </div>
 
-                    <div className="flex gap-4">
-                        <button
-                            type="submit"
-                            className="flex-1 inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-500 px-6 py-4 font-black text-white shadow-xl shadow-emerald-500/20 hover:bg-emerald-600 transition-all active:scale-95"
-                        >
-                            <Save className="h-5 w-5" />
-                            Provision Enterprise Instance
-                        </button>
+                    <div className="flex flex-col gap-4">
+                        {!showPayment ? (
+                            <button
+                                type="button"
+                                onClick={() => setShowPayment(true)}
+                                className="flex-1 inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-500 px-6 py-4 font-black text-white shadow-xl shadow-emerald-500/20 hover:bg-emerald-600 transition-all active:scale-95"
+                            >
+                                <Globe className="h-5 w-5" />
+                                Proceed to Payment & Provisioning
+                            </button>
+                        ) : (
+                            <div className="space-y-6 theme-dark bg-gray-900 p-8 rounded-3xl border border-gray-800 shadow-2xl">
+                                <div className="text-center space-y-2">
+                                    <h3 className="text-xl font-black text-white">Payment Required</h3>
+                                    <p className="text-sm text-gray-400">Please settle the setup fee for the <span className="text-emerald-500 font-bold">{tier}</span> tier.</p>
+                                </div>
+                                
+                                <PayPalCheckoutButton 
+                                    financialRecordId="new-tenant-setup"
+                                    tenantId="system"
+                                    amountToPay={tier === 'CLINIC' ? '100.00' : tier === 'GENERAL' ? '250.00' : '500.00'}
+                                    onSuccess={() => setIsPaid(true)}
+                                />
+
+                                {isPaid && (
+                                    <button
+                                        type="submit"
+                                        className="w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-500 px-6 py-4 font-black text-white shadow-xl shadow-emerald-500/20 hover:bg-emerald-600 animate-bounce"
+                                    >
+                                        <Save className="h-5 w-5" />
+                                        Complete Provisioning
+                                    </button>
+                                )}
+                            </div>
+                        )}
                     </div>
                 </form>
             </div>

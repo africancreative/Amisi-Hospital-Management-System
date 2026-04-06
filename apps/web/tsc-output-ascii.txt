@@ -1,0 +1,191 @@
+.next/dev/types/validator.ts(400,31): error TS2344: Type 'typeof import("C:/Users/amisi/OneDrive/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/src/app/(tenant)/[slug]/layout")' does not satisfy the constraint 'LayoutConfig<"/[slug]">'.
+  Types of property 'default' are incompatible.
+    Type '({ children, params, }: { children: ReactNode; params: { slug: string; }; }) => Promise<Element>' is not assignable to type 'ComponentType<LayoutProps<"/[slug]">> | ((props: LayoutProps<"/[slug]">) => void | Promise<void> | ReactNode | Promise<...>)'.
+      Type '({ children, params, }: { children: ReactNode; params: { slug: string; }; }) => Promise<Element>' is not assignable to type 'FunctionComponent<LayoutProps<"/[slug]">>'.
+        Types of parameters '__0' and 'props' are incompatible.
+          Type 'LayoutProps<"/[slug]">' is not assignable to type '{ children: ReactNode; params: { slug: string; }; }'.
+            Types of property 'params' are incompatible.
+              Property 'slug' is missing in type 'Promise<{ slug: string; }>' but required in type '{ slug: string; }'.
+.next/types/validator.ts(400,31): error TS2344: Type 'typeof import("C:/Users/amisi/OneDrive/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/src/app/(tenant)/[slug]/layout")' does not satisfy the constraint 'LayoutConfig<"/[slug]">'.
+  Types of property 'default' are incompatible.
+    Type '({ children, params, }: { children: ReactNode; params: { slug: string; }; }) => Promise<Element>' is not assignable to type 'ComponentType<LayoutProps<"/[slug]">> | ((props: LayoutProps<"/[slug]">) => void | Promise<void> | ReactNode | Promise<...>)'.
+      Type '({ children, params, }: { children: ReactNode; params: { slug: string; }; }) => Promise<Element>' is not assignable to type 'FunctionComponent<LayoutProps<"/[slug]">>'.
+        Types of parameters '__0' and 'props' are incompatible.
+          Type 'LayoutProps<"/[slug]">' is not assignable to type '{ children: ReactNode; params: { slug: string; }; }'.
+            Types of property 'params' are incompatible.
+              Property 'slug' is missing in type 'Promise<{ slug: string; }>' but required in type '{ slug: string; }'.
+src/app/[slug]/billing/[id]/page.tsx(19,10): error TS2305: Module '"@/app/actions/billing-actions"' has no exported member 'getInvoiceById'.
+src/app/[slug]/billing/[id]/page.tsx(19,26): error TS2305: Module '"@/app/actions/billing-actions"' has no exported member 'recordServiceLevelPayment'.
+src/app/[slug]/billing/page.tsx(14,10): error TS2305: Module '"@/app/actions/billing-actions"' has no exported member 'getHospitalRevenueStats'.
+src/app/[slug]/hr/page.tsx(16,10): error TS2305: Module '"@/app/actions/hr-actions"' has no exported member 'getEmployees'.
+src/app/[slug]/hr/payroll/page.tsx(15,10): error TS2305: Module '"@/app/actions/hr-actions"' has no exported member 'getPayrollHistory'.
+src/app/[slug]/hr/payroll/page.tsx(24,44): error TS7006: Parameter 'h' implicitly has an 'any' type.
+src/app/[slug]/hr/payroll/page.tsx(25,42): error TS7006: Parameter 'acc' implicitly has an 'any' type.
+src/app/[slug]/hr/payroll/page.tsx(25,47): error TS7006: Parameter 'h' implicitly has an 'any' type.
+src/app/[slug]/hr/payroll/page.tsx(108,43): error TS7006: Parameter 'record' implicitly has an 'any' type.
+src/app/[slug]/lab/[id]/page.tsx(54,38): error TS2339: Property 'testName' does not exist on type '{ patient: { id: string; createdAt: Date; updatedAt: Date; version: number; isSynced: boolean; email: string | null; firstName: string; lastName: string; phone: string | null; ... 8 more ...; conflictStatus: string | null; } | null; results: { ...; }[]; } & { ...; }'.
+src/app/[slug]/lab/[id]/page.tsx(54,60): error TS18047: 'order.patient' is possibly 'null'.
+src/app/[slug]/lab/[id]/page.tsx(54,86): error TS18047: 'order.patient' is possibly 'null'.
+src/app/[slug]/lab/[id]/page.tsx(88,83): error TS2339: Property 'testName' does not exist on type '{ patient: { id: string; createdAt: Date; updatedAt: Date; version: number; isSynced: boolean; email: string | null; firstName: string; lastName: string; phone: string | null; ... 8 more ...; conflictStatus: string | null; } | null; results: { ...; }[]; } & { ...; }'.
+src/app/[slug]/lab/page.tsx(51,91): error TS2339: Property 'testName' does not exist on type '{ patient: { id: string; createdAt: Date; updatedAt: Date; version: number; isSynced: boolean; email: string | null; firstName: string; lastName: string; phone: string | null; ... 8 more ...; conflictStatus: string | null; } | null; results: { ...; }[]; } & { ...; }'.
+src/app/[slug]/lab/page.tsx(52,79): error TS2339: Property 'priority' does not exist on type '{ patient: { id: string; createdAt: Date; updatedAt: Date; version: number; isSynced: boolean; email: string | null; firstName: string; lastName: string; phone: string | null; ... 8 more ...; conflictStatus: string | null; } | null; results: { ...; }[]; } & { ...; }'.
+src/app/[slug]/lab/page.tsx(56,59): error TS18047: 'order.patient' is possibly 'null'.
+src/app/[slug]/lab/page.tsx(56,85): error TS18047: 'order.patient' is possibly 'null'.
+src/app/[slug]/lab/page.tsx(60,139): error TS2551: Property 'orderedBy' does not exist on type '{ patient: { id: string; createdAt: Date; updatedAt: Date; version: number; isSynced: boolean; email: string | null; firstName: string; lastName: string; phone: string | null; ... 8 more ...; conflictStatus: string | null; } | null; results: { ...; }[]; } & { ...; }'. Did you mean 'orderedById'?
+src/app/[slug]/patients/[id]/billing/page.tsx(14,10): error TS2724: '"@/app/actions/ehr-actions"' has no exported member named 'getPatientById'. Did you mean 'getPatients'?
+src/app/[slug]/patients/[id]/billing/page.tsx(100,88): error TS2554: Expected 1 arguments, but got 3.
+src/app/[slug]/patients/[id]/encounters/new/page.tsx(25,23): error TS2322: Type '(formData: FormData) => Promise<{ id: string; createdAt: Date; updatedAt: Date; version: number; isSynced: boolean; type: string; dischargedAt: Date | null; patientId: string; ... 10 more ...; conflictData: JsonValue; }>' is not assignable to type 'string | ((formData: FormData) => void | Promise<void>) | undefined'.
+  Type '(formData: FormData) => Promise<{ id: string; createdAt: Date; updatedAt: Date; version: number; isSynced: boolean; type: string; dischargedAt: Date | null; patientId: string; ... 10 more ...; conflictData: JsonValue; }>' is not assignable to type '(formData: FormData) => void | Promise<void>'.
+    Type 'Promise<{ id: string; createdAt: Date; updatedAt: Date; version: number; isSynced: boolean; type: string; dischargedAt: Date | null; patientId: string; conflictStatus: string | null; ... 9 more ...; conflictData: JsonValue; }>' is not assignable to type 'void | Promise<void>'.
+      Type 'Promise<{ id: string; createdAt: Date; updatedAt: Date; version: number; isSynced: boolean; type: string; dischargedAt: Date | null; patientId: string; conflictStatus: string | null; ... 9 more ...; conflictData: JsonValue; }>' is not assignable to type 'Promise<void>'.
+        Type '{ id: string; createdAt: Date; updatedAt: Date; version: number; isSynced: boolean; type: string; dischargedAt: Date | null; patientId: string; conflictStatus: string | null; ... 9 more ...; conflictData: JsonValue; }' is not assignable to type 'void'.
+src/app/[slug]/patients/[id]/lab/page.tsx(14,10): error TS2724: '"@/app/actions/ehr-actions"' has no exported member named 'getPatientById'. Did you mean 'getPatients'?
+src/app/[slug]/patients/[id]/page.tsx(19,10): error TS2724: '"@/app/actions/ehr-actions"' has no exported member named 'getPatientById'. Did you mean 'getPatients'?
+src/app/[slug]/patients/[id]/page.tsx(36,36): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/app/[slug]/patients/[id]/page.tsx(37,39): error TS7006: Parameter 'c' implicitly has an 'any' type.
+src/app/[slug]/settings/page.tsx(27,47): error TS2322: Type '{ id: string; phone: string | null; address: string | null; hospitalName: string; systemStatus: SystemStatus; detailedAddress: string | null; taxId: string | null; marketingSlogan: string | null; ... 8 more ...; hrEnabled: boolean; }' is not assignable to type '{ hospitalName: string; marketingSlogan?: string | undefined; logoUrl?: string | undefined; taxId?: string | undefined; phone?: string | undefined; contactEmail?: string | undefined; detailedAddress?: string | undefined; }'.
+  Types of property 'marketingSlogan' are incompatible.
+    Type 'string | null' is not assignable to type 'string | undefined'.
+      Type 'null' is not assignable to type 'string | undefined'.
+src/app/actions/adt-actions.ts(20,51): error TS2322: Type '"ADMISSIONS"' is not assignable to type 'Role'.
+src/app/actions/adt-actions.ts(59,51): error TS2345: Argument of type '"PATIENT_ADMITTED"' is not assignable to parameter of type 'RealtimeEventType'.
+src/app/actions/adt-actions.ts(70,33): error TS2322: Type '"NURSE_MANAGER"' is not assignable to type 'Role'.
+src/app/actions/adt-actions.ts(70,59): error TS2322: Type '"ADMISSIONS"' is not assignable to type 'Role'.
+src/app/actions/adt-actions.ts(126,51): error TS2345: Argument of type '"PATIENT_TRANSFERRED"' is not assignable to parameter of type 'RealtimeEventType'.
+src/app/actions/adt-actions.ts(137,42): error TS2322: Type '"ADMISSIONS"' is not assignable to type 'Role'.
+src/app/actions/adt-actions.ts(170,51): error TS2345: Argument of type '"PATIENT_DISCHARGED"' is not assignable to parameter of type 'RealtimeEventType'.
+src/app/actions/audit-actions.ts(4,30): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+src/app/actions/audit-actions.ts(50,29): error TS7006: Parameter 'log' implicitly has an 'any' type.
+src/app/actions/audit-actions.ts(69,21): error TS7006: Parameter 'logs' implicitly has an 'any' type.
+src/app/actions/billing-actions.ts(116,9): error TS2322: Type '"READ"' is not assignable to type 'AuditAction'.
+src/app/actions/billing-actions.ts(194,41): error TS2345: Argument of type '"PAYMENT_RECEIVED"' is not assignable to parameter of type 'RealtimeEventType'.
+src/app/actions/diagnostic-actions.ts(9,29): error TS2307: Cannot find module '@amisi/sync-engine' or its corresponding type declarations.
+src/app/actions/diagnostic-actions.ts(41,41): error TS2345: Argument of type '"DIAGNOSTIC_ORDERED"' is not assignable to parameter of type 'RealtimeEventType'.
+src/app/actions/diagnostic-actions.ts(96,45): error TS2345: Argument of type '"CRITICAL_RESULT_ALARM"' is not assignable to parameter of type 'RealtimeEventType'.
+src/app/actions/ehr-actions.ts(9,29): error TS2307: Cannot find module '@amisi/sync-engine' or its corresponding type declarations.
+src/app/actions/ehr-actions.ts(189,41): error TS2345: Argument of type '"TRAUMA_ALARM"' is not assignable to parameter of type 'RealtimeEventType'.
+src/app/actions/him-actions.ts(16,23): error TS2322: Type '"HIM_OFFICER"' is not assignable to type 'Role'.
+src/app/actions/him-actions.ts(16,66): error TS2322: Type '"AUDITOR"' is not assignable to type 'Role'.
+src/app/actions/him-actions.ts(36,34): error TS2353: Object literal may only specify known properties, and 'recordedAt' does not exist in type 'VitalsOrderByWithRelationInput | VitalsOrderByWithRelationInput[]'.
+src/app/actions/him-actions.ts(63,23): error TS2322: Type '"HIM_OFFICER"' is not assignable to type 'Role'.
+src/app/actions/him-actions.ts(120,23): error TS2322: Type '"HIM_OFFICER"' is not assignable to type 'Role'.
+src/app/actions/him-actions.ts(120,47): error TS2322: Type '"PATIENT_PORTAL"' is not assignable to type 'Role'.
+src/app/actions/him-actions.ts(144,51): error TS2345: Argument of type '"ROI_REQUESTED"' is not assignable to parameter of type 'RealtimeEventType'.
+src/app/actions/him-actions.ts(151,23): error TS2322: Type '"HIM_OFFICER"' is not assignable to type 'Role'.
+src/app/actions/him-actions.ts(170,55): error TS2345: Argument of type '"ROI_APPROVED"' is not assignable to parameter of type 'RealtimeEventType'.
+src/app/actions/him-actions.ts(199,23): error TS2322: Type '"HIM_OFFICER"' is not assignable to type 'Role'.
+src/app/actions/him-actions.ts(245,23): error TS2322: Type '"HIM_OFFICER"' is not assignable to type 'Role'.
+src/app/actions/hr-actions.ts(33,23): error TS2322: Type '"HR_MANAGER"' is not assignable to type 'Role'.
+src/app/actions/hr-actions.ts(74,51): error TS2345: Argument of type '"EMPLOYEE_ONBOARDED"' is not assignable to parameter of type 'RealtimeEventType'.
+src/app/actions/hr-actions.ts(89,23): error TS2322: Type '"HR_MANAGER"' is not assignable to type 'Role'.
+src/app/actions/hr-actions.ts(106,96): error TS2554: Expected 4 arguments, but got 5.
+src/app/actions/hr-actions.ts(134,23): error TS2322: Type '"HR_MANAGER"' is not assignable to type 'Role'.
+src/app/actions/hr-actions.ts(157,51): error TS2345: Argument of type '"SHIFT_ASSIGNED"' is not assignable to parameter of type 'RealtimeEventType'.
+src/app/actions/hr-actions.ts(164,23): error TS2322: Type '"HR_MANAGER"' is not assignable to type 'Role'.
+src/app/actions/hr-actions.ts(219,23): error TS2322: Type '"HR_MANAGER"' is not assignable to type 'Role'.
+src/app/actions/hr-actions.ts(245,41): error TS2345: Argument of type '"LEAVE_APPROVED" | "LEAVE_REJECTED"' is not assignable to parameter of type 'RealtimeEventType'.
+  Type '"LEAVE_APPROVED"' is not assignable to type 'RealtimeEventType'.
+src/app/actions/icu-actions.ts(57,51): error TS2345: Argument of type '"ICU_ADMISSION"' is not assignable to parameter of type 'RealtimeEventType'.
+src/app/actions/icu-actions.ts(132,85): error TS2554: Expected 4 arguments, but got 5.
+src/app/actions/icu-actions.ts(171,51): error TS2345: Argument of type '"VENTILATOR_UPDATED"' is not assignable to parameter of type 'RealtimeEventType'.
+src/app/actions/icu-actions.ts(239,51): error TS2345: Argument of type '"ICU_DISCHARGE"' is not assignable to parameter of type 'RealtimeEventType'.
+src/app/actions/ipd-actions.ts(9,29): error TS2307: Cannot find module '@amisi/sync-engine' or its corresponding type declarations.
+src/app/actions/ipd-actions.ts(46,41): error TS2345: Argument of type '"BED_STATUS_CHANGED"' is not assignable to parameter of type 'RealtimeEventType'.
+src/app/actions/ipd-actions.ts(83,41): error TS2345: Argument of type '"MAR_UPDATED"' is not assignable to parameter of type 'RealtimeEventType'.
+src/app/actions/ipd-actions.ts(140,41): error TS2345: Argument of type '"PATIENT_DISCHARGED"' is not assignable to parameter of type 'RealtimeEventType'.
+src/app/actions/ipd-actions.ts(141,41): error TS2345: Argument of type '"BED_STATUS_CHANGED"' is not assignable to parameter of type 'RealtimeEventType'.
+src/app/actions/lab-actions.ts(15,13): error TS2353: Object literal may only specify known properties, and 'testName' does not exist in type 'Without<LabOrderCreateInput, LabOrderUncheckedCreateInput> & LabOrderUncheckedCreateInput'.
+src/app/actions/lab-actions.ts(70,9): error TS2322: Type '{ labOrderId: string; parameter: string; value: string; unit: string | undefined; referenceRange: string | undefined; flag: string | undefined; performedBy: string; }[]' is not assignable to type 'LabResultCreateManyInput | LabResultCreateManyInput[]'.
+  Type '{ labOrderId: string; parameter: string; value: string; unit: string | undefined; referenceRange: string | undefined; flag: string | undefined; performedBy: string; }[]' is not assignable to type 'LabResultCreateManyInput[]'.
+    Type '{ labOrderId: string; parameter: string; value: string; unit: string | undefined; referenceRange: string | undefined; flag: string | undefined; performedBy: string; }' is missing the following properties from type 'LabResultCreateManyInput': biomarkerName, valueResult
+src/app/actions/lis-actions.ts(80,51): error TS2345: Argument of type '"LAB_ORDERED"' is not assignable to parameter of type 'RealtimeEventType'.
+src/app/actions/lis-actions.ts(128,51): error TS2345: Argument of type '"SPECIMEN_COLLECTED"' is not assignable to parameter of type 'RealtimeEventType'.
+src/app/actions/lis-actions.ts(206,95): error TS2554: Expected 4 arguments, but got 5.
+src/app/actions/lis-actions.ts(217,23): error TS2322: Type '"PATHOLOGIST"' is not assignable to type 'Role'.
+src/app/actions/lis-actions.ts(250,41): error TS2345: Argument of type '"LAB_REPORT_VALIDATED"' is not assignable to parameter of type 'RealtimeEventType'.
+src/app/actions/lis-actions.ts(254,96): error TS2554: Expected 4 arguments, but got 5.
+src/app/actions/maternity-actions.ts(25,32): error TS2322: Type '"MIDWIFE"' is not assignable to type 'Role'.
+src/app/actions/maternity-actions.ts(71,98): error TS2554: Expected 4 arguments, but got 5.
+src/app/actions/maternity-actions.ts(101,32): error TS2322: Type '"MIDWIFE"' is not assignable to type 'Role'.
+src/app/actions/maternity-actions.ts(148,32): error TS2322: Type '"MIDWIFE"' is not assignable to type 'Role'.
+src/app/actions/maternity-actions.ts(172,51): error TS2345: Argument of type '"LABOUR_STARTED"' is not assignable to parameter of type 'RealtimeEventType'.
+src/app/actions/maternity-actions.ts(197,32): error TS2322: Type '"MIDWIFE"' is not assignable to type 'Role'.
+src/app/actions/maternity-actions.ts(203,27): error TS2352: Conversion of type 'string | number | boolean | JsonObject | JsonArray | null' to type 'PartogramPoint[]' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'JsonArray' is not comparable to type 'PartogramPoint[]'.
+    Type 'JsonValue' is not comparable to type 'PartogramPoint'.
+      Type 'JsonValue[]' is missing the following properties from type 'PartogramPoint': time, cervicalDilation, foetaltDescent, contractionsPerHr, foetusHeartRate
+src/app/actions/maternity-actions.ts(213,98): error TS2554: Expected 4 arguments, but got 5.
+src/app/actions/maternity-actions.ts(225,94): error TS2554: Expected 4 arguments, but got 5.
+src/app/actions/maternity-actions.ts(234,33): error TS2322: Type 'PartogramPoint' is not assignable to type 'InputJsonValue | null | undefined'.
+  Type 'PartogramPoint' is not assignable to type 'InputJsonObject'.
+    Index signature for type 'string' is missing in type 'PartogramPoint'.
+src/app/actions/maternity-actions.ts(234,50): error TS2322: Type 'PartogramPoint' is not assignable to type 'InputJsonValue | null | undefined'.
+  Type 'PartogramPoint' is not assignable to type 'InputJsonObject'.
+    Index signature for type 'string' is missing in type 'PartogramPoint'.
+src/app/actions/maternity-actions.ts(260,32): error TS2322: Type '"MIDWIFE"' is not assignable to type 'Role'.
+src/app/actions/maternity-actions.ts(321,104): error TS2554: Expected 4 arguments, but got 5.
+src/app/actions/maternity-actions.ts(329,82): error TS2554: Expected 4 arguments, but got 5.
+src/app/actions/maternity-actions.ts(352,32): error TS2322: Type '"MIDWIFE"' is not assignable to type 'Role'.
+src/app/actions/oncology-actions.ts(68,51): error TS2345: Argument of type '"TREATMENT_CREATED"' is not assignable to parameter of type 'RealtimeEventType'.
+src/app/actions/oncology-actions.ts(108,86): error TS2554: Expected 4 arguments, but got 5.
+src/app/actions/oncology-actions.ts(158,51): error TS2345: Argument of type '"CHEMO_STARTED"' is not assignable to parameter of type 'RealtimeEventType'.
+src/app/actions/oncology-actions.ts(202,94): error TS2554: Expected 4 arguments, but got 5.
+src/app/actions/payroll-actions.ts(106,23): error TS2322: Type '"HR_MANAGER"' is not assignable to type 'Role'.
+src/app/actions/payroll-actions.ts(161,23): error TS2322: Type '"HR_MANAGER"' is not assignable to type 'Role'.
+src/app/actions/payroll-actions.ts(222,23): error TS2322: Type '"HR_MANAGER"' is not assignable to type 'Role'.
+src/app/actions/payroll-actions.ts(294,51): error TS2345: Argument of type '"PAYSLIP_READY"' is not assignable to parameter of type 'RealtimeEventType'.
+src/app/actions/payroll-actions.ts(305,23): error TS2322: Type '"HR_MANAGER"' is not assignable to type 'Role'.
+src/app/actions/payroll-actions.ts(337,23): error TS2322: Type '"HR_MANAGER"' is not assignable to type 'Role'.
+src/app/actions/pharmacy-actions.ts(9,29): error TS2307: Cannot find module '@amisi/sync-engine' or its corresponding type declarations.
+src/app/actions/pharmos-actions.ts(86,17): error TS2322: Type '{ drugName: string; dosage: string; quantity: number; frequency: string; duration: string | undefined; }[]' is not assignable to type '(Without<PrescriptionItemCreateWithoutPrescriptionInput, PrescriptionItemUncheckedCreateWithoutPrescriptionInput> & PrescriptionItemUncheckedCreateWithoutPrescriptionInput) | (Without<...> & PrescriptionItemCreateWithoutPrescriptionInput) | PrescriptionItemCreateWithoutPrescriptionInput[] | PrescriptionItemUnchecked...'.
+  Type '{ drugName: string; dosage: string; quantity: number; frequency: string; duration: string | undefined; }[]' is not assignable to type 'PrescriptionItemCreateWithoutPrescriptionInput[]'.
+    Type '{ drugName: string; dosage: string; quantity: number; frequency: string; duration: string | undefined; }' is not assignable to type 'PrescriptionItemCreateWithoutPrescriptionInput'.
+      Types of property 'duration' are incompatible.
+        Type 'string | undefined' is not assignable to type 'string'.
+          Type 'undefined' is not assignable to type 'string'.
+src/app/actions/pharmos-actions.ts(104,51): error TS2345: Argument of type '"PRESCRIPTION_RECEIVED"' is not assignable to parameter of type 'RealtimeEventType'.
+src/app/actions/pharmos-actions.ts(373,41): error TS2345: Argument of type '"PRESCRIPTION_DISPENSED"' is not assignable to parameter of type 'RealtimeEventType'.
+src/app/actions/pharmos-actions.ts(376,45): error TS2345: Argument of type '"CONTROLLED_SUBSTANCE_DISPENSED"' is not assignable to parameter of type 'RealtimeEventType'.
+src/app/actions/radiology-actions.ts(79,51): error TS2345: Argument of type '"RADIOLOGY_ORDERED"' is not assignable to parameter of type 'RealtimeEventType'.
+src/app/actions/radiology-actions.ts(158,51): error TS2345: Argument of type '"STUDY_ACQUIRED"' is not assignable to parameter of type 'RealtimeEventType'.
+src/app/actions/radiology-actions.ts(174,23): error TS2322: Type '"RADIOLOGIST"' is not assignable to type 'Role'.
+src/app/actions/radiology-actions.ts(198,96): error TS2554: Expected 4 arguments, but got 5.
+src/app/actions/radiology-actions.ts(219,33): error TS2322: Type '"RADIOLOGIST"' is not assignable to type 'Role'.
+src/app/actions/scm-actions.ts(22,19): error TS2304: Cannot find name 'Int'.
+src/app/actions/scm-actions.ts(26,23): error TS2322: Type '"PROCUREMENT_MANAGER"' is not assignable to type 'Role'.
+src/app/actions/scm-actions.ts(66,106): error TS2554: Expected 4 arguments, but got 5.
+src/app/actions/scm-actions.ts(103,51): error TS2345: Argument of type '"PO_SENT"' is not assignable to parameter of type 'RealtimeEventType'.
+src/app/actions/scm-actions.ts(120,23): error TS2322: Type '"INVENTORY_CLERK"' is not assignable to type 'Role'.
+src/app/actions/scm-actions.ts(120,42): error TS2322: Type '"PROCUREMENT_MANAGER"' is not assignable to type 'Role'.
+src/app/actions/scm-actions.ts(174,51): error TS2345: Argument of type '"INVENTORY_RESTOCKED"' is not assignable to parameter of type 'RealtimeEventType'.
+src/app/actions/scm-actions.ts(248,9): error TS2322: Type '"SYSTEM_ROUTINE"' is not assignable to type 'AuditAction'.
+src/app/actions/surgery-actions.ts(24,33): error TS2322: Type '"SURGEON"' is not assignable to type 'Role'.
+src/app/actions/surgery-actions.ts(47,51): error TS2345: Argument of type '"SURGERY_REQUESTED"' is not assignable to parameter of type 'RealtimeEventType'.
+src/app/actions/surgery-actions.ts(67,23): error TS2322: Type '"SURGEON"' is not assignable to type 'Role'.
+src/app/actions/surgery-actions.ts(67,34): error TS2322: Type '"OT_MANAGER"' is not assignable to type 'Role'.
+src/app/actions/surgery-actions.ts(123,51): error TS2345: Argument of type '"SURGERY_SCHEDULED"' is not assignable to parameter of type 'RealtimeEventType'.
+src/app/actions/surgery-actions.ts(142,32): error TS2322: Type '"ANESTHESIOLOGIST"' is not assignable to type 'Role'.
+src/app/actions/surgery-actions.ts(142,52): error TS2322: Type '"SURGEON"' is not assignable to type 'Role'.
+src/app/actions/surgery-actions.ts(189,23): error TS2322: Type '"SURGEON"' is not assignable to type 'Role'.
+src/app/actions/surgery-actions.ts(189,34): error TS2322: Type '"ANESTHESIOLOGIST"' is not assignable to type 'Role'.
+src/app/actions/surgery-actions.ts(267,98): error TS2554: Expected 4 arguments, but got 5.
+src/app/actions/surgery-actions.ts(289,32): error TS2322: Type '"ANESTHESIOLOGIST"' is not assignable to type 'Role'.
+src/app/actions/surgery-actions.ts(289,52): error TS2322: Type '"SURGEON"' is not assignable to type 'Role'.
+src/app/actions/surgery-actions.ts(347,41): error TS2345: Argument of type '"ICU_ADMISSION_PENDING"' is not assignable to parameter of type 'RealtimeEventType'.
+src/app/actions/tenant-actions.ts(3,40): error TS2305: Module '"@amisi/database"' has no exported member 'createTenantDatabase'.
+src/app/api/sync/route.ts(4,41): error TS2307: Cannot find module '@amisi/sync-engine' or its corresponding type declarations.
+src/app/error.tsx(64,29): error TS2322: Type '{ children: Element; asChild: true; variant: string; className: string; }' is not assignable to type 'IntrinsicAttributes & ButtonProps & RefAttributes<HTMLButtonElement>'.
+  Property 'variant' does not exist on type 'IntrinsicAttributes & ButtonProps & RefAttributes<HTMLButtonElement>'.
+src/app/hospitals/[id]/page.tsx(26,10): error TS2305: Module '"@/app/actions/tenant-actions"' has no exported member 'getTenantById'.
+src/app/hospitals/page.tsx(3,10): error TS2305: Module '"@/app/actions/tenant-actions"' has no exported member 'getTenants'.
+src/app/hospitals/page.tsx(28,35): error TS7006: Parameter 'tenant' implicitly has an 'any' type.
+src/app/not-found.tsx(40,25): error TS2322: Type '{ children: (string | Element)[]; onClick: () => void; variant: string; className: string; }' is not assignable to type 'IntrinsicAttributes & ButtonProps & RefAttributes<HTMLButtonElement>'.
+  Property 'variant' does not exist on type 'IntrinsicAttributes & ButtonProps & RefAttributes<HTMLButtonElement>'.
+src/components/ServiceInvoiceForm.tsx(5,10): error TS2305: Module '"@/app/actions/billing-actions"' has no exported member 'createInvoice'.
+../../packages/auth/src/lib/rbac.ts(33,14): error TS2740: Type '{ DOCTOR: ("CONSULTATION_WRITE" | "TRIAGE_WRITE" | "LIS_RESULT_WRITE" | "RIS_REPORT_WRITE")[]; NURSE: ("CONSULTATION_WRITE" | "TRIAGE_WRITE" | "WARD_TRACK_WRITE")[]; PHARMACIST: ("PHARM_DISPENSE" | "INV_AUDIT")[]; LAB_TECH: "LIS_RESULT_WRITE"[]; ACCOUNTANT: ("LEDGER_VIEW" | ... 1 more ... | "PAYROLL_PROCESS")[]; HR:...' is missing the following properties from type 'Record<Role, ("CONSULTATION_WRITE" | "TRIAGE_WRITE" | "WARD_TRACK_WRITE" | "SURGERY_SCHEDULE" | "LIS_RESULT_WRITE" | "RIS_REPORT_WRITE" | "PHARM_DISPENSE" | "INV_AUDIT" | "LEDGER_VIEW" | "BILLING_ADJUST" | "PAYROLL_PROCESS")[]>': HR_MANAGER, MIDWIFE, ICU_NURSE, ONCOLOGY_NURSE, and 5 more.
+../../packages/ui/src/components/ui/button.tsx(2,22): error TS2307: Cannot find module '@radix-ui/react-slot' or its corresponding type declarations.
+../../packages/ui/src/components/ui/button.tsx(3,40): error TS2307: Cannot find module 'class-variance-authority' or its corresponding type declarations.
+../../packages/ui/src/components/ui/button.tsx(43,19): error TS2339: Property 'variant' does not exist on type 'ButtonProps'.
+../../packages/ui/src/components/ui/button.tsx(43,28): error TS2339: Property 'size' does not exist on type 'ButtonProps'.
+../../packages/ui/src/components/ui/label.tsx(4,33): error TS2307: Cannot find module '@radix-ui/react-label' or its corresponding type declarations.
+../../packages/ui/src/components/ui/label.tsx(5,40): error TS2307: Cannot find module 'class-variance-authority' or its corresponding type declarations.

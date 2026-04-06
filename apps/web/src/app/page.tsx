@@ -1,156 +1,129 @@
-import { cookies } from "next/headers";
-import { Plus, Users, Building2, Activity, TrendingUp, DollarSign, Microscope, Pill } from "lucide-react";
-import { getPlatformDashboardStats, getTenantDashboardStats } from "./actions/dashboard-actions";
+import { Building2, ShieldCheck, ArrowRight, Activity, Users, Zap, CheckCircle2 } from "lucide-react";
+import * as LucideIcons from "lucide-react";
 import Link from "next/link";
+import { getGlobalSettings } from "./actions/system-actions";
 
-export default async function Home() {
-  const cookieStore = await cookies();
-  const isSystemAdmin = cookieStore.get('amisi-is-system-admin')?.value === 'true';
+export default async function LandingPage() {
+  const settings = await getGlobalSettings();
 
-  if (isSystemAdmin) {
-    const stats = await getPlatformDashboardStats();
-    return <PlatformDashboard stats={stats} />;
-  }
+  const getIcon = (name: string) => {
+    const Icon = (LucideIcons as any)[name] || Activity;
+    return Icon;
+  };
 
-  const stats = await getTenantDashboardStats();
-  return <TenantDashboard stats={stats} />;
-}
-
-function PlatformDashboard({ stats }: { stats: any }) {
   return (
-    <div className="flex-1 overflow-y-auto p-8 bg-gray-50 dark:bg-[#0a0a0b]">
-      <div className="mx-auto max-w-7xl">
-        <header className="flex justify-between items-center mb-10">
-          <div>
-            <h1 className="text-4xl font-bold tracking-tight text-white">Platform Control Plane</h1>
-            <p className="text-neutral-500 mt-2 text-lg">
-              Global overview of the Amisi Genuine infrastructure.
-            </p>
+    <div className="flex-1 bg-[#0a0a0b] text-white selection:bg-amber-500/30">
+      {/* Navigation */}
+      <nav className="border-b border-white/5 bg-black/20 backdrop-blur-md sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <img 
+               src={settings.platformLogoUrl || "/media__1775407355702.png"} 
+               alt={`${settings.platformName} Logo`} 
+               className="h-10 w-10 object-contain rounded-lg"
+            />
+            <span className="text-xl font-black tracking-tighter text-white uppercase italic">
+                {settings.platformName}
+            </span>
           </div>
-          <Link href="/hospitals" className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white shadow-lg shadow-blue-600/20 hover:bg-blue-500 transition-all hover:scale-[1.02] active:scale-[0.98]">
-            <Plus className="h-5 w-5" />
-            <span>Onboard Hospital</span>
-          </Link>
-        </header>
-
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          <StatCard title="Total Hospitals" value={stats.hospitalCount} icon={Building2} trend="+2 this month" color="blue" />
-          <StatCard title="Total Users" value={stats.totalUsers} icon={Users} trend="+18% this week" color="indigo" />
-          <StatCard title="Active Subscriptions" value={stats.activeSubscriptions} icon={TrendingUp} trend="Revenue Growing" color="emerald" />
-          <StatCard title="System Health" value={stats.systemHealth} icon={Activity} trend="Operational" color="rose" />
+          <div className="flex items-center gap-4">
+            <Link href="/system/login" className="text-sm font-semibold text-neutral-400 hover:text-white transition-colors">
+              Platform Administration
+            </Link>
+            <Link href="/login" className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold text-sm hover:from-blue-500 hover:to-indigo-500 transition-all flex items-center gap-2 shadow-lg shadow-blue-600/20">
+              Hospital Login <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
         </div>
+      </nav>
 
-        <div className="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="rounded-3xl border border-white/5 bg-neutral-900/50 p-8 backdrop-blur-xl shadow-2xl">
-            <h2 className="text-xl font-bold text-white mb-6">Recent Deployments</h2>
-            <div className="space-y-4">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/5">
-                  <div className="h-10 w-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400">
-                    <Building2 className="h-5 w-5" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-white">Amisi Premier - Region: East Africa</p>
-                    <p className="text-xs text-neutral-500">Provisioned 2 hours ago</p>
-                  </div>
-                  <span className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-500 text-[10px] font-bold uppercase tracking-wider">Success</span>
+      <main>
+        {/* Hero Section */}
+        {settings.showHero && (
+            <section className="relative pt-20 pb-32 overflow-hidden">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-gradient-to-b from-blue-600/10 via-transparent to-transparent pointer-events-none" />
+            
+            {settings.heroImageUrl && (
+                <div 
+                    className="absolute inset-0 opacity-10 bg-cover bg-center grayscale"
+                    style={{ backgroundImage: `url(${settings.heroImageUrl})` }}
+                />
+            )}
+
+            <div className="max-w-7xl mx-auto px-6 relative">
+                <div className="max-w-3xl">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold uppercase tracking-widest mb-8">
+                    <Zap className="h-3 w-3 fill-current" /> {settings.platformSlogan || 'Next-Generation Healthcare'}
                 </div>
-              ))}
+                <h1 className="text-7xl font-black tracking-tighter mb-8 leading-[0.9]">
+                    {settings.heroTitle || 'Enterprise Hospital Management for the Modern Era.'}
+                </h1>
+                <p className="text-xl text-neutral-400 leading-relaxed mb-12 max-w-2xl">
+                    {settings.heroSubtitle || `${settings.platformName} provides a robust, hybrid-cloud infrastructure for modern hospitals. From clinical workflows to high-availability sync, we power the future of digital health.`}
+                </p>
+                <div className="flex flex-col sm:flex-row gap-6">
+                    <Link href="/request" className="px-8 py-4 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-black text-lg hover:from-blue-500 hover:to-indigo-500 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-2xl shadow-blue-600/40 flex items-center justify-center gap-3">
+                    {settings.heroCTA || 'Request Enterprise Access'} <span className="flex items-center justify-center h-6 w-6 rounded-full bg-white/20"><ArrowRight className="h-4 w-4" /></span>
+                    </Link>
+                    <Link href="/system/login" className="px-8 py-4 rounded-2xl bg-neutral-900 border border-white/10 text-white font-bold text-lg hover:bg-neutral-800 transition-all flex items-center justify-center gap-3">
+                    System Admin
+                    </Link>
+                </div>
+                </div>
             </div>
+            </section>
+        )}
+
+        {/* Minimal Instructions/Features */}
+        {settings.showFeatures && (
+            <section className="py-24 border-t border-white/5 bg-white/[0.02]">
+            <div className="max-w-7xl mx-auto px-6">
+                <h2 className="text-3xl font-black tracking-tight mb-16 text-center italic uppercase">The {settings.platformName.split(' ')[0]} Edge</h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+                <FeatureCard 
+                    icon={getIcon(settings.feature1Icon || 'ShieldCheck')} 
+                    title={settings.feature1Title || "Secure Multi-Tenancy"} 
+                    description={settings.feature1Desc || "Each hospital operates in a completely isolated database environment with enterprise-grade encryption."} 
+                />
+                <FeatureCard 
+                    icon={getIcon(settings.feature2Icon || 'Activity')} 
+                    title={settings.feature2Title || "Live Clinical Flow"} 
+                    description={settings.feature2Desc || "Monitor patient queues, lab results, and pharmacy inventory in real-time with zero latency."} 
+                />
+                <FeatureCard 
+                    icon={getIcon(settings.feature3Icon || 'Users')} 
+                    title={settings.feature3Title || "Staff Autonomy"} 
+                    description={settings.feature3Desc || "Role-based access ensures that doctors, nurses, and accountants see exactly what they need."} 
+                />
+                </div>
+            </div>
+            </section>
+        )}
+      </main>
+
+      <footer className="border-t border-white/5 py-12 bg-black/40">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
+          <div className="flex items-center gap-2 opacity-50 grayscale hover:grayscale-0 transition-all cursor-default">
+            <div className="h-6 w-6 rounded-lg bg-white/10 flex items-center justify-center text-white font-bold text-xs italic">
+                {(settings.platformName?.[0] || 'H').toUpperCase()}
+            </div>
+            <span className="text-sm font-black tracking-tighter uppercase italic">{settings.platformName}</span>
           </div>
-          <div className="rounded-3xl border border-white/5 bg-neutral-900/50 p-8 backdrop-blur-xl shadow-2xl flex flex-col items-center justify-center text-center">
-            <div className="h-16 w-16 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500 mb-4 font-bold text-2xl italic">G</div>
-            <h2 className="text-xl font-bold text-white mb-2">Amisi Genuine Enterprise</h2>
-            <p className="text-neutral-500 max-w-xs">The world's most advanced hospital management infrastructure at your fingertips.</p>
-          </div>
+          <p className="text-neutral-500 text-sm">© 2026 {settings.platformName} Systems. All rights reserved.</p>
         </div>
-      </div>
+      </footer>
     </div>
   );
 }
 
-function TenantDashboard({ stats }: { stats: any }) {
+function FeatureCard({ icon: Icon, title, description }: { icon: any; title: string; description: string }) {
   return (
-    <div className="flex-1 overflow-y-auto p-8 bg-gray-50 dark:bg-[#0a0a0b]">
-      <div className="mx-auto max-w-7xl">
-        <header className="flex justify-between items-center mb-10">
-          <div>
-            <h1 className="text-4xl font-bold tracking-tight text-white">Hospital Dashboard</h1>
-            <p className="text-neutral-500 mt-2 text-lg">
-              Daily operations and clinical statistics.
-            </p>
-          </div>
-          <Link href="/patients" className="inline-flex items-center gap-2 rounded-xl bg-amber-500 px-6 py-3 font-semibold text-white shadow-lg shadow-amber-500/20 hover:bg-amber-400 transition-all hover:scale-[1.02] active:scale-[0.98]">
-            <Plus className="h-5 w-5" />
-            <span>Register Patient</span>
-          </Link>
-        </header>
-
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          <StatCard title="Total Patients" value={stats.patientCount} icon={Users} trend="Active Records" color="blue" />
-          <StatCard title="Today's Encounters" value={stats.todayEncounters} icon={Activity} trend="Rising" color="rose" />
-          <StatCard title="Pending Labs" value={stats.pendingLabs} icon={Microscope} trend="Action Required" color="amber" />
-          <StatCard title="Hospital Revenue" value={stats.totalRevenue} icon={DollarSign} trend="Calculated" color="emerald" />
-        </div>
-
-        <div className="mt-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 rounded-3xl border border-white/5 bg-neutral-900/50 p-8 backdrop-blur-xl shadow-2xl">
-            <h2 className="text-xl font-bold text-white mb-6">Patient Queue Activity</h2>
-            <div className="h-64 flex flex-col items-center justify-center gap-4 border-2 border-dashed border-white/5 rounded-3xl">
-              <Activity className="h-12 w-12 text-neutral-700" />
-              <p className="text-neutral-500">Live activity feed will appear here as patients are checked in.</p>
-            </div>
-          </div>
-          <div className="space-y-6">
-            <QuickAction icon={Users} label="Manage Staff" href="/users" color="blue" />
-            <QuickAction icon={Microscope} label="Lab Results" href="/lab" color="rose" />
-            <QuickAction icon={Pill} label="Pharmacy Stock" href="/inventory" color="amber" />
-          </div>
-        </div>
+    <div className="group">
+      <div className="h-14 w-14 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500 mb-6 group-hover:scale-110 transition-transform bg-gradient-to-br from-blue-500/10 to-amber-500/10 border border-white/5">
+        <Icon className="h-7 w-7 text-blue-400" />
       </div>
-    </div>
-  );
-}
-
-function QuickAction({ icon: Icon, label, href, color }: { icon: any, label: string, href: string, color: string }) {
-  const colors: any = {
-    blue: "bg-blue-500/10 text-blue-400 border-blue-500/20 hover:bg-blue-500/20",
-    rose: "bg-rose-500/10 text-rose-400 border-rose-500/20 hover:bg-rose-500/20",
-    amber: "bg-amber-500/10 text-amber-400 border-amber-500/20 hover:bg-amber-500/20",
-  };
-
-  return (
-    <Link href={href} className={`flex items-center gap-4 p-6 rounded-3xl border backdrop-blur-sm transition-all hover:scale-[1.02] active:scale-[0.98] ${colors[color]}`}>
-      <Icon className="h-6 w-6" />
-      <span className="font-bold text-lg">{label}</span>
-    </Link>
-  );
-}
-
-function StatCard({ title, value, icon: Icon, trend, color }: { title: string; value: string; icon: any; trend: string; color: string; }) {
-  const bgColors: any = {
-    blue: "bg-blue-500/10 text-blue-400",
-    emerald: "bg-emerald-500/10 text-emerald-400",
-    amber: "bg-amber-500/10 text-amber-400",
-    rose: "bg-rose-500/10 text-rose-400",
-    indigo: "bg-indigo-500/10 text-indigo-400",
-  };
-
-  return (
-    <div className="rounded-3xl border border-white/5 bg-neutral-900/50 p-6 backdrop-blur-xl shadow-2xl flex flex-col justify-between group transition-all hover:border-white/10">
-      <div className="flex items-center justify-between">
-        <p className="text-sm font-semibold text-neutral-400 uppercase tracking-widest">{title}</p>
-        <div className={`p-3 rounded-2xl ${bgColors[color]} group-hover:scale-110 transition-transform`}>
-          <Icon className="h-6 w-6" />
-        </div>
-      </div>
-      <div className="mt-8">
-        <p className="text-4xl font-black text-white">{value}</p>
-        <div className="flex items-center gap-2 mt-2">
-          <TrendingUp className="h-4 w-4 text-emerald-500" />
-          <p className="text-xs font-medium text-neutral-500">{trend}</p>
-        </div>
-      </div>
+      <h3 className="text-xl font-bold mb-4">{title}</h3>
+      <p className="text-neutral-500 leading-relaxed">{description}</p>
     </div>
   );
 }

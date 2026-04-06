@@ -1,13 +1,25 @@
-'use server';
+'use client';
 
-import { loginHospitalUser } from '../actions/auth-actions';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Hospital } from 'lucide-react';
+import { useActionState, useTransition } from 'react';
+import { loginHospitalUser, type AuthActionState } from '../actions/auth-actions';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Button, Label } from '@amisi/ui';
+import { Hospital, ShieldAlert, Loader2 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-export default async function LoginPage() {
+const initialState: AuthActionState = {
+    error: null,
+};
+
+export default function LoginPage() {
+    const [state, formAction] = useActionState(loginHospitalUser, initialState);
+    const [isPending, startTransition] = useTransition();
+
+    const handleSubmit = (formData: FormData) => {
+        startTransition(() => {
+            formAction(formData);
+        });
+    };
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-[#0a0a0b] relative overflow-hidden">
             {/* Background Decorations - Royal Blue & Amber Theme */}
@@ -20,7 +32,7 @@ export default async function LoginPage() {
                         <div className="p-2 bg-blue-600 rounded-lg">
                             <Hospital className="w-6 h-6 text-white" />
                         </div>
-                        <span className="text-xl font-bold text-white tracking-tight">Amisi Genuine</span>
+                        <span className="text-xl font-bold text-white tracking-tight uppercase tracking-tighter italic">Amisi HealthOS</span>
                     </div>
                 </div>
 
@@ -28,7 +40,7 @@ export default async function LoginPage() {
                     <CardHeader className="space-y-1 pb-8">
                         <div className="flex justify-center mb-4">
                             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500 shadow-xl shadow-amber-500/20">
-                                <span className="text-2xl font-bold text-white">G</span>
+                                <span className="text-2xl font-bold text-white uppercase italic">H</span>
                             </div>
                         </div>
                         <CardTitle className="text-2xl font-bold text-white text-center">Hospital Staff Login</CardTitle>
@@ -37,48 +49,68 @@ export default async function LoginPage() {
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <form action={loginHospitalUser} className="space-y-5">
+                        <form action={handleSubmit} className="space-y-5">
+                            {state?.error && (
+                                <div className="bg-red-500/10 border border-red-500/20 p-4 rounded-xl flex items-center gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
+                                    <ShieldAlert className="w-5 h-5 text-red-500 shrink-0" />
+                                    <p className="text-sm text-red-400 font-medium">{state.error}</p>
+                                </div>
+                            )}
+
                             <div className="space-y-2">
-                                <Label className="text-neutral-300 ml-1">Hospital Slug</Label>
+                                <Label className="text-neutral-300 ml-1">Hospital ID (Slug)</Label>
                                 <Input
                                     name="tenantSlug"
                                     placeholder="e.g. amisi-premier"
                                     required
-                                    className="bg-white/5 border-white/10 text-white placeholder:text-neutral-600 focus:border-amber-500/50 focus:ring-amber-500/20 rounded-xl h-12"
+                                    disabled={isPending}
+                                    className="bg-white/5 border-white/10 text-white placeholder:text-neutral-600 focus:border-amber-500/50 focus:ring-amber-500/20 rounded-xl h-12 transition-all disabled:opacity-50"
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label className="text-neutral-300 ml-1">Email Address</Label>
+                                <Label className="text-neutral-300 ml-1">Staff Email</Label>
                                 <Input
                                     name="email"
                                     type="email"
                                     placeholder="doctor@amisigenuine.com"
                                     required
-                                    className="bg-white/5 border-white/10 text-white placeholder:text-neutral-600 focus:border-amber-500/50 focus:ring-amber-500/20 rounded-xl h-12"
+                                    disabled={isPending}
+                                    className="bg-white/5 border-white/10 text-white placeholder:text-neutral-600 focus:border-amber-500/50 focus:ring-amber-500/20 rounded-xl h-12 transition-all disabled:opacity-50"
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label className="text-neutral-300 ml-1">Password</Label>
+                                <Label className="text-neutral-300 ml-1">Secret Key (Password)</Label>
                                 <Input
                                     name="password"
                                     type="password"
                                     placeholder="••••••••"
                                     required
-                                    className="bg-white/5 border-white/10 text-white placeholder:text-neutral-600 focus:border-amber-500/50 focus:ring-amber-500/20 rounded-xl h-12"
+                                    disabled={isPending}
+                                    className="bg-white/5 border-white/10 text-white placeholder:text-neutral-600 focus:border-amber-500/50 focus:ring-amber-500/20 rounded-xl h-12 transition-all disabled:opacity-50"
                                 />
                             </div>
                             <Button
                                 type="submit"
-                                className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold h-12 rounded-xl transition-all duration-300 shadow-lg shadow-blue-600/20 mt-4 active:scale-[0.98]"
+                                disabled={isPending}
+                                className={cn(
+                                    "w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold h-12 rounded-xl transition-all duration-300 shadow-lg shadow-blue-600/20 mt-4 active:scale-[0.98]",
+                                    isPending && "bg-blue-800 cursor-not-allowed opacity-80"
+                                )}
                             >
-                                Sign In
+                                {isPending ? (
+                                    <span className="flex items-center gap-2">
+                                        <Loader2 className="w-4 h-4 animate-spin" /> Verifying...
+                                    </span>
+                                ) : (
+                                    "Authenticate Access"
+                                )}
                             </Button>
                         </form>
                     </CardContent>
                 </Card>
 
                 <p className="mt-8 text-center text-neutral-500 text-sm">
-                    Protected by Amisi Genuine Security Protocol v2.4
+                    Protected by Amisi HealthOS Security Protocol v3.1
                 </p>
                 <div className="mt-4 text-center">
                     <a href="/system/login" className="text-xs text-neutral-600 hover:text-amber-500 transition-colors">

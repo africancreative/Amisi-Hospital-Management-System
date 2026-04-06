@@ -1,0 +1,36 @@
+﻿Γû▓ Next.js 16.1.6 (Turbopack)
+- Environments: .env
+
+  Creating an optimized production build ...
+Γ£ô Compiled successfully in 14.1s
+  Running TypeScript ...
+npx : Failed to compile.
+At line:1 char:1
++ npx next build > build_error_v9.txt 2>&1
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Failed to compile. 
+   :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+./src/app/actions/maternity-actions.ts:172:51
+Type error: Argument of type '"LABOUR_STARTED"' is not 
+assignable to parameter of type 'RealtimeEventType'.
+
+[0m [90m 170 |[39m
+ [90m 171 |[39m     [36mconst[39m tenantId [33m=[39m 
+[36mawait[39m getResolvedTenantId()[33m;[39m
+[31m[1m>[22m[39m[90m 172 |[39m     [36mif[39m 
+(tenantId) realtimeHub[33m.[39mbroadcast(tenantId[33m,[39m 
+[32m'LABOUR_STARTED'[39m[33m,[39m 
+[32m'MaternityRecord'[39m[33m,[39m 
+maternityRecordId)[33m;[39m
+ [90m     |[39m                                               
+    [31m[1m^[22m[39m
+ [90m 173 |[39m
+ [90m 174 |[39m     [36mawait[39m logAudit({
+ [90m 175 |[39m         action[33m:[39m 
+[32m'CREATE'[39m[33m,[39m resource[33m:[39m 
+[32m'DeliveryLog'[39m[33m,[39m resourceId[33m:[39m 
+deliveryLog[33m.[39mid[33m,[39m[0m
+Next.js build worker exited with code: 1 and signal: null

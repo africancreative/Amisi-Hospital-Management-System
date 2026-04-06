@@ -1,0 +1,37 @@
+﻿Γû▓ Next.js 16.1.6 (Turbopack)
+- Environments: .env
+
+  Creating an optimized production build ...
+Γ£ô Compiled successfully in 11.7s
+  Running TypeScript ...
+npx : Failed to compile.
+At line:1 char:1
++ npx next build > build_error_v6.txt 2>&1
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Failed to 
+compile.    :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+./src/app/actions/him-actions.ts:36:34
+Type error: Object literal may only specify known 
+properties, and 'recordedAt' does not exist in type 
+'VitalsOrderByWithRelationInput | 
+VitalsOrderByWithRelationInput[]'.
+
+[0m [90m 34 |[39m         include[33m:[39m {
+ [90m 35 |[39m             diagnoses[33m:[39m 
+[36mtrue[39m[33m,[39m
+[31m[1m>[22m[39m[90m 36 |[39m             
+vitals[33m:[39m { orderBy[33m:[39m { 
+recordedAt[33m:[39m [32m'desc'[39m }[33m,[39m 
+take[33m:[39m [35m10[39m }[33m,[39m
+ [90m    |[39m                                  
+[31m[1m^[22m[39m
+ [90m 37 |[39m             prescriptions[33m:[39m 
+[36mtrue[39m[33m,[39m
+ [90m 38 |[39m             allergies[33m:[39m 
+[36mtrue[39m[33m,[39m
+ [90m 39 |[39m             labOrders[33m:[39m 
+[36mtrue[39m[33m,[39m[0m
+Next.js build worker exited with code: 1 and signal: null

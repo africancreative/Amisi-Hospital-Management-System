@@ -24,7 +24,7 @@ export default function ExportInvoiceButton({ invoice, hospitalSettings, variant
 
     return (
         <button
-            onClick={() => generateInvoice(invoice)}
+            onClick={() => generateInvoice(invoice, hospitalSettings)}
             className="p-2 text-gray-400 hover:text-emerald-500 transition-colors"
             title="Download Invoice"
         >

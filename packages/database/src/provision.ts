@@ -40,6 +40,9 @@ export async function provisionTenant(
 
     // Create a unique reference ID for KMS encryption
     const keyRef = `kms-amisi-${crypto.randomBytes(16).toString('hex')}`;
+    
+    // Generate a shared secret for Edge-to-Cloud synchronization
+    const sharedSecret = crypto.randomBytes(32).toString('hex');
 
     const controlDb = getControlDb();
 
@@ -51,6 +54,7 @@ export async function provisionTenant(
             region,
             dbUrl: isolatedDbUrl,
             encryptionKeyReference: keyRef,
+            sharedSecret,
             tier: tier,
             enabledModules: enabledModules || getDefaultModulesForTier(tier)
         }
@@ -94,8 +98,12 @@ export async function provisionTenant(
             }
         });
 
+        // Seed Clinical Baseline (Departments, Services, Welcome Patient)
+        console.log(`[Provision] Seeding Clinical Baseline (ER, Lab, Pharmacy)...`);
+        await seedClinicalBaseline(isolatedClient);
+
         await isolatedClient.$disconnect();
-        console.log(`[Provision] Hospital Settings Seeded successfully.`);
+        console.log(`[Provision] Hospital Settings & Clinical Baseline Seeded successfully.`);
 
         // Seed Admin User
         if (admin) {
@@ -174,6 +182,58 @@ async function seedAdminUser(dbUrl: string, admin: AdminInfo) {
     });
 
     await isolatedClient.$disconnect();
+}
+
+/**
+ * Seeds a comprehensive clinical infrastructure into a new tenant database.
+ * Aligned with the healthos.prisma schema models.
+ */
+async function seedClinicalBaseline(client: TenantClient) {
+    // 1. Wards & Beds (Infrastructure)
+    console.log(`[Provision] Seeding Wards & Beds...`);
+    const mainWard = await client.ward.create({
+        data: {
+            name: 'General Ward A',
+            type: 'GENERAL',
+            floor: 1,
+            beds: {
+                create: [
+                    { number: 'G-101', status: 'AVAILABLE' },
+                    { number: 'G-102', status: 'AVAILABLE' },
+                    { number: 'G-103', status: 'AVAILABLE' }
+                ]
+            }
+        }
+    });
+
+    // 2. Common Medications (Pharmacy Baseline)
+    console.log(`[Provision] Seeding Medication Baseline...`);
+    const commonMeds = [
+        { name: 'Paracetamol', dosageForm: 'tablet', unit: '500mg', drugClass: 'Analgesic' },
+        { name: 'Amoxicillin', dosageForm: 'capsule', unit: '250mg', drugClass: 'Antibiotic' },
+        { name: 'Ibuprofen', dosageForm: 'tablet', unit: '400mg', drugClass: 'NSAID' }
+    ];
+
+    for (const med of commonMeds) {
+        await client.medication.create({
+            data: med
+        });
+    }
+
+    // 3. Welcome Patient (Clinical Orientation)
+    console.log(`[Provision] Seeding Welcome Patient...`);
+    await client.patient.create({
+        data: {
+            firstName: 'Welcome',
+            lastName: 'Patient',
+            mrn: `AM-${new Date().getFullYear()}-00001`,
+            gender: 'other',
+            dob: new Date('1990-01-01'), // Fixed from 'dateOfBirth'
+            email: 'welcome@amisi.health',
+            phone: '+254700000000',
+            address: 'Amisi Cloud Core'
+        }
+    });
 }
 
 // If run directly from CLI

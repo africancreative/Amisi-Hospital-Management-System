@@ -1,0 +1,163 @@
+﻿Γû▓ Next.js 16.1.6 (Turbopack)
+- Environments: .env
+
+  Creating an optimized production build ...
+Γ£ô Compiled successfully in 11.0s
+  Running TypeScript ...
+  Collecting page data using 11 workers ...
+  Generating static pages using 11 workers (0/19) ...
+  Generating static pages using 11 workers (4/19) 
+npx : [RootLayout] Error Caught: Error: Dynamic server usage: Route /_not-found couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+At line:1 char:36
++ ... Item -Recurse -Force .next; npx next build > build_error_v18.txt 2>&1
++                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([RootLayout] Er...ic-server-error:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+    at w (C:\Users\amisi\OneDrive\Documents\GitHub\Amisi-Hospital-Management-System\apps\web\.next\server\chunks\ssr\b2b3e_next_7d29ee05._.js:1:10537)
+    at n (C:\Users\amisi\OneDrive\Documents\GitHub\Amisi-Hospital-Management-System\apps\web\.next\server\chunks\ssr\b2b3e_next_7d29ee05._.js:4:11076)
+    at i (C:\Users\amisi\OneDrive\Documents\GitHub\Amisi-Hospital-Management-System\apps\web\.next\server\chunks\ssr\[root-of-the-server]__efb32c2e._.js:1:4503)
+    at stringify (<anonymous>) {
+  description: "Route /_not-found couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+[RootLayout] Error Caught: Error: Dynamic server usage: Route /hospitals/new couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at w (C:\Users\amisi\OneDrive\Documents\GitHub\Amisi-Hospital-Management-System\apps\web\.next\server\chunks\ssr\b2b3e_next_7d29ee05._.js:1:10537)
+    at n (C:\Users\amisi\OneDrive\Documents\GitHub\Amisi-Hospital-Management-System\apps\web\.next\server\chunks\ssr\b2b3e_next_7d29ee05._.js:4:11076)
+    at i (C:\Users\amisi\OneDrive\Documents\GitHub\Amisi-Hospital-Management-System\apps\web\.next\server\chunks\ssr\[root-of-the-server]__efb32c2e._.js:1:4503)
+    at stringify (<anonymous>) {
+  description: "Route /hospitals/new couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+[RootLayout] Error Caught: Error: Dynamic server usage: Route /hospitals couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at w (C:\Users\amisi\OneDrive\Documents\GitHub\Amisi-Hospital-Management-System\apps\web\.next\server\chunks\ssr\b2b3e_next_7d29ee05._.js:1:10537)
+    at n (C:\Users\amisi\OneDrive\Documents\GitHub\Amisi-Hospital-Management-System\apps\web\.next\server\chunks\ssr\b2b3e_next_7d29ee05._.js:4:11076)
+    at i (C:\Users\amisi\OneDrive\Documents\GitHub\Amisi-Hospital-Management-System\apps\web\.next\server\chunks\ssr\[root-of-the-server]__efb32c2e._.js:1:4503)
+    at stringify (<anonymous>) {
+  description: "Route /hospitals couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+  Generating static pages using 11 workers (9/19) 
+[RootLayout] Error Caught: Error: Dynamic server usage: Route /login couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at w (C:\Users\amisi\OneDrive\Documents\GitHub\Amisi-Hospital-Management-System\apps\web\.next\server\chunks\ssr\b2b3e_next_7d29ee05._.js:1:10537)
+    at n (C:\Users\amisi\OneDrive\Documents\GitHub\Amisi-Hospital-Management-System\apps\web\.next\server\chunks\ssr\b2b3e_next_7d29ee05._.js:4:11076)
+    at i (C:\Users\amisi\OneDrive\Documents\GitHub\Amisi-Hospital-Management-System\apps\web\.next\server\chunks\ssr\[root-of-the-server]__efb32c2e._.js:1:4503)
+    at stringify (<anonymous>) {
+  description: "Route /login couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+[RootLayout] Error Caught: Error: Dynamic server usage: Route /lockout couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at w (C:\Users\amisi\OneDrive\Documents\GitHub\Amisi-Hospital-Management-System\apps\web\.next\server\chunks\ssr\b2b3e_next_7d29ee05._.js:1:10537)
+    at n (C:\Users\amisi\OneDrive\Documents\GitHub\Amisi-Hospital-Management-System\apps\web\.next\server\chunks\ssr\b2b3e_next_7d29ee05._.js:4:11076)
+    at i (C:\Users\amisi\OneDrive\Documents\GitHub\Amisi-Hospital-Management-System\apps\web\.next\server\chunks\ssr\[root-of-the-server]__efb32c2e._.js:1:4503)
+    at stringify (<anonymous>) {
+  description: "Route /lockout couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+[RootLayout] Error Caught: Error: Dynamic server usage: Route /system/dashboard couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at w (C:\Users\amisi\OneDrive\Documents\GitHub\Amisi-Hospital-Management-System\apps\web\.next\server\chunks\ssr\b2b3e_next_7d29ee05._.js:1:10537)
+    at n (C:\Users\amisi\OneDrive\Documents\GitHub\Amisi-Hospital-Management-System\apps\web\.next\server\chunks\ssr\b2b3e_next_7d29ee05._.js:4:11076)
+    at i (C:\Users\amisi\OneDrive\Documents\GitHub\Amisi-Hospital-Management-System\apps\web\.next\server\chunks\ssr\[root-of-the-server]__efb32c2e._.js:1:4503)
+    at stringify (<anonymous>) {
+  description: "Route /system/dashboard couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+[RootLayout] Error Caught: Error: Dynamic server usage: Route / couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at w (C:\Users\amisi\OneDrive\Documents\GitHub\Amisi-Hospital-Management-System\apps\web\.next\server\chunks\ssr\b2b3e_next_7d29ee05._.js:1:10537)
+    at n (C:\Users\amisi\OneDrive\Documents\GitHub\Amisi-Hospital-Management-System\apps\web\.next\server\chunks\ssr\b2b3e_next_7d29ee05._.js:4:11076)
+    at i (C:\Users\amisi\OneDrive\Documents\GitHub\Amisi-Hospital-Management-System\apps\web\.next\server\chunks\ssr\[root-of-the-server]__efb32c2e._.js:1:4503)
+    at stringify (<anonymous>) {
+  description: "Route / couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+[RootLayout] Error Caught: Error: Dynamic server usage: Route /request couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at w (C:\Users\amisi\OneDrive\Documents\GitHub\Amisi-Hospital-Management-System\apps\web\.next\server\chunks\ssr\b2b3e_next_7d29ee05._.js:1:10537)
+    at n (C:\Users\amisi\OneDrive\Documents\GitHub\Amisi-Hospital-Management-System\apps\web\.next\server\chunks\ssr\b2b3e_next_7d29ee05._.js:4:11076)
+    at i (C:\Users\amisi\OneDrive\Documents\GitHub\Amisi-Hospital-Management-System\apps\web\.next\server\chunks\ssr\[root-of-the-server]__efb32c2e._.js:1:4503)
+    at stringify (<anonymous>) {
+  description: "Route /request couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+[RootLayout] Error Caught: Error: Dynamic server usage: Route /suspended couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at w (C:\Users\amisi\OneDrive\Documents\GitHub\Amisi-Hospital-Management-System\apps\web\.next\server\chunks\ssr\b2b3e_next_7d29ee05._.js:1:10537)
+    at n (C:\Users\amisi\OneDrive\Documents\GitHub\Amisi-Hospital-Management-System\apps\web\.next\server\chunks\ssr\b2b3e_next_7d29ee05._.js:4:11076)
+    at i (C:\Users\amisi\OneDrive\Documents\GitHub\Amisi-Hospital-Management-System\apps\web\.next\server\chunks\ssr\[root-of-the-server]__efb32c2e._.js:1:4503)
+    at stringify (<anonymous>) {
+  description: "Route /suspended couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+  Generating static pages using 11 workers (14/19) 
+[RootLayout] Error Caught: Error: Dynamic server usage: Route /system/login couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at w (C:\Users\amisi\OneDrive\Documents\GitHub\Amisi-Hospital-Management-System\apps\web\.next\server\chunks\ssr\b2b3e_next_7d29ee05._.js:1:10537)
+    at n (C:\Users\amisi\OneDrive\Documents\GitHub\Amisi-Hospital-Management-System\apps\web\.next\server\chunks\ssr\b2b3e_next_7d29ee05._.js:4:11076)
+    at i (C:\Users\amisi\OneDrive\Documents\GitHub\Amisi-Hospital-Management-System\apps\web\.next\server\chunks\ssr\[root-of-the-server]__efb32c2e._.js:1:4503)
+    at stringify (<anonymous>) {
+  description: "Route /system/login couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+[RootLayout] Error Caught: Error: Dynamic server usage: Route /system/hospitals/create couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at w (C:\Users\amisi\OneDrive\Documents\GitHub\Amisi-Hospital-Management-System\apps\web\.next\server\chunks\ssr\b2b3e_next_7d29ee05._.js:1:10537)
+    at n (C:\Users\amisi\OneDrive\Documents\GitHub\Amisi-Hospital-Management-System\apps\web\.next\server\chunks\ssr\b2b3e_next_7d29ee05._.js:4:11076)
+    at i (C:\Users\amisi\OneDrive\Documents\GitHub\Amisi-Hospital-Management-System\apps\web\.next\server\chunks\ssr\[root-of-the-server]__efb32c2e._.js:1:4503)
+    at stringify (<anonymous>) {
+  description: "Route /system/hospitals/create couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+[RootLayout] Error Caught: Error: Dynamic server usage: Route /system/hospitals/new couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at w (C:\Users\amisi\OneDrive\Documents\GitHub\Amisi-Hospital-Management-System\apps\web\.next\server\chunks\ssr\b2b3e_next_7d29ee05._.js:1:10537)
+    at n (C:\Users\amisi\OneDrive\Documents\GitHub\Amisi-Hospital-Management-System\apps\web\.next\server\chunks\ssr\b2b3e_next_7d29ee05._.js:4:11076)
+    at i (C:\Users\amisi\OneDrive\Documents\GitHub\Amisi-Hospital-Management-System\apps\web\.next\server\chunks\ssr\[root-of-the-server]__efb32c2e._.js:1:4503)
+    at stringify (<anonymous>) {
+  description: "Route /system/hospitals/new couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Γ£ô Generating static pages using 11 workers (19/19) in 782.2ms
+  Finalizing page optimization ...
+
+Route (app)
+Γöî ╞Æ /
+Γö£ ╞Æ /_not-found
+Γö£ ╞Æ /[slug]
+Γö£ ╞Æ /[slug]/accounting
+Γö£ ╞Æ /[slug]/accounting/coa
+Γö£ ╞Æ /[slug]/accounting/reports/trial-balance
+Γö£ ╞Æ /[slug]/billing
+Γö£ ╞Æ /[slug]/billing/[id]
+Γö£ ╞Æ /[slug]/billing/invoice/new
+Γö£ ╞Æ /[slug]/hr
+Γö£ ╞Æ /[slug]/hr/payroll
+Γö£ ╞Æ /[slug]/inventory
+Γö£ ╞Æ /[slug]/lab
+Γö£ ╞Æ /[slug]/lab/[id]
+Γö£ ╞Æ /[slug]/patients
+Γö£ ╞Æ /[slug]/patients/[id]
+Γö£ ╞Æ /[slug]/patients/[id]/billing
+Γö£ ╞Æ /[slug]/patients/[id]/encounters/new
+Γö£ ╞Æ /[slug]/patients/[id]/lab
+Γö£ ╞Æ /[slug]/patients/new
+Γö£ ╞Æ /[slug]/pharmacy
+Γö£ ╞Æ /[slug]/settings
+Γö£ ╞Æ /[slug]/users
+Γö£ ╞Æ /api/paypal/capture-order
+Γö£ ╞Æ /api/paypal/create-order
+Γö£ ╞Æ /api/realtime
+Γö£ ╞Æ /api/sync
+Γö£ ╞Æ /api/tenant/status
+Γö£ ╞Æ /hospitals
+Γö£ ╞Æ /hospitals/[id]
+Γö£ ╞Æ /hospitals/new
+Γö£ ╞Æ /lockout
+Γö£ ╞Æ /login
+Γö£ ╞Æ /request
+Γö£ ╞Æ /suspended
+Γö£ ╞Æ /system/dashboard
+Γö£ ╞Æ /system/hospitals/[id]/edit
+Γö£ ╞Æ /system/hospitals/create
+Γö£ ╞Æ /system/hospitals/new
+Γöö ╞Æ /system/login
+
+
+╞Æ Proxy (Middleware)
+
+╞Æ  (Dynamic)  server-rendered on demand
+

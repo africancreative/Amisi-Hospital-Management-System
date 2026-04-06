@@ -1,0 +1,62 @@
+﻿Γû▓ Next.js 16.1.6 (Turbopack)
+- Environments: .env
+
+  Creating an optimized production build ...
+Γ£ô Compiled successfully in 15.5s
+  Running TypeScript ...
+npx : Failed to compile.
+At line:1 char:1
++ npx next build > build_error_v5.txt 2>&1
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Failed to 
+compile.    :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+./src/app/[slug]/patients/[id]/encounters/new/page.tsx:25:23
+Type error: Type '(formData: FormData) => Promise<{ id: 
+string; createdAt: Date; updatedAt: Date; version: number; 
+isSynced: boolean; type: string; dischargedAt: Date | null; 
+patientId: string; ... 10 more ...; conflictData: JsonValue; 
+}>' is not assignable to type 'string | ((formData: 
+FormData) => void | Promise<void>) | undefined'.
+  Type '(formData: FormData) => Promise<{ id: string; 
+createdAt: Date; updatedAt: Date; version: number; isSynced: 
+boolean; type: string; dischargedAt: Date | null; patientId: 
+string; ... 10 more ...; conflictData: JsonValue; }>' is not 
+assignable to type '(formData: FormData) => void | 
+Promise<void>'.
+    Type 'Promise<{ id: string; createdAt: Date; updatedAt: 
+Date; version: number; isSynced: boolean; type: string; 
+dischargedAt: Date | null; patientId: string; 
+conflictStatus: string | null; ... 9 more ...; conflictData: 
+JsonValue; }>' is not assignable to type 'void | 
+Promise<void>'.
+      Type 'Promise<{ id: string; createdAt: Date; 
+updatedAt: Date; version: number; isSynced: boolean; type: 
+string; dischargedAt: Date | null; patientId: string; 
+conflictStatus: string | null; ... 9 more ...; conflictData: 
+JsonValue; }>' is not assignable to type 'Promise<void>'.
+        Type '{ id: string; createdAt: Date; updatedAt: 
+Date; version: number; isSynced: boolean; type: string; 
+dischargedAt: Date | null; patientId: string; 
+conflictStatus: string | null; ... 9 more ...; conflictData: 
+JsonValue; }' is not assignable to type 'void'.
+
+[0m [90m 23 |[39m                 
+[33m<[39m[33m/[39m[33mheader[39m[33m>[39m
+ [90m 24 |[39m
+[31m[1m>[22m[39m[90m 25 |[39m                 
+[33m<[39m[33mform[39m action[33m=[39m{createEncounter[
+33m.[39mbind([36mnull[39m[33m,[39m patientId)} 
+className[33m=[39m[32m"space-y-8"[39m[33m>[39m
+ [90m    |[39m                       [31m[1m^[22m[39m
+ [90m 26 |[39m                     
+[33m<[39m[33mdiv[39m className[33m=[39m[32m"grid 
+grid-cols-1 lg:grid-cols-2 gap-8"[39m[33m>[39m
+ [90m 27 |[39m                         {[90m/* Encounter 
+Metadata */[39m}
+ [90m 28 |[39m                         
+[33m<[39m[33msection[39m 
+className[33m=[39m[32m"space-y-6"[39m[33m>[39m[0m
+Next.js build worker exited with code: 1 and signal: null

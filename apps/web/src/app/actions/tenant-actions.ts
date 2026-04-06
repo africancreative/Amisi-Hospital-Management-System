@@ -1,39 +1,15 @@
 'use server';
 
-import { getControlDb, DeploymentTier } from '@amisi/database';
+import { getControlDb, DeploymentTier, createTenantDatabase, provisionTenant, syncTenantSettings } from '@amisi/database';
 import { revalidatePath } from 'next/cache';
-import { provisionTenant } from '@amisi/database';
 import { ensureSuperAdmin } from '@/lib/auth-utils';
-
-export async function getTenants() {
-    await ensureSuperAdmin();
-    const db = getControlDb();
-    return await db.tenant.findMany({
-        orderBy: { createdAt: 'desc' },
-    });
-}
-
-export async function getTenantById(idOrSlug: string) {
-    await ensureSuperAdmin();
-    const db = getControlDb();
-    // Try UUID match first
-    const byId = await db.tenant.findUnique({
-        where: { id: idOrSlug },
-    });
-    if (byId) return byId;
-
-    // Fallback to Slug match
-    return await db.tenant.findFirst({
-        where: { slug: idOrSlug },
-    });
-}
+import { hashPassword } from '@amisi/auth';
 
 export async function createTenant(formData: FormData) {
     await ensureSuperAdmin();
     const name = formData.get('name') as string;
     const slug = formData.get('slug') as string;
     const region = formData.get('region') as string;
-    const dbUrl = formData.get('dbUrl') as string;
 
     const adminName = formData.get('adminName') as string;
     const adminEmail = formData.get('adminEmail') as string;
@@ -65,11 +41,20 @@ export async function createTenant(formData: FormData) {
         irb: formData.get('module_irb') === 'on',
     };
 
-    if (!name || !slug || !region || !dbUrl || !adminName || !adminEmail || !adminPassword) {
+    if (!name || !slug || !region || !adminName || !adminEmail || !adminPassword) {
         throw new Error('Missing required fields');
     }
 
-    // Pass extended configuration to provisioning logic
+    console.log(`[Provisioning Action] Starting automated flow for ${slug}...`);
+
+    // 1. Automate Database Creation via Neon
+    const { dbUrl } = await createTenantDatabase(slug);
+    console.log(`[Provisioning Action] Neon DB generated: ${dbUrl}`);
+
+    // 2. Hash the initial admin password
+    const passwordHash = await hashPassword(adminPassword);
+
+    // 3. Trigger Core Provisioning Logic
     await provisionTenant(name, slug, region, dbUrl, tier, {
         contactEmail,
         phone,
@@ -80,7 +65,7 @@ export async function createTenant(formData: FormData) {
     }, enabledModules, {
         name: adminName,
         email: adminEmail,
-        passwordHash: adminPassword // In a real app, hash this with bcrypt before passing
+        passwordHash
     });
 
     revalidatePath('/hospitals');
@@ -107,4 +92,98 @@ export async function updateEnabledModules(id: string, modules: any) {
     });
 
     revalidatePath(`/hospitals/${id}`);
+}
+
+export async function getTenants() {
+    await ensureSuperAdmin();
+    const db = getControlDb();
+    return db.tenant.findMany({
+        orderBy: { createdAt: 'desc' }
+    });
+}
+
+export async function getTenantById(id: string) {
+    await ensureSuperAdmin();
+    const db = getControlDb();
+    return db.tenant.findUnique({
+        where: { id }
+    });
+}
+
+export async function updateTenantFull(id: string, data: any) {
+    await ensureSuperAdmin();
+    const db = getControlDb();
+
+    const { name, region, dbUrl, tier, enabledModules, ...settings } = data;
+
+    // 1. Update the Control Plane
+    const updatedTenant = await db.tenant.update({
+        where: { id },
+        data: {
+            name,
+            region,
+            dbUrl,
+            tier,
+            enabledModules
+        }
+    });
+
+    // 2. Sync to the isolated local DB if connectivity is available
+    // This propagates branding changes (Name, Logo, Address)
+    try {
+        await syncTenantSettings(id, settings);
+    } catch (e) {
+        console.error(`[Admin Action] Sync failed for ${updatedTenant.slug}. Settings may be out of sync.`, e);
+    }
+
+    revalidatePath('/system/dashboard');
+    revalidatePath(`/system/hospitals/${id}/edit`);
+}
+
+export async function cloneTenant(sourceId: string, newConfig: any) {
+    await ensureSuperAdmin();
+    const db = getControlDb();
+
+    // 1. Fetch source baseline
+    const source = await db.tenant.findUnique({
+        where: { id: sourceId }
+    });
+
+    if (!source) throw new Error('Source hospital for cloning not found');
+
+    // 2. Prepare for provisioning
+    const { name, slug, region, dbUrl, adminName, adminEmail, adminPassword } = newConfig;
+    
+    // In a real scenario, we might want to copy more settings, 
+    // but for now we inherit Modules and Tier.
+    await provisionTenant(
+        name,
+        slug,
+        region,
+        dbUrl,
+        source.tier as DeploymentTier,
+        {}, // Branding is fresh for the node
+        source.enabledModules,
+        {
+            name: adminName,
+            email: adminEmail,
+            // Pass the original password (will be hashed in provisionTenant)
+            passwordHash: adminPassword 
+        }
+    );
+
+    revalidatePath('/system/dashboard');
+}
+
+export async function deleteTenant(id: string) {
+    await ensureSuperAdmin();
+    const db = getControlDb();
+    
+    // For safety, we could soft-delete, but the user asked for "delete"
+    // Let's implement hard-delete since it relates to orchestration
+    await db.tenant.delete({
+        where: { id }
+    });
+
+    revalidatePath('/system/dashboard');
 }

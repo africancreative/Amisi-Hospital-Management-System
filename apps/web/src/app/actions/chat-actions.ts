@@ -59,7 +59,7 @@ export async function sendClinicalMedia(patientId: string, authorName: string, a
     const files = formData.getAll('files') as File[];
     const authorId = 'system-user-id';
 
-    const message = await tenantDb.$transaction(async (tx: any) => {
+    const message = await tenantDb.$transaction(async (tx) => {
         const msg = await tx.chatMessage.create({
             data: {
                 content: content || null,

@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 import { Role } from '@amisi/tenant-client';
-import { Permission, hasPermission as checkPermission } from './rbac';
+import { Permission, hasPermission as checkPermission } from '@amisi/auth';
 
 /**
  * Server-only utility to get the current user's role from cookies.
@@ -27,8 +27,8 @@ export async function ensurePermission(permission: Permission) {
  * Verify if the current user belongs to one of the allowed roles.
  * Throws an error if not authorized.
  */
-export async function ensureRole(allowedRoles: Role[]) {
-    const role = await getServerRole();
+export async function ensureRole(allowedRoles: string[]) {
+    const role = (await getServerRole()) as string;
     if (!allowedRoles.includes(role)) {
         throw new Error(`Unauthorized: Access restricted to ${allowedRoles.join(', ')}`);
     }

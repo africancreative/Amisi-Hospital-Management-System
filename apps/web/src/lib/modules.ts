@@ -29,10 +29,12 @@ export async function getTenantModules(tenantId: string): Promise<Set<ModuleCode
             include: { module: true }
         });
 
-        return new Set(entitlements.map((e: any) => e.module.code as ModuleCode));
-    } catch (error: any) {
+        return new Set(entitlements.map((e) => (e.module as any).code as ModuleCode));
+    } catch (error) {
+        let message = 'Unknown error';
+        if (error instanceof Error) message = error.message;
         console.error('[modules.ts] getTenantModules Error:', error);
-        throw new Error('Failed to resolve tenant modules: ' + error.message);
+        throw new Error('Failed to resolve tenant modules: ' + message);
     }
 }
 

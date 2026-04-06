@@ -37,7 +37,7 @@ export async function postJournalEntry(data: {
     }
 
     // 2. Perform atomic posting
-    const entry = await db.$transaction(async (tx: any) => {
+    const entry = await db.$transaction(async (tx) => {
         const je = await tx.journalEntry.create({
             data: {
                 description: data.description,
@@ -100,8 +100,8 @@ export async function getTrialBalance() {
     });
 
     return accounts.map(acc => {
-        const totalDebit = acc.journalLines.reduce((sum: number, l: any) => sum + Number(l.debit), 0);
-        const totalCredit = acc.journalLines.reduce((sum: number, l: any) => sum + Number(l.credit), 0);
+        const totalDebit = acc.journalLines.reduce((sum: number, l) => sum + Number(l.debit), 0);
+        const totalCredit = acc.journalLines.reduce((sum: number, l) => sum + Number(l.credit), 0);
 
         // Net balance calculation based on account type
         let balance = 0;

@@ -94,39 +94,39 @@ async function seed() {
     console.log('Seeding employees...');
     const staff = [
         {
-            employeeId: 'EMP-001',
+            employeeId: `ADMIN-${tenant.slug}`,
             firstName: 'Amisi',
             lastName: 'Amoi',
-            email: 'amisiaimoi@gmail.com',
-            passwordHash: '@theVerge#2047', // Plain for demo as requested
+            email: 'admin@amisi-premier.amisigenuine.com',
+            passwordHash: '@Admin123',
             role: 'ADMIN',
             department: 'Administration',
             baseSalary: new Decimal(5000),
             permissions: ['ALL']
         },
         {
-            employeeId: 'EMP-002',
+            employeeId: `DOC-${tenant.slug}`,
             firstName: 'Sarah',
             lastName: 'Amisi',
-            email: 'sarah.amisi@amisigenuine.com',
+            email: 'doctor@amisi-premier.amisigenuine.com',
             role: 'DOCTOR',
             department: 'Clinical',
             baseSalary: new Decimal(4500)
         },
         {
-            employeeId: 'EMP-003',
+            employeeId: `NURSE-${tenant.slug}`,
             firstName: 'Joy',
             lastName: 'Nurse',
-            email: 'joy.nurse@amisigenuine.com',
+            email: 'nurse@amisi-premier.amisigenuine.com',
             role: 'NURSE',
             department: 'Nursing',
             baseSalary: new Decimal(2500)
         },
         {
-            employeeId: 'EMP-004',
+            employeeId: `ACC-${tenant.slug}`,
             firstName: 'Alex',
             lastName: 'Accountant',
-            email: 'alex.finance@amisigenuine.com',
+            email: 'accountant@amisi-premier.amisigenuine.com',
             role: 'ACCOUNTANT',
             department: 'Finance',
             baseSalary: new Decimal(3000)
@@ -135,9 +135,16 @@ async function seed() {
 
     for (const s of staff) {
         await tenantDb.employee.upsert({
-            where: { email: s.email },
-            update: { ...s },
-            create: { ...s as any }
+            where: { employeeId: s.employeeId },
+            update: { 
+                ...s as any,
+                email: s.email, // Ensure email is updated if changed in seed
+                status: 'active'
+            },
+            create: { 
+                ...s as any,
+                status: 'active'
+            }
         });
     }
 
@@ -147,12 +154,14 @@ async function seed() {
     if (patientsCount === 0) {
         const patients = [
             {
+                mrn: 'AM-2024-0001',
                 firstName: 'John',
                 lastName: 'Doe',
                 dob: new Date('1985-05-15'),
                 gender: 'Male'
             },
             {
+                mrn: 'AM-2024-0002',
                 firstName: 'Jane',
                 lastName: 'Smith',
                 dob: new Date('1992-11-20'),

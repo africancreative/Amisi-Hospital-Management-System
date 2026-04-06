@@ -3,54 +3,79 @@
 import { getTenantDb } from '@/lib/db';
 import { revalidatePath } from 'next/cache';
 import { ensureRole } from '@/lib/auth-utils';
+import { logAudit } from '@/lib/audit';
+import { realtimeHub } from '@amisi/realtime';
+import { getResolvedTenantId, getTenantSyncSecret } from '@/lib/tenant';
+import { recordEvent } from '@amisi/sync-engine';
+import { postInventoryJournalEntry } from './accounting-bridge';
 
-// Inventory Actions
-export async function getInventoryItems() {
+// ---------------------------------------------------------------------------
+// INVENTORY ACTIONS
+// ---------------------------------------------------------------------------
+
+export async function getInventoryItems(category?: string) {
     const db = await getTenantDb();
     return db.inventoryItem.findMany({
+        where: category ? { category } : undefined,
         orderBy: { name: 'asc' }
     });
 }
 
-export async function updateInventoryStock(itemId: string, quantityChange: number, description?: string) {
+export async function updateInventoryStock(itemId: string, quantityChange: number) {
     await ensureRole(['PHARMACIST', 'ADMIN']);
     const db = await getTenantDb();
 
     const item = await db.inventoryItem.update({
         where: { id: itemId },
-        data: {
-            quantity: { increment: quantityChange },
-            version: { increment: 1 }
-        }
+        data: { quantity: { increment: quantityChange }, version: { increment: 1 } }
     });
+
+    const tenantId = await getResolvedTenantId();
+    if (tenantId) {
+        realtimeHub.broadcast(tenantId, 'INVENTORY_ALERT', 'InventoryItem', item.id);
+        const secret = await getTenantSyncSecret(tenantId);
+        if (secret) await recordEvent(db, 'InventoryItem', item.id, 'UPDATE', item, secret, 'OUTGOING');
+    }
 
     revalidatePath('/inventory');
     return item;
 }
 
-// Prescription Actions
-export async function createPrescription(patientId: string, encounterId: string | null, orderedBy: string, items: { drugName: string, dosage: string, frequency: string, duration: string, quantity: number }[]) {
+// ---------------------------------------------------------------------------
+// PRESCRIPTION ACTIONS
+// ---------------------------------------------------------------------------
+
+export async function createPrescription(
+    patientId: string,
+    encounterId: string | null,
+    orderedBy: string,
+    items: { drugName: string; dosage: string; frequency: string; duration: string; quantity: number }[]
+) {
     await ensureRole(['DOCTOR', 'ADMIN']);
     const db = await getTenantDb();
 
+    // Joint Commission Safety: Check patient allergies before prescribing
+    const allergies = await db.allergy.findMany({ where: { patientId } });
+    const allergySubstances = allergies.map(a => a.substance.toLowerCase());
+
+    const conflicts = items.filter(i =>
+        allergySubstances.some(a => i.drugName.toLowerCase().includes(a))
+    );
+
+    if (conflicts.length > 0) {
+        const names = conflicts.map(c => c.drugName).join(', ');
+        throw new Error(`ALLERGY_CONFLICT: Patient has known allergy to: ${names}. Override requires attending physician approval.`);
+    }
+
     const prescription = await db.prescription.create({
         data: {
-            patientId,
-            encounterId,
-            orderedBy,
+            patientId, encounterId, orderedBy,
             status: 'pending',
-            items: {
-                create: items.map(item => ({
-                    drugName: item.drugName,
-                    dosage: item.dosage,
-                    frequency: item.frequency,
-                    duration: item.duration,
-                    quantity: item.quantity
-                }))
-            }
+            items: { create: items }
         }
     });
 
+    await logAudit({ action: 'CREATE', resource: 'Prescription', resourceId: prescription.id, details: { patientId, orderedBy } });
     revalidatePath(`/patients/${patientId}`);
     revalidatePath('/pharmacy');
     return prescription;
@@ -60,23 +85,28 @@ export async function getPendingPrescriptions() {
     const db = await getTenantDb();
     return db.prescription.findMany({
         where: { status: 'pending' },
-        include: {
-            patient: true,
-            items: true
-        },
+        include: { patient: { include: { allergies: true } }, items: true },
         orderBy: { createdAt: 'desc' }
     });
 }
 
-// Dispensing Actions
-export async function dispensePrescription(prescriptionId: string, dispensedBy: string, itemDispensations: { itemId: string, quantity: number }[]) {
+// ---------------------------------------------------------------------------
+// DISPENSING — BATCH-AWARE WITH COGS JOURNAL ENTRY
+// ---------------------------------------------------------------------------
+
+export async function dispensePrescription(
+    prescriptionId: string,
+    dispensedBy: string,
+    itemDispensations: { itemId: string; quantity: number; batchId?: string }[]
+) {
     await ensureRole(['PHARMACIST', 'ADMIN']);
     const db = await getTenantDb();
 
-    // Transactional dispensing
-    return db.$transaction(async (tx) => {
-        // 1. Create dispensing records
+    const updatedPrescription = await db.$transaction(async (tx: any) => {
+        let totalCOGS = 0;
+
         for (const disp of itemDispensations) {
+            // 1. Create dispensing record
             await tx.dispensingRecord.create({
                 data: {
                     prescriptionId,
@@ -86,24 +116,59 @@ export async function dispensePrescription(prescriptionId: string, dispensedBy: 
                 }
             });
 
-            // 2. Decrement inventory
-            await tx.inventoryItem.update({
+            // 2. Decrement main inventory
+            const item = await tx.inventoryItem.update({
                 where: { id: disp.itemId },
-                data: {
-                    quantity: { decrement: disp.quantity },
-                    version: { increment: 1 }
-                }
+                data: { quantity: { decrement: disp.quantity }, version: { increment: 1 } }
             });
+            totalCOGS += Number(item.price) * disp.quantity;
+
+            // 3. If batch-controlled, decrement the specific batch
+            if (disp.batchId) {
+                await tx.inventoryBatch.update({
+                    where: { id: disp.batchId },
+                    data: { quantity: { decrement: disp.quantity } }
+                });
+            }
         }
 
-        // 3. Mark prescription as dispensed
-        const updatedPrescription = await tx.prescription.update({
+        const updated = await tx.prescription.update({
             where: { id: prescriptionId },
             data: { status: 'dispensed' }
         });
 
-        revalidatePath('/pharmacy');
-        revalidatePath('/inventory');
-        return updatedPrescription;
+        return { prescription: updated, totalCOGS };
     });
+
+    // 4. Post COGS double-entry (IAS 2 / ASC 330)
+    if (updatedPrescription.totalCOGS > 0) {
+        await postInventoryJournalEntry({
+            type: 'PHARMACY_DISPENSE',
+            sourceId: prescriptionId,
+            amount: updatedPrescription.totalCOGS,
+            description: `COGS: Prescription ${prescriptionId}`,
+            fiscalPeriod: new Date().toISOString().slice(0, 7)
+        });
+    }
+
+    await logAudit({
+        action: 'UPDATE', resource: 'Prescription', resourceId: prescriptionId,
+        details: { action: 'DISPENSED', dispensedBy, totalCOGS: updatedPrescription.totalCOGS }
+    });
+
+    const tenantId = await getResolvedTenantId();
+    if (tenantId) {
+        realtimeHub.broadcast(tenantId, 'MEDICATION_DISPENSED', 'Prescription', prescriptionId);
+        const secret = await getTenantSyncSecret(tenantId);
+        if (secret) {
+            await recordEvent(
+                db, 'Prescription', prescriptionId, 'UPDATE',
+                updatedPrescription.prescription, secret, 'OUTGOING'
+            );
+        }
+    }
+
+    revalidatePath('/pharmacy');
+    revalidatePath('/inventory');
+    return updatedPrescription.prescription;
 }

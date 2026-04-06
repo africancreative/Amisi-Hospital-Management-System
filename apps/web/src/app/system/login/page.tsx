@@ -1,26 +1,28 @@
 'use server';
 
 import { loginSystemAdmin } from '../../actions/auth-actions';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
+import { getGlobalSettings } from '../../actions/system-actions';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Button, Label } from '@amisi/ui';
 import { ShieldCheck } from 'lucide-react';
 
 export default async function SystemLoginPage() {
+    const settings = await getGlobalSettings();
+    
     return (
         <div className="min-h-screen flex items-center justify-center bg-[#0a0a0b] relative overflow-hidden">
             {/* Background Decorations - Royal Blue & Amber Theme */}
             <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[120px]" />
             <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-amber-500/10 rounded-full blur-[120px]" />
 
-            <div className="w-full max-w-md p-6 relative z-10">
+            <div className="w-full max-w-md p-6 relative z-10 font-sans">
                 <div className="flex justify-center mb-8">
                     <div className="flex items-center gap-3 bg-white/5 p-3 rounded-2xl border border-white/10 backdrop-blur-md shadow-xl">
                         <div className="p-2 bg-blue-600 rounded-lg">
                             <ShieldCheck className="w-6 h-6 text-white" />
                         </div>
-                        <span className="text-xl font-bold text-white tracking-tight">Amisi Genuine</span>
+                        <span className="text-xl font-bold text-white tracking-tight italic uppercase tracking-tighter">
+                            {settings.platformName || 'Amisi HealthOS'}
+                        </span>
                     </div>
                 </div>
 
@@ -28,12 +30,14 @@ export default async function SystemLoginPage() {
                     <CardHeader className="pb-8">
                         <div className="flex justify-center mb-6">
                             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500 shadow-xl shadow-amber-500/20">
-                                <span className="text-2xl font-bold text-white">G</span>
+                                <span className="text-2xl font-bold text-white italic">
+                                    {(settings.platformName?.[0] || 'A').toUpperCase()}
+                                </span>
                             </div>
                         </div>
                         <CardTitle className="text-3xl text-center text-white">System Access</CardTitle>
                         <CardDescription className="text-center pt-2 text-neutral-400">
-                            Internal administration portal for Amisi Genuine
+                            {settings.platformSlogan || 'Internal administration portal for the distributed network'}
                         </CardDescription>
                     </CardHeader>
                     <form action={loginSystemAdmin}>
@@ -70,7 +74,7 @@ export default async function SystemLoginPage() {
                 </Card>
 
                 <p className="mt-8 text-center text-neutral-500 text-sm">
-                    Amisi Genuine Cloud Infrastructure v3.1
+                    Amisi HealthOS Distributed Infrastructure v4.0
                 </p>
                 <div className="mt-4 text-center">
                     <a href="/login" className="text-xs text-neutral-600 hover:text-blue-400 transition-colors">

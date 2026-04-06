@@ -5,7 +5,15 @@ import { Building2, Mail, Phone, MapPin, Tag, Palette, Globe, Save } from 'lucid
 import { updateHospitalBranding } from '@/app/actions/hospital-actions';
 
 interface HospitalBrandingFormProps {
-    initialSettings: any;
+    initialSettings: {
+        hospitalName: string;
+        marketingSlogan?: string | null;
+        logoUrl?: string | null;
+        taxId?: string | null;
+        phone?: string | null;
+        contactEmail?: string | null;
+        detailedAddress?: string | null;
+    };
 }
 
 export default function HospitalBrandingForm({ initialSettings }: HospitalBrandingFormProps) {
@@ -55,7 +63,7 @@ export default function HospitalBrandingForm({ initialSettings }: HospitalBrandi
                             <Tag className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                             <input
                                 name="marketingSlogan"
-                                defaultValue={initialSettings.marketingSlogan}
+                                defaultValue={initialSettings.marketingSlogan ?? undefined}
                                 className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-emerald-500 outline-none transition-all italic"
                                 placeholder="e.g., Excellence in Healthcare"
                             />
@@ -68,7 +76,7 @@ export default function HospitalBrandingForm({ initialSettings }: HospitalBrandi
                             <Globe className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                             <input
                                 name="logoUrl"
-                                defaultValue={initialSettings.logoUrl}
+                                defaultValue={initialSettings.logoUrl ?? undefined}
                                 className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
                                 placeholder="https://..."
                             />
@@ -84,7 +92,7 @@ export default function HospitalBrandingForm({ initialSettings }: HospitalBrandi
                             <Save className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                             <input
                                 name="taxId"
-                                defaultValue={initialSettings.taxId}
+                                defaultValue={initialSettings.taxId ?? undefined}
                                 className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-emerald-500 outline-none transition-all font-mono"
                                 placeholder="KRA PIN / TIN"
                             />
@@ -98,7 +106,7 @@ export default function HospitalBrandingForm({ initialSettings }: HospitalBrandi
                                 <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                                 <input
                                     name="phone"
-                                    defaultValue={initialSettings.phone}
+                                    defaultValue={initialSettings.phone ?? undefined}
                                     className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
                                     placeholder="+254..."
                                 />
@@ -107,7 +115,7 @@ export default function HospitalBrandingForm({ initialSettings }: HospitalBrandi
                                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                                 <input
                                     name="contactEmail"
-                                    defaultValue={initialSettings.contactEmail}
+                                    defaultValue={initialSettings.contactEmail ?? undefined}
                                     className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
                                     placeholder="info@..."
                                 />
@@ -121,7 +129,7 @@ export default function HospitalBrandingForm({ initialSettings }: HospitalBrandi
                             <MapPin className="absolute left-4 top-4 h-4 w-4 text-gray-400" />
                             <textarea
                                 name="detailedAddress"
-                                defaultValue={initialSettings.detailedAddress}
+                                defaultValue={initialSettings.detailedAddress ?? undefined}
                                 rows={3}
                                 className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-emerald-500 outline-none transition-all resize-none"
                                 placeholder="Full physical address for official documents..."

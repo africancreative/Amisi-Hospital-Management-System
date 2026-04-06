@@ -12,10 +12,10 @@ export async function createLabOrder(patientId: string, encounterId: string | nu
         data: {
             patientId,
             encounterId,
-            testName,
-            priority,
+            testPanelId: testName,
+            urgency: priority,
             status: 'pending',
-            orderedBy,
+            orderedById: orderedBy,
         }
     });
 
@@ -69,12 +69,11 @@ export async function recordLabResult(orderId: string, results: { parameter: str
     await db.labResult.createMany({
         data: results.map(r => ({
             labOrderId: orderId,
-            parameter: r.parameter,
-            value: r.value,
+            biomarkerName: r.parameter,
+            valueResult: r.value,
             unit: r.unit,
-            referenceRange: r.range,
-            flag: r.flag,
-            performedBy: technicianName,
+            referenceText: r.range,
+            flag: r.flag || 'NORMAL',
         }))
     });
 

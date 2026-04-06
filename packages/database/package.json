@@ -20,6 +20,7 @@
         "db:studio:control": "prisma studio --schema=./prisma/control.prisma",
         "db:studio:tenant": "prisma studio --schema=./prisma/tenant.prisma",
         "db:seed:demo": "npx tsx src/seed-demo.ts",
+        "db:seed:comprehensive": "npx tsx src/seed-comprehensive.ts",
         "db:seed:all": "npx tsx src/seed-all-tenants.ts"
     },
     "dependencies": {

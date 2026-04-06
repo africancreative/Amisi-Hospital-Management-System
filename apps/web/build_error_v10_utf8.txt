@@ -1,0 +1,15 @@
+﻿npx : 
+At line:1 char:1
++ npx next build > build_error_v10.txt 2>&1
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+> Build error occurred
+Error: EPERM: operation not permitted, unlink 'C:\Users\amisi\OneDrive\Documents\GitHub\Amisi-Hospital-Management-System\apps\web\.next\server\app\api\paypal'
+    at ignore-listed frames {
+  errno: -4048,
+  code: 'EPERM',
+  syscall: 'unlink',
+  path: 'C:\\Users\\amisi\\OneDrive\\Documents\\GitHub\\Amisi-Hospital-Management-System\\apps\\web\\.next\\server\\app\\api\\paypal'
+}

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
 import {
     LayoutDashboard,
     Users,
@@ -20,17 +20,17 @@ import {
 import { logout } from '@/app/actions/auth-actions';
 
 const navigation = [
-    { name: 'Dashboard', href: '/', icon: LayoutDashboard },
-    { name: 'Patients', href: '/patients', icon: Users, module: 'EHR', roles: ['DOCTOR', 'NURSE', 'ADMIN'] },
-    { name: 'Billing', href: '/billing', icon: DollarSign, module: 'BILLING', roles: ['ACCOUNTANT', 'ADMIN'] },
-    { name: 'Laboratory', href: '/lab', icon: Microscope, module: 'LAB', roles: ['LAB_TECH', 'DOCTOR', 'ADMIN'] },
+    { name: 'Dashboard', href: '', icon: LayoutDashboard }, 
+    { name: 'Patients', href: '/patients', icon: Users, module: 'EHR', roles: ['DOCTOR', 'NURSE', 'ADMIN', 'MIDWIFE', 'SURGEON', 'ANESTHESIOLOGIST', 'ICU_NURSE'] },
+    { name: 'Billing', href: '/billing', icon: DollarSign, module: 'BILLING', roles: ['ACCOUNTANT', 'ADMIN', 'RECEPTIONIST'] },
+    { name: 'Laboratory', href: '/lab', icon: Microscope, module: 'LAB', roles: ['LAB_TECH', 'DOCTOR', 'ADMIN', 'PATHOLOGIST'] },
     { name: 'Pharmacy', href: '/pharmacy', icon: Pill, module: 'PHARMACY', roles: ['PHARMACIST', 'DOCTOR', 'ADMIN'] },
-    { name: 'Inventory', href: '/inventory', icon: Package, module: 'INVENTORY', roles: ['PHARMACIST', 'ADMIN'] },
-    { name: 'HR & Payroll', href: '/hr', icon: Briefcase, module: 'HR', roles: ['HR', 'ADMIN'] },
-    { name: 'Accounting', href: '/accounting', icon: BookOpen, module: 'ACCOUNTING', roles: ['ACCOUNTANT', 'ADMIN'] },
-    { name: 'Hospitals', href: '/hospitals', icon: Building2, roles: ['ADMIN'] },
+    { name: 'Inventory', href: '/inventory', icon: Package, module: 'INVENTORY', roles: ['PHARMACIST', 'ADMIN', 'PROCUREMENT_MANAGER', 'INVENTORY_CLERK'] },
+    { name: 'HR & Payroll', href: '/hr', icon: Briefcase, module: 'HR', roles: ['HR', 'HR_MANAGER', 'ADMIN'] },
+    { name: 'Accounting', href: '/accounting', icon: BookOpen, module: 'ACCOUNTING', roles: ['ACCOUNTANT', 'ADMIN', 'AUDITOR'] },
+    { name: 'Hospitals', href: '/hospitals', icon: Building2, roles: ['ADMIN'], system: true },
     { name: 'Users', href: '/users', icon: Users, roles: ['ADMIN'] },
-    { name: 'Analytics', href: '/analytics', icon: Activity, roles: ['ADMIN', 'DOCTOR', 'ACCOUNTANT'] },
+    { name: 'Analytics', href: '/analytics', icon: Activity, roles: ['ADMIN', 'DOCTOR', 'ACCOUNTANT', 'AUDITOR'] },
     { name: 'Settings', href: '/settings', icon: Settings, roles: ['ADMIN'] },
 ];
 
@@ -48,6 +48,8 @@ export default function Sidebar({
     isSystemAdmin?: boolean
 }) {
     const pathname = usePathname();
+    const params = useParams();
+    const slug = params?.slug as string;
 
     const filteredNavigation = navigation.filter(item => {
         // 1. Module check
@@ -57,9 +59,9 @@ export default function Sidebar({
         if (item.roles && !item.roles.includes(userRole)) return false;
 
         // 3. System Admin routes check
-        if ((item.href === '/hospitals') && !isSystemAdmin) return false;
+        if (item.system && !isSystemAdmin) return false;
 
-        // Users page should be visible for Hospital Admin (tenant role) OR System Admin
+        // Users page logic
         if (item.href === '/users' && !isSystemAdmin && userRole !== 'ADMIN') return false;
 
         return true;
@@ -67,28 +69,49 @@ export default function Sidebar({
 
     return (
         <div className="flex h-screen w-64 flex-col bg-gray-950 text-white border-r border-gray-800 transition-all duration-300 shrink-0">
-            <div className="flex bg-gray-900 border-b border-gray-800 h-16 shrink-0 items-center px-6">
-                <div className="flex items-center gap-3">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 font-bold text-white shadow-lg shadow-blue-600/30">
-                        G
+            <div className="flex bg-gray-950 border-b border-gray-900 h-20 shrink-0 items-center px-6">
+                <div className="flex items-center gap-4">
+                    <div className="relative group">
+                        <div className="absolute -inset-1 bg-emerald-500 rounded-xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+                        <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-gray-900 border border-emerald-500/50 font-black text-emerald-500 shadow-2xl text-xl">
+                            A
+                        </div>
                     </div>
-                    <span className="text-lg font-semibold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-white via-blue-400 to-amber-500">
-                        Amisi Genuine
-                    </span>
+                    <div className="flex flex-col">
+                        <span className="text-sm font-black tracking-tight text-white uppercase">
+                            Amisi <span className="text-emerald-500">HealthOS</span>
+                        </span>
+                        <span className="text-[9px] font-black text-gray-500 uppercase tracking-[0.2em] -mt-1">
+                            Enterprise Core
+                        </span>
+                    </div>
                 </div>
             </div>
 
             <div className="flex flex-1 flex-col overflow-y-auto pt-6 px-3">
-                <div className="px-3 mb-2">
-                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{userRole}</p>
+                <div className="px-3 mb-2 flex items-center justify-between">
+                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        {isSystemAdmin ? 'System Admin' : userRole}
+                    </p>
+                    {slug && <span className="text-[10px] text-amber-500 font-bold uppercase">{slug}</span>}
                 </div>
                 <nav className="flex-1 space-y-1">
                     {filteredNavigation.map((item) => {
-                        const isActive = pathname === item.href;
+                        // Resolve actual href
+                        let targetHref = item.href;
+                        if (item.name === 'Dashboard') {
+                            targetHref = isSystemAdmin ? '/system/dashboard' : (slug ? `/${slug}` : '/');
+                        } else if (!item.system && slug) {
+                            targetHref = `/${slug}${item.href}`;
+                        } else if (item.system) {
+                            targetHref = item.href;
+                        }
+
+                        const isActive = pathname === targetHref;
                         return (
                             <Link
                                 key={item.name}
-                                href={item.href}
+                                href={targetHref}
                                 className={`
                   group flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-all duration-200
                   ${isActive
@@ -99,7 +122,7 @@ export default function Sidebar({
                                 <item.icon
                                     className={`
                     h-5 w-5 shrink-0 transition-colors duration-200
-                    ${isActive ? 'text-blue-400' : 'text-gray-500 group-hover:text-gray-300'}
+                    ${isActive ? 'text-emerald-500' : 'text-gray-500 group-hover:text-gray-300'}
                   `}
                                     aria-hidden="true"
                                 />

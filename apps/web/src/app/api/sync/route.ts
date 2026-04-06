@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getTenantDb } from '@/lib/db';
 import { ControlClient, TenantClient } from '@amisi/database';
+import { resolveSemanticConflict } from '../../../../../../packages/sync-engine/src/resolver';
 import crypto from 'crypto';
 
 const controlDb = new ControlClient();
 
 /**
- * Bi-Directional Sync API
+ * Bi-Directional Sync API (Cloud Hub)
+ * Handles Edge Node push/pull orchestration.
  */
 
 // GET: Pull deltas from Cloud to Edge
@@ -15,23 +17,28 @@ export async function GET(req: NextRequest) {
     if (!tenantId) return NextResponse.json({ error: 'Tenant context missing' }, { status: 400 });
 
     const { searchParams } = new URL(req.url);
-    const lastId = searchParams.get('lastId') || '';
+    const lastSequence = BigInt(searchParams.get('lastSequence') || '0');
 
     try {
         const tenantDb = await getTenantDb();
 
-        // Find events that haven't been synced to this specific edge yet
-        // In this MVP, we use the EventJournal as the source of truth
+        // Find all outgoing events that the edge hasn't seen yet
         const deltas = await tenantDb.eventJournal.findMany({
             where: {
-                timestamp: { gt: new Date(Date.now() - 24 * 60 * 60 * 1000) }, // Last 24h
-                id: { gt: lastId },
+                sequenceNumber: { gt: lastSequence },
+                direction: 'OUTGOING'
             },
-            orderBy: { id: 'asc' },
+            orderBy: { sequenceNumber: 'asc' },
             take: 100
         });
 
-        return NextResponse.json({ deltas });
+        // Convert BigInt to string for JSON serialization
+        const serializedDeltas = deltas.map(d => ({
+            ...d,
+            sequenceNumber: d.sequenceNumber.toString()
+        }));
+
+        return NextResponse.json({ deltas: serializedDeltas });
     } catch (error: any) {
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
@@ -44,9 +51,12 @@ export async function POST(req: NextRequest) {
 
     try {
         const { batch } = await req.json();
-        const tenant = await controlDb.tenant.findUnique({ where: { id: tenantId } });
+        const tenant = await controlDb.tenant.findUnique({ 
+            where: { id: tenantId },
+            select: { sharedSecret: true }
+        });
 
-        if (!tenant || !tenant.publicKeySpki) {
+        if (!tenant || !tenant.sharedSecret) {
             return NextResponse.json({ error: 'Tenant sync not initialized' }, { status: 403 });
         }
 
@@ -57,71 +67,64 @@ export async function POST(req: NextRequest) {
         // Process batch in a transaction
         await tenantDb.$transaction(async (tx) => {
             for (const event of batch) {
-                // 1. Verify Signature
+                // 1. Verify HMAC Signature using Shared Secret
                 const message = `${event.entityType}:${event.entityId}:${event.action}:${JSON.stringify(event.payload)}`;
-                const isValid = crypto.verify(
-                    null,
-                    Buffer.from(message),
-                    {
-                        key: tenant.publicKeySpki!,
-                        format: 'pem',
-                        type: 'spki'
-                    },
-                    Buffer.from(event.signature, 'hex')
-                );
+                const expectedSignature = crypto
+                    .createHmac('sha256', tenant.sharedSecret!)
+                    .update(message)
+                    .digest('hex');
 
-                if (!isValid) {
-                    throw new Error(`Invalid signature for event ${event.id}`);
+                if (expectedSignature !== event.signature) {
+                    console.error(`[Sync] Signature mismatch for event ${event.id}`);
+                    continue; // Skip invalid events
                 }
 
-                // 2. Conflict Resolution
-                if (event.entityType === 'FinancialRecord') {
-                    // Check for duplicates
-                    const existing = await tx.financialRecord.findUnique({ where: { id: event.entityId } });
-                    if (existing) {
-                        conflicts.push({ id: event.entityId, reason: 'IMMUTABLE_DUPLICATE_REJECTED' });
-                        continue;
-                    }
+                // 2. Clinical Reconciliation (Semantic Hybrid)
+                const modelName = event.entityType.charAt(0).toLowerCase() + event.entityType.slice(1);
+                const model = (tx as any)[modelName];
+                
+                if (!model) {
+                    console.warn(`[Sync] Unknown entity type: ${event.entityType}`);
+                    continue;
                 }
 
-                if (event.entityType === 'Encounter') {
-                    const existing = await (tx as any).encounter.findUnique({ where: { id: event.entityId } });
-                    if (existing && existing.version >= event.payload.version) {
-                        // Mark as conflict pending manual merge
-                        await (tx as any).encounter.update({
-                            where: { id: event.entityId },
-                            data: {
-                                conflictStatus: 'PENDING_MERGE',
-                                conflictData: event.payload
-                            }
-                        });
-                        conflicts.push({ id: event.entityId, reason: 'CLINICAL_CONFLICT_PENDING' });
-                        continue;
-                    }
+                const existing = await model.findUnique({ where: { id: event.entityId } });
+
+                if (existing) {
+                    // RESOLVE CONFLICT
+                    const resolvedData = resolveSemanticConflict(
+                        { 
+                            id: existing.id, 
+                            version: existing.version, 
+                            data: existing, 
+                            timestamp: existing.updatedAt 
+                        },
+                        { 
+                            id: event.entityId, 
+                            version: event.payload.version, 
+                            data: event.payload, 
+                            timestamp: new Date(event.timestamp) 
+                        }
+                    );
+
+                    await model.update({
+                        where: { id: event.entityId },
+                        data: { ...resolvedData, isSynced: true }
+                    });
+                } else {
+                    // APPLY NEW
+                    await model.create({
+                        data: { ...event.payload, isSynced: true }
+                    });
                 }
 
-                // 3. Apply Change
-                // This is a simplified apply logic for the MVP
-                // In a full implementation, this would dynamically route to entity handlers
-                try {
-                    const model = (tx as any)[event.entityType.charAt(0).toLowerCase() + event.entityType.slice(1)];
-                    if (event.action === 'CREATE') {
-                        await model.create({ data: { ...event.payload, isSynced: true } });
-                    } else if (event.action === 'UPDATE') {
-                        await model.update({
-                            where: { id: event.entityId },
-                            data: { ...event.payload, isSynced: true }
-                        });
-                    }
-                    acceptedIds.push(event.id);
-                } catch (e: any) {
-                    console.error(`Apply failed for ${event.id}:`, e);
-                }
+                acceptedIds.push(event.id);
             }
         });
 
         return NextResponse.json({ acceptedIds, conflicts });
     } catch (error: any) {
+        console.error('[Sync Error]', error);
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }

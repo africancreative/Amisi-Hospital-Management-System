@@ -1,0 +1,41 @@
+﻿Γû▓ Next.js 16.1.6 (Turbopack)
+- Environments: .env
+
+  Creating an optimized production build ...
+Γ£ô Compiled successfully in 14.3s
+  Running TypeScript ...
+npx : Failed to compile.
+At line:1 char:1
++ npx next build > build_error_v3.txt 2>&1
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Failed to compile. 
+   :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+./src/app/[slug]/lab/[id]/page.tsx:54:38
+Type error: Property 'testName' does not exist on type '{ 
+patient: { id: string; createdAt: Date; updatedAt: Date; 
+version: number; isSynced: boolean; email: string | null; 
+firstName: string; lastName: string; phone: string | null; ... 
+8 more ...; conflictStatus: string | null; } | null; results: { 
+...; }[]; } & { ...; }'.
+
+[0m [90m 52 |[39m                     
+[33m<[39m[33m/[39m[33mh1[39m[33m>[39m
+ [90m 53 |[39m                     [33m<[39m[33mp[39m 
+className[33m=[39m[32m"text-gray-500 font-medium mt-1 
+uppercase text-xs tracking-widest"[39m[33m>[39m
+[31m[1m>[22m[39m[90m 54 |[39m                         
+[33mTest[39m[33m:[39m {order[33m.[39mtestName} ΓÇó 
+[33mPatient[39m[33m:[39m 
+{order[33m.[39mpatient[33m.[39mlastName}[33m,[39m 
+{order[33m.[39mpatient[33m.[39mfirstName}
+ [90m    |[39m                                      
+[31m[1m^[22m[39m
+ [90m 55 |[39m                     
+[33m<[39m[33m/[39m[33mp[39m[33m>[39m
+ [90m 56 |[39m                 
+[33m<[39m[33m/[39m[33mheader[39m[33m>[39m
+ [90m 57 |[39m[0m
+Next.js build worker exited with code: 1 and signal: null
