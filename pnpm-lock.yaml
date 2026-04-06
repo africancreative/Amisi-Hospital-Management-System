@@ -167,11 +167,7 @@ importers:
 
   packages/config: {}
 
-  packages/control-client:
-    dependencies:
-      '@prisma/client':
-        specifier: ^5.13.0
-        version: 5.22.0(prisma@5.22.0)
+  packages/control-client: {}
 
   packages/database:
     dependencies:
@@ -233,11 +229,7 @@ importers:
         specifier: ^5.4.5
         version: 5.9.3
 
-  packages/tenant-client:
-    dependencies:
-      '@prisma/client':
-        specifier: ^5.13.0
-        version: 5.22.0(prisma@5.22.0)
+  packages/tenant-client: {}
 
   packages/ui:
     dependencies:
