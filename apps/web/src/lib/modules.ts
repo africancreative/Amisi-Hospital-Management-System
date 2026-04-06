@@ -1,12 +1,4 @@
-import { ControlClient } from '@amisi/database';
-
-let controlDbInstance: ControlClient | null = null;
-function getControlDb() {
-    if (!controlDbInstance) {
-        controlDbInstance = new ControlClient();
-    }
-    return controlDbInstance;
-}
+import { getControlDb } from '@amisi/database';
 
 export type ModuleCode = 'LAB' | 'PHARMACY' | 'INVENTORY' | 'HR' | 'ACCOUNTING' | 'EHR' | 'BILLING';
 

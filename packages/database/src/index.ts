@@ -5,4 +5,11 @@ export * from './neon';
 export * from './update';
 
 export { PrismaClient } from '@prisma/client';
+export { getControlDb, getTenantDb } from './tenant-routing';
+export { provisionTenant, type ExtendedSettings, type AdminInfo } from './provision';
+export { createTenantDatabase, type NeonDbResponse } from './neon';
 export type { Decimal } from '@prisma/client/runtime/library';
+export type { default as ControlClient } from '@prisma/client';
+
+// Type exports for DeploymentTier - needs to be defined here since it's a local type
+export type DeploymentTier = 'CLINIC' | 'GENERAL' | 'RESEARCH';
