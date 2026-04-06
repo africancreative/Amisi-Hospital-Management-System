@@ -1,4 +1,4 @@
-import { PrismaClient } from '@amisi/tenant-client';
+import { TenantClient } from '@amisi/database';
 
 /**
  * Generates a unique, deterministic Medical Record Number (MRN)

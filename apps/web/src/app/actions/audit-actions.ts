@@ -1,7 +1,7 @@
 'use server';
 
 import { getControlDb } from '@/lib/db';
-import { PrismaClient } from '@amisi/tenant-client';
+import { TenantClient } from '@amisi/database';
 import { ensureSuperAdmin } from '@/lib/auth-utils';
 
 export type GlobalAuditEntry = {
@@ -36,7 +36,7 @@ export async function getGlobalAuditLogs(): Promise<GlobalAuditEntry[]> {
     const logPromises = tenants.map(async (tenant) => {
         try {
             // Instantiate a dynamic client for this tenant
-            const tenantDb = new PrismaClient({
+            const tenantDb = new TenantClient({
                 datasources: { db: { url: tenant.dbUrl } }
             });
 
