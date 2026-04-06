@@ -1,48 +1,60 @@
 import { execSync } from 'child_process';
-import path from 'path';
 
 const projectDir = '/vercel/share/v0-project';
 
-try {
-  console.log('Starting push to main branch...\n');
+const runCmd = (cmd, desc) => {
+  console.log(`[v0] ${desc}`);
+  try {
+    return execSync(cmd, { 
+      cwd: projectDir,
+      stdio: 'inherit',
+      encoding: 'utf-8'
+    });
+  } catch (error) {
+    console.error(`[v0] Error: ${error.message}`);
+    throw error;
+  }
+};
 
-  // Change to project directory
-  process.chdir(projectDir);
+try {
+  console.log('[v0] Starting push to main branch...\n');
 
   // Check current branch
-  const currentBranch = execSync('git rev-parse --abbrev-ref HEAD', { encoding: 'utf-8' }).trim();
-  console.log(`Current branch: ${currentBranch}\n`);
+  const currentBranch = execSync('git rev-parse --abbrev-ref HEAD', { 
+    cwd: projectDir,
+    encoding: 'utf-8' 
+  }).trim();
+  console.log(`[v0] Current branch: ${currentBranch}\n`);
 
   // Add all changes
-  console.log('Adding all changes...');
-  execSync('git add -A', { stdio: 'inherit' });
+  runCmd('git add .', 'Adding all changes...');
 
   // Check if there are changes to commit
-  const status = execSync('git status --porcelain', { encoding: 'utf-8' });
+  const status = execSync('git status --porcelain', { 
+    cwd: projectDir,
+    encoding: 'utf-8' 
+  });
   
   if (status.trim()) {
     // Commit changes
-    console.log('\nCommitting changes...');
     const commitMessage = 'fix: resolve build errors - fix imports, add recharts dependency, export database functions';
-    execSync(`git commit -m "${commitMessage}"`, { stdio: 'inherit' });
-    console.log('Changes committed successfully\n');
+    runCmd(`git commit -m "${commitMessage}"`, 'Committing changes...');
+    console.log('[v0] Changes committed successfully\n');
   } else {
-    console.log('No changes to commit\n');
+    console.log('[v0] No changes to commit\n');
   }
 
   // Checkout main branch if not already on it
   if (currentBranch !== 'main') {
-    console.log('Checking out main branch...');
-    execSync('git checkout main', { stdio: 'inherit' });
+    runCmd('git checkout main', 'Checking out main branch...');
   }
 
   // Push to main
-  console.log('\nPushing to main branch...');
-  execSync('git push origin main', { stdio: 'inherit' });
+  runCmd('git push origin main', 'Pushing to main branch...');
   
-  console.log('\n✓ Successfully pushed to main branch on GitHub!');
+  console.log('\n[v0] ✓ Successfully pushed to main branch on GitHub!');
   process.exit(0);
 } catch (error) {
-  console.error('Error during push:', error.message);
+  console.error('[v0] Error during push:', error.message);
   process.exit(1);
 }
