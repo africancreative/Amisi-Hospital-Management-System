@@ -167,8 +167,6 @@ importers:
 
   packages/config: {}
 
-  packages/control-client: {}
-
   packages/database:
     dependencies:
       '@prisma/client':
@@ -228,8 +226,6 @@ importers:
       typescript:
         specifier: ^5.4.5
         version: 5.9.3
-
-  packages/tenant-client: {}
 
   packages/ui:
     dependencies:

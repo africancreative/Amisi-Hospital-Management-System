@@ -12,7 +12,4 @@ build
 *.sublime-workspace
 
 # Generated Prisma Clients
-/packages/control-client/*
-!/packages/control-client/package.json
-/packages/tenant-client/*
-!/packages/tenant-client/package.json
+/packages/database/generated/
