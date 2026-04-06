@@ -1,8 +1,22 @@
 import { ControlClient } from './index';
-import { hashPassword } from '@amisi/auth';
+import crypto from 'crypto';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
+
+/**
+ * Local PBKDF2 Implementation to break circular dependency with @amisi/auth
+ * Compatible with the clinical platform's security standard.
+ */
+async function hashPassword(password: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+        const salt = crypto.randomBytes(16).toString('hex');
+        crypto.pbkdf2(password, salt, 1000, 64, 'sha512', (err, derivedKey) => {
+            if (err) reject(err);
+            resolve(`${salt}:${derivedKey.toString('hex')}`);
+        });
+    });
+}
 
 async function seedSystemAdmin() {
     console.log('[Amisi HealthOS] Provisioning system administrators...');
