@@ -82,8 +82,12 @@ export async function provisionTenant(
 
         // Seed Initial Settings
         console.log(`[Provision] Seeding initial Hospital Settings...`);
-        const isolatedClient = new TenantClient({
-            datasourceUrl: isolatedDbUrl
+        const isolatedClient = new PrismaClient({
+            datasources: {
+                db: {
+                    url: isolatedDbUrl
+                }
+            }
         });
 
         await isolatedClient.$connect();
@@ -158,8 +162,12 @@ function getDefaultModulesForTier(tier: DeploymentTier) {
 }
 
 async function seedAdminUser(dbUrl: string, admin: AdminInfo) {
-    const isolatedClient = new TenantClient({
-        datasourceUrl: dbUrl
+    const isolatedClient = new PrismaClient({
+        datasources: {
+            db: {
+                url: dbUrl
+            }
+        }
     });
 
     await isolatedClient.$connect();

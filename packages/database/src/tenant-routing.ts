@@ -56,7 +56,7 @@ export async function getTenantDb(tenantId: string): Promise<TenantClient> {
 
     // 3. Instantiate the isolated Prisma Client dynamically connecting only to the specific Hospital DB.
     // The 'dbUrl' retrieved here is completely isolated.
-    const tenantClient = new TenantClient({
+    const tenantClient = new PrismaClient({
         datasources: {
             db: {
                 url: tenant.dbUrl
