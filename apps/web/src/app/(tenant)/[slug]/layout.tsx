@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
-import { PrismaClient as ControlClient } from '@amisi/control-client';
+import { getControlDb } from '@/lib/db';
 import { Activity, Pill, Beaker, Stethoscope, Users, Box, BedDouble, ShieldCheck, Home } from 'lucide-react';
 import Link from 'next/link';
 
@@ -26,7 +26,7 @@ export default async function TenantLayout({
     const slug = params.slug;
 
     // VERY IMPORTANT: Read the control matrix for this specific branch
-    const controlDb = new ControlClient();
+    const controlDb = getControlDb();
     const tenant = await controlDb.tenant.findUnique({
         where: { slug }
     });

@@ -1,4 +1,4 @@
-import { PrismaClient } from '@amisi/control-client';
+import { PrismaClient } from '@prisma/client';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
 

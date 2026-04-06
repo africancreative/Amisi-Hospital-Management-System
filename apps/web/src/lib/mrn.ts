@@ -1,5 +1,3 @@
-import { PrismaClient } from '@amisi/tenant-client';
-
 /**
  * Generates a unique, deterministic Medical Record Number (MRN)
  * Format: [PREFIX]-[YEAR]-[SEQUENTIAL_ID]

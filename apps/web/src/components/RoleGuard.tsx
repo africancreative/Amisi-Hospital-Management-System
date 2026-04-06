@@ -1,6 +1,7 @@
 import { getServerRole } from '@/lib/auth-utils';
 import { redirect } from 'next/navigation';
-import { Role } from '@amisi/tenant-client';
+
+type Role = 'ADMIN' | 'DOCTOR' | 'NURSE' | 'STAFF';
 
 interface RoleGuardProps {
     children: React.ReactNode;

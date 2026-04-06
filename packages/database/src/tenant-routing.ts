@@ -1,13 +1,15 @@
-import { PrismaClient as ControlClient } from '@amisi/control-client';
-import { PrismaClient as TenantClient } from '@amisi/tenant-client';
+import { PrismaClient } from '@prisma/client';
 import { config } from './config';
+
+type ControlClient = PrismaClient;
+type TenantClient = PrismaClient;
 
 // Global singleton for the Control Plane (System of Record)
 let _controlDb: ControlClient;
 
 export function getControlDb(): ControlClient {
     if (!_controlDb) {
-        _controlDb = new ControlClient({
+        _controlDb = new PrismaClient({
             datasources: {
                 db: {
                     url: config.NEON_DATABASE_URL

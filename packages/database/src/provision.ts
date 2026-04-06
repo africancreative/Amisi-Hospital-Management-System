@@ -1,8 +1,11 @@
-import { getControlDb, TenantClient } from './index';
-import { DeploymentTier } from '@amisi/control-client';
+import { getControlDb } from './index';
+import { PrismaClient } from '@prisma/client';
 import { execSync } from 'child_process';
 import crypto from 'crypto';
 import path from 'path';
+
+type TenantClient = PrismaClient;
+type DeploymentTier = 'CLINIC' | 'GENERAL' | 'RESEARCH';
 
 export interface ExtendedSettings {
     contactEmail?: string | null;

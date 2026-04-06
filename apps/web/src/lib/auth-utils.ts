@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers';
-import { Role } from '@amisi/tenant-client';
 import { Permission, hasPermission as checkPermission } from '@amisi/auth';
+
+type Role = 'ADMIN' | 'DOCTOR' | 'NURSE' | 'STAFF';
 
 /**
  * Server-only utility to get the current user's role from cookies.

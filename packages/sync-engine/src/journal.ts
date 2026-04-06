@@ -1,4 +1,4 @@
-import { TenantClient as PrismaClient } from '@amisi/database';
+import { PrismaClient } from '@prisma/client';
 import crypto from 'crypto';
 
 const SECRET_KEY = process.env.SYNC_SECRET || 'amisi-edge-secret';

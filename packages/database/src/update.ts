@@ -1,5 +1,6 @@
-import { getControlDb, TenantClient } from './index';
+import { getControlDb, getTenantDb } from './tenant-routing';
 import { ExtendedSettings } from './provision';
+import { PrismaClient } from '@prisma/client';
 
 /**
  * Synchronizes Hospital Settings from the Control Plane to the Isolated Tenant DB.
@@ -18,8 +19,8 @@ export async function syncTenantSettings(tenantId: string, settings: ExtendedSet
     console.log(`[Sync] Propagating branding updates to ${tenant.slug}...`);
 
     // 2. Instantiate the isolated client
-    const isolatedClient = new TenantClient({
-        datasourceUrl: tenant.dbUrl
+    const isolatedClient = new PrismaClient({
+        datasources: { db: { url: tenant.dbUrl } }
     });
 
     try {
