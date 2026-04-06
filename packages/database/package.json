@@ -25,6 +25,7 @@
     },
     "dependencies": {
         "@prisma/client": "^5.13.0",
+        "@amisi/auth": "workspace:*",
         "zod": "^3.23.8",
         "dotenv": "^16.4.5"
     },

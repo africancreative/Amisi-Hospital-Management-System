@@ -73,40 +73,43 @@ export async function loginSystemAdmin(formData: FormData): Promise<void> {
     let redirectPath: string | null = null;
 
     if (!email || !password) {
+        console.warn('[AUTH] System Admin login attempt with missing credentials.');
         redirectPath = '/system/login?error=missing';
     } else {
         try {
-            console.log(`[LOGIN] Attempting System Admin login for: ${email}`);
+            console.log(`[AUTH] Verifying System Admin: ${email}...`);
             const controlDb = getControlDb();
             const admin = await controlDb.systemAdmin.findUnique({
                 where: { email }
             });
 
             if (!admin) {
-                console.warn(`[LOGIN] Admin not found for email: ${email}`);
-                redirectPath = '/system/login?error=invalid';
-            } else if (!admin.passwordHash) {
-                console.error(`[LOGIN] Admin found but passwordHash is missing for: ${email}`);
+                console.warn(`[AUTH] Admin identity not found: ${email}`);
                 redirectPath = '/system/login?error=invalid';
             } else {
-                console.log(`[LOGIN] Admin found. Verifying password...`);
+                console.log(`[AUTH] Admin found. Initiating secure password verification...`);
+                // Using the unified verifyPassword utility from @amisi/auth
                 const isValid = await verifyPassword(password, admin.passwordHash);
-                console.log(`[LOGIN] Password verification result: ${isValid}`);
                 
                 if (!isValid) {
+                    console.warn(`[AUTH] Invalid security token for admin: ${email}`);
                     redirectPath = '/system/login?error=invalid';
                 } else {
+                    console.log(`[AUTH] Authentication successful for admin: ${email}. Injecting platform session...`);
                     const cookieStore = await cookies();
-                    cookieStore.set('amisi-user-role', 'ADMIN', { path: '/' });
-                    cookieStore.set('amisi-user-name', admin.name, { path: '/' });
-                    cookieStore.set('amisi-is-system-admin', 'true', { path: '/' });
-                    console.log(`[LOGIN] Login successful for: ${email}`);
+                    
+                    // Session attributes for Platform SuperAdmin
+                    cookieStore.set('amisi-user-role', 'ADMIN', { path: '/', httpOnly: true, secure: process.env.NODE_ENV === 'production' });
+                    cookieStore.set('amisi-user-name', admin.name, { path: '/', httpOnly: true, secure: process.env.NODE_ENV === 'production' });
+                    cookieStore.set('amisi-is-system-admin', 'true', { path: '/', httpOnly: true, secure: process.env.NODE_ENV === 'production' });
+                    
+                    console.log(`[AUTH] Platform session established for admin: ${email}. Routing to dashboard...`);
                     redirectPath = '/system/dashboard';
                 }
             }
-        } catch (e) {
-            console.error('[LOGIN] Admin login error:', e);
-            redirectPath = '/system/login?error=system';
+        } catch (e: any) {
+            console.error(`[AUTH] Fatal System Admin authentication failure: ${e.message}`, e);
+            redirectPath = `/system/login?error=system&msg=${encodeURIComponent(e.message)}`;
         }
     }
 

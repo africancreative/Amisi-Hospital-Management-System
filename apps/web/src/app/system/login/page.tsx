@@ -5,8 +5,15 @@ import { getGlobalSettings } from '../../actions/system-actions';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Button, Label } from '@amisi/ui';
 import { ShieldCheck } from 'lucide-react';
 
-export default async function SystemLoginPage() {
+export default async function SystemLoginPage({ searchParams }: { searchParams: Promise<{ error?: string; msg?: string }> }) {
     const settings = await getGlobalSettings();
+    const { error, msg } = await searchParams;
+
+    const errorMessages: Record<string, string> = {
+        'invalid': 'Access Denied: Invalid administrator credentials or security token.',
+        'missing': 'Missing Credentials: Both email and security token are required.',
+        'system': `System Exception: ${msg || 'An internal error occurred during authentication.'}`
+    };
     
     return (
         <div className="min-h-screen flex items-center justify-center bg-[#0a0a0b] relative overflow-hidden">
@@ -28,6 +35,13 @@ export default async function SystemLoginPage() {
 
                 <Card className="bg-neutral-900/50 border-white/10 backdrop-blur-xl shadow-2xl rounded-3xl overflow-hidden">
                     <CardHeader className="pb-8">
+                        {error && (
+                            <div className="mb-6 p-4 rounded-2xl bg-red-500/10 border border-red-500/20 animate-in fade-in slide-in-from-top-4 duration-500">
+                                <p className="text-xs font-black text-red-400 uppercase tracking-widest leading-relaxed">
+                                    {errorMessages[error] || 'Unknown Security Exception Intercepted'}
+                                </p>
+                            </div>
+                        )}
                         <div className="flex justify-center mb-6">
                             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500 shadow-xl shadow-amber-500/20">
                                 <span className="text-2xl font-bold text-white italic">
