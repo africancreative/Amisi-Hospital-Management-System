@@ -1,4 +1,4 @@
-import { getControlDb, TenantClient } from './index';
+import { getControlDb, TenantClient } from './client';
 import { DeploymentTier } from '../generated/control-client';
 import { execSync } from 'child_process';
 import crypto from 'crypto';
