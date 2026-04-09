@@ -6,7 +6,7 @@ import { ensureRole } from '@/lib/auth-utils';
 import { logAudit } from '@/lib/audit';
 import { realtimeHub } from '@amisi/realtime';
 import { getResolvedTenantId, getTenantSyncSecret } from '@/lib/tenant';
-import { recordEvent } from '@amisi/sync-engine/journal';
+import { recordEvent } from '@amisi/sync-engine';
 
 /**
  * Admits a patient to a specific bed.

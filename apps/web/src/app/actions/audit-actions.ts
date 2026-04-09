@@ -1,7 +1,6 @@
 'use server';
 
 import { getControlDb } from '@/lib/db';
-import { PrismaClient } from '@prisma/client';
 import { ensureSuperAdmin } from '@/lib/auth-utils';
 
 export type GlobalAuditEntry = {
