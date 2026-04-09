@@ -11,8 +11,9 @@
         }
     },
     "scripts": {
-        "build": "pnpm db:generate && tsc",
+        "build": "pnpm db:generate && tsc && pnpm db:copy-engine",
         "db:generate": "pnpm db:generate:control && pnpm db:generate:tenant",
+        "db:copy-engine": "node -e \"const fs = require('fs'); const path = require('path'); const libQueryEngine = path.join(__dirname, 'node_modules/.prisma/client'); if (fs.existsSync(libQueryEngine)) { const distPath = path.join(__dirname, 'dist'); if (!fs.existsSync(distPath)) fs.mkdirSync(distPath, {recursive: true}); require('child_process').execSync(`cp -r ${libQueryEngine} ${distPath}/.prisma || true`); }\"",
         "db:generate:control": "prisma generate --schema=./prisma/control.prisma",
         "db:generate:tenant": "prisma generate --schema=./prisma/tenant.prisma",
         "db:push:control": "prisma db push --schema=./prisma/control.prisma",
