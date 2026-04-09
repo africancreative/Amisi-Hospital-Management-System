@@ -1,10 +1,12 @@
+import { PrismaClient } from '@prisma/client';
+
 export * from './config';
 export * from './tenant-routing';
 export * from './provision';
 export * from './neon';
 export * from './update';
 
-export { PrismaClient } from '@prisma/client';
+export { PrismaClient };
 export { getControlDb, getTenantDb } from './tenant-routing';
 export { provisionTenant, type ExtendedSettings, type AdminInfo } from './provision';
 export { createTenantDatabase, type NeonDbResponse } from './neon';
@@ -15,4 +17,4 @@ export type { default as ControlClient } from '@prisma/client';
 export type DeploymentTier = 'CLINIC' | 'GENERAL' | 'RESEARCH';
 
 // TenantClient is just a type alias for PrismaClient (for isolated tenant DBs)
-export type TenantClient = InstanceType<typeof PrismaClient>;
+export type TenantClient = PrismaClient;
