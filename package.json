@@ -2,7 +2,9 @@
   "name": "amisi-hospital-saas",
   "private": true,
   "scripts": {
-    "build": "pnpm --filter @amisi/database db:generate && turbo run build",
+    "prebuild": "pnpm --filter @amisi/database db:generate",
+    "build": "turbo run build",
+    "postbuild": "pnpm --filter @amisi/database db:copy-prisma",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "postinstall": "pnpm --filter @amisi/database db:generate"

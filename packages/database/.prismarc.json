@@ -1,0 +1,4 @@
+{
+  "supportedDataProxyEngineType": ["binary"],
+  "previewFeatures": ["nativeDistinct"]
+}

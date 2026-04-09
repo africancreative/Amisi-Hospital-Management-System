@@ -1,0 +1,17 @@
+# Keep node_modules for Prisma binaries
+!node_modules
+!packages/*/node_modules
+!apps/*/node_modules
+
+# Ignore development files
+.env.local
+.env.*.local
+*.log
+.turbo
+.next/cache
+
+# But don't ignore Prisma generated files and binaries
+!packages/database/node_modules/.prisma
+!packages/database/generated
+!**/node_modules/.prisma
+!**/node_modules/@prisma
