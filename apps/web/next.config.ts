@@ -10,6 +10,14 @@ const nextConfig: NextConfig = {
     "@amisi/sync-engine",
     "@amisi/ui"
   ],
+  experimental: {
+    outputFileTracingIncludes: {
+      "/**/*": [
+        "../../packages/database/generated/control-client/**/*",
+        "../../packages/database/generated/tenant-client/**/*",
+      ],
+    },
+  },
 };
 
 export default nextConfig;
