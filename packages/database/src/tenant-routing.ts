@@ -1,5 +1,5 @@
-import { PrismaClient as ControlClient } from '@amisi/control-client';
-import { PrismaClient as TenantClient } from '@amisi/tenant-client';
+import { PrismaClient as ControlClient } from '../generated/control-client';
+import { PrismaClient as TenantClient } from '../generated/tenant-client';
 import { config } from './config';
 
 // Global singleton for the Control Plane (System of Record)
