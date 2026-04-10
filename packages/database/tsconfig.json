@@ -13,7 +13,7 @@
     "include": [
         "src/index.ts",
         "src/config.ts",
-        "src/tenant-routing.ts",
+        "src/client.ts",
         "src/provision.ts"
     ]
 }
