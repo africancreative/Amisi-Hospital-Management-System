@@ -9,8 +9,9 @@
         "./client": "./src/client.ts"
     },
     "scripts": {
-        "build": "pnpm db:generate && tsc",
-        "db:generate": "pnpm db:generate:control && pnpm db:generate:tenant",
+        "build": "pnpm generate && tsc",
+        "generate": "prisma generate --schema=./prisma/control.prisma && prisma generate --schema=./prisma/tenant.prisma",
+        "db:generate": "pnpm generate",
         "db:generate:control": "prisma generate --schema=./prisma/control.prisma",
         "db:generate:tenant": "prisma generate --schema=./prisma/tenant.prisma",
         "db:push:control": "prisma db push --schema=./prisma/control.prisma",

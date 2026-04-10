@@ -2,9 +2,24 @@ import { Building2, ShieldCheck, ArrowRight, Activity, Users, Zap, CheckCircle2 
 import * as LucideIcons from "lucide-react";
 import Link from "next/link";
 import { getGlobalSettings } from "./actions/system-actions";
+import { cookies } from "next/headers";
+import { getControlDb } from "@/lib/db";
 
 export default async function LandingPage() {
   const settings = await getGlobalSettings();
+  const cookieStore = await cookies();
+  let tenantSlug = cookieStore.get('amisi-tenant-slug')?.value;
+  const tenantId = cookieStore.get('amisi-tenant-id')?.value;
+  const userRole = cookieStore.get('amisi-user-role')?.value;
+  const isSystemAdmin = cookieStore.get('amisi-is-system-admin')?.value === 'true';
+
+  if (!tenantSlug && tenantId && userRole) {
+    const controlDb = getControlDb();
+    const tenant = await controlDb.tenant.findUnique({ where: { id: tenantId } });
+    if (tenant) {
+      tenantSlug = tenant.slug;
+    }
+  }
 
   const getIcon = (name: string) => {
     const Icon = (LucideIcons as any)[name] || Activity;
@@ -27,12 +42,25 @@ export default async function LandingPage() {
             </span>
           </div>
           <div className="flex items-center gap-4">
-            <Link href="/system/login" className="text-sm font-semibold text-neutral-400 hover:text-white transition-colors">
-              Platform Administration
-            </Link>
-            <Link href="/login" className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold text-sm hover:from-blue-500 hover:to-indigo-500 transition-all flex items-center gap-2 shadow-lg shadow-blue-600/20">
-              Hospital Login <ArrowRight className="h-4 w-4" />
-            </Link>
+            {isSystemAdmin ? (
+              <Link href="/system/dashboard" className="text-sm font-semibold text-neutral-400 hover:text-white transition-colors">
+                System Dashboard
+              </Link>
+            ) : (
+              <Link href="/system/login" className="text-sm font-semibold text-neutral-400 hover:text-white transition-colors">
+                Platform Administration
+              </Link>
+            )}
+            
+            {userRole && tenantSlug ? (
+              <Link href={`/${tenantSlug}`} className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-sm hover:from-emerald-500 hover:to-teal-500 transition-all flex items-center gap-2 shadow-lg shadow-emerald-600/20">
+                My Dashboard <ArrowRight className="h-4 w-4" />
+              </Link>
+            ) : (
+              <Link href="/login" className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold text-sm hover:from-blue-500 hover:to-indigo-500 transition-all flex items-center gap-2 shadow-lg shadow-blue-600/20">
+                Hospital Login <ArrowRight className="h-4 w-4" />
+              </Link>
+            )}
           </div>
         </div>
       </nav>

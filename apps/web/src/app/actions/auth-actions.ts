@@ -47,6 +47,7 @@ export async function loginHospitalUser(prevState: AuthActionState, formData: Fo
         // 3. Set Session Cookies
         const cookieStore = await cookies();
         cookieStore.set('amisi-tenant-id', tenant.id, { path: '/' });
+        cookieStore.set('amisi-tenant-slug', tenant.slug, { path: '/' });
         cookieStore.set('amisi-user-id', user.id, { path: '/' });
         cookieStore.set('amisi-user-role', user.role, { path: '/' });
         cookieStore.set('amisi-user-name', `${user.firstName} ${user.lastName}`, { path: '/' });
@@ -121,6 +122,7 @@ export async function loginSystemAdmin(formData: FormData): Promise<void> {
 export async function logout() {
     const cookieStore = await cookies();
     cookieStore.delete('amisi-tenant-id');
+    cookieStore.delete('amisi-tenant-slug');
     cookieStore.delete('amisi-user-role');
     cookieStore.delete('amisi-user-name');
     cookieStore.delete('amisi-is-system-admin');
