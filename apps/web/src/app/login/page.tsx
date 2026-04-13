@@ -2,7 +2,7 @@
 
 import { useActionState, useTransition } from 'react';
 import { loginHospitalUser, type AuthActionState } from '../actions/auth-actions';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Button, Label } from '@amisi/ui';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Button, Label } from '@amisimedos/ui';
 import { Hospital, ShieldAlert, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -32,7 +32,7 @@ export default function LoginPage() {
                         <div className="p-2 bg-blue-600 rounded-lg">
                             <Hospital className="w-6 h-6 text-white" />
                         </div>
-                        <span className="text-xl font-bold text-white tracking-tight uppercase tracking-tighter italic">Amisi HealthOS</span>
+                        <span className="text-xl font-bold text-white tracking-tight uppercase tracking-tighter italic">AmisiMedOS</span>
                     </div>
                 </div>
 
@@ -110,7 +110,7 @@ export default function LoginPage() {
                 </Card>
 
                 <p className="mt-8 text-center text-neutral-500 text-sm">
-                    Protected by Amisi HealthOS Security Protocol v3.1
+                    Protected by AmisiMedOS Security Protocol v3.1
                 </p>
                 <div className="mt-4 text-center">
                     <a href="/system/login" className="text-xs text-neutral-600 hover:text-amber-500 transition-colors">

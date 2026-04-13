@@ -1,0 +1,43 @@
+import { getTenantBySlug } from '@amisimedos/db';
+import { type NextRequest } from 'next/server';
+
+/**
+ * tRPC Context Resolver
+ * 
+ * Logic flow:
+ * 1. Extract 'x-tenant-slug' from headers (standard for AmisiMedOS multi-tenancy)
+ * 2. Resolve the isolated database client for that specific hospital node
+ * 3. Extract auth session metadata (JWT or Session Cookie)
+ */
+export const createTRPCContext = async (opts: { req: NextRequest }) => {
+  const { req } = opts;
+  
+  // 1. Multi-Tenant Routing (The Core of AmisiMedOS)
+  const tenantSlug = req.headers.get('x-tenant-slug');
+  
+  let db = null;
+  if (tenantSlug) {
+    try {
+      db = await getTenantBySlug(tenantSlug);
+    } catch (e) {
+      console.error(`[tRPC Context] Failed to resolve tenant for slug: ${tenantSlug}`, e);
+    }
+  }
+
+  // 2. Auth Context (Integrating @amisimedos/auth)
+  // Simplified for this stage - extraction from cookies/headers
+  const session = {
+    userId: req.cookies.get('amisi-user-id')?.value,
+    role: req.cookies.get('amisi-user-role')?.value,
+    tenantId: req.cookies.get('amisi-tenant-id')?.value,
+  };
+
+  return {
+    req,
+    db,
+    session,
+    tenantSlug,
+  };
+};
+
+export type Context = Awaited<ReturnType<typeof createTRPCContext>>;

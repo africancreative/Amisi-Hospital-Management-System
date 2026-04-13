@@ -3,20 +3,32 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   outputFileTracingRoot: path.join(__dirname, "../../"),
-  serverExternalPackages: ['@amisi/database'],
+  output: process.env.STANDALONE_BUILD === 'true' ? 'standalone' : undefined,
+  serverExternalPackages: ['@amisimedos/db'],
   transpilePackages: [
-    "@amisi/auth",
-    "@amisi/realtime",
-    "@amisi/sync-engine",
-    "@amisi/ui"
+    "@amisimedos/auth",
+    "@amisimedos/chat",
+    "@amisimedos/sync",
+    "@amisimedos/ui"
   ],
-  experimental: {
-    outputFileTracingIncludes: {
-      "/**/*": [
-        "../../packages/database/generated/control-client/**/*",
-        "../../packages/database/generated/tenant-client/**/*",
-      ],
-    },
+  outputFileTracingIncludes: {
+    "/**/*": [
+      "../../packages/db/generated/control-client/**/*",
+      "../../packages/db/generated/tenant-client/**/*",
+    ],
+  },
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          { key: 'X-XSS-Protection', value: '1; mode=block' },
+          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+        ],
+      },
+    ];
   },
 };
 

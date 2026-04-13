@@ -6,23 +6,23 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        const { financialRecordId, tenantId } = body;
+        const { invoiceId, tenantId } = body;
 
-        if (!financialRecordId || !tenantId) {
-            return NextResponse.json({ error: 'Missing financialRecordId or tenantId' }, { status: 400 });
+        if (!invoiceId || !tenantId) {
+            return NextResponse.json({ error: 'Missing invoiceId or tenantId' }, { status: 400 });
         }
 
         const tenantDb = await getTenantDb(tenantId);
         
-        const financialRecord = await tenantDb.financialRecord.findUnique({
-            where: { id: financialRecordId }
+        const invoice = await tenantDb.invoice.findUnique({
+            where: { id: invoiceId }
         });
 
-        if (!financialRecord) {
-            return NextResponse.json({ error: 'FinancialRecord not found' }, { status: 404 });
+        if (!invoice) {
+            return NextResponse.json({ error: 'Invoice not found' }, { status: 404 });
         }
 
-        if (financialRecord.balanceDue.toNumber() <= 0) {
+        if (invoice.balanceDue.toNumber() <= 0) {
             return NextResponse.json({ error: 'Balance already cleared' }, { status: 400 });
         }
 
@@ -32,10 +32,10 @@ export async function POST(req: NextRequest) {
                 intent: CheckoutPaymentIntent.Capture,
                 purchaseUnits: [
                     {
-                        referenceId: financialRecordId,
+                        referenceId: invoiceId,
                         amount: {
                             currencyCode: 'USD',
-                            value: financialRecord.balanceDue.toNumber().toFixed(2)
+                            value: invoice.balanceDue.toNumber().toFixed(2)
                         }
                     }
                 ]

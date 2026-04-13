@@ -1,4 +1,4 @@
-import { Role } from '@amisi/database';
+import { Role } from '@amisimedos/db';
 
 /**
  * Capability-based permissions for fine-grained access control.

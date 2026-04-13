@@ -1,11 +1,12 @@
 import { cookies } from "next/headers";
-import { Plus, Users, Building2, Activity, TrendingUp, ShieldAlert, Monitor, Globe, ChevronRight } from "lucide-react";
+import { Plus, Users, Building2, Activity, TrendingUp, ShieldAlert, Monitor, Globe, ChevronRight, Key } from "lucide-react";
 import { getPlatformDashboardStats } from "../../actions/dashboard-actions";
 import { getTenants } from "../../actions/tenant-actions";
-import { getGlobalSettings } from "../../actions/system-actions";
+import { getGlobalSettings, listApiKeys } from "../../actions/system-actions";
 import { AuditMonitoring } from "@/components/system/audit-monitoring";
 import { SystemAccounting } from "@/components/system/SystemAccounting";
 import { SystemSettingsForm } from "@/components/system/SystemSettingsForm";
+import { ApiKeyManager } from "@/components/system/ApiKeyManager";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -22,9 +23,11 @@ export default async function SystemDashboardPage({
     redirect('/system/login');
   }
 
-  const [stats, settings] = await Promise.all([
+  const [stats, settings, tenants, allApiKeys] = await Promise.all([
     getPlatformDashboardStats(),
-    getGlobalSettings()
+    getGlobalSettings(),
+    getTenants(),
+    listApiKeys()
   ]);
 
   return (
@@ -48,7 +51,7 @@ export default async function SystemDashboardPage({
             </p>
           </div>
           <div className="flex flex-col items-end gap-6 relative z-10">
-             <div className="flex items-center gap-2 p-1 bg-neutral-900/80 backdrop-blur-xl border border-white/5 rounded-2xl shadow-2xl">
+             <div className="flex items-center gap-2 p-1 bg-neutral-900/80 backdrop-blur-xl border border-white/5 rounded-2xl shadow-2xl flex-wrap">
                 <Link href="?tab=overview" className={`px-5 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all ${tab === 'overview' ? 'bg-blue-600 text-white shadow-xl shadow-blue-600/20' : 'text-neutral-500 hover:text-white'}`}>
                     Live Overview
                 </Link>
@@ -57,6 +60,9 @@ export default async function SystemDashboardPage({
                 </Link>
                 <Link href="?tab=security" className={`px-5 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center gap-2 ${tab === 'security' ? 'bg-blue-600 text-white shadow-xl shadow-blue-600/20' : 'text-neutral-500 hover:text-white'}`}>
                     Security Hub
+                </Link>
+                <Link href="?tab=keys" className={`px-5 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center gap-2 ${tab === 'keys' ? 'bg-amber-500 text-black shadow-xl shadow-amber-500/20' : 'text-neutral-500 hover:text-white'}`}>
+                    <Key className="h-3 w-3" /> API Keys
                 </Link>
                 <Link href="?tab=settings" className={`px-5 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center gap-2 ${tab === 'settings' ? 'bg-blue-600 text-white shadow-xl shadow-blue-600/20' : 'text-neutral-500 hover:text-white'}`}>
                     Platform Config
@@ -95,7 +101,7 @@ export default async function SystemDashboardPage({
                 </div>
                 
                 <div className="grid gap-4">
-                  {(await getTenants()).map((tenant: any) => (
+                  {tenants.map((tenant: any) => (
                     <div key={tenant.id} className="flex items-center gap-6 p-6 rounded-[2rem] bg-white/[0.03] border border-white/5 group hover:border-blue-500/30 transition-all hover:bg-blue-600/[0.03] hover:translate-x-2">
                       <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-blue-500/20 to-indigo-500/10 flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform shadow-xl">
                         <Building2 className="h-7 w-7" />
@@ -177,6 +183,8 @@ export default async function SystemDashboardPage({
           </div>
         ) : tab === 'accounting' ? (
            <SystemAccounting />
+        ) : tab === 'keys' ? (
+           <ApiKeyManager tenants={tenants as any} allKeys={allApiKeys} />
         ) : tab === 'settings' ? (
            <SystemSettingsForm />
         ) : (

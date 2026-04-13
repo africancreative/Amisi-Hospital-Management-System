@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { RealtimeEvent } from '@amisi/realtime';
+import { RealtimeEvent } from '@amisimedos/chat';
 
 export function useRealtime(tenantId: string, onUpdate: (event: RealtimeEvent) => void) {
   const [isConnected, setIsConnected] = useState(false);

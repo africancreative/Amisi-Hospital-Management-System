@@ -4,9 +4,9 @@ import { getTenantDb } from '@/lib/db';
 import { revalidatePath } from 'next/cache';
 import { ensureRole } from '@/lib/auth-utils';
 import { logAudit } from '@/lib/audit';
-import { realtimeHub } from '@amisi/realtime';
+import { realtimeHub } from '@amisimedos/chat';
 import { getResolvedTenantId } from '@/lib/tenant';
-import { Role } from '@amisi/database';
+import { Role } from '@amisimedos/db';
 
 // Core Financial Settings
 const ADMIN_APPROVAL_THRESHOLD = 5000.00;

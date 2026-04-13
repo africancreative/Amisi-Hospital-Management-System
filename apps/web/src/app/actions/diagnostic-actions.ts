@@ -4,9 +4,9 @@ import { getTenantDb } from '@/lib/db';
 import { revalidatePath } from 'next/cache';
 import { ensureRole } from '@/lib/auth-utils';
 import { logAudit } from '@/lib/audit';
-import { realtimeHub } from '@amisi/realtime';
+import { realtimeHub } from '@amisimedos/chat';
 import { getResolvedTenantId, getTenantSyncSecret } from '@/lib/tenant';
-import { recordEvent } from '@amisi/sync-engine';
+import { recordEvent } from '@amisimedos/sync';
 
 export async function orderDiagnostic(formData: FormData) {
     await ensureRole(['DOCTOR', 'ADMIN']);

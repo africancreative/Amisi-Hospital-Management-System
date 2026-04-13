@@ -3,7 +3,7 @@
 import { getTenantDb } from '@/lib/db';
 import { revalidatePath } from 'next/cache';
 import { ensureRole } from '@/lib/auth-utils';
-import { Decimal } from '@amisi/database';
+import { Decimal } from '@amisimedos/db';
 
 export type JournalLineInput = {
     accountId: string;

@@ -6,7 +6,7 @@ import { getGlobalAuditLogs, GlobalAuditEntry } from '../../app/actions/audit-ac
 
 /**
  * HIPAA Audit Monitoring Dashboard
- * Provides centralized security oversight for the Amisi HealthOS platform.
+ * Provides centralized security oversight for the AmisiMedOS platform.
  */
 export function AuditMonitoring() {
     const [logs, setLogs] = useState<GlobalAuditEntry[]>([]);

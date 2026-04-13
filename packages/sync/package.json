@@ -1,0 +1,31 @@
+{
+    "name": "@amisimedos/sync",
+    "version": "1.0.0",
+    "description": "Amisi Edge Data Retention and Synchronization Service",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "scripts": {
+        "build": "tsc",
+        "start": "ts-node src/index.ts",
+        "purge": "ts-node src/purge-worker.ts",
+        "sync": "ts-node src/sync-engine.ts"
+    },
+    "exports": {
+      ".": "./dist/index.js",
+      "./journal": "./dist/journal.js",
+      "./resolver": "./dist/resolver.js",
+      "./connectivity/status": "./dist/connectivity/status.js"
+    },
+    "dependencies": {
+        "@amisimedos/db": "workspace:*",
+        "node-cron": "^3.0.3",
+        "axios": "^1.6.8",
+        "crypto-js": "^4.2.0"
+    },
+    "devDependencies": {
+        "ts-node": "^10.9.2",
+        "typescript": "^5.4.5",
+        "@types/node": "^20.12.7",
+        "@types/node-cron": "^3.0.11"
+    }
+}

@@ -49,8 +49,8 @@ export function proxy(request: NextRequest) {
     // 4. Resolve Tenant from Slug or Session
     let tenantId = request.cookies.get('amisi-tenant-id')?.value;
     
-    // 5. LAN-First Detection (HealthOS Edge)
-    const isLocalGateway = request.headers.get('x-healthos-gateway') === 'true';
+    // 5. LAN-First Detection (AmisiMedOS Edge)
+    const isLocalGateway = request.headers.get('x-AmisiMedOS-gateway') === 'true';
     const clientIp = request.headers.get('x-forwarded-for') || '127.0.0.1';
     
     // If the first part of the path is NOT a system route, assume it's a potential tenant slug
@@ -66,10 +66,10 @@ export function proxy(request: NextRequest) {
         }
         
         if (isLocalGateway) {
-            response.headers.set('x-healthos-mode', 'EDGE');
-            response.headers.set('x-healthos-node-ip', clientIp || '127.0.0.1');
+            response.headers.set('x-AmisiMedOS-mode', 'EDGE');
+            response.headers.set('x-AmisiMedOS-node-ip', clientIp || '127.0.0.1');
         } else {
-            response.headers.set('x-healthos-mode', 'CLOUD');
+            response.headers.set('x-AmisiMedOS-mode', 'CLOUD');
         }
         
         return response;

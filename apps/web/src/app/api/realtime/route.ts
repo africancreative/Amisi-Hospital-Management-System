@@ -1,10 +1,10 @@
 import { NextRequest } from 'next/server';
-import { realtimeHub, RealtimeEvent } from '@amisi/realtime';
+import { realtimeHub, RealtimeEvent } from '@amisimedos/chat';
 
 export const runtime = 'nodejs'; // Required for long-running SSE connections
 
 /**
- * HealthOS Real-Time Streaming Endpoint (SSE)
+ * AmisiMedOS Real-Time Streaming Endpoint (SSE)
  * Provides a persistent connection for instant UI updates.
  */
 export async function GET(req: NextRequest) {

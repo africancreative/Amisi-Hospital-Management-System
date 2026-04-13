@@ -19,7 +19,12 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@amisimedos/sync/*": ["../../packages/sync/src/*"],
+      "@amisimedos/auth": ["../../packages/auth/src/index"],
+      "@amisimedos/auth/*": ["../../packages/auth/src/*"],
+      "@amisimedos/db": ["../../packages/db/src/index"],
+      "@amisimedos/db/*": ["../../packages/db/src/*"]
     }
   },
   "include": [

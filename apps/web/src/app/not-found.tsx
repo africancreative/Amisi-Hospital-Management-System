@@ -1,7 +1,7 @@
 'use client';
 
 import { Search, Home, ArrowLeft } from 'lucide-react';
-import { Button } from '@amisi/ui';
+import { Button } from '@amisimedos/ui';
 
 export default function NotFound() {
     return (
@@ -56,7 +56,7 @@ export default function NotFound() {
 
                 <div className="pt-16">
                     <p className="text-[10px] uppercase font-bold tracking-[0.3em] text-neutral-700">
-                        Amisi HealthOS Registry Integrity Protocol v4.0
+                        AmisiMedOS Registry Integrity Protocol v4.0
                     </p>
                 </div>
             </div>

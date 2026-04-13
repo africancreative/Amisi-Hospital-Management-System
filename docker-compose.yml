@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  # 1. Clinical Database (PostgreSQL)
+  db:
+    image: postgres:16-alpine
+    container_name: amisi-clinical-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-amisi2026}
+      POSTGRES_DB: amisimedos
+    ports:
+      - "5432:5432"
+    volumes:
+      - clinical_data:/var/lib/postgresql/data
+    networks:
+      - amisi-network
+
+  # 2. Sovereign KMS (HashiCorp Vault)
+  vault:
+    image: hashicorp/vault:1.15
+    container_name: amisi-kms-vault
+    restart: always
+    ports:
+      - "8200:8200"
+    environment:
+      VAULT_ADDR: 'http://0.0.0.0:8200'
+      VAULT_API_ADDR: 'http://0.0.0.0:8200'
+      VAULT_DEV_ROOT_TOKEN_ID: ${VAULT_TOKEN:-amisi-root-token}
+    cap_add:
+      - IPC_LOCK
+    networks:
+      - amisi-network
+
+  # 3. AmisiMedOS Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: amisi-app-server
+    restart: always
+    depends_on:
+      - db
+      - vault
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:${DB_PASSWORD:-amisi2026}@db:5432/amisimedos
+      - VAULT_TOKEN=${VAULT_TOKEN:-amisi-root-token}
+      - VAULT_ADDR=http://vault:8200
+      - NODE_ENV=production
+    networks:
+      - amisi-network
+
+networks:
+  amisi-network:
+    driver: bridge
+
+volumes:
+  clinical_data:

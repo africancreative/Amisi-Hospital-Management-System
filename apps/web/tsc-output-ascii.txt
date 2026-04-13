@@ -59,10 +59,10 @@ src/app/actions/audit-actions.ts(50,29): error TS7006: Parameter 'log' implicitl
 src/app/actions/audit-actions.ts(69,21): error TS7006: Parameter 'logs' implicitly has an 'any' type.
 src/app/actions/billing-actions.ts(116,9): error TS2322: Type '"READ"' is not assignable to type 'AuditAction'.
 src/app/actions/billing-actions.ts(194,41): error TS2345: Argument of type '"PAYMENT_RECEIVED"' is not assignable to parameter of type 'RealtimeEventType'.
-src/app/actions/diagnostic-actions.ts(9,29): error TS2307: Cannot find module '@amisi/sync-engine' or its corresponding type declarations.
+src/app/actions/diagnostic-actions.ts(9,29): error TS2307: Cannot find module '@amisimedos/sync-engine' or its corresponding type declarations.
 src/app/actions/diagnostic-actions.ts(41,41): error TS2345: Argument of type '"DIAGNOSTIC_ORDERED"' is not assignable to parameter of type 'RealtimeEventType'.
 src/app/actions/diagnostic-actions.ts(96,45): error TS2345: Argument of type '"CRITICAL_RESULT_ALARM"' is not assignable to parameter of type 'RealtimeEventType'.
-src/app/actions/ehr-actions.ts(9,29): error TS2307: Cannot find module '@amisi/sync-engine' or its corresponding type declarations.
+src/app/actions/ehr-actions.ts(9,29): error TS2307: Cannot find module '@amisimedos/sync-engine' or its corresponding type declarations.
 src/app/actions/ehr-actions.ts(189,41): error TS2345: Argument of type '"TRAUMA_ALARM"' is not assignable to parameter of type 'RealtimeEventType'.
 src/app/actions/him-actions.ts(16,23): error TS2322: Type '"HIM_OFFICER"' is not assignable to type 'Role'.
 src/app/actions/him-actions.ts(16,66): error TS2322: Type '"AUDITOR"' is not assignable to type 'Role'.
@@ -89,7 +89,7 @@ src/app/actions/icu-actions.ts(57,51): error TS2345: Argument of type '"ICU_ADMI
 src/app/actions/icu-actions.ts(132,85): error TS2554: Expected 4 arguments, but got 5.
 src/app/actions/icu-actions.ts(171,51): error TS2345: Argument of type '"VENTILATOR_UPDATED"' is not assignable to parameter of type 'RealtimeEventType'.
 src/app/actions/icu-actions.ts(239,51): error TS2345: Argument of type '"ICU_DISCHARGE"' is not assignable to parameter of type 'RealtimeEventType'.
-src/app/actions/ipd-actions.ts(9,29): error TS2307: Cannot find module '@amisi/sync-engine' or its corresponding type declarations.
+src/app/actions/ipd-actions.ts(9,29): error TS2307: Cannot find module '@amisimedos/sync-engine' or its corresponding type declarations.
 src/app/actions/ipd-actions.ts(46,41): error TS2345: Argument of type '"BED_STATUS_CHANGED"' is not assignable to parameter of type 'RealtimeEventType'.
 src/app/actions/ipd-actions.ts(83,41): error TS2345: Argument of type '"MAR_UPDATED"' is not assignable to parameter of type 'RealtimeEventType'.
 src/app/actions/ipd-actions.ts(140,41): error TS2345: Argument of type '"PATIENT_DISCHARGED"' is not assignable to parameter of type 'RealtimeEventType'.
@@ -136,7 +136,7 @@ src/app/actions/payroll-actions.ts(222,23): error TS2322: Type '"HR_MANAGER"' is
 src/app/actions/payroll-actions.ts(294,51): error TS2345: Argument of type '"PAYSLIP_READY"' is not assignable to parameter of type 'RealtimeEventType'.
 src/app/actions/payroll-actions.ts(305,23): error TS2322: Type '"HR_MANAGER"' is not assignable to type 'Role'.
 src/app/actions/payroll-actions.ts(337,23): error TS2322: Type '"HR_MANAGER"' is not assignable to type 'Role'.
-src/app/actions/pharmacy-actions.ts(9,29): error TS2307: Cannot find module '@amisi/sync-engine' or its corresponding type declarations.
+src/app/actions/pharmacy-actions.ts(9,29): error TS2307: Cannot find module '@amisimedos/sync-engine' or its corresponding type declarations.
 src/app/actions/pharmos-actions.ts(86,17): error TS2322: Type '{ drugName: string; dosage: string; quantity: number; frequency: string; duration: string | undefined; }[]' is not assignable to type '(Without<PrescriptionItemCreateWithoutPrescriptionInput, PrescriptionItemUncheckedCreateWithoutPrescriptionInput> & PrescriptionItemUncheckedCreateWithoutPrescriptionInput) | (Without<...> & PrescriptionItemCreateWithoutPrescriptionInput) | PrescriptionItemCreateWithoutPrescriptionInput[] | PrescriptionItemUnchecked...'.
   Type '{ drugName: string; dosage: string; quantity: number; frequency: string; duration: string | undefined; }[]' is not assignable to type 'PrescriptionItemCreateWithoutPrescriptionInput[]'.
     Type '{ drugName: string; dosage: string; quantity: number; frequency: string; duration: string | undefined; }' is not assignable to type 'PrescriptionItemCreateWithoutPrescriptionInput'.
@@ -172,8 +172,8 @@ src/app/actions/surgery-actions.ts(267,98): error TS2554: Expected 4 arguments, 
 src/app/actions/surgery-actions.ts(289,32): error TS2322: Type '"ANESTHESIOLOGIST"' is not assignable to type 'Role'.
 src/app/actions/surgery-actions.ts(289,52): error TS2322: Type '"SURGEON"' is not assignable to type 'Role'.
 src/app/actions/surgery-actions.ts(347,41): error TS2345: Argument of type '"ICU_ADMISSION_PENDING"' is not assignable to parameter of type 'RealtimeEventType'.
-src/app/actions/tenant-actions.ts(3,40): error TS2305: Module '"@amisi/database"' has no exported member 'createTenantDatabase'.
-src/app/api/sync/route.ts(4,41): error TS2307: Cannot find module '@amisi/sync-engine' or its corresponding type declarations.
+src/app/actions/tenant-actions.ts(3,40): error TS2305: Module '"@amisimedos/database"' has no exported member 'createTenantDatabase'.
+src/app/api/sync/route.ts(4,41): error TS2307: Cannot find module '@amisimedos/sync-engine' or its corresponding type declarations.
 src/app/error.tsx(64,29): error TS2322: Type '{ children: Element; asChild: true; variant: string; className: string; }' is not assignable to type 'IntrinsicAttributes & ButtonProps & RefAttributes<HTMLButtonElement>'.
   Property 'variant' does not exist on type 'IntrinsicAttributes & ButtonProps & RefAttributes<HTMLButtonElement>'.
 src/app/hospitals/[id]/page.tsx(26,10): error TS2305: Module '"@/app/actions/tenant-actions"' has no exported member 'getTenantById'.

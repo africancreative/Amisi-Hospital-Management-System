@@ -39,8 +39,8 @@ export async function getTenantDashboardStats() {
         where: { status: 'pending' }
     });
 
-    const revenue = await db.financialRecord.findMany({
-        where: { status: 'paid' },
+    const revenue = await db.invoice.findMany({
+        where: { status: 'PAID' },
         select: { totalAmount: true }
     });
 

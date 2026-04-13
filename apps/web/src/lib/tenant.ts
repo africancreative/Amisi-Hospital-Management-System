@@ -1,5 +1,5 @@
 import { headers } from 'next/headers';
-import { getControlDb } from '@amisi/database';
+import { getControlDb } from '@amisimedos/db';
 
 /**
  * Resolves the current tenant ID from the injected middleware headers.

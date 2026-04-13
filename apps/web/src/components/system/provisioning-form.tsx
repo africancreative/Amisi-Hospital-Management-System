@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { createTenant } from '../../app/actions/tenant-actions';
-import { Button, Input, Card, CardContent, CardHeader, CardTitle, Label } from '@amisi/ui';
+import { Button, Input, Card, CardContent, CardHeader, CardTitle, Label } from '@amisimedos/ui';
 import { CheckCircle2, Loader2, Globe, Shield, Activity, ChevronRight, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -29,7 +29,7 @@ export function ProvisioningForm() {
         try {
             // Simulated progress steps for better UX
             setTimeout(() => setStatus(s => [...s, 'Creating isolated Neon Database...']), 1200);
-            setTimeout(() => setStatus(s => [...s, 'Applying HealthOS Tenant Schema...']), 2400);
+            setTimeout(() => setStatus(s => [...s, 'Applying AmisiMedOS Tenant Schema...']), 2400);
             setTimeout(() => setStatus(s => [...s, 'Seeding clinical baseline (ER/Lab/Pharmacy)...']), 3600);
             setTimeout(() => setStatus(s => [...s, 'Finalizing security certificates...']), 4800);
 

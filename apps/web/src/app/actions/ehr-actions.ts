@@ -4,9 +4,9 @@ import { getTenantDb } from '@/lib/db';
 import { revalidatePath } from 'next/cache';
 import { ensureRole } from '@/lib/auth-utils';
 import { logAudit } from '@/lib/audit';
-import { realtimeHub } from '@amisi/realtime';
+import { realtimeHub } from '@amisimedos/chat';
 import { getResolvedTenantId, getTenantSyncSecret } from '@/lib/tenant';
-import { recordEvent } from '@amisi/sync-engine';
+import { recordEvent } from '@amisimedos/sync';
 
 import { generateMRN } from '@/lib/mrn';
 
@@ -236,7 +236,7 @@ export async function getPatientById(id: string) {
             encounters: { orderBy: { createdAt: 'desc' }, include: { vitals: true } },
             chats: { orderBy: { timestamp: 'desc' } },
             allergies: true,
-            financialRecords: { orderBy: { createdAt: 'desc' } },
+            invoices: { orderBy: { createdAt: 'desc' } },
         }
     });
 }

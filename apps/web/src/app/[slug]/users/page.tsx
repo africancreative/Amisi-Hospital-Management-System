@@ -1,7 +1,7 @@
 import { getEmployees, addEmployee, removeEmployee } from '../../actions/user-actions';
-import { Card, CardContent, CardHeader, CardTitle, Button, Input, Label } from '@amisi/ui';
+import { Card, CardContent, CardHeader, CardTitle, Button, Input, Label } from '@amisimedos/ui';
 import { Users, UserPlus, Trash2, Shield, Briefcase, Mail } from 'lucide-react';
-import { Role } from '@amisi/database';
+import { Role } from '@amisimedos/db';
 
 export default async function UsersPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;

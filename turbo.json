@@ -5,7 +5,7 @@
         "build": {
             "dependsOn": [
                 "^build",
-                "@amisi/database#generate"
+                "@amisimedos/db#generate"
             ],
             "inputs": [
                 "$TURBO_DEFAULT$",
@@ -17,10 +17,13 @@
                 "dist/**"
             ],
             "env": [
-                "DATABASE_URL",
+                "NEON_DATABASE_URL",
+                "LOCAL_EDGE_DATABASE_URL",
                 "JWT_SECRET",
                 "CLOUD_SYNC_URL",
-                "NODE_ENV"
+                "NODE_ENV",
+                "CLOUD_MODE",
+                "SYNC_INTERVAL_MS"
             ]
         },
         "generate": {

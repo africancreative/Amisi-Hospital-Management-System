@@ -1,11 +1,11 @@
 {
-  "name": "amisi-hospital-saas",
+  "name": "amisimedos-monorepo",
   "private": true,
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
-    "postinstall": "pnpm --filter @amisi/database db:generate"
+    "postinstall": "pnpm --filter @amisimedos/db db:generate"
   },
   "devDependencies": {
     "turbo": "latest"

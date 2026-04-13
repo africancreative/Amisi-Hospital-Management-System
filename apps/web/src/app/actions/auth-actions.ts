@@ -3,7 +3,7 @@
 import { cookies } from 'next/headers';
 import { getControlDb, getTenantDb, TenantClient } from '@/lib/db';
 import { redirect } from 'next/navigation';
-import { verifyPassword } from '@amisi/auth';
+import { verifyPassword } from '@amisimedos/auth';
 
 import { logAudit } from '@/lib/audit';
 
@@ -89,7 +89,7 @@ export async function loginSystemAdmin(formData: FormData): Promise<void> {
                 redirectPath = '/system/login?error=invalid';
             } else {
                 console.log(`[AUTH] Admin found. Initiating secure password verification...`);
-                // Using the unified verifyPassword utility from @amisi/auth
+                // Using the unified verifyPassword utility from @amisimedos/auth
                 const isValid = await verifyPassword(password, admin.passwordHash);
                 
                 if (!isValid) {

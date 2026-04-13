@@ -1,4 +1,4 @@
-import { getTenantDb as getTenantDbFromPackage, getControlDb, type TenantClient } from '@amisi/database';
+import { getTenantDb as getTenantDbFromPackage, getControlDb, type TenantClient } from '@amisimedos/db';
 import { headers } from 'next/headers';
 export { getControlDb, type TenantClient };
 
@@ -29,7 +29,7 @@ export async function getTenantDb(providedTenantId?: string): Promise<TenantClie
     }
 
     if (!tenantId) {
-        throw new Error('No tenant context found. Please ensure you are accessing via a hospital subdomain.');
+        throw new Error('No tenant context found. Please ensure you are accessing via a hospital slug path (e.g., /amisi-premier).');
     }
 
     try {

@@ -17,22 +17,10 @@ import {
     BookOpen,
     LogOut
 } from 'lucide-react';
-import { logout } from '@/app/actions/auth-actions';
+import { BillingResilienceWidget } from './BillingResilienceWidget';
+import { api } from '@/trpc/react';
 
-const navigation = [
-    { name: 'Dashboard', href: '', icon: LayoutDashboard }, 
-    { name: 'Patients', href: '/patients', icon: Users, module: 'EHR', roles: ['DOCTOR', 'NURSE', 'ADMIN', 'MIDWIFE', 'SURGEON', 'ANESTHESIOLOGIST', 'ICU_NURSE'] },
-    { name: 'Billing', href: '/billing', icon: DollarSign, module: 'BILLING', roles: ['ACCOUNTANT', 'ADMIN', 'RECEPTIONIST'] },
-    { name: 'Laboratory', href: '/lab', icon: Microscope, module: 'LAB', roles: ['LAB_TECH', 'DOCTOR', 'ADMIN', 'PATHOLOGIST'] },
-    { name: 'Pharmacy', href: '/pharmacy', icon: Pill, module: 'PHARMACY', roles: ['PHARMACIST', 'DOCTOR', 'ADMIN'] },
-    { name: 'Inventory', href: '/inventory', icon: Package, module: 'INVENTORY', roles: ['PHARMACIST', 'ADMIN', 'PROCUREMENT_MANAGER', 'INVENTORY_CLERK'] },
-    { name: 'HR & Payroll', href: '/hr', icon: Briefcase, module: 'HR', roles: ['HR', 'HR_MANAGER', 'ADMIN'] },
-    { name: 'Accounting', href: '/accounting', icon: BookOpen, module: 'ACCOUNTING', roles: ['ACCOUNTANT', 'ADMIN', 'AUDITOR'] },
-    { name: 'Hospitals', href: '/hospitals', icon: Building2, roles: ['ADMIN'], system: true },
-    { name: 'Users', href: '/users', icon: Users, roles: ['ADMIN'] },
-    { name: 'Analytics', href: '/analytics', icon: Activity, roles: ['ADMIN', 'DOCTOR', 'ACCOUNTANT', 'AUDITOR'] },
-    { name: 'Settings', href: '/settings', icon: Settings, roles: ['ADMIN'] },
-];
+// ... (navigation array remains above)
 
 export default function Sidebar({
     enabledModules = [],
@@ -50,6 +38,11 @@ export default function Sidebar({
     const pathname = usePathname();
     const params = useParams();
     const slug = params?.slug as string;
+
+    // Fetch Billing Status via tRPC
+    const { data: billing } = api.nursing.getBillingStatus.useQuery(undefined, {
+      enabled: !!slug && !isSystemAdmin
+    });
 
     const filteredNavigation = navigation.filter(item => {
         // 1. Module check
@@ -79,7 +72,7 @@ export default function Sidebar({
                     </div>
                     <div className="flex flex-col">
                         <span className="text-sm font-black tracking-tight text-white uppercase">
-                            Amisi <span className="text-emerald-500">HealthOS</span>
+                            Amisi <span className="text-emerald-500">AmisiMedOS</span>
                         </span>
                         <span className="text-[9px] font-black text-gray-500 uppercase tracking-[0.2em] -mt-1">
                             Enterprise Core
@@ -95,6 +88,20 @@ export default function Sidebar({
                     </p>
                     {slug && <span className="text-[10px] text-amber-500 font-bold uppercase">{slug}</span>}
                 </div>
+                
+                {/* Billing Resilience Health Check */}
+                {billing && (
+                  <div className="px-3 mb-6">
+                    <BillingResilienceWidget 
+                      isExpired={billing.isExpired}
+                      isLockout={billing.isLockout}
+                      isWithinGrace={billing.isWithinGrace}
+                      gracePeriodRemaining={billing.gracePeriodRemaining}
+                      planCode={billing.planCode}
+                    />
+                  </div>
+                )}
+
                 <nav className="flex-1 space-y-1">
                     {filteredNavigation.map((item) => {
                         // Resolve actual href

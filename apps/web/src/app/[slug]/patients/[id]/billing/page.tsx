@@ -23,7 +23,7 @@ export default async function PatientBillingPage({ params }: { params: Promise<{
         notFound();
     }
 
-    const totalBalance = patient.financialRecords.reduce((acc: number, r: any) => acc + Number(r.balanceDue), 0);
+    const totalBalance = patient.invoices.reduce((acc: number, r: any) => acc + Number(r.balanceDue), 0);
 
     return (
         <div className="flex-1 overflow-y-auto p-8 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white">
@@ -81,7 +81,7 @@ export default async function PatientBillingPage({ params }: { params: Promise<{
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-100 dark:divide-gray-900">
-                                    {patient.financialRecords.map((record: any) => (
+                                    {patient.invoices.map((record: any) => (
                                         <tr key={record.id} className="group hover:bg-gray-50 dark:hover:bg-gray-900/40 transition-colors">
                                             <td className="px-8 py-5">
                                                 <StatusPill status={record.status} />
@@ -98,7 +98,7 @@ export default async function PatientBillingPage({ params }: { params: Promise<{
                                                 {Number(record.balanceDue) > 0 && (
                                                     <form action={async (formData) => {
                                                         'use server';
-                                                        await recordPayment({ financialRecordId: record.id, amount: Number(record.balanceDue), method: 'CASH' });
+                                                        await recordPayment({ invoiceId: record.id, amount: Number(record.balanceDue), method: 'CASH' });
                                                     }}>
                                                         <button
                                                             className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-500 text-white text-xs font-black uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-500/20 active:scale-95"
@@ -116,7 +116,7 @@ export default async function PatientBillingPage({ params }: { params: Promise<{
                                             </td>
                                         </tr>
                                     ))}
-                                    {patient.financialRecords.length === 0 && (
+                                    {patient.invoices.length === 0 && (
                                         <tr>
                                             <td colSpan={6} className="px-8 py-20 text-center text-gray-500 italic font-medium">
                                                 No financial records found for this patient.

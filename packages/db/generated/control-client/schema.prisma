@@ -1,0 +1,209 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("NEON_DATABASE_URL") // System of record
+}
+
+generator client {
+  provider      = "prisma-client-js"
+  output        = "../generated/control-client"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+}
+
+enum TenantStatus {
+  active
+  suspended
+  terminated
+}
+
+enum DeploymentTier {
+  CLINIC
+  GENERAL
+  RESEARCH
+}
+
+model Tenant {
+  id                     String         @id @default(uuid())
+  name                   String
+  slug                   String         @unique
+  dbUrl                  String         @map("db_url")
+  encryptionKeyReference String         @map("encryption_key_reference")
+  tier                   DeploymentTier @default(CLINIC)
+  region                 String
+  status                 TenantStatus   @default(active)
+  suspensionReason       String?        @map("suspension_reason")
+  suspendedAt            DateTime?      @map("suspended_at")
+  enabledModules         Json           @default("{}") @map("enabled_modules")
+  publicKeySpki          String?        @map("public_key_spki") @db.Text
+  sharedSecret           String?        @map("shared_secret") @db.Text
+  createdAt              DateTime       @default(now()) @map("created_at")
+  updatedAt              DateTime       @updatedAt @map("updated_at")
+
+  entitlements  TenantModule[]
+  payments      SystemPayment[]
+  subscriptions Subscription[]
+
+  @@map("tenants")
+}
+
+model Module {
+  id          String   @id @default(uuid())
+  name        String
+  code        String   @unique // e.g., 'LAB', 'PHARMACY', 'HR', 'ACCOUNTING'
+  description String?
+  basePrice   Decimal  @default(0) @map("base_price") @db.Decimal(10, 2)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  tenants TenantModule[]
+
+  @@map("modules")
+}
+
+model TenantModule {
+  id       String @id @default(uuid())
+  tenantId String @map("tenant_id")
+  tenant   Tenant @relation(fields: [tenantId], references: [id])
+  moduleId String @map("module_id")
+  module   Module @relation(fields: [moduleId], references: [id])
+
+  isEnabled  Boolean   @default(true) @map("is_enabled")
+  validUntil DateTime? @map("valid_until")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([tenantId, moduleId])
+  @@map("tenant_modules")
+}
+
+model SystemAdmin {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("system_admins")
+}
+
+model GlobalSettings {
+  id              String  @id @default("singleton")
+  platformName    String  @default("AmisiMedOS") @map("platform_name")
+  platformLogoUrl String? @map("platform_logo_url")
+  platformSlogan  String? @map("platform_slogan")
+
+  // Frontend CMS Content
+  heroTitle    String? @map("hero_title")
+  heroSubtitle String? @map("hero_subtitle")
+  heroCTA      String? @map("hero_cta")
+  heroImageUrl String? @map("hero_image_url")
+
+  showHero     Boolean @default(true) @map("show_hero")
+  showFeatures Boolean @default(true) @map("show_features")
+
+  feature1Title String? @map("feature1_title")
+  feature1Desc  String? @map("feature1_desc")
+  feature1Icon  String? @map("feature1_icon")
+
+  feature2Title String? @map("feature2_title")
+  feature2Desc  String? @map("feature2_desc")
+  feature2Icon  String? @map("feature2_icon")
+
+  feature3Title String? @map("feature3_title")
+  feature3Desc  String? @map("feature3_desc")
+  feature3Icon  String? @map("feature3_icon")
+
+  // PayPal Settings
+  paypalClientId     String? @map("paypal_client_id")
+  paypalClientSecret String? @map("paypal_client_secret")
+  paypalEnv          String  @default("sandbox") @map("paypal_env")
+
+  // M-Pesa (Daraja) Settings
+  mpesaConsumerKey    String? @map("mpesa_consumer_key")
+  mpesaConsumerSecret String? @map("mpesa_consumer_secret")
+  mpesaPasskey        String? @map("mpesa_passkey")
+  mpesaShortcode      String? @map("mpesa_shortcode")
+
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("global_settings")
+}
+
+model SystemPayment {
+  id       String  @id @default(uuid())
+  tenantId String? @map("tenant_id")
+  tenant   Tenant? @relation(fields: [tenantId], references: [id])
+
+  amount    Decimal @db.Decimal(10, 2)
+  currency  String  @default("USD")
+  method    String // 'PAYPAL' | 'MPESA'
+  status    String // 'COMPLETED' | 'PENDING' | 'FAILED'
+  reference String  @unique // Provider Transaction ID
+
+  customerEmail String @map("customer_email")
+  customerName  String @map("customer_name")
+
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("system_payments")
+}
+
+model Plan {
+  id          String  @id @default(uuid())
+  name        String
+  code        String  @unique // 'STARTER', 'PRO', 'ENTERPRISE'
+  description String?
+  price       Decimal @db.Decimal(10, 2)
+  currency    String  @default("USD")
+  features    Json    @default("[]") // List of enabled feature codes
+
+  maxPatients Int @default(100) @map("max_patients")
+  maxUsers    Int @default(5) @map("max_users")
+  maxBeds     Int @default(10) @map("max_beds")
+
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  subscriptions Subscription[]
+
+  @@map("plans")
+}
+
+model Subscription {
+  id       String @id @default(uuid())
+  tenantId String @map("tenant_id")
+  tenant   Tenant @relation(fields: [tenantId], references: [id])
+  planId   String @map("plan_id")
+  plan     Plan   @relation(fields: [planId], references: [id])
+
+  status    String    @default("ACTIVE") // 'ACTIVE', 'EXPIRED', 'CANCELLED'
+  startDate DateTime  @default(now()) @map("start_date")
+  endDate   DateTime? @map("end_date")
+
+  // Resilient Billing
+  signedToken String? @map("signed_token") @db.Text // JWT signed by Cloud Hub for offline verification
+
+  autoRenew Boolean @default(true) @map("auto_renew")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("subscriptions")
+}
+
+model PatientIndex {
+  biometricHash String @id @map("biometric_hash")
+  biometricType String @map("biometric_type")
+  tenantId      String @map("tenant_id")
+  patientId     String @map("patient_id")
+
+  description String?
+  timestamp   DateTime @default(now())
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([tenantId])
+  @@map("patient_index")
+}

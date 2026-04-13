@@ -21,7 +21,7 @@ export async function submitHospitalInquiry(data: {
 
     try {
         const result = await resend.emails.send({
-            from: 'HealthOS Onboarding <onboarding@healthos.amisigenuine.com>',
+            from: 'AmisiMedOS Onboarding <onboarding@AmisiMedOS.amisigenuine.com>',
             to: ['amisi@amisigenuine.com'],
             subject: `New Hospital Inquiry: ${data.hospitalName}`,
             html: `
@@ -35,7 +35,7 @@ export async function submitHospitalInquiry(data: {
                 <p><strong>Additional Notes:</strong><br/>${data.notes}</p>
                 <br/>
                 <hr/>
-                <p><small>System Generated. Please log into the HealthOS System Admin panel to provision their Tenant.</small></p>
+                <p><small>System Generated. Please log into the AmisiMedOS System Admin panel to provision their Tenant.</small></p>
             `,
         });
 

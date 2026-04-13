@@ -3,7 +3,7 @@
 import { getTenantDb } from '@/lib/db';
 import { ensureRole } from '@/lib/auth-utils';
 import { revalidatePath } from 'next/cache';
-import { Decimal, Role } from '@amisi/database';
+import { Decimal, Role } from '@amisimedos/db';
 
 export async function getEmployees() {
     await ensureRole(['ADMIN']);

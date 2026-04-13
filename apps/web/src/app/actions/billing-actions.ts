@@ -4,7 +4,7 @@ import { getTenantDb } from '@/lib/db';
 import { revalidatePath } from 'next/cache';
 import { ensureRole } from '@/lib/auth-utils';
 import { logAudit } from '@/lib/audit';
-import { realtimeHub } from '@amisi/realtime';
+import { realtimeHub } from '@amisimedos/chat';
 import { getResolvedTenantId } from '@/lib/tenant';
 import { postInventoryJournalEntry } from './accounting-bridge';
 
@@ -25,19 +25,19 @@ export async function captureCharge(data: {
     await ensureRole(['DOCTOR', 'NURSE', 'ADMIN']);
     const db = await getTenantDb();
 
-    // Find or create the FinancialRecord for this encounter
-    let record = await db.financialRecord.findFirst({
+    // Find or create the Invoice for this encounter
+    let record = await db.invoice.findFirst({
         where: data.encounterId ? { encounterId: data.encounterId } : { patientId: data.patientId }
     });
 
     if (!record) {
-        record = await db.financialRecord.create({
+        record = await db.invoice.create({
             data: {
                 patientId: data.patientId,
                 encounterId: data.encounterId,
                 totalAmount: 0,
                 balanceDue: 0,
-                status: 'pending',
+                status: 'OPEN',
             }
         });
     }
@@ -45,20 +45,21 @@ export async function captureCharge(data: {
     const quantity = data.quantity ?? 1;
     const subtotal = quantity * data.unitPrice;
 
-    const item = await db.invoiceItem.create({
+    const item = await db.billItem.create({
         data: {
-            financialRecordId: record.id,
+            invoiceId: record.id,
+            visitId: data.encounterId || '', // Assuming encounterId as visitId for now in this legacy action
             description: data.description,
             quantity,
             unitPrice: data.unitPrice,
-            subtotal,
-            isTaxable: data.isTaxable ?? false,
-            paymentStatus: 'UNPAID',
+            totalPrice: subtotal,
+            category: 'GENERAL',
+            status: 'UNPAID',
         }
     });
 
-    // Update financial record totals
-    await db.financialRecord.update({
+    // Update invoice totals
+    await db.invoice.update({
         where: { id: record.id },
         data: {
             totalAmount: { increment: subtotal },
@@ -88,18 +89,18 @@ export async function captureCharge(data: {
 // CLAIM SCRUBBING — CMS coding validation before submission
 // ---------------------------------------------------------------------------
 
-export async function scrubClaim(financialRecordId: string) {
+export async function scrubClaim(invoiceId: string) {
     const db = await getTenantDb();
-    const record = await db.financialRecord.findUnique({
-        where: { id: financialRecordId },
-        include: { items: true }
+    const record = await db.invoice.findUnique({
+        where: { id: invoiceId },
+        include: { billItems: true }
     });
 
-    if (!record) throw new Error('Financial record not found');
+    if (!record) throw new Error('Invoice not found');
 
     const errors: string[] = [];
 
-    for (const item of record.items) {
+    for (const item of record.billItems) {
         // Flag items with no CPT/ICD-10 (CMS requirement)
         // Note: these fields will be available after pnpm db:generate completes
         if (!('cptCode' in item) || !(item as any).cptCode) {
@@ -113,11 +114,11 @@ export async function scrubClaim(financialRecordId: string) {
     const valid = errors.length === 0;
 
     await logAudit({
-        action: 'READ', resource: 'FinancialRecord', resourceId: financialRecordId,
+        action: 'READ', resource: 'Invoice', resourceId: invoiceId,
         details: { action: 'CLAIM_SCRUB', valid, errorCount: errors.length }
     });
 
-    return { valid, errors, itemCount: record.items.length };
+    return { valid, errors, itemCount: record.billItems.length };
 }
 
 // ---------------------------------------------------------------------------
@@ -125,7 +126,7 @@ export async function scrubClaim(financialRecordId: string) {
 // ---------------------------------------------------------------------------
 
 export async function recordPayment(data: {
-    financialRecordId: string;
+    invoiceId: string;
     amount: number;
     method: string; // 'CASH', 'CARD', 'INSURANCE', 'MOBILE_MONEY'
     reference?: string;
@@ -135,10 +136,10 @@ export async function recordPayment(data: {
     await ensureRole(['ACCOUNTANT', 'ADMIN']);
     const db = await getTenantDb();
 
-    const record = await db.financialRecord.findUnique({
-        where: { id: data.financialRecordId }
+    const record = await db.invoice.findUnique({
+        where: { id: data.invoiceId }
     });
-    if (!record) throw new Error('Financial record not found');
+    if (!record) throw new Error('Invoice not found');
 
     const fiscalPeriod = new Date().toISOString().slice(0, 7);
 
@@ -146,7 +147,7 @@ export async function recordPayment(data: {
         // 1. Create payment entry
         await tx.payment.create({
             data: {
-                financialRecordId: data.financialRecordId,
+                invoiceId: data.invoiceId,
                 amount: data.amount,
                 method: data.method,
                 reference: data.reference,
@@ -155,11 +156,11 @@ export async function recordPayment(data: {
 
         // 2. Reduce balance due
         const newBalance = Number(record.balanceDue) - data.amount - (data.contractualAdjustment ?? 0);
-        await tx.financialRecord.update({
-            where: { id: data.financialRecordId },
+        await tx.invoice.update({
+            where: { id: data.invoiceId },
             data: {
                 balanceDue: newBalance,
-                status: newBalance <= 0 ? 'paid' : 'partial'
+                status: newBalance <= 0 ? 'PAID' : 'PARTIAL'
             }
         });
     });
@@ -167,9 +168,9 @@ export async function recordPayment(data: {
     // 3. Post payment JE (Cash DR, AR CR)
     await postInventoryJournalEntry({
         type: data.isInsurance ? 'INSURANCE_PAYMENT' : 'PATIENT_PAYMENT',
-        sourceId: data.financialRecordId,
+        sourceId: data.invoiceId,
         amount: data.amount,
-        description: `Payment via ${data.method}: Record ${data.financialRecordId}`,
+        description: `Payment via ${data.method}: Invoice ${data.invoiceId}`,
         fiscalPeriod
     });
 
@@ -177,21 +178,21 @@ export async function recordPayment(data: {
     if (data.contractualAdjustment && data.contractualAdjustment > 0) {
         await postInventoryJournalEntry({
             type: 'CONTRACTUAL_ADJUST',
-            sourceId: data.financialRecordId,
+            sourceId: data.invoiceId,
             amount: data.contractualAdjustment,
-            description: `Insurance contractual adj.: ${data.financialRecordId}`,
+            description: `Insurance contractual adj.: ${data.invoiceId}`,
             fiscalPeriod
         });
     }
 
     await logAudit({
-        action: 'CREATE', resource: 'Payment', resourceId: data.financialRecordId,
+        action: 'CREATE', resource: 'Payment', resourceId: data.invoiceId,
         details: { amount: data.amount, method: data.method, contractualAdjustment: data.contractualAdjustment }
     });
 
     const tenantId = await getResolvedTenantId();
     if (tenantId) {
-        realtimeHub.broadcast(tenantId, 'PAYMENT_RECEIVED', 'FinancialRecord', data.financialRecordId);
+        realtimeHub.broadcast(tenantId, 'PAYMENT_RECEIVED', 'Invoice', data.invoiceId);
     }
 
     revalidatePath('/billing');
@@ -203,10 +204,10 @@ export async function recordPayment(data: {
 
 export async function getPatientInvoice(patientId: string) {
     const db = await getTenantDb();
-    return db.financialRecord.findMany({
+    return db.invoice.findMany({
         where: { patientId },
         include: {
-            items: { orderBy: { createdAt: 'asc' } },
+            billItems: { orderBy: { createdAt: 'asc' } },
             payments: { orderBy: { createdAt: 'asc' } },
             patient: true,
         },
@@ -220,8 +221,8 @@ export async function getPatientInvoice(patientId: string) {
 
 export async function getARAgingReport() {
     const db = await getTenantDb();
-    const allUnpaid = await db.financialRecord.findMany({
-        where: { status: { not: 'paid' }, balanceDue: { gt: 0 } },
+    const allUnpaid = await db.invoice.findMany({
+        where: { status: { not: 'PAID' }, balanceDue: { gt: 0 } },
         include: { patient: { select: { firstName: true, lastName: true, mrn: true } } }
     });
 
@@ -241,38 +242,38 @@ export async function getARAgingReport() {
 
 export async function getInvoiceById(id: string) {
     const db = await getTenantDb();
-    return db.financialRecord.findUnique({
+    return db.invoice.findUnique({
         where: { id },
-        include: { items: true, payments: true, patient: true }
+        include: { billItems: true, payments: true, patient: true }
     });
 }
 
-export async function recordServiceLevelPayment(invoiceItemId: string, amount: number, method?: string) {
+export async function recordServiceLevelPayment(billItemId: string, amount: number, method?: string) {
     const db = await getTenantDb();
-    return db.invoiceItem.update({
-        where: { id: invoiceItemId },
-        data: { paymentStatus: 'PAID' }
+    return db.billItem.update({
+        where: { id: billItemId },
+        data: { status: 'PAID' }
     });
 }
 
 export async function getHospitalRevenueStats() {
     const db = await getTenantDb();
     
-    const paid = await db.financialRecord.aggregate({
-        where: { status: 'paid' },
+    const paid = await db.invoice.aggregate({
+        where: { status: 'PAID' },
         _sum: { totalAmount: true }
     });
     
-    const unpaid = await db.financialRecord.aggregate({
-        where: { status: { not: 'paid' } },
+    const unpaid = await db.invoice.aggregate({
+        where: { status: { not: 'PAID' } },
         _sum: { balanceDue: true }
     });
 
-    const totalInvoicedAgg = await db.financialRecord.aggregate({
+    const totalInvoicedAgg = await db.invoice.aggregate({
         _sum: { totalAmount: true }
     });
 
-    const recentInvoices = await db.financialRecord.findMany({
+    const recentInvoices = await db.invoice.findMany({
         take: 10,
         orderBy: { createdAt: 'desc' },
         include: { patient: true }
@@ -299,27 +300,29 @@ export async function createInvoice(patientId: string, encounterId: string | nul
     const totalAmount = subtotal + tax;
 
     return await db.$transaction(async (tx: any) => {
-        // 2. Create the shell Financial Record
-        const record = await tx.financialRecord.create({
+        // 2. Create the shell Invoice
+        const record = await tx.invoice.create({
             data: {
                 patientId,
                 encounterId: encounterId || undefined,
                 totalAmount,
                 balanceDue: totalAmount,
-                status: 'pending',
+                status: 'OPEN',
             }
         });
 
         // 3. Create all itemized child charges
         for (const item of items) {
-            await tx.invoiceItem.create({
+            await tx.billItem.create({
                 data: {
-                    financialRecordId: record.id,
+                    invoiceId: record.id,
+                    visitId: encounterId || '', // Simplified for this legacy action
                     description: item.description,
                     quantity: item.quantity,
                     unitPrice: item.unitPrice,
-                    subtotal: item.quantity * item.unitPrice,
-                    paymentStatus: 'UNPAID',
+                    totalPrice: item.quantity * item.unitPrice,
+                    status: 'UNPAID',
+                    category: 'GENERAL',
                 }
             });
         }

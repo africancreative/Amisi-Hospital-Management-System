@@ -1,7 +1,7 @@
 const { getControlDb, TenantClient } = require('./packages/database/dist/index');
 
 async function listAllSystemUsers() {
-    console.log('--- AMISI HEALTHOS: COMPREHENSIVE NODE AUDIT ---');
+    console.log('--- AmisiMedOS: COMPREHENSIVE NODE AUDIT ---');
     console.log('================================================\n');
 
     const controlDb = getControlDb();

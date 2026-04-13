@@ -1,0 +1,2168 @@
+// By default this needs a placeholder URL to pass validation during generation.
+// In practice, this is injected dynamically per-tenant at runtime.
+datasource db {
+  provider = "postgresql"
+  url      = env("LOCAL_EDGE_DATABASE_URL")
+}
+
+generator client {
+  provider      = "prisma-client-js"
+  output        = "../generated/tenant-client"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+}
+
+enum SystemStatus {
+  ACTIVE
+  SUSPENDED
+  MAINTENANCE
+}
+
+model HospitalSettings {
+  id              String       @id @default(uuid())
+  hospitalName    String       @map("hospital_name")
+  systemStatus    SystemStatus @default(ACTIVE) @map("system_status")
+  address         String?
+  phone           String?
+  detailedAddress String?      @map("detailed_address")
+  taxId           String?      @map("tax_id")
+  marketingSlogan String?      @map("marketing_slogan")
+  contactEmail    String?      @map("contact_email")
+  logoUrl         String?      @map("logo_url")
+  timezone        String       @default("UTC")
+  lastSyncedAt    DateTime?    @map("last_synced_at")
+
+  // Module Toggles
+  ehrEnabled      Boolean @default(true) @map("ehr_enabled")
+  billingEnabled  Boolean @default(true) @map("billing_enabled")
+  labEnabled      Boolean @default(false) @map("lab_enabled")
+  pharmacyEnabled Boolean @default(false) @map("pharmacy_enabled")
+  hrEnabled       Boolean @default(false) @map("hr_enabled")
+
+  @@map("hospital_settings")
+}
+
+model LocalSubscription {
+  id             String   @id @default("singleton")
+  planCode       String   @map("plan_code") // e.g., 'PRO'
+  status         String // 'ACTIVE', 'EXPIRED'
+  validUntil     DateTime @map("valid_until")
+  gracePeriodEnd DateTime @map("grace_period_end")
+
+  // Security
+  signedToken  String   @map("signed_token") @db.Text // Verified by local public key
+  lastSyncedAt DateTime @default(now()) @map("last_synced_at")
+
+  @@map("local_subscription")
+}
+
+model Patient {
+  id        String   @id @default(uuid())
+  mrn       String   @unique // Medical Record Number (e.g., AM-2024-00001)
+  firstName String   @map("first_name")
+  lastName  String   @map("last_name")
+  dob       DateTime
+  gender    String?
+
+  // Demographics (PII)
+  phone   String?
+  email   String?
+  address String?
+
+  // Biometrics (Global ID)
+  biometricHash String? @map("biometric_hash") // SHA-256 of fingerprint/iris
+  biometricType String? @map("biometric_type") // 'FINGERPRINT', 'IRIS'
+
+  // Clinical Settings
+  respiratoryScale Int @default(1) @map("respiratory_scale") // Scale 1: Normal, Scale 2: CO2 Retainers (COPD)
+
+  // Insurance
+  insuranceProvider String? @map("insurance_provider")
+  insuranceId       String? @map("insurance_id")
+
+  // Emergency Contact
+  emergencyContactName  String? @map("emergency_contact_name")
+  emergencyContactPhone String? @map("emergency_contact_phone")
+
+  version        Int     @default(1)
+  isSynced       Boolean @default(false) @map("is_synced")
+  conflictStatus String? @map("conflict_status") // 'NONE', 'PENDING_MERGE'
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  invoices           Invoice[]
+  clinicalNotes      ClinicalNote[]
+  diagnosticOrders   DiagnosticOrder[]
+  prescriptions      Prescription[]
+  vitals             Vitals[]
+  allergies          Allergy[]
+  encounters         Encounter[]
+  chats              ChatMessage[]
+  dispensingLogs     DispensingLog[]
+  icuMonitoring      ICUMonitoring[]
+  vitalsLogs         VitalsLog[]
+  oncologyTreatments OncologyTreatment[]
+  chemoSessions      ChemoSession[]
+  maternityRecords   MaternityRecord[]
+  deliveryLogs       DeliveryLog[]
+  recordVersions     RecordVersion[]
+  releaseRequests    ReleaseRequest[]
+  consentForms       ConsentForm[]
+  recordAccessGrants RecordAccessGrant[]
+  radiologyOrders    RadiologyOrder[]
+  imagingStudies     ImagingStudy[]
+  radiologyReports   RadiologyReport[]
+  surgeryRequests    SurgeryRequest[]
+  labOrders          LabOrder[]
+  visits             Visit[]
+
+  @@map("patients")
+}
+
+model ChatMessage {
+  id         String   @id @default(uuid())
+  content    String?  @db.Text
+  patientId  String   @map("patient_id")
+  patient    Patient  @relation(fields: [patientId], references: [id])
+  authorId   String   @map("author_id")
+  authorName String   @map("author_name")
+  authorRole String   @map("author_role")
+  timestamp  DateTime @default(now())
+
+  isClinical        Boolean @default(false) @map("is_clinical")
+  isSystemGenerated Boolean @default(false) @map("is_system_generated")
+
+  attachments Attachment[]
+
+  @@index([patientId])
+  @@map("chat_messages")
+}
+
+model UserChatMessage {
+  id         String    @id @default(uuid())
+  content    String    @db.Text
+  senderId   String    @map("sender_id")
+  sender     Employee  @relation("SentMessages", fields: [senderId], references: [id])
+  receiverId String?   @map("receiver_id")
+  receiver   Employee? @relation("ReceivedMessages", fields: [receiverId], references: [id])
+
+  groupId String?    @map("group_id")
+  group   ChatGroup? @relation(fields: [groupId], references: [id])
+
+  read      Boolean   @default(false)
+  timestamp DateTime  @default(now())
+  expiresAt DateTime? @map("expires_at")
+
+  attachments InternalAttachment[]
+
+  @@index([senderId, receiverId])
+  @@index([groupId])
+  @@map("user_chat_messages")
+}
+
+model ChatGroup {
+  id        String   @id @default(uuid())
+  name      String?
+  type      String   @default("DIRECT") // 'DIRECT', 'GROUP', 'SYSTEM'
+  createdAt DateTime @default(now()) @map("created_at")
+
+  members  ChatMember[]
+  messages UserChatMessage[]
+
+  @@map("chat_groups")
+}
+
+model ChatMember {
+  id       String    @id @default(uuid())
+  groupId  String    @map("group_id")
+  group    ChatGroup @relation(fields: [groupId], references: [id])
+  userId   String    @map("user_id")
+  user     Employee  @relation(fields: [userId], references: [id])
+  role     String    @default("MEMBER") // 'ADMIN', 'MEMBER'
+  joinedAt DateTime  @default(now()) @map("joined_at")
+
+  @@unique([groupId, userId])
+  @@map("chat_members")
+}
+
+model InternalAttachment {
+  id        String          @id @default(uuid())
+  messageId String          @map("message_id")
+  message   UserChatMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  type      String // 'image', 'voice', 'video', 'document'
+  url       String          @db.Text
+  fileName  String?         @map("file_name")
+  fileSize  Int?            @map("file_size")
+  createdAt DateTime        @default(now()) @map("created_at")
+
+  @@index([messageId])
+  @@map("internal_attachments")
+}
+
+model Attachment {
+  id        String      @id @default(uuid())
+  messageId String      @map("message_id")
+  message   ChatMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  type      String // 'image', 'voice', 'video', 'document'
+  url       String      @db.Text
+  fileName  String?     @map("file_name")
+  fileSize  Int?        @map("file_size")
+  createdAt DateTime    @default(now()) @map("created_at")
+
+  @@index([messageId])
+  @@map("attachments")
+}
+
+model Encounter {
+  id        String  @id @default(uuid())
+  patientId String  @map("patient_id")
+  patient   Patient @relation(fields: [patientId], references: [id])
+
+  visitId String? @map("visit_id")
+  visit   Visit?  @relation(fields: [visitId], references: [id])
+
+  doctorName String  @map("doctor_name")
+  type       String // e.g., 'Checkup', 'Emergency', 'Inpatient', 'Follow-up'
+  notes      String? @db.Text
+  plan       String? @db.Text
+
+  // Triage & ED SOP (ESI Levels 1-5)
+  esiLevel        Int?     @map("esi_level")
+  triageNotes     String?  @map("triage_notes") @db.Text
+  triageStartedAt DateTime @default(now()) @map("triage_started_at")
+
+  // EMTALA Compliance
+  mseCompletedAt DateTime? @map("mse_completed_at") // Medical Screening Exam
+  isStabilized   Boolean   @default(false) @map("is_stabilized")
+
+  // IPD & Discharge
+  dischargeSummary String?   @map("discharge_summary") @db.Text
+  dischargedAt     DateTime? @map("discharged_at")
+
+  version        Int     @default(1)
+  isSynced       Boolean @default(false) @map("is_synced")
+  conflictStatus String? @map("conflict_status") // 'NONE', 'PENDING_MERGE'
+  conflictData   Json?   @map("conflict_data")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  vitals           Vitals?
+  diagnoses        Diagnosis[]
+  invoice          Invoice?
+  diagnosticOrders DiagnosticOrder[]
+  prescriptions    Prescription[]
+  admission        Admission?
+  marRecords       MedicationAdministration[]
+  icuMonitoring    ICUMonitoring[]
+  maternityRecord  MaternityRecord[]
+  radiologyOrders  RadiologyOrder[]
+  imagingStudies   ImagingStudy[]
+  radiologyReports RadiologyReport[]
+  surgeryRequests  SurgeryRequest[]
+  labOrders        LabOrder[]
+  clinicalNotes    ClinicalNote[]
+
+  @@map("encounters")
+}
+
+model Visit {
+  id        String  @id @default(uuid())
+  patientId String  @map("patient_id")
+  patient   Patient @relation(fields: [patientId], references: [id])
+
+  type   String // 'INPATIENT', 'OUTPATIENT', 'EMERGENCY'
+  status String  @default("OPEN") // 'OPEN', 'CLOSED', 'CANCELLED'
+  reason String? @db.Text
+
+  admittedAt   DateTime  @default(now()) @map("admitted_at")
+  dischargedAt DateTime? @map("discharged_at")
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  encounters    Encounter[]
+  invoices      Invoice[]
+  billItems     BillItem[]
+  clinicalNotes ClinicalNote[]
+
+  @@map("visits")
+}
+
+model ClinicalNote {
+  id          String     @id @default(uuid())
+  visitId     String?    @map("visit_id")
+  visit       Visit?     @relation(fields: [visitId], references: [id])
+  encounterId String?    @map("encounter_id")
+  encounter   Encounter? @relation(fields: [encounterId], references: [id])
+  patientId   String     @map("patient_id")
+  patient     Patient    @relation(fields: [patientId], references: [id])
+  authorId    String     @map("author_id")
+  author      Employee   @relation(fields: [authorId], references: [id])
+
+  type       String  @default("SOAP") // 'SOAP', 'NURSING', 'PROGRESS', 'CONSULT'
+  subjective String? @db.Text
+  objective  String? @db.Text
+  assessment String? @db.Text
+  plan       String? @db.Text
+  content    String? @db.Text // For free-text notes
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("clinical_notes")
+}
+
+model Ward {
+  id    String @id @default(uuid())
+  name  String
+  type  String // 'GENERAL', 'ICU', 'MATERNITY', 'PEDIATRIC'
+  floor Int?
+
+  beds Bed[]
+
+  @@map("wards")
+}
+
+model Bed {
+  id     String @id @default(uuid())
+  wardId String @map("ward_id")
+  ward   Ward   @relation(fields: [wardId], references: [id])
+  number String
+  status String @default("AVAILABLE") // 'AVAILABLE', 'OCCUPIED', 'CLEANING', 'MAINTENANCE'
+
+  admissions    Admission[]
+  icuMonitoring ICUMonitoring[]
+
+  @@map("beds")
+}
+
+model Admission {
+  id          String    @id @default(uuid())
+  encounterId String    @unique @map("encounter_id")
+  encounter   Encounter @relation(fields: [encounterId], references: [id])
+  bedId       String    @map("bed_id")
+  bed         Bed       @relation(fields: [bedId], references: [id])
+
+  attendingPhysicianId String? @map("attending_physician_id")
+  admissionReason      String? @map("admission_reason") @db.Text
+  status               String  @default("ADMITTED") // 'ADMITTED', 'DISCHARGED'
+
+  admittedAt   DateTime  @default(now()) @map("admitted_at")
+  dischargedAt DateTime? @map("discharged_at")
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  transfers AdtTransferEvent[]
+
+  @@map("admissions")
+}
+
+model AdtTransferEvent {
+  id          String    @id @default(uuid())
+  admissionId String    @map("admission_id")
+  admission   Admission @relation(fields: [admissionId], references: [id])
+
+  fromBedId String @map("from_bed_id")
+  toBedId   String @map("to_bed_id")
+
+  reasonForTransfer String? @map("reason_for_transfer") @db.Text
+  transferredByRole String? @map("transferred_by_role") // E.g., 'NURSE_MANAGER'
+
+  transferredAt DateTime @default(now()) @map("transferred_at")
+
+  version  Int     @default(1)
+  isSynced Boolean @default(false) @map("is_synced")
+
+  @@map("adt_transfer_events")
+}
+
+model MedicationAdministration {
+  id          String    @id @default(uuid())
+  encounterId String    @map("encounter_id")
+  encounter   Encounter @relation(fields: [encounterId], references: [id])
+
+  medicationName String  @map("medication_name")
+  dosage         String
+  route          String // 'ORAL', 'IV', 'IM', 'TOPICAL'
+  status         String  @default("GIVEN") // 'GIVEN', 'SKIPPED', 'REFUSED'
+  reasonForSkip  String? @map("reason_for_skip")
+
+  administeredBy String   @map("administered_by")
+  administeredAt DateTime @default(now()) @map("administered_at")
+
+  @@map("medication_administration")
+}
+
+// Pharmacy & Inventory
+model InventoryItem {
+  id          String    @id @default(uuid())
+  name        String
+  description String?
+  category    String // 'Drug', 'Supply', 'Equipment', 'MRO'
+  subCategory String?   @map("sub_category") // 'Antibiotic', 'Ventilator', 'PPE', etc.
+  sku         String?   @unique
+  quantity    Int       @default(0)
+  unit        String // 'tablet', 'vial', 'box'
+  minLevel    Int       @default(10) @map("min_level")
+  expiryDate  DateTime? @map("expiry_date")
+
+  // Asset Management
+  isAsset      Boolean @default(false) @map("is_asset")
+  serialNumber String? @map("serial_number") // For medical equipment
+
+  // Batch/Lot Control
+  batchEnabled Boolean @default(false) @map("batch_enabled") // For drugs
+
+  price Decimal @db.Decimal(10, 2)
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  dispensingRecords  DispensingRecord[]
+  poItems            PurchaseOrderItem[]
+  batches            InventoryBatch[]
+  maintenanceLogs    AssetMaintenance[]
+  vendorCatalogItems VendorCatalogItem[]
+  billItems          BillItem[]
+
+  @@map("inventory_items")
+}
+
+model Prescription {
+  id          String     @id @default(uuid())
+  patientId   String     @map("patient_id")
+  patient     Patient    @relation(fields: [patientId], references: [id])
+  encounterId String?    @map("encounter_id")
+  encounter   Encounter? @relation(fields: [encounterId], references: [id])
+
+  orderedBy String  @map("ordered_by")
+  status    String  @default("pending") // 'pending', 'dispensed', 'cancelled'
+  notes     String? @db.Text
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  items             PrescriptionItem[]
+  dispensingRecords DispensingRecord[]
+  dispensingLogs    DispensingLog[]
+
+  @@map("prescriptions")
+}
+
+model PrescriptionItem {
+  id             String       @id @default(uuid())
+  prescriptionId String       @map("prescription_id")
+  prescription   Prescription @relation(fields: [prescriptionId], references: [id])
+
+  drugName  String @map("drug_name")
+  dosage    String // e.g., '500mg'
+  frequency String // e.g., 'TID'
+  duration  String // e.g., '5 days'
+  quantity  Int
+
+  @@map("prescription_items")
+}
+
+model DispensingRecord {
+  id             String        @id @default(uuid())
+  prescriptionId String?       @map("prescription_id")
+  prescription   Prescription? @relation(fields: [prescriptionId], references: [id])
+  itemId         String        @map("item_id")
+  inventoryItem  InventoryItem @relation(fields: [itemId], references: [id])
+
+  quantityDispensed Int    @map("quantity_dispensed")
+  dispensedBy       String @map("dispensed_by")
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("dispensing_records")
+}
+
+enum Role {
+  DOCTOR
+  NURSE
+  PHARMACIST
+  LAB_TECH
+  ACCOUNTANT
+  HR_MANAGER
+  HR
+  ADMIN
+  MIDWIFE
+  ICU_NURSE
+  ONCOLOGY_NURSE
+  RADIOGRAPHER
+  RADIOLOGIST
+  RECEPTIONIST
+  SECURITY
+  CLEANER
+  DRIVER
+  PATHOLOGIST
+  PROCUREMENT_MANAGER
+  INVENTORY_CLERK
+  ADMISSIONS
+  NURSE_MANAGER
+  HIM_OFFICER
+  AUDITOR
+  SURGEON
+  ANESTHESIOLOGIST
+  OT_MANAGER
+  PATIENT_PORTAL
+}
+
+model Employee {
+  id           String  @id @default(uuid())
+  employeeId   String  @unique @map("employee_id") // e.g., 'EMP-2024-001'
+  firstName    String  @map("first_name")
+  lastName     String  @map("last_name")
+  role         Role    @default(DOCTOR)
+  department   String
+  permissions  Json    @default("[]")
+  email        String  @unique
+  passwordHash String? @map("password_hash")
+  phone        String?
+  nationalId   String? @unique @map("national_id")
+  status       String  @default("ACTIVE") // 'ACTIVE','ON_LEAVE','SUSPENDED','TERMINATED'
+
+  // Contract
+  contractType   String    @default("FULL_TIME") @map("contract_type") // 'FULL_TIME','PART_TIME','CONTRACT','LOCUM'
+  dateJoined     DateTime  @default(now()) @map("date_joined")
+  dateTerminated DateTime? @map("date_terminated")
+  probationEnds  DateTime? @map("probation_ends")
+
+  // Compensation
+  baseSalary Decimal  @map("base_salary") @db.Decimal(10, 2)
+  hourlyRate Decimal? @map("hourly_rate") @db.Decimal(8, 2)
+  currency   String   @default("USD")
+
+  // Professional Credentials
+  licenseNumber   String?   @map("license_number")
+  licenseExpiry   DateTime? @map("license_expiry")
+  licenseBody     String?   @map("license_body") // e.g., 'AMA', 'NMC', 'BPS'
+  credentialsDocs Json?     @map("credentials_docs") // [{name, url, expiry}]
+
+  // Emergency Contact
+  emergencyName  String? @map("emergency_name")
+  emergencyPhone String? @map("emergency_phone")
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  payrollRecords   PayrollRecord[]
+  shifts           ShiftSchedule[]
+  attendanceLogs   AttendanceLog[]
+  payslips         Payslip[]
+  sentMessages     UserChatMessage[] @relation("SentMessages")
+  receivedMessages UserChatMessage[] @relation("ReceivedMessages")
+  clinicalNotes    ClinicalNote[]
+  chatGroups       ChatMember[]
+
+  @@map("employees")
+}
+
+model PayrollRecord {
+  id         String   @id @default(uuid())
+  employeeId String   @map("employee_id")
+  employee   Employee @relation(fields: [employeeId], references: [id])
+
+  periodMonth Int @map("period_month")
+  periodYear  Int @map("period_year")
+
+  baseAmount      Decimal @map("base_amount") @db.Decimal(10, 2)
+  bonusAmount     Decimal @default(0) @map("bonus_amount") @db.Decimal(10, 2)
+  deductionAmount Decimal @default(0) @map("deduction_amount") @db.Decimal(10, 2)
+  netAmount       Decimal @map("net_amount") @db.Decimal(10, 2)
+
+  status String    @default("draft") // 'draft', 'processed', 'paid'
+  paidAt DateTime? @map("paid_at")
+
+  version     Int      @default(1)
+  isSynced    Boolean  @default(false) @map("is_synced")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  // Tax & deductions (per jurisdiction)
+  incomeTax   Decimal  @default(0) @map("income_tax") @db.Decimal(10, 2)
+  nhif        Decimal  @default(0) @map("nhif") @db.Decimal(8, 2) // National Health Insurance
+  nssf        Decimal  @default(0) @map("nssf") @db.Decimal(8, 2) // Social Security
+  allowances  Decimal  @default(0) @map("allowances") @db.Decimal(10, 2)
+  overtimePay Decimal  @default(0) @map("overtime_pay") @db.Decimal(10, 2)
+
+  hoursWorked   Decimal? @map("hours_worked") @db.Decimal(6, 2)
+  overtimeHours Decimal? @map("overtime_hours") @db.Decimal(6, 2)
+
+  payslips Payslip[]
+
+  @@map("payroll_records")
+}
+
+// ===========================================================================
+// HR & PAYROLL MODULE
+// ===========================================================================
+
+model ShiftSchedule {
+  id         String   @id @default(uuid())
+  employeeId String   @map("employee_id")
+  employee   Employee @relation(fields: [employeeId], references: [id])
+
+  shiftDate  DateTime @map("shift_date")
+  startTime  DateTime @map("start_time")
+  endTime    DateTime @map("end_time")
+  shiftType  String   @default("DAY") // 'DAY','NIGHT','ONCALL','WEEKEND'
+  department String
+  ward       String?
+
+  swapRequestedWith String? @map("swap_requested_with") // Employee ID
+  swapStatus        String? @map("swap_status") // 'PENDING','APPROVED','REJECTED'
+  isPublished       Boolean @default(false) @map("is_published")
+  notes             String?
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([employeeId, shiftDate])
+  @@map("shift_schedules")
+}
+
+model AttendanceLog {
+  id         String   @id @default(uuid())
+  employeeId String   @map("employee_id")
+  employee   Employee @relation(fields: [employeeId], references: [id])
+
+  date        DateTime  @db.Date
+  clockIn     DateTime? @map("clock_in")
+  clockOut    DateTime? @map("clock_out")
+  hoursWorked Decimal?  @map("hours_worked") @db.Decimal(5, 2)
+  overtimeHrs Decimal?  @map("overtime_hrs") @db.Decimal(5, 2)
+  status      String    @default("PRESENT") // 'PRESENT','ABSENT','LATE','ON_LEAVE','HOLIDAY'
+
+  // Geofencing / biometric source
+  source      String  @default("MANUAL") // 'BIOMETRIC','QR','MANUAL','MOBILE'
+  offlineMode Boolean @default(false) @map("offline_mode")
+  deviceId    String? @map("device_id")
+  notes       String?
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([employeeId, date])
+  @@index([employeeId, date])
+  @@map("attendance_logs")
+}
+
+model LeaveRequest {
+  id         String @id @default(uuid())
+  employeeId String @map("employee_id")
+
+  leaveType     String // 'ANNUAL','SICK','MATERNITY','PATERNITY','UNPAID','COMPASSIONATE'
+  startDate     DateTime @map("start_date")
+  endDate       DateTime @map("end_date")
+  daysRequested Int      @map("days_requested")
+  reason        String?  @db.Text
+  status        String   @default("PENDING") // 'PENDING','APPROVED','REJECTED','CANCELLED'
+
+  approvedBy      String?   @map("approved_by")
+  approvedAt      DateTime? @map("approved_at")
+  rejectionReason String?   @map("rejection_reason")
+
+  // Medical certificate for sick leave
+  medicalCertUrl String? @map("medical_cert_url")
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("leave_requests")
+}
+
+model Payslip {
+  id              String        @id @default(uuid())
+  employeeId      String        @map("employee_id")
+  employee        Employee      @relation(fields: [employeeId], references: [id])
+  payrollRecordId String        @map("payroll_record_id")
+  payrollRecord   PayrollRecord @relation(fields: [payrollRecordId], references: [id])
+
+  periodMonth Int @map("period_month")
+  periodYear  Int @map("period_year")
+
+  // Earnings
+  baseSalary  Decimal @map("base_salary") @db.Decimal(10, 2)
+  allowances  Decimal @default(0) @db.Decimal(10, 2)
+  overtimePay Decimal @default(0) @map("overtime_pay") @db.Decimal(10, 2)
+  bonus       Decimal @default(0) @db.Decimal(10, 2)
+  grossPay    Decimal @map("gross_pay") @db.Decimal(10, 2)
+
+  // Statutory Deductions
+  incomeTax       Decimal @default(0) @map("income_tax") @db.Decimal(10, 2)
+  nhif            Decimal @default(0) @db.Decimal(8, 2)
+  nssf            Decimal @default(0) @db.Decimal(8, 2)
+  otherDeductions Decimal @default(0) @map("other_deductions") @db.Decimal(10, 2)
+  totalDeductions Decimal @map("total_deductions") @db.Decimal(10, 2)
+
+  netPay Decimal @map("net_pay") @db.Decimal(10, 2)
+
+  // Working hours summary
+  hoursWorked   Decimal @map("hours_worked") @db.Decimal(6, 2)
+  overtimeHours Decimal @default(0) @map("overtime_hours") @db.Decimal(6, 2)
+  daysAbsent    Int     @default(0) @map("days_absent")
+  daysOnLeave   Int     @default(0) @map("days_on_leave")
+
+  status      String    @default("DRAFT") // 'DRAFT','APPROVED','DISBURSED'
+  disbursedAt DateTime? @map("disbursed_at")
+  paymentRef  String?   @map("payment_ref") // Bank transfer reference
+
+  pdfUrl String? @map("pdf_url") // Generated payslip PDF
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([employeeId, periodMonth, periodYear])
+  @@map("payslips")
+}
+
+model DiagnosticOrder {
+  id          String     @id @default(uuid())
+  patientId   String     @map("patient_id")
+  patient     Patient    @relation(fields: [patientId], references: [id])
+  encounterId String?    @map("encounter_id")
+  encounter   Encounter? @relation(fields: [encounterId], references: [id])
+
+  category  String @default("LAB") // 'LAB', 'RADIOLOGY'
+  testName  String @map("test_name")
+  priority  String @default("routine") // 'routine', 'stat', 'urgent'
+  status    String @default("pending") // 'pending', 'collected', 'in_progress', 'completed', 'validated'
+  orderedBy String @map("ordered_by")
+
+  // Tracking & Collection
+  specimenId     String?   @map("specimen_id")
+  collectionTime DateTime? @map("collection_time")
+
+  // Validation
+  validatedAt DateTime? @map("validated_at")
+  validatedBy String?   @map("validated_by")
+  isCritical  Boolean   @default(false) @map("is_critical")
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  results DiagnosticResult[]
+
+  @@map("diagnostic_orders")
+}
+
+model DiagnosticResult {
+  id      String          @id @default(uuid())
+  orderId String          @map("order_id")
+  order   DiagnosticOrder @relation(fields: [orderId], references: [id])
+
+  parameter      String // e.g., 'Hemoglobin', 'Glucose'
+  value          String
+  unit           String?
+  referenceRange String? @map("reference_range")
+  flag           String? // e.g., 'Normal', 'High', 'Low', 'Critical'
+
+  performedBy String? @map("performed_by")
+  verifiedBy  String? @map("verified_by")
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("diagnostic_results")
+}
+
+model Vitals {
+  id          String     @id @default(uuid())
+  patientId   String     @map("patient_id")
+  patient     Patient    @relation(fields: [patientId], references: [id])
+  encounterId String?    @unique @map("encounter_id")
+  encounter   Encounter? @relation(fields: [encounterId], references: [id])
+
+  bloodPressure   String?  @map("blood_pressure") // e.g., '120/80'
+  heartRate       Int?     @map("heart_rate")
+  temperature     Decimal?
+  respiratoryRate Int?     @map("respiratory_rate")
+  spO2            Int?
+  weight          Decimal?
+  height          Decimal?
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("vitals")
+}
+
+model Diagnosis {
+  id          String    @id @default(uuid())
+  encounterId String    @map("encounter_id")
+  encounter   Encounter @relation(fields: [encounterId], references: [id])
+
+  code        String // e.g., ICD-10 Code
+  description String
+  category    String? // e.g., 'Primary', 'Secondary'
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("diagnoses")
+}
+
+model Allergy {
+  id        String  @id @default(uuid())
+  patientId String  @map("patient_id")
+  patient   Patient @relation(fields: [patientId], references: [id])
+
+  substance String
+  reaction  String?
+  severity  String? // e.g., 'Mild', 'Moderate', 'Severe'
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("allergies")
+}
+
+model Invoice {
+  id          String     @id @default(uuid())
+  patientId   String     @map("patient_id")
+  patient     Patient    @relation(fields: [patientId], references: [id])
+  encounterId String?    @unique @map("encounter_id")
+  encounter   Encounter? @relation(fields: [encounterId], references: [id])
+  visitId     String?    @map("visit_id")
+  visit       Visit?     @relation(fields: [visitId], references: [id])
+
+  totalAmount Decimal @default(0) @map("total_amount") @db.Decimal(10, 2)
+  balanceDue  Decimal @default(0) @map("balance_due") @db.Decimal(10, 2)
+  status      String  @default("OPEN") // 'OPEN', 'PARTIAL', 'PAID', 'VOID'
+
+  // Insurance Support
+  payerType             String  @default("CASH") @map("payer_type") // 'CASH', 'INSURANCE', 'CORPORATE'
+  insurancePolicyNumber String? @map("insurance_policy_number")
+  preAuthCode           String? @map("pre_auth_code")
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  billItems BillItem[]
+  payments  Payment[]
+
+  @@map("invoices")
+}
+
+model Payment {
+  id        String  @id @default(uuid())
+  invoiceId String  @map("invoice_id")
+  invoice   Invoice @relation(fields: [invoiceId], references: [id])
+
+  amount    Decimal
+  method    String // e.g., 'cash', 'card', 'insurance', 'mobile_money'
+  reference String? // e.g., Transaction ID
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  allocations PaymentAllocation[]
+
+  @@map("payments")
+}
+
+model BillItem {
+  id        String   @id @default(uuid())
+  visitId   String   @map("visit_id")
+  visit     Visit    @relation(fields: [visitId], references: [id])
+  invoiceId String?  @map("invoice_id")
+  invoice   Invoice? @relation(fields: [invoiceId], references: [id])
+
+  description String
+  quantity    Decimal @db.Decimal(10, 2)
+  unitPrice   Decimal @map("unit_price") @db.Decimal(10, 2)
+  totalPrice  Decimal @map("total_price") @db.Decimal(10, 2)
+
+  status   String @default("UNPAID") // 'UNPAID', 'PARTIAL', 'PAID'
+  category String // 'CONSULTATION', 'LAB', 'PHARMACY', 'PROCEDURE'
+
+  inventoryItemId String?        @map("inventory_item_id")
+  inventoryItem   InventoryItem? @relation(fields: [inventoryItemId], references: [id])
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  allocations PaymentAllocation[]
+
+  @@map("bill_items")
+}
+
+model PaymentAllocation {
+  id         String   @id @default(uuid())
+  paymentId  String   @map("payment_id")
+  payment    Payment  @relation(fields: [paymentId], references: [id])
+  billItemId String   @map("bill_item_id")
+  billItem   BillItem @relation(fields: [billItemId], references: [id])
+
+  amount Decimal @db.Decimal(10, 2)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([paymentId, billItemId])
+  @@map("payment_allocations")
+}
+
+// Accounting Core (IFRS Compliant)
+model Account {
+  id          String  @id @default(uuid())
+  code        String  @unique // e.g., '1010', '4000'
+  name        String
+  type        String // 'ASSET', 'LIABILITY', 'EQUITY', 'REVENUE', 'EXPENSE'
+  description String?
+
+  isActive Boolean @default(true) @map("is_active")
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  journalLines JournalLine[]
+
+  @@map("accounts")
+}
+
+model JournalEntry {
+  id          String   @id @default(uuid())
+  date        DateTime @default(now())
+  description String   @db.Text
+  reference   String? // e.g., Invoice ID, PO ID, GRN ID
+  status      String   @default("POSTED") // 'DRAFT', 'POSTED', 'REVERSED'
+
+  // IFRS & GAAP Compliance
+  accountingStandard String  @default("BOTH") // 'IFRS', 'US_GAAP', 'BOTH'
+  ledgerType         String  @default("GENERAL") // 'GENERAL', 'AR', 'AP', 'INVENTORY'
+  fiscalPeriod       String? @map("fiscal_period")
+
+  sourceType String? @map("source_type") // 'BILLING', 'PHARMACY', 'PROCUREMENT', 'PAYROLL'
+  sourceId   String? @map("source_id")
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  lines JournalLine[]
+
+  @@map("journal_entries")
+}
+
+model JournalLine {
+  id             String       @id @default(uuid())
+  journalEntryId String       @map("journal_entry_id")
+  journalEntry   JournalEntry @relation(fields: [journalEntryId], references: [id])
+
+  accountId String  @map("account_id")
+  account   Account @relation(fields: [accountId], references: [id])
+
+  description String? @db.Text
+  debit       Decimal @default(0) @db.Decimal(15, 2)
+  credit      Decimal @default(0) @db.Decimal(15, 2)
+
+  @@map("journal_lines")
+}
+
+// SCM & Procurement Module
+model Vendor {
+  id            String  @id @default(uuid())
+  name          String
+  taxId         String? @map("tax_id")
+  contactPerson String? @map("contact_person")
+  email         String?
+  phone         String?
+  address       String?
+
+  paymentTerms String? @map("payment_terms") // 'NET30', 'CIA', etc.
+  isInsurance  Boolean @default(false) @map("is_insurance")
+
+  purchaseOrders PurchaseOrder[]
+  catalogItems   VendorCatalogItem[]
+
+  @@map("vendors")
+}
+
+model VendorCatalogItem {
+  id       String @id @default(uuid())
+  vendorId String @map("vendor_id")
+  vendor   Vendor @relation(fields: [vendorId], references: [id])
+
+  inventoryItemId String        @map("inventory_item_id")
+  inventoryItem   InventoryItem @relation(fields: [inventoryItemId], references: [id])
+
+  vendorSku       String? @map("vendor_sku")
+  unitPrice       Decimal @map("unit_price") @db.Decimal(10, 2)
+  minimumOrderQty Int     @default(1) @map("minimum_order_qty")
+  leadTimeDays    Int     @default(7) @map("lead_time_days")
+
+  @@unique([vendorId, inventoryItemId])
+  @@map("vendor_catalog_items")
+}
+
+model PurchaseOrder {
+  id       String @id @default(uuid())
+  vendorId String @map("vendor_id")
+  vendor   Vendor @relation(fields: [vendorId], references: [id])
+
+  status      String  @default("DRAFT") // 'DRAFT', 'PENDING_ADMIN_APPROVAL', 'APPROVED', 'SENT', 'PARTIAL_RECEIPT', 'RECEIVED', 'CANCELLED'
+  totalAmount Decimal @map("total_amount") @db.Decimal(12, 2)
+
+  orderedBy    String   @map("ordered_by")
+  orderedAt    DateTime @default(now()) @map("ordered_at")
+  approvedById String?  @map("approved_by_id")
+
+  items PurchaseOrderItem[]
+  grns  GRN[]
+
+  @@map("purchase_orders")
+}
+
+model PurchaseOrderItem {
+  id              String        @id @default(uuid())
+  purchaseOrderId String        @map("purchase_order_id")
+  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id])
+
+  itemId        String        @map("item_id")
+  inventoryItem InventoryItem @relation(fields: [itemId], references: [id])
+
+  quantity  Int
+  unitPrice Decimal @map("unit_price") @db.Decimal(10, 2)
+  subtotal  Decimal
+
+  @@map("purchase_order_items")
+}
+
+model GRN {
+  id              String        @id @default(uuid())
+  purchaseOrderId String        @map("purchase_order_id")
+  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id])
+
+  receivedDate DateTime @default(now()) @map("received_date")
+  receivedBy   String   @map("received_by")
+  deliveryNote String?  @map("delivery_note")
+
+  items GRNItem[]
+
+  @@map("grns")
+}
+
+model GRNItem {
+  id    String @id @default(uuid())
+  grnId String @map("grn_id")
+  grn   GRN    @relation(fields: [grnId], references: [id])
+
+  itemId    String  @map("item_id")
+  quantity  Int
+  unitPrice Decimal @map("unit_price") @db.Decimal(10, 2)
+
+  batchNumber String?   @map("batch_number")
+  expiryDate  DateTime? @map("expiry_date")
+
+  @@map("grn_items")
+}
+
+model InventoryLocation {
+  id   String @id @default(uuid())
+  name String
+  type String // 'MAIN_STORE', 'PHARMACY', 'WARD'
+
+  bins    InventoryBin[]
+  batches InventoryBatch[]
+
+  @@map("inventory_locations")
+}
+
+model InventoryBin {
+  id         String            @id @default(uuid())
+  locationId String            @map("location_id")
+  location   InventoryLocation @relation(fields: [locationId], references: [id])
+
+  code        String // e.g., 'A1-S2' (Aisle 1, Shelf 2)
+  description String?
+
+  @@map("inventory_bins")
+}
+
+model InventoryBatch {
+  id            String            @id @default(uuid())
+  itemId        String            @map("item_id")
+  inventoryItem InventoryItem     @relation(fields: [itemId], references: [id])
+  locationId    String            @map("location_id")
+  location      InventoryLocation @relation(fields: [locationId], references: [id])
+
+  batchNumber String    @map("batch_number")
+  expiryDate  DateTime? @map("expiry_date")
+  quantity    Int       @default(0)
+
+  @@map("inventory_batches")
+}
+
+model AssetMaintenance {
+  id            String        @id @default(uuid())
+  itemId        String        @map("item_id")
+  inventoryItem InventoryItem @relation(fields: [itemId], references: [id])
+
+  lastServicedAt DateTime? @map("last_serviced_at")
+  technicianName String?   @map("technician_name")
+  notes          String?   @db.Text
+  nextDueDate    DateTime? @map("next_due_date")
+
+  @@map("asset_maintenance")
+}
+
+model EventJournal {
+  id               String   @id @default(uuid())
+  entityType       String   @map("entity_type")
+  entityId         String   @map("entity_id")
+  action           String // 'CREATE', 'UPDATE', 'DELETE'
+  payload          Json?
+  encryptedPayload String?  @map("encrypted_payload") @db.Text
+  timestamp        DateTime @default(now())
+  signature        String?
+  publicKeyId      String?  @map("public_key_id")
+  isSynced         Boolean  @default(false) @map("is_synced")
+  direction        String   @default("OUTGOING") // 'OUTGOING' (Edge->Cloud), 'INCOMING' (Cloud->Edge)
+  sequenceNumber   BigInt   @default(0) @map("sequence_number") // For ordered delta tracking
+
+  @@index([sequenceNumber])
+  @@map("event_journal")
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  actorId    String   @map("actor_id")
+  actorName  String   @map("actor_name")
+  actorRole  String   @map("actor_role")
+  action     String // 'CREATE', 'UPDATE', 'DELETE', 'ACCESS', 'LOGIN', 'EXPORT'
+  resource   String // e.g., 'Patient', 'LabOrder'
+  resourceId String?  @map("resource_id")
+  details    Json?
+  ipAddress  String?  @map("ip_address")
+  userAgent  String?  @map("user_agent")
+  timestamp  DateTime @default(now())
+
+  // Cryptographic integrity
+  hash String? // SHA-256 hash of (previous_hash + current_entry)
+
+  @@index([actorId])
+  @@index([timestamp])
+  @@map("audit_logs")
+}
+
+model SyncNode {
+  id            String   @id @default(uuid())
+  nodeName      String   @map("node_name")
+  nodeType      String   @default("EDGE") // 'EDGE', 'CLOUD'
+  lastHeartbeat DateTime @default(now()) @map("last_heartbeat")
+  version       String
+  status        String   @default("HEALTHY") // 'HEALTHY', 'DEGRADED', 'OFFLINE'
+
+  config Json?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("sync_nodes")
+}
+
+// ===========================================================================
+// SPECIALIZED UNITS — ICU, Oncology, Maternity
+// ===========================================================================
+
+model ICUMonitoring {
+  id          String     @id @default(uuid())
+  patientId   String     @map("patient_id")
+  patient     Patient    @relation(fields: [patientId], references: [id])
+  encounterId String?    @map("encounter_id")
+  encounter   Encounter? @relation(fields: [encounterId], references: [id])
+  bedId       String?    @map("bed_id")
+  bed         Bed?       @relation(fields: [bedId], references: [id])
+
+  admissionReason String @map("admission_reason") @db.Text
+  apacheScore     Int?   @map("apache_score") // APACHE II
+  sofaScore       Int?   @map("sofa_score") // Sequential Organ Failure
+
+  // Ventilator settings
+  ventilatorMode String?  @map("ventilator_mode") // 'IPPV','SIMV','CPAP','BiPAP','NONE'
+  fio2           Decimal? @db.Decimal(4, 2) // 0.21–1.00
+  tidalVolume    Int?     @map("tidal_volume") // mL
+  peep           Decimal? @db.Decimal(4, 1) // cmH2O
+
+  isolationStatus String @default("NONE") @map("isolation_status") // 'NONE','CONTACT','DROPLET','AIRBORNE'
+  codeStatus      String @default("FULL") @map("code_status") // 'FULL','DNR','DNI','COMFORT'
+
+  admittedAt   DateTime  @default(now()) @map("admitted_at")
+  dischargedAt DateTime? @map("discharged_at")
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  vitalsLogs VitalsLog[]
+
+  @@map("icu_monitoring")
+}
+
+model VitalsLog {
+  id              String         @id @default(uuid())
+  patientId       String         @map("patient_id")
+  patient         Patient        @relation(fields: [patientId], references: [id])
+  encounterId     String?        @map("encounter_id")
+  icuMonitoringId String?        @map("icu_monitoring_id")
+  icuMonitoring   ICUMonitoring? @relation(fields: [icuMonitoringId], references: [id])
+
+  recordedAt DateTime @default(now()) @map("recorded_at")
+  recordedBy String   @map("recorded_by")
+
+  bloodPressure   String?  @map("blood_pressure") // '120/80'
+  heartRate       Int?     @map("heart_rate")
+  temperature     Decimal? @db.Decimal(4, 1)
+  respiratoryRate Int?     @map("respiratory_rate")
+  spO2            Int?
+  gcs             Int? // Glasgow Coma Scale (ICU)
+  urineOutputMl   Int?     @map("urine_output_ml") // Per-hour
+  painScore       Int?     @map("pain_score") // 0–10
+
+  // Drug infusion snapshot (ICU drips)
+  infusionData Json? @map("infusion_data") // [{drug, rate_ml_hr, concentration}]
+
+  source     String  @default("MANUAL") // 'MANUAL','DEVICE','IMPORT'
+  isCritical Boolean @default(false) @map("is_critical")
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([patientId, recordedAt(sort: Desc)])
+  @@map("vitals_logs")
+}
+
+model OncologyTreatment {
+  id           String  @id @default(uuid())
+  patientId    String  @map("patient_id")
+  patient      Patient @relation(fields: [patientId], references: [id])
+  oncologistId String  @map("oncologist_id")
+
+  protocolName      String  @map("protocol_name") // 'CHOP', 'FOLFOX', 'AC-T'
+  cancerType        String  @map("cancer_type")
+  stage             String? // 'I','II','III','IV'
+  intent            String? // 'CURATIVE','PALLIATIVE','ADJUVANT'
+  totalCycles       Int     @map("total_cycles")
+  currentCycle      Int     @default(0) @map("current_cycle")
+  cycleIntervalDays Int     @default(21) @map("cycle_interval_days")
+
+  startDate DateTime? @map("start_date")
+  endDate   DateTime? @map("end_date")
+  status    String    @default("PLANNED") // 'PLANNED','ACTIVE','COMPLETED','DISCONTINUED'
+
+  response              String? // 'CR','PR','SD','PD'
+  discontinuationReason String? @map("discontinuation_reason") @db.Text
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  sessions ChemoSession[]
+
+  @@map("oncology_treatments")
+}
+
+model ChemoSession {
+  id          String            @id @default(uuid())
+  treatmentId String            @map("treatment_id")
+  treatment   OncologyTreatment @relation(fields: [treatmentId], references: [id])
+  patientId   String            @map("patient_id")
+  patient     Patient           @relation(fields: [patientId], references: [id])
+
+  cycleNumber   Int       @map("cycle_number")
+  sessionNumber Int       @map("session_number")
+  scheduledDate DateTime  @map("scheduled_date")
+  actualDate    DateTime? @map("actual_date")
+  status        String    @default("SCHEDULED") // 'SCHEDULED','COMPLETED','HELD','CANCELLED'
+
+  // Pre-chemo assessment gate
+  anc             Decimal? @db.Decimal(5, 2) // Absolute Neutrophil Count
+  platelets       Int? // Platelet count (10³/µL)
+  weightKg        Decimal? @map("weight_kg") @db.Decimal(5, 1)
+  bsa             Decimal? @db.Decimal(4, 2) // Body Surface Area (m²)
+  preChemoCleared Boolean  @default(false) @map("pre_chemo_cleared")
+
+  // Drug infusions and outcomes (JSONB for CTCAE flexibility)
+  drugs      Json? // [{name, dose_mg_m2, calculated_dose, rate, duration_hr}]
+  toxicities Json? // [{drug, ctcae_grade, type, description}]
+
+  sessionNotes        String? @map("session_notes") @db.Text
+  adverseEvent        Boolean @default(false) @map("adverse_event")
+  doseReduced         Boolean @default(false) @map("dose_reduced")
+  doseReductionReason String? @map("dose_reduction_reason") @db.Text
+
+  infusionStart DateTime? @map("infusion_start")
+  infusionEnd   DateTime? @map("infusion_end")
+  nurseId       String?   @map("nurse_id")
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("chemo_sessions")
+}
+
+model MaternityRecord {
+  id          String     @id @default(uuid())
+  patientId   String     @map("patient_id")
+  patient     Patient    @relation(fields: [patientId], references: [id])
+  encounterId String?    @map("encounter_id")
+  encounter   Encounter? @relation(fields: [encounterId], references: [id])
+
+  // ANC Booking Data
+  gravida             Int // Total pregnancies (including current)
+  para                Int // Prior deliveries after 20 weeks
+  lmp                 DateTime // Last Menstrual Period
+  edd                 DateTime // Estimated Due Date
+  gestationalAgeWeeks Int?     @map("gestational_age_weeks")
+
+  bloodGroup    String? @map("blood_group") // 'A+','B-', etc.
+  rhesus        String? // 'Positive','Negative'
+  hivStatus     String? @map("hiv_status") // 'Positive','Negative','Unknown'
+  pmtctEnrolled Boolean @default(false) @map("pmtct_enrolled")
+
+  riskLevel   String   @default("LOW") @map("risk_level") // 'LOW','MEDIUM','HIGH'
+  riskFactors String[] @map("risk_factors")
+
+  ancVisitCount Int       @default(0) @map("anc_visit_count")
+  nextAncDate   DateTime? @map("next_anc_date")
+
+  // Delivery outcome (populated after delivery)
+  deliveryOutcome   String?   @map("delivery_outcome") // 'SVD','C_SECTION','ASSISTED','STILLBIRTH'
+  deliveryDate      DateTime? @map("delivery_date")
+  birthWeightKg     Decimal?  @map("birth_weight_kg") @db.Decimal(5, 3)
+  apgar1min         Int?      @map("apgar_1min")
+  apgar5min         Int?      @map("apgar_5min")
+  neonatalPatientId String?   @map("neonatal_patient_id") // Auto-created baby Patient record
+
+  status String @default("ANTENATAL") // 'ANTENATAL','LABOUR','POSTNATAL','DISCHARGED'
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  deliveryLog DeliveryLog?
+
+  @@map("maternity_records")
+}
+
+model DeliveryLog {
+  id                String          @id @default(uuid())
+  maternityRecordId String          @unique @map("maternity_record_id")
+  maternityRecord   MaternityRecord @relation(fields: [maternityRecordId], references: [id])
+  patientId         String          @map("patient_id")
+  patient           Patient         @relation(fields: [patientId], references: [id])
+  midwifeId         String          @map("midwife_id")
+  obstetricianId    String?         @map("obstetrician_id")
+
+  // Labour onset
+  labourOnsetAt  DateTime? @map("labour_onset_at")
+  membraneStatus String?   @map("membrane_status") // 'INTACT','SROM','AROM'
+  liquorColor    String?   @map("liquor_color") // 'CLEAR','MECONIUM','BLOOD_STAINED'
+
+  // WHO Partogram (time-series array)
+  partogramData Json? @map("partogram_data")
+  // [{time, cervical_dilation, foetal_descent, contractions_per_10min, foetal_hr, bp}]
+
+  // Delivery event
+  deliveryTime         DateTime? @map("delivery_time")
+  deliveryMethod       String?   @map("delivery_method") // 'SVD','FORCEPS','VACUUM','C_SECTION'
+  cSectionIndication   String?   @map("c_section_indication") @db.Text
+  placentaDeliveryTime DateTime? @map("placenta_delivery_time")
+  bloodLossMl          Int?      @map("blood_loss_ml")
+  episiotomy           Boolean   @default(false)
+  perinealTear         String?   @map("perineal_tear") // 'NONE','1ST','2ND','3RD','4TH'
+  isEmergency          Boolean   @default(false) @map("is_emergency")
+
+  // Neonatal
+  babySex               String?  @map("baby_sex")
+  birthWeightKg         Decimal? @map("birth_weight_kg") @db.Decimal(5, 3)
+  apgar1min             Int?     @map("apgar_1min")
+  apgar5min             Int?     @map("apgar_5min")
+  resuscitationRequired Boolean  @default(false) @map("resuscitation_required")
+
+  // Post-delivery
+  oxytocinGiven Boolean @default(false) @map("oxytocin_given")
+  vitaminKGiven Boolean @default(false) @map("vitamin_k_given")
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("delivery_logs")
+}
+
+// ===========================================================================
+// AMISI PHARMOS — Standalone Pharmacy Dispensing Module
+// ===========================================================================
+
+model Medication {
+  id           String   @id @default(uuid())
+  ndcCode      String?  @unique @map("ndc_code") // National Drug Code (11-digit)
+  name         String
+  genericName  String?  @map("generic_name")
+  drugClass    String?  @map("drug_class") // 'Antibiotic', 'Analgesic', etc.
+  deaSchedule  String?  @map("dea_schedule") // NULL, 'II', 'III', 'IV', 'V'
+  unit         String // 'mg', 'mcg', 'mL'
+  dosageForm   String?  @map("dosage_form") // 'tablet', 'vial', 'inhaler'
+  minDose      Decimal? @map("min_dose") @db.Decimal(10, 3)
+  maxDose      Decimal? @map("max_dose") @db.Decimal(10, 3)
+  maxDailyDose Decimal? @map("max_daily_dose") @db.Decimal(10, 3)
+  requiresRA   Boolean  @default(false) @map("requires_ra") // Risk Assessment required
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  pharmacyInventory PharmacyInventory[]
+  interactionsA     DrugInteraction[]   @relation("DrugA")
+  interactionsB     DrugInteraction[]   @relation("DrugB")
+
+  @@map("medications")
+}
+
+model PharmacyInventory {
+  id           String     @id @default(uuid())
+  medicationId String     @map("medication_id")
+  medication   Medication @relation(fields: [medicationId], references: [id])
+  locationId   String?    @map("location_id")
+
+  batchNumber      String   @map("batch_number")
+  lotNumber        String?  @map("lot_number")
+  expiryDate       DateTime @map("expiry_date")
+  quantityOnHand   Int      @default(0) @map("quantity_on_hand")
+  quantityReserved Int      @default(0) @map("quantity_reserved") // Allocated to pending Rxs
+  unitCost         Decimal? @map("unit_cost") @db.Decimal(10, 2)
+  isControlled     Boolean  @default(false) @map("is_controlled")
+  storageCondition String   @default("ROOM_TEMP") @map("storage_condition") // 'REFRIGERATED', 'FROZEN'
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  dispensingLogs DispensingLog[]
+
+  @@index([medicationId, expiryDate]) // FEFO index
+  @@map("pharmacy_inventory")
+}
+
+model DrugInteraction {
+  id      String     @id @default(uuid())
+  drugAId String     @map("drug_a_id")
+  drugA   Medication @relation("DrugA", fields: [drugAId], references: [id])
+  drugBId String     @map("drug_b_id")
+  drugB   Medication @relation("DrugB", fields: [drugBId], references: [id])
+
+  severity       String // 'MINOR', 'MODERATE', 'MAJOR', 'CONTRAINDICATED'
+  mechanism      String? @db.Text
+  clinicalEffect String? @map("clinical_effect") @db.Text
+  management     String? @db.Text // Recommended clinical action
+  source         String? // 'FDA', 'Clinical DB', etc.
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([drugAId, drugBId])
+  @@map("drug_interactions")
+}
+
+model DispensingLog {
+  id                  String             @id @default(uuid())
+  prescriptionId      String             @map("prescription_id")
+  prescription        Prescription       @relation(fields: [prescriptionId], references: [id])
+  pharmacyInventoryId String?            @map("pharmacy_inventory_id")
+  pharmacyInventory   PharmacyInventory? @relation(fields: [pharmacyInventoryId], references: [id])
+  patientId           String             @map("patient_id")
+  patient             Patient            @relation(fields: [patientId], references: [id])
+
+  pharmacistId String  @map("pharmacist_id") // Who performed final dispense
+  technicianId String? @map("technician_id") // Who prepared the bag
+
+  quantityDispensed Int       @map("quantity_dispensed")
+  batchNumber       String?   @map("batch_number")
+  expiryDate        DateTime? @map("expiry_date")
+
+  // Patient Counseling
+  counselingNotes   String? @map("counseling_notes") @db.Text
+  patientInstructed Boolean @default(false) @map("patient_instructed")
+
+  status      String  @default("DISPENSED") // 'DISPENSED', 'PARTIAL', 'REFUSED'
+  offlineMode Boolean @default(false) @map("offline_mode")
+  ipAddress   String? @map("ip_address")
+  deviceId    String? @map("device_id")
+
+  // HIPAA Cryptographic Audit Chain
+  hash     String? // SHA-256 of (prevHash + content)
+  prevHash String? @map("prev_hash")
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  controlledLog ControlledSubstanceLog?
+
+  @@map("dispensing_logs")
+}
+
+model ControlledSubstanceLog {
+  id              String        @id @default(uuid())
+  dispensingLogId String        @unique @map("dispensing_log_id")
+  dispensingLog   DispensingLog @relation(fields: [dispensingLogId], references: [id])
+  patientId       String        @map("patient_id")
+
+  deaSchedule   String @map("dea_schedule") // 'II', 'III', 'IV', 'V'
+  prescriberDea String @map("prescriber_dea")
+  pharmacyDea   String @map("pharmacy_dea")
+
+  quantityDispensed Int    @map("quantity_dispensed")
+  unit              String
+  runningBalance    Int    @map("running_balance") // DEA perpetual inventory
+
+  // DEA Schedule II Dual Sign-off
+  picId           String    @map("pic_id") // Pharmacist-in-Charge
+  witnessId       String?   @map("witness_id") // Required for Schedule II
+  picSignedAt     DateTime? @map("pic_signed_at")
+  witnessSignedAt DateTime? @map("witness_signed_at")
+
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("controlled_substances_log")
+}
+
+// ===========================================================================
+// HEALTH INFORMATION MANAGEMENT (HIM) MODULE
+// HIPAA Compliant — EMR/EHR Governance, ROI, Consent, Immutable Audit Chain
+// ===========================================================================
+
+// Record version snapshot — full EMR state at any point in time
+model RecordVersion {
+  id        String  @id @default(uuid())
+  patientId String  @map("patient_id")
+  patient   Patient @relation(fields: [patientId], references: [id])
+
+  versionNumber Int     @map("version_number")
+  changedBy     String  @map("changed_by") // Employee ID
+  changedByRole String  @map("changed_by_role")
+  changeReason  String? @map("change_reason") @db.Text
+  changeType    String // 'CREATE','UPDATE','AMENDMENT','CORRECTION'
+
+  // Full snapshot of changed fields (encrypted at application layer)
+  snapshotData    Json    @map("snapshot_data") // Encrypted JSON blob
+  isEncrypted     Boolean @default(true) @map("is_encrypted")
+  encryptionKeyId String? @map("encryption_key_id")
+
+  // Cryptographic integrity
+  hash     String? // SHA-256 of (prevHash + snapshotData)
+  prevHash String? @map("prev_hash")
+
+  accessLevel String @default("RESTRICTED") @map("access_level")
+  // 'PUBLIC','RESTRICTED','CONFIDENTIAL','HIGHLY_CONFIDENTIAL'
+
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([patientId, versionNumber])
+  @@index([patientId, versionNumber])
+  @@map("record_versions")
+}
+
+// Release of Information (ROI) — HIPAA Authorization Requests
+model ReleaseRequest {
+  id        String  @id @default(uuid())
+  patientId String  @map("patient_id")
+  patient   Patient @relation(fields: [patientId], references: [id])
+
+  requestedBy    String  @map("requested_by") // Can be patient, legal, insurer
+  requesterType  String  @map("requester_type") // 'PATIENT','ATTORNEY','INSURER','PROVIDER','COURT'
+  requesterOrg   String? @map("requester_org")
+  requesterEmail String? @map("requester_email")
+
+  purposeOfUse String @map("purpose_of_use")
+  // 'TREATMENT','PAYMENT','OPERATIONS','LEGAL','RESEARCH','INSURANCE','PATIENT_REQUEST'
+
+  recordDateFrom  DateTime? @map("record_date_from")
+  recordDateTo    DateTime? @map("record_date_to")
+  requestedFields String[]  @map("requested_fields") // ['diagnoses','labs','imaging','medications']
+
+  urgency String @default("ROUTINE") // 'ROUTINE','URGENT','STAT'
+
+  // Approval workflow
+  status        String    @default("PENDING")
+  // 'PENDING','UNDER_REVIEW','APPROVED','PARTIAL','DENIED','FULFILLED'
+  reviewedBy    String?   @map("reviewed_by")
+  reviewedAt    DateTime? @map("reviewed_at")
+  denialReason  String?   @map("denial_reason") @db.Text
+  approvalNotes String?   @map("approval_notes") @db.Text
+
+  // Fulfillment
+  fulfilledAt    DateTime? @map("fulfilled_at")
+  deliveryMethod String?   @map("delivery_method") // 'SECURE_EMAIL','FAX','PORTAL','MAIL'
+  deliveryRef    String?   @map("delivery_ref") // Tracking/confirmation number
+
+  // HIPAA Auth form linkage
+  consentFormId String?      @map("consent_form_id")
+  consentForm   ConsentForm? @relation(fields: [consentFormId], references: [id])
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("release_requests")
+}
+
+// HIPAA Consent Forms — Authorization to Use/Disclose PHI
+model ConsentForm {
+  id        String  @id @default(uuid())
+  patientId String  @map("patient_id")
+  patient   Patient @relation(fields: [patientId], references: [id])
+
+  formType String // 'GENERAL_TREATMENT','ROI_AUTHORIZATION','RESEARCH','MARKETING'
+  version  String // Form template version, e.g., 'v2.1-HIPAA'
+
+  // Consent details
+  consentGiven    Boolean  @default(false) @map("consent_given")
+  consentScope    String[] @map("consent_scope") // ['diagnoses','billing','imaging']
+  authorizedParty String?  @map("authorized_party") // Name of person/org authorized to receive
+
+  // Legal fields
+  signedAt        DateTime? @map("signed_at")
+  signedByName    String?   @map("signed_by_name")
+  signatureMethod String?   @map("signature_method") // 'WET','ELECTRONIC','VERBAL_WITNESSED'
+  witnessId       String?   @map("witness_id")
+  expiresAt       DateTime? @map("expires_at")
+  isRevoked       Boolean   @default(false) @map("is_revoked")
+  revokedAt       DateTime? @map("revoked_at")
+  revokedReason   String?   @map("revoked_reason") @db.Text
+
+  // Storage
+  documentUrl String? @map("document_url")
+  isEncrypted Boolean @default(true) @map("is_encrypted")
+
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  releaseRequests ReleaseRequest[]
+
+  @@map("consent_forms")
+}
+
+// Record Access Grant — role-based permission grants for specific patient records
+model RecordAccessGrant {
+  id        String  @id @default(uuid())
+  patientId String  @map("patient_id")
+  patient   Patient @relation(fields: [patientId], references: [id])
+
+  grantedTo     String   @map("granted_to") // Employee ID
+  grantedToRole String   @map("granted_to_role")
+  grantedBy     String   @map("granted_by") // HIM Officer or Admin ID
+  accessLevel   String // 'READ','AMEND','FULL'
+  scope         String[] // ['diagnoses','labs','medications','imaging','notes']
+
+  reason    String?   @db.Text
+  expiresAt DateTime? @map("expires_at")
+  isActive  Boolean   @default(true) @map("is_active")
+  revokedAt DateTime? @map("revoked_at")
+  revokedBy String?   @map("revoked_by")
+
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([patientId, grantedTo])
+  @@map("record_access_grants")
+}
+
+// ===========================================================================
+// RADIOLOGY & PACS (DICOM) MODULE
+// Standard-compliant RIS/PACS Workflow & Image Metadata Indexing
+// ===========================================================================
+
+// Radiology Order (CPOE Request for Imaging)
+model RadiologyOrder {
+  id          String    @id @default(uuid())
+  patientId   String    @map("patient_id")
+  patient     Patient   @relation(fields: [patientId], references: [id])
+  encounterId String    @map("encounter_id")
+  encounter   Encounter @relation(fields: [encounterId], references: [id])
+
+  orderedById        String   @map("ordered_by_id") // Referring physician Employee ID
+  orderedAt          DateTime @default(now()) @map("ordered_at")
+  modality           String // 'XRAY', 'CT', 'MRI', 'US', 'PET' 'NM'
+  targetRegion       String   @map("target_region") // e.g., 'Chest', 'Brain', 'Abdomen'
+  clinicalIndication String   @map("clinical_indication") @db.Text
+
+  status        String    @default("PENDING") // 'PENDING','SCHEDULED','IN_PROGRESS','COMPLETED','CANCELLED'
+  scheduledDate DateTime? @map("scheduled_date")
+  priority      String    @default("ROUTINE") // 'ROUTINE','URGENT','STAT'
+
+  // Billing integration
+  billedAmount Decimal? @map("billed_amount") @db.Decimal(10, 2)
+  isBilled     Boolean  @default(false) @map("is_billed")
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  studies ImagingStudy[]
+
+  @@map("radiology_orders")
+}
+
+// DICOM Study (Represents one imaging procedure, may have multiple series)
+model ImagingStudy {
+  id             String          @id @default(uuid())
+  orderId        String?         @map("order_id")
+  radiologyOrder RadiologyOrder? @relation(fields: [orderId], references: [id])
+
+  patientId   String     @map("patient_id")
+  patient     Patient    @relation(fields: [patientId], references: [id])
+  encounterId String?    @map("encounter_id")
+  encounter   Encounter? @relation(fields: [encounterId], references: [id])
+
+  dicomStudyUID   String @unique @map("dicom_study_uid") // Core DICOM linking ID
+  accessionNumber String @unique @map("accession_number")
+
+  modality         String
+  studyDate        DateTime @map("study_date")
+  studyDescription String?  @map("study_description")
+
+  referringPhysicianId String? @map("referring_physician_id")
+  radiologistId        String? @map("radiologist_id") // Assigned reader
+  status               String  @default("ACQUIRED") // 'ACQUIRED','READING','REPORTED'
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  series  DicomSeries[]
+  reports RadiologyReport[]
+
+  @@map("imaging_studies")
+}
+
+// DICOM Series (Grouping within a study, e.g., Axial vs Sagittal)
+model DicomSeries {
+  id           String       @id @default(uuid())
+  studyId      String       @map("study_id")
+  imagingStudy ImagingStudy @relation(fields: [studyId], references: [id])
+
+  dicomSeriesUID String @unique @map("dicom_series_uid")
+  seriesNumber   Int    @map("series_number")
+  modality       String
+
+  seriesDescription String? @map("series_description")
+  bodyPartExamined  String? @map("body_part_examined")
+
+  numberOfInstances Int @default(0) @map("number_of_instances")
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  instances DicomInstance[]
+
+  @@map("dicom_series")
+}
+
+// DICOM Instance (Individual image slice/frame - URL pointer to PACS/Edge storage)
+model DicomInstance {
+  id          String      @id @default(uuid())
+  seriesId    String      @map("series_id")
+  dicomSeries DicomSeries @relation(fields: [seriesId], references: [id])
+
+  dicomSOPInstanceUID String @unique @map("dicom_sop_instance_uid")
+  instanceNumber      Int    @map("instance_number")
+
+  storageUrl String @map("storage_url") // S3 URL or Local Edge URL (required by OHIF/Cornerstone)
+  fileSizeKb Int?   @map("file_size_kb")
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("dicom_instances")
+}
+
+// Radiology Report (Diagnostic findings by Radiologist)
+model RadiologyReport {
+  id           String       @id @default(uuid())
+  studyId      String       @map("study_id")
+  imagingStudy ImagingStudy @relation(fields: [studyId], references: [id])
+
+  patientId   String     @map("patient_id")
+  patient     Patient    @relation(fields: [patientId], references: [id])
+  encounterId String?    @map("encounter_id")
+  encounter   Encounter? @relation(fields: [encounterId], references: [id])
+
+  findings   String @db.Text
+  impression String @db.Text
+  addendums  Json? // [{addedAt, text, authorId}]
+
+  isCriticalResult Boolean @default(false) @map("is_critical_result")
+
+  signingRadiologistId String    @map("signing_radiologist_id")
+  status               String    @default("DRAFT") // 'DRAFT','SIGNED','AMENDED'
+  signedAt             DateTime? @map("signed_at")
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("radiology_reports")
+}
+
+// ===========================================================================
+// SURGERY & OT PLANNING MODULE
+// End-To-End Operative Theatre tracking with PharmOS integration
+// ===========================================================================
+
+// 1. Clinical Request for Surgery
+model SurgeryRequest {
+  id            String     @id @default(uuid())
+  patientId     String     @map("patient_id")
+  patient       Patient    @relation(fields: [patientId], references: [id])
+  encounterId   String?    @map("encounter_id")
+  encounter     Encounter? @relation(fields: [encounterId], references: [id])
+  requestedById String     @map("requested_by_id")
+
+  diagnosis     String   @db.Text
+  procedureCode String   @map("procedure_code") // e.g., CPT code or descriptive name
+  requestedDate DateTime @map("requested_date")
+
+  priority String @default("ELECTIVE") // 'ELECTIVE', 'URGENT', 'EMERGENCY'
+  status   String @default("PENDING") // 'PENDING', 'APPROVED', 'SCHEDULED', 'COMPLETED', 'CANCELLED'
+
+  medicalClearanceUrl String? @map("medical_clearance_url")
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  schedules OTSchedule[]
+
+  @@map("surgery_requests")
+}
+
+// 2. OT Block Assignment (Scheduling)
+model OTSchedule {
+  id             String         @id @default(uuid())
+  requestId      String         @unique @map("request_id")
+  surgeryRequest SurgeryRequest @relation(fields: [requestId], references: [id])
+
+  theatreRoomId String @map("theatre_room_id") // Could link to a generic Location model
+
+  scheduledStartTime DateTime @map("scheduled_start_time")
+  scheduledEndTime   DateTime @map("scheduled_end_time")
+
+  // Surgical Team
+  primarySurgeonId   String  @map("primary_surgeon_id")
+  anesthesiologistId String  @map("anesthesiologist_id")
+  scrubNurseId       String? @map("scrub_nurse_id")
+  circulatingNurseId String? @map("circulating_nurse_id")
+
+  status String @default("BOOKED") // 'BOOKED', 'PRE_OP', 'IN_PROGRESS', 'POST_OP', 'COMPLETED'
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  preOp   SurgeryPreOp?
+  intraOp SurgeryIntraOp?
+  postOp  SurgeryPostOp?
+
+  @@map("ot_schedules")
+}
+
+// 3. Pre-Op WHO Surgical Safety Gate
+model SurgeryPreOp {
+  id           String     @id @default(uuid())
+  otScheduleId String     @unique @map("ot_schedule_id")
+  otSchedule   OTSchedule @relation(fields: [otScheduleId], references: [id])
+
+  consentSigned      Boolean @default(false) @map("consent_signed")
+  consentDocumentUrl String? @map("consent_document_url")
+
+  fastingConfirmed   Boolean @default(false) @map("fasting_confirmed")
+  surgicalSiteMarked Boolean @default(false) @map("surgical_site_marked")
+  anesthesiaCleared  Boolean @default(false) @map("anesthesia_cleared")
+
+  bloodReservedUnits Int     @default(0) @map("blood_reserved_units")
+  crossmatchStatus   String? @map("crossmatch_status") // 'PENDING', 'READY'
+
+  clearedForSurgery Boolean @default(false) @map("cleared_for_surgery") // Master Gate
+  clearedByNurseId  String? @map("cleared_by_nurse_id")
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("surgery_pre_op")
+}
+
+// 4. Intra-Op Operative Record (Natively hooks into PharmOS)
+model SurgeryIntraOp {
+  id           String     @id @default(uuid())
+  otScheduleId String     @unique @map("ot_schedule_id")
+  otSchedule   OTSchedule @relation(fields: [otScheduleId], references: [id])
+
+  timeOutCompleted Boolean   @default(false) @map("time_out_completed")
+  incisionTime     DateTime? @map("incision_time")
+  closureTime      DateTime? @map("closure_time")
+
+  // Anesthesia & PharmOS Integration
+  anesthesiaLog Json? @map("anesthesia_log") // Time-series vitals & events
+  drugsUsed     Json? @map("drugs_used") // [{medicationId, batchId, quantity}] -> Auto-deducted from PharmOS
+
+  // Surgical Notes
+  estimatedBloodLossMl Int?    @map("estimated_blood_loss_ml")
+  implantsUsed         Json?   @map("implants_used") // [{serialNumber, manufacturer}]
+  complications        String? @db.Text
+  surgeonNotes         String? @map("surgeon_notes") @db.Text
+
+  specimensSentToLab Boolean @default(false) @map("specimens_sent_to_lab")
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("surgery_intra_op")
+}
+
+// 5. Post-Op / PACU Record
+model SurgeryPostOp {
+  id           String     @id @default(uuid())
+  otScheduleId String     @unique @map("ot_schedule_id")
+  otSchedule   OTSchedule @relation(fields: [otScheduleId], references: [id])
+
+  pacuArrivalTime DateTime @default(now()) @map("pacu_arrival_time")
+
+  arrivalAldreteScore   Int? @map("arrival_aldrete_score") // Max 10
+  dischargeAldreteScore Int? @map("discharge_aldrete_score") // >= 9 required for discharge without MD override
+
+  vitalsLog          Json?   @map("vitals_log") // PACU specific time-series vitals
+  postOpInstructions String? @map("post_op_instructions") @db.Text
+
+  pacuDischargeTime    DateTime? @map("pacu_discharge_time")
+  dischargeDestination String?   @map("discharge_destination") // 'WARD', 'ICU', 'HOME', 'MORGUE'
+  dischargedByMD       String?   @map("discharged_by_md") // Mandatory override if score < 9
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("surgery_post_op")
+}
+
+// ===========================================================================
+// LABORATORY INFORMATION SYSTEM (LIS)
+// Supports Internal Hospital CPOE & Standalone Lab SaaS Operations
+// ===========================================================================
+
+// 1. Lab Order
+model LabOrder {
+  id String @id @default(uuid())
+
+  // Hospital Integration Fields
+  patientId   String?    @map("patient_id")
+  patient     Patient?   @relation(fields: [patientId], references: [id])
+  encounterId String?    @map("encounter_id")
+  encounter   Encounter? @relation(fields: [encounterId], references: [id])
+  orderedById String?    @map("ordered_by_id")
+
+  // Standalone Mode Fields
+  isStandalone          Boolean @default(false) @map("is_standalone")
+  externalPatientSource String? @map("external_patient_source") // e.g. 'Walk-In', 'Clinic A'
+  externalPatientData   Json?   @map("external_patient_data") // { firstName, lastName, dob, gender, phone }
+
+  testPanelId   String  @map("test_panel_id") // e.g., 'CBC', 'CMP', 'LIPID'
+  urgency       String  @default("ROUTINE") // 'ROUTINE', 'STAT', 'ASAP'
+  clinicalNotes String? @map("clinical_notes") @db.Text
+
+  status    String   @default("PENDING") // 'PENDING', 'SAMPLE_COLLECTED', 'IN_ANALYSIS', 'COMPLETED', 'CANCELLED'
+  orderedAt DateTime @default(now()) @map("ordered_at")
+
+  // Billing (applicable to both standalone and hospital)
+  billedAmount Decimal? @map("billed_amount") @db.Decimal(10, 2)
+  isBilled     Boolean  @default(false) @map("is_billed")
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  samples LabSample[]
+  results LabResult[]
+  reports LabReport[]
+
+  @@map("lab_orders")
+}
+
+// 2. Lab Sample (Specimen Tracking)
+model LabSample {
+  id         String   @id @default(uuid())
+  labOrderId String   @map("lab_order_id")
+  labOrder   LabOrder @relation(fields: [labOrderId], references: [id])
+
+  specimenType  String  @map("specimen_type") // 'BLOOD', 'URINE', 'SWAB', 'CSF'
+  containerType String? @map("container_type") // 'EDTA_PURPLE', 'SST_GOLD', 'STERILE_CUP'
+  barcode       String  @unique
+
+  collectedAt   DateTime? @map("collected_at")
+  collectedById String?   @map("collected_by_id") // Phlebotomist
+
+  isRejected      Boolean @default(false) @map("is_rejected")
+  rejectionReason String? @map("rejection_reason") // 'HEMOLYZED', 'QNS' (Quantity Not Sufficient), 'CLOTTED'
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("lab_samples")
+}
+
+// 3. Lab Result (Individual Bio-Marker Readings from HL7 Edge Proxy)
+model LabResult {
+  id         String   @id @default(uuid())
+  labOrderId String   @map("lab_order_id")
+  labOrder   LabOrder @relation(fields: [labOrderId], references: [id])
+
+  biomarkerName String   @map("biomarker_name") // e.g., 'Hemoglobin', 'Glucose'
+  valueResult   String   @map("value_result") // Kept as string to support "Negative", "1+ ", or "12.5"
+  numericValue  Decimal? @map("numeric_value") @db.Decimal(10, 3) // Optional raw numeric for graphing
+  unit          String?
+
+  referenceRangeMin Decimal? @map("reference_range_min") @db.Decimal(10, 3)
+  referenceRangeMax Decimal? @map("reference_range_max") @db.Decimal(10, 3)
+  referenceText     String?  @map("reference_text") // e.g. "Negative"
+
+  flag String @default("NORMAL") // 'NORMAL', 'HIGH', 'LOW', 'CRITICAL_HIGH', 'CRITICAL_LOW', 'ABNORMAL'
+
+  machineId  String?  @map("machine_id") // e.g. 'Sysmex-XN1000'
+  analyzedAt DateTime @default(now()) @map("analyzed_at")
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("lab_results")
+}
+
+// 4. Lab Report (Final Pathologist Validation)
+model LabReport {
+  id         String   @id @default(uuid())
+  labOrderId String // @unique? Multiple reports if addendum? Let's keep 1-to-many.
+  labOrder   LabOrder @relation(fields: [labOrderId], references: [id])
+
+  pathologistId          String  @map("pathologist_id")
+  clinicalInterpretation String? @map("clinical_interpretation") @db.Text
+
+  isCritical Boolean @default(false) @map("is_critical")
+
+  validatedAt DateTime @default(now()) @map("validated_at")
+  status      String   @default("FINAL") // 'PRELIMINARY', 'FINAL', 'AMENDED'
+
+  pdfUrl String? @map("pdf_url") // Pre-generated report PDF link
+
+  version   Int      @default(1)
+  isSynced  Boolean  @default(false) @map("is_synced")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("lab_reports")
+}
+
+// ===========================================================================
+// SYNC & CDC MODULE (SYSTEM OF RECORD)
+// ===========================================================================
+
+model ChangeLog {
+  id        String   @id @default(uuid())
+  modelName String   @map("model_name")
+  recordId  String   @map("record_id")
+  operation String // 'CREATE', 'UPDATE', 'DELETE'
+  data      Json? // Full record or delta
+  userId    String?  @map("user_id")
+  timestamp DateTime @default(now())
+
+  isProcessed Boolean @default(false) @map("is_processed")
+  nodeId      String? @map("node_id") // Originating edge node
+
+  @@index([timestamp])
+  @@map("change_log")
+}
+
+model SyncQueue {
+  id         String  @id @default(uuid())
+  payload    Json
+  direction  String  @default("OUTGOING") // 'OUTGOING', 'INCOMING'
+  status     String  @default("PENDING") // 'PENDING', 'SENT', 'FAILED', 'APPLIED'
+  retryCount Int     @default(0) @map("retry_count")
+  lastError  String? @map("last_error")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("sync_queue")
+}

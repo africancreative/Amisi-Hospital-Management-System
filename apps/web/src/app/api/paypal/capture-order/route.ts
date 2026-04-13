@@ -5,10 +5,10 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        const { orderID, financialRecordId, tenantId } = body;
+        const { orderID, invoiceId, tenantId } = body;
 
-        if (!orderID || !financialRecordId || !tenantId) {
-            return NextResponse.json({ error: 'Missing orderID, financialRecordId or tenantId' }, { status: 400 });
+        if (!orderID || !invoiceId || !tenantId) {
+            return NextResponse.json({ error: 'Missing orderID, invoiceId or tenantId' }, { status: 400 });
         }
 
         const ordersController = await getOrdersController();
@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
                         reference: orderID,
                         customerEmail: parsedCapture.payer?.email_address || 'unknown',
                         customerName: `${parsedCapture.payer?.name?.given_name || ''} ${parsedCapture.payer?.name?.surname || ''}`.trim() || 'Anonymous',
-                        description: `Onboarding Setup Fee (${financialRecordId})`
+                        description: `Onboarding Setup Fee (${invoiceId})`
                     }
                 });
                 return NextResponse.json(parsedCapture, { status: statusCode });
@@ -47,8 +47,8 @@ export async function POST(req: NextRequest) {
 
             // Handle Tenant-Specific Payments (Patient Billing)
             const tenantDb = await getTenantDb(tenantId);
-            const record = await tenantDb.financialRecord.findUnique({
-                where: { id: financialRecordId }
+            const record = await tenantDb.invoice.findUnique({
+                where: { id: invoiceId }
             });
 
             if (record) {
@@ -56,16 +56,16 @@ export async function POST(req: NextRequest) {
                 const isPaid = newBalance <= 0;
 
                 await tenantDb.$transaction([
-                    tenantDb.financialRecord.update({
-                        where: { id: financialRecordId },
+                    tenantDb.invoice.update({
+                        where: { id: invoiceId },
                         data: {
                             balanceDue: Math.max(0, newBalance),
-                            status: isPaid ? 'paid' : 'partial'
+                            status: isPaid ? 'PAID' : 'PARTIAL'
                         }
                     }),
                     tenantDb.payment.create({
                         data: {
-                            financialRecordId: financialRecordId,
+                            invoiceId: invoiceId,
                             amount: capturedFloat,
                             method: 'paypal',
                             reference: orderID

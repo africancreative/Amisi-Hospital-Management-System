@@ -1,0 +1,60 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "AmisiMedOS Local Node",
+  "version": "1.0.0",
+  "identifier": "com.amisimedos.local",
+  "build": {
+    "beforeDevCommand": "pnpm dev",
+    "devUrl": "http://localhost:3000",
+    "beforeBuildCommand": "pnpm --filter @amisimedos/web build",
+    "frontendDist": "../web/.next/standalone"
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/icon.ico"
+    ],
+    "resources": [
+      "../web/.next/standalone/**/*",
+      "../web/.next/static/**/*",
+      "../web/public/**/*"
+    ]
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [
+      {
+        "label": "main",
+        "title": "AmisiMedOS Local Node",
+        "width": 1280,
+        "height": 800,
+        "resizable": true,
+        "fullscreen": false,
+        "visible": true,
+        "decorations": true,
+        "alwaysOnTop": false,
+        "url": "http://localhost:3000"
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "plugins": {
+    "updater": {
+      "active": true,
+      "endpoints": [
+        "https://releases.amisimedos.com/{{target}}/{{arch}}/{{current_version}}"
+      ],
+      "dialog": true,
+      "pubkey": "PLACEHOLDER_UPDATE_PUBKEY"
+    },
+    "autostart": {
+      "name": "AmisiMedOS Local Node",
+      "args": false
+    }
+  }
+}

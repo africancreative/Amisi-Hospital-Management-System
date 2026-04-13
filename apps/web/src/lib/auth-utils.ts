@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
-import { Role } from '@amisi/database';
-import { Permission, hasPermission as checkPermission } from '@amisi/auth';
+import { Role } from '@amisimedos/db';
+import { Permission, hasPermission as checkPermission } from '@amisimedos/auth';
 
 /**
  * Server-only utility to get the current user's role from cookies.

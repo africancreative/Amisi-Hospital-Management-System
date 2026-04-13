@@ -1,5 +1,5 @@
 import { Client, Environment, LogLevel, OrdersController } from "@paypal/paypal-server-sdk";
-import { getControlDb } from "@amisi/database";
+import { getControlDb } from "@amisimedos/db";
 
 async function getPayPalConfig() {
     const db = getControlDb();

@@ -25,7 +25,7 @@ export default async function OnboardHospitalPage() {
                             Onboard <span className="text-blue-500">Hospital</span>
                         </h1>
                         <p className="text-neutral-500 max-w-xl text-lg">
-                            Initialize a new isolated instance of the Amisi HealthOS. 
+                            Initialize a new isolated instance of the AmisiMedOS. 
                             This will automate database provisioning and security seeding.
                         </p>
                     </div>

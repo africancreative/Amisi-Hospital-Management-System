@@ -75,7 +75,7 @@ export default function OnboardingForm({ availableModules }: { availableModules:
                     <div className="space-y-2">
                         <label className="text-sm font-semibold text-neutral-400">URL Routing Slug (Unique)</label>
                         <input required name="slug" className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-all font-mono" placeholder="mercy-general" />
-                        <p className="text-xs text-neutral-500">Access path: healthos.com/mercy-general</p>
+                        <p className="text-xs text-neutral-500">Access path: AmisiMedOS.com/mercy-general</p>
                     </div>
 
                     <div className="space-y-2">

@@ -28,7 +28,7 @@ export function SystemSettingsForm() {
     const [testingMpesa, setTestingMpesa] = useState(false);
     
     const [settings, setSettings] = useState({
-        platformName: 'Amisi HealthOS',
+        platformName: 'AmisiMedOS',
         platformLogoUrl: '',
         platformSlogan: '',
         
@@ -156,7 +156,7 @@ export function SystemSettingsForm() {
                         <input 
                             value={settings.platformName}
                             onChange={e => setSettings({ ...settings, platformName: e.target.value })}
-                            placeholder="e.g. Amisi HealthOS Enterprise"
+                            placeholder="e.g. AmisiMedOS Enterprise"
                             className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white focus:outline-none focus:border-blue-500/50 transition-all"
                         />
                     </div>

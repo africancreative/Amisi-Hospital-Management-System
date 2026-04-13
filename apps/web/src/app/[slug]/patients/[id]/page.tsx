@@ -21,6 +21,7 @@ import { getHospitalSettings } from '@/app/actions/hospital-actions';
 import { notFound } from 'next/navigation';
 import ClinicalChat from '@/components/ClinicalChat';
 import ExportPatientButton from '@/components/ExportPatientButton';
+import PatientClinicalSection from '@/components/PatientClinicalSection';
 
 export default async function PatientDetailPage({ params }: { params: Promise<{ slug: string, id: string }> }) {
     const { slug, id } = await params;
@@ -31,11 +32,13 @@ export default async function PatientDetailPage({ params }: { params: Promise<{ 
         notFound();
     }
 
-    // Combine encounters and chats for a unified timestamped timeline
-    const timelineEvents = [
-        ...patient.encounters.map((e) => ({ ...e, eventType: 'ENCOUNTER' })),
-        ...(patient.chats || []).map((c) => ({ ...c, eventType: 'CHAT', createdAt: c.timestamp }))
-    ].sort((a, b) => new Date(b.createdAt as any).getTime() - new Date(a.createdAt as any).getTime());
+    if (!patient) {
+        notFound();
+    }
+
+    // Pass encounters for PDF export ONLY
+    const timelineEvents = patient.encounters.map(e => ({ ...e, eventType: 'ENCOUNTER' }));
+
 
     return (
         <div className="flex-1 overflow-y-auto p-8 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white relative">
@@ -97,90 +100,8 @@ export default async function PatientDetailPage({ params }: { params: Promise<{ 
                         </section>
 
                         {/* Encounter Timeline */}
-                        <section className="bg-white dark:bg-gray-950 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">
-                            <div className="px-6 py-5 border-b border-gray-100 dark:border-gray-900 flex items-center justify-between">
-                                <h2 className="text-xl font-bold flex items-center gap-2">
-                                    <Stethoscope className="h-5 w-5 text-emerald-500" />
-                                    Clinical Timeline
-                                </h2>
-                            </div>
-                            <div className="p-6 space-y-6">
-                                {timelineEvents.map((event: any, idx: number) => (
-                                    <div key={event.id} className="relative pl-8 pb-8 last:pb-0">
-                                        {idx !== timelineEvents.length - 1 && (
-                                            <div className="absolute left-[11px] top-6 bottom-0 w-0.5 bg-gray-100 dark:bg-gray-800"></div>
-                                        )}
-                                        <div className="absolute left-0 top-1.5 h-6 w-6 rounded-full bg-emerald-100 dark:bg-emerald-900/30 border-2 border-emerald-500 flex items-center justify-center overflow-hidden">
-                                            {event.eventType === 'ENCOUNTER' ? (
-                                                <div className="h-2 w-2 rounded-full bg-emerald-500"></div>
-                                            ) : (
-                                                <MessageCircle className="h-3 w-3 text-emerald-500" />
-                                            )}
-                                        </div>
+                        <PatientClinicalSection patientId={patient.id} />
 
-                                        <div className="flex flex-col sm:flex-row justify-between items-start gap-2">
-                                            <div>
-                                                <span className={`text-[10px] font-black uppercase tracking-widest ${event.eventType === 'CHAT' ? 'text-blue-500' : 'text-emerald-500'}`}>
-                                                    {event.eventType === 'CHAT' ? 'Communication' : event.type}
-                                                </span>
-                                                <h3 className="text-lg font-bold mt-1" suppressHydrationWarning>{new Date(event.createdAt).toLocaleDateString(undefined, { dateStyle: 'long' })}</h3>
-                                                <p className="text-sm text-gray-500 mt-1 font-medium italic">
-                                                    {event.eventType === 'CHAT' ? event.authorName : `Dr. ${event.doctorName}`}
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        <div className={`mt-4 p-4 rounded-xl border ${event.eventType === 'CHAT' ? 'bg-blue-50/50 dark:bg-blue-900/10 border-blue-100 dark:border-blue-900/20' : 'bg-gray-50 dark:bg-gray-900/50 border-gray-100 dark:border-gray-900'}`}>
-                                            {event.content || event.notes ? (
-                                                <p className="text-sm leading-relaxed text-gray-700 dark:text-gray-300">
-                                                    {event.notes || event.content}
-                                                </p>
-                                            ) : null}
-
-                                            {/* Media Attachments in Timeline */}
-                                            {event.attachments && event.attachments.length > 0 && (
-                                                <div className="grid grid-cols-2 gap-3 mt-4">
-                                                    {event.attachments.map((att: any) => (att.type === 'image' ? (
-                                                        <div key={att.id} className="rounded-xl overflow-hidden border border-gray-200 dark:border-gray-800 shadow-sm">
-                                                            <img src={att.url} alt="Clinical Attachment" className="w-full h-40 object-cover" />
-                                                        </div>
-                                                    ) : (
-                                                        <div key={att.id} className="flex items-center gap-3 p-3 bg-white dark:bg-gray-950 rounded-xl border border-gray-200 dark:border-gray-800">
-                                                            <div className="h-10 w-10 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
-                                                                {att.type === 'voice' ? <HeartPulse className="h-5 w-5 text-emerald-500" /> : <FileText className="h-5 w-5 text-gray-400" />}
-                                                            </div>
-                                                            <div>
-                                                                <p className="text-xs font-bold truncate max-w-[120px]">{att.fileName || 'Attachment'}</p>
-                                                                <p className="text-[10px] text-gray-500 uppercase font-black tracking-widest">{att.type}</p>
-                                                            </div>
-                                                        </div>
-                                                    )))}
-                                                </div>
-                                            )}
-
-                                            {!event.notes && !event.content && !event.attachments?.length && (
-                                                <p className="text-sm leading-relaxed text-gray-400 italic">
-                                                    No clinical notes recorded.
-                                                </p>
-                                            )}
-
-                                            {event.plan && (
-                                                <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-800">
-                                                    <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Management Plan</p>
-                                                    <p className="text-sm text-gray-700 dark:text-gray-300">{event.plan}</p>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                ))}
-
-                                {timelineEvents.length === 0 && (
-                                    <div className="text-center py-10 text-gray-500 italic">
-                                        No clinical history recorded yet.
-                                    </div>
-                                )}
-                            </div>
-                        </section>
 
                         {/* Recent Lab Results */}
                         <section className="bg-white dark:bg-gray-950 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">

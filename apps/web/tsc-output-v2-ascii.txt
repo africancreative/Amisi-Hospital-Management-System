@@ -61,5 +61,5 @@ src/app/actions/pharmos-actions.ts(86,17): error TS2322: Type '{ drugName: strin
           Type 'undefined' is not assignable to type 'string'.
 src/app/actions/radiology-actions.ts(198,41): error TS2345: Argument of type '"CRITICAL_RESULT_ALERT"' is not assignable to parameter of type 'RealtimeEventType'.
 src/app/actions/surgery-actions.ts(267,41): error TS2345: Argument of type '"MASSIVE_TRANSFUSION_ALERT"' is not assignable to parameter of type 'RealtimeEventType'.
-src/app/actions/tenant-actions.ts(3,40): error TS2305: Module '"@amisi/database"' has no exported member 'createTenantDatabase'.
+src/app/actions/tenant-actions.ts(3,40): error TS2305: Module '"@amisimedos/database"' has no exported member 'createTenantDatabase'.
 src/components/ServiceInvoiceForm.tsx(35,50): error TS2554: Expected 1 arguments, but got 3.

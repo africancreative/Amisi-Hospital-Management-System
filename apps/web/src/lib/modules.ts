@@ -1,4 +1,4 @@
-import { ControlClient } from '@amisi/database';
+import { ControlClient } from '@amisimedos/db';
 
 let controlDbInstance: ControlClient | null = null;
 function getControlDb() {

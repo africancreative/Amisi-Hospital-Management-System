@@ -4,7 +4,7 @@ import { getTenantDb } from '@/lib/db';
 import { revalidatePath } from 'next/cache';
 import { ensureRole } from '@/lib/auth-utils';
 import { logAudit } from '@/lib/audit';
-import { realtimeHub } from '@amisi/realtime';
+import { realtimeHub } from '@amisimedos/chat';
 import { getResolvedTenantId } from '@/lib/tenant';
 import { createHash } from 'crypto';
 

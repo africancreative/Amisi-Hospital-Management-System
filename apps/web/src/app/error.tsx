@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { ShieldAlert, RotateCcw, Home, MessageSquare } from 'lucide-react';
-import { Button } from '@amisi/ui';
+import { Button } from '@amisimedos/ui';
 
 export default function Error({
     error,
@@ -81,7 +81,7 @@ export default function Error({
                             className="flex items-center gap-2 text-amber-500 hover:text-amber-400 font-medium transition-colors group"
                         >
                             <MessageSquare className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                            Contact Amisi HealthOS Support
+                            Contact AmisiMedOS Support
                         </a>
                     </div>
                 </div>
@@ -92,7 +92,7 @@ export default function Error({
                 <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
                     <span className="font-bold text-black text-xs italic">H</span>
                 </div>
-                <span className="text-white font-bold tracking-tighter text-sm uppercase">AMISI HealthOS</span>
+                <span className="text-white font-bold tracking-tighter text-sm uppercase">AmisiMedOS</span>
             </div>
         </div>
     );

@@ -1,9 +1,9 @@
 'use server';
 
-import { getControlDb, DeploymentTier, createTenantDatabase, provisionTenant, syncTenantSettings } from '@amisi/database';
+import { getControlDb, DeploymentTier, createTenantDatabase, provisionTenant, syncTenantSettings } from '@amisimedos/db';
 import { revalidatePath } from 'next/cache';
 import { ensureSuperAdmin } from '@/lib/auth-utils';
-import { hashPassword } from '@amisi/auth';
+import { hashPassword } from '@amisimedos/auth';
 
 export async function createTenant(formData: FormData) {
     await ensureSuperAdmin();

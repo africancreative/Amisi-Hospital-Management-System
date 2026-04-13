@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { ControlClient } from '@amisi/database';
+import { ControlClient } from '@amisimedos/db';
 
 const controlDb = new ControlClient();
 

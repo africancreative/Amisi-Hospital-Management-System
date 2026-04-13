@@ -1,6 +1,6 @@
 'use server';
 
-import { getControlDb, DeploymentTier, createTenantDatabase, provisionTenant } from '@amisi/database';
+import { getControlDb, DeploymentTier, createTenantDatabase, provisionTenant } from '@amisimedos/db';
 import { revalidatePath } from 'next/cache';
 import { ensureSuperAdmin } from '@/lib/auth-utils';
 import { Client, Environment, LogLevel } from "@paypal/paypal-server-sdk";
@@ -64,7 +64,7 @@ export async function getGlobalSettings() {
         if (!settings) {
             // Initialize if not exists (Only happens once)
             settings = await db.globalSettings.create({
-                data: { id: 'singleton', platformName: 'Amisi HealthOS', showHero: true }
+                data: { id: 'singleton', platformName: 'AmisiMedOS', showHero: true }
             });
         }
 
@@ -72,7 +72,7 @@ export async function getGlobalSettings() {
     } catch (err: any) {
         console.warn('[System Action] Failed to fetch Global Settings. Using branding defaults.');
         return {
-            platformName: 'Amisi HealthOS',
+            platformName: 'AmisiMedOS',
             platformSlogan: 'Next-Generation Healthcare Networking',
             showHero: true,
             heroTitle: 'Enterprise Hospital Management for the Modern Era.',
@@ -195,4 +195,66 @@ export async function testMpesaConnection(credentials: { key: string; secret: st
     } catch (err: any) {
         return { success: false, message: err.message };
     }
+}
+
+// ── API Key Management ─────────────────────────────────────────────────────────
+
+function generateSecureKey(prefix: string = 'amisi'): string {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let key = `${prefix}_`;
+    // Generate two segments of 20 chars each
+    for (let i = 0; i < 40; i++) {
+        if (i === 20) key += '_';
+        key += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return key;
+}
+
+export async function generateApiKey(tenantId: string, label: string) {
+    await ensureSuperAdmin();
+    const db = getControlDb();
+
+    const tenant = await db.tenant.findUnique({ where: { id: tenantId } });
+    if (!tenant) throw new Error('Hospital not found');
+
+    const apiKey = generateSecureKey(`amisi_${tenant.slug.replace(/-/g, '_')}`);
+
+    // Store in globalSettings as a JSON blob keyed by tenantId
+    // (A dedicated ApiKey model would be cleaner, but this avoids schema migrations)
+    const settings = await db.globalSettings.findUnique({ where: { id: 'singleton' } });
+    const existing = (settings as any)?.apiKeys || {};
+    const tenantKeys = existing[tenantId] || [];
+    tenantKeys.push({ key: apiKey, label, createdAt: new Date().toISOString() });
+    existing[tenantId] = tenantKeys;
+
+    await db.globalSettings.update({
+        where: { id: 'singleton' },
+        data: { apiKeys: existing } as any
+    });
+
+    revalidatePath('/system/dashboard');
+    return { key: apiKey, label };
+}
+
+export async function listApiKeys(tenantId?: string) {
+    await ensureSuperAdmin();
+    const db = getControlDb();
+    const settings = await db.globalSettings.findUnique({ where: { id: 'singleton' } });
+    const allKeys = (settings as any)?.apiKeys || {};
+    if (tenantId) return allKeys[tenantId] || [];
+    return allKeys;
+}
+
+export async function revokeApiKey(tenantId: string, keyToRevoke: string) {
+    await ensureSuperAdmin();
+    const db = getControlDb();
+    const settings = await db.globalSettings.findUnique({ where: { id: 'singleton' } });
+    const existing = (settings as any)?.apiKeys || {};
+    const tenantKeys = (existing[tenantId] || []).filter((k: any) => k.key !== keyToRevoke);
+    existing[tenantId] = tenantKeys;
+    await db.globalSettings.update({
+        where: { id: 'singleton' },
+        data: { apiKeys: existing } as any
+    });
+    revalidatePath('/system/dashboard');
 }

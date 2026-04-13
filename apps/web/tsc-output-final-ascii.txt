@@ -130,8 +130,8 @@ src/app/actions/surgery-actions.ts(189,34): error TS2322: Type '"ANESTHESIOLOGIS
 src/app/actions/surgery-actions.ts(267,41): error TS2345: Argument of type '"MASSIVE_TRANSFUSION_ALERT"' is not assignable to parameter of type 'RealtimeEventType'.
 src/app/actions/surgery-actions.ts(289,32): error TS2322: Type '"ANESTHESIOLOGIST"' is not assignable to type 'Role'.
 src/app/actions/surgery-actions.ts(289,52): error TS2322: Type '"SURGEON"' is not assignable to type 'Role'.
-src/app/actions/tenant-actions.ts(3,40): error TS2305: Module '"@amisi/database"' has no exported member 'createTenantDatabase'.
-src/app/api/sync/route.ts(4,10): error TS2305: Module '"@amisi/sync-engine"' has no exported member 'resolveSemanticConflict'.
+src/app/actions/tenant-actions.ts(3,40): error TS2305: Module '"@amisimedos/database"' has no exported member 'createTenantDatabase'.
+src/app/api/sync/route.ts(4,10): error TS2305: Module '"@amisimedos/sync-engine"' has no exported member 'resolveSemanticConflict'.
 src/app/hospitals/[id]/page.tsx(26,10): error TS2305: Module '"@/app/actions/tenant-actions"' has no exported member 'getTenantById'.
 src/app/hospitals/page.tsx(3,10): error TS2305: Module '"@/app/actions/tenant-actions"' has no exported member 'getTenants'.
 src/app/hospitals/page.tsx(28,35): error TS7006: Parameter 'tenant' implicitly has an 'any' type.

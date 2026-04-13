@@ -5,11 +5,15 @@ import Sidebar from '@/components/Sidebar';
 import { cookies, headers } from 'next/headers';
 import { getTenantModules } from '@/lib/modules';
 import RoleSwitcher from '@/components/RoleSwitcher';
+import { TrpcProvider } from '@/trpc/Provider';
+import InternalChatSidebar from '@/components/InternalChatSidebar';
+import PWARegistration from '@/components/PWARegistration';
+
 
 
 
 export const metadata: Metadata = {
-  title: 'Amisi HealthOS Platinum | HMS',
+  title: 'AmisiMedOS Platinum | HMS',
   description: 'Enterprise Hybrid-Cloud Hospital Management System by amisigenuine.com',
 };
 
@@ -52,18 +56,23 @@ export default async function RootLayout({
     return (
       <html lang="en" className="dark" suppressHydrationWarning>
         <body className="font-sans bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 flex min-h-screen" suppressHydrationWarning>
-          {isLoggedIn && (
-            <Sidebar
-              enabledModules={enabledModules}
-              userRole={userRole}
-              userName={userName}
-              isSystemAdmin={isSystemAdmin}
-            />
-          )}
-          <main className="flex-1 flex flex-col h-screen overflow-hidden">
-            {children}
-          </main>
-          {isLoggedIn && <RoleSwitcher />}
+          <TrpcProvider>
+            <PWARegistration />
+            {isLoggedIn && (
+              <Sidebar
+
+                enabledModules={enabledModules}
+                userRole={userRole}
+                userName={userName}
+                isSystemAdmin={isSystemAdmin}
+              />
+            )}
+            <main className="flex-1 flex flex-col h-screen overflow-hidden">
+              {children}
+            </main>
+            {isLoggedIn && <RoleSwitcher />}
+            {isLoggedIn && <InternalChatSidebar />}
+          </TrpcProvider>
         </body>
       </html>
     );
@@ -73,9 +82,11 @@ export default async function RootLayout({
     return (
       <html lang="en" className="dark">
         <body className="font-sans bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 flex min-h-screen">
-          <main className="flex-1 flex flex-col h-screen overflow-hidden">
-            {children}
-          </main>
+          <TrpcProvider>
+            <main className="flex-1 flex flex-col h-screen overflow-hidden">
+              {children}
+            </main>
+          </TrpcProvider>
         </body>
       </html>
     );

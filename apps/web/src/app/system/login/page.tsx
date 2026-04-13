@@ -2,7 +2,7 @@
 
 import { loginSystemAdmin } from '../../actions/auth-actions';
 import { getGlobalSettings } from '../../actions/system-actions';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Button, Label } from '@amisi/ui';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Button, Label } from '@amisimedos/ui';
 import { ShieldCheck } from 'lucide-react';
 
 export default async function SystemLoginPage({ searchParams }: { searchParams: Promise<{ error?: string; msg?: string }> }) {
@@ -24,11 +24,13 @@ export default async function SystemLoginPage({ searchParams }: { searchParams: 
             <div className="w-full max-w-md p-6 relative z-10 font-sans">
                 <div className="flex justify-center mb-8">
                     <div className="flex items-center gap-3 bg-white/5 p-3 rounded-2xl border border-white/10 backdrop-blur-md shadow-xl">
-                        <div className="p-2 bg-blue-600 rounded-lg">
-                            <ShieldCheck className="w-6 h-6 text-white" />
-                        </div>
+                        <img
+                            src="/logo.png"
+                            alt="Amisi MedOS Logo"
+                            className="h-10 w-10 object-contain rounded-lg"
+                        />
                         <span className="text-xl font-bold text-white tracking-tight italic uppercase tracking-tighter">
-                            {settings.platformName || 'Amisi HealthOS'}
+                            {settings.platformName || 'AmisiMedOS'}
                         </span>
                     </div>
                 </div>
@@ -43,11 +45,11 @@ export default async function SystemLoginPage({ searchParams }: { searchParams: 
                             </div>
                         )}
                         <div className="flex justify-center mb-6">
-                            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500 shadow-xl shadow-amber-500/20">
-                                <span className="text-2xl font-bold text-white italic">
-                                    {(settings.platformName?.[0] || 'A').toUpperCase()}
-                                </span>
-                            </div>
+                            <img
+                                src="/logo.png"
+                                alt="Amisi MedOS"
+                                className="h-16 w-16 object-contain drop-shadow-xl"
+                            />
                         </div>
                         <CardTitle className="text-3xl text-center text-white">System Access</CardTitle>
                         <CardDescription className="text-center pt-2 text-neutral-400">
@@ -88,7 +90,7 @@ export default async function SystemLoginPage({ searchParams }: { searchParams: 
                 </Card>
 
                 <p className="mt-8 text-center text-neutral-500 text-sm">
-                    Amisi HealthOS Distributed Infrastructure v4.0
+                    AmisiMedOS Distributed Infrastructure v4.0
                 </p>
                 <div className="mt-4 text-center">
                     <a href="/login" className="text-xs text-neutral-600 hover:text-blue-400 transition-colors">
