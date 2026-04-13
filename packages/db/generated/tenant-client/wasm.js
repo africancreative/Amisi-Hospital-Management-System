@@ -879,6 +879,7 @@ exports.Prisma.VitalsLogScalarFieldEnum = {
   gcs: 'gcs',
   urineOutputMl: 'urineOutputMl',
   painScore: 'painScore',
+  news2Score: 'news2Score',
   infusionData: 'infusionData',
   source: 'source',
   isCritical: 'isCritical',

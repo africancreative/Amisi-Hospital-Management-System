@@ -29,7 +29,7 @@ export default function HospitalsDashboard() {
         onSuccess: () => refetch()
     });
 
-    const filteredHospitals = hospitals?.filter(h => 
+    const filteredHospitals = (hospitals as any[])?.filter((h: any) => 
         h.name.toLowerCase().includes(search.toLowerCase()) || 
         h.slug.toLowerCase().includes(search.toLowerCase())
     );
@@ -62,8 +62,8 @@ export default function HospitalsDashboard() {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
                 {[
                     { label: 'Total Hospitals', value: hospitals?.length || 0, icon: Building2, color: 'text-blue-400' },
-                    { label: 'Active Nodes', value: hospitals?.filter(h => h.status === 'active').length || 0, icon: ShieldCheck, color: 'text-emerald-400' },
-                    { label: 'Suspended', value: hospitals?.filter(h => h.status === 'suspended').length || 0, icon: AlertTriangle, color: 'text-amber-400' },
+                    { label: 'Active Nodes', value: (hospitals as any[])?.filter(h => h.status === 'active').length || 0, icon: ShieldCheck, color: 'text-emerald-400' },
+                    { label: 'Suspended', value: (hospitals as any[])?.filter(h => h.status === 'suspended').length || 0, icon: AlertTriangle, color: 'text-amber-400' },
                     { label: 'Total Revenue', value: '$128.4k', icon: CreditCard, color: 'text-indigo-400' },
                 ].map((stat, i) => (
                     <div key={i} className="p-6 rounded-[2rem] bg-slate-900/40 border border-slate-800 backdrop-blur-sm group hover:border-slate-700 transition-all">

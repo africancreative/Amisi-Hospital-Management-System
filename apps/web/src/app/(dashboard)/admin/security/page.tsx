@@ -99,7 +99,7 @@ export default function SecurityPage() {
                     Retrieving immutable logs...
                   </td>
                 </tr>
-              ) : auditData?.logs.map((log) => (
+              ) : (auditData?.logs as any[])?.map((log: any) => (
                 <tr key={log.id} className="border-b border-slate-800/50 hover:bg-slate-900/20 transition-colors group">
                   <td className="px-8 py-5 text-sm text-slate-300">
                     {format(new Date(log.timestamp), 'MMM dd, HH:mm:ss')}

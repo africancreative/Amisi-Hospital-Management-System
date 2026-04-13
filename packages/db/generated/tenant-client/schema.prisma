@@ -1262,6 +1262,7 @@ model VitalsLog {
   gcs             Int? // Glasgow Coma Scale (ICU)
   urineOutputMl   Int?     @map("urine_output_ml") // Per-hour
   painScore       Int?     @map("pain_score") // 0–10
+  news2Score      Int?     @map("news2_score") // National Early Warning Score 2
 
   // Drug infusion snapshot (ICU drips)
   infusionData Json? @map("infusion_data") // [{drug, rate_ml_hr, concentration}]

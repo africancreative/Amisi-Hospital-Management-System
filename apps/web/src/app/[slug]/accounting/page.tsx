@@ -18,8 +18,13 @@ import { getRecentJournalEntries, getTrialBalance } from '@/app/actions/accounti
 
 export const dynamic = 'force-dynamic';
 
-export default async function AccountingDashboard({ params }: { params: Promise<{ slug: string }> }) {
-    const { slug } = await params;
+export default async function AccountingDashboard(
+    props: {
+        params: Promise<{ slug: string }>;
+        searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+    }
+) {
+    const { slug } = await props.params;
     const entries = await getRecentJournalEntries();
     const trialBalance = await getTrialBalance();
 

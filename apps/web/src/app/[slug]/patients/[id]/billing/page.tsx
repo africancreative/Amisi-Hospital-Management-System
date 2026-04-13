@@ -15,8 +15,13 @@ import { getPatientById } from '@/app/actions/ehr-actions';
 import { recordPayment } from '@/app/actions/billing-actions';
 import { revalidatePath } from 'next/cache';
 
-export default async function PatientBillingPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = await params;
+export default async function PatientBillingPage(
+    props: {
+        params: Promise<{ slug: string; id: string }>;
+        searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+    }
+) {
+    const { id } = await props.params;
     const patient = await getPatientById(id);
 
     if (!patient) {

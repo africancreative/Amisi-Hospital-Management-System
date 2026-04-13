@@ -117,6 +117,31 @@ export const disposeClients = async () => {
     }
 };
 
-// --- Re-exports for Simplified Platform Interaction ---
-export { DeploymentTier } from '../generated/control-client';
+// --- Consolidated Platform Exports ---
+export { 
+    DeploymentTier, 
+    Decimal, 
+    Prisma, 
+    Role, 
+    TenantStatus 
+} from './types';
+
+export type { 
+    DeploymentTierType, 
+    RoleType, 
+    Tenant, 
+    Module, 
+    TenantModule 
+} from './types';
+
+
+/**
+ * Singleton 'db' Export
+ * Primarily targets the Control Plane for SaaS administrative and shared operations.
+ */
+export const db = getControlDb();
+
+
+
+
 

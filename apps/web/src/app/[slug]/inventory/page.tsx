@@ -14,8 +14,13 @@ import { getInventoryItems } from '@/app/actions/pharmacy-actions';
 
 export const dynamic = 'force-dynamic';
 
-export default async function InventoryPage({ params }: { params: Promise<{ slug: string }> }) {
-    const { slug } = await params;
+export default async function InventoryPage(
+    props: {
+        params: Promise<{ slug: string }>;
+        searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+    }
+) {
+    const { slug } = await props.params;
     const items = await getInventoryItems();
 
     const lowStockItems = items.filter(item => item.quantity <= item.minLevel);

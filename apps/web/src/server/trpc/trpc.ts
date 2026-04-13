@@ -34,7 +34,7 @@ export const publicProcedure = t.procedure;
  * Rejects requests that do not specify a valid AmisiMedOS Clinical Node slug,
  * or if the node is in a hard clinical lockout.
  */
-const enforceTenant = t.middleware(async ({ ctx, next }) => {
+const enforceTenant = t.middleware(async ({ ctx, next, type }) => {
   if (!ctx.db || !ctx.tenantSlug) {
     throw new TRPCError({
       code: 'BAD_REQUEST',

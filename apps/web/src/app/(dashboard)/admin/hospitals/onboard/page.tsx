@@ -16,7 +16,7 @@ import {
     Layers
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { DeploymentTier } from '@amisimedos/db/client';
+import { DeploymentTier } from '@amisimedos/constants';
 
 /**
  * SaaS Admin: Hospital Onboarding Center
@@ -28,7 +28,7 @@ export default function OnboardHospital() {
         name: '',
         slug: '',
         region: 'US-EAST-1',
-        tier: DeploymentTier.CLINIC,
+        tier: DeploymentTier.CLINIC as DeploymentTier,
         dbUrl: '',
         selectedModuleIds: [] as string[]
     });

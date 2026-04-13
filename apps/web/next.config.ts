@@ -4,12 +4,14 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   outputFileTracingRoot: path.join(__dirname, "../../"),
   output: process.env.STANDALONE_BUILD === 'true' ? 'standalone' : undefined,
-  serverExternalPackages: ['@amisimedos/db'],
+  serverExternalPackages: [],
   transpilePackages: [
     "@amisimedos/auth",
     "@amisimedos/chat",
+    "@amisimedos/db",
     "@amisimedos/sync",
-    "@amisimedos/ui"
+    "@amisimedos/ui",
+    "@amisimedos/constants"
   ],
   outputFileTracingIncludes: {
     "/**/*": [
@@ -58,7 +60,3 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
-
-
-
-

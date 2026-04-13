@@ -13,8 +13,14 @@ import {
 } from 'lucide-react';
 import { getPatientById } from '@/app/actions/ehr-actions';
 
-export default async function PatientLabHistoryPage({ params }: { params: { id: string } }) {
-    const patient = await getPatientById(params.id);
+export default async function PatientLabHistoryPage(
+    props: {
+        params: Promise<{ slug: string; id: string }>;
+        searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+    }
+) {
+    const { id } = await props.params;
+    const patient = await getPatientById(id);
 
     if (!patient) {
         notFound();

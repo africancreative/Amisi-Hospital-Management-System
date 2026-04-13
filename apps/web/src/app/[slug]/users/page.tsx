@@ -3,8 +3,13 @@ import { Card, CardContent, CardHeader, CardTitle, Button, Input, Label } from '
 import { Users, UserPlus, Trash2, Shield, Briefcase, Mail } from 'lucide-react';
 import { Role } from '@amisimedos/db';
 
-export default async function UsersPage({ params }: { params: Promise<{ slug: string }> }) {
-    const { slug } = await params;
+export default async function UsersPage(
+    props: {
+        params: Promise<{ slug: string }>;
+        searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+    }
+) {
+    const { slug } = await props.params;
     const employees = await getEmployees();
 
     return (

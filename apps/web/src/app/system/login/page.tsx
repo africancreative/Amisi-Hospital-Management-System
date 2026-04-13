@@ -5,9 +5,14 @@ import { getGlobalSettings } from '../../actions/system-actions';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Button, Label } from '@amisimedos/ui';
 import { ShieldCheck } from 'lucide-react';
 
-export default async function SystemLoginPage({ searchParams }: { searchParams: Promise<{ error?: string; msg?: string }> }) {
+export default async function SystemLoginPage(
+    props: {
+        params: Promise<any>;
+        searchParams: Promise<{ error?: string; msg?: string }>;
+    }
+) {
     const settings = await getGlobalSettings();
-    const { error, msg } = await searchParams;
+    const { error, msg } = await props.searchParams;
 
     const errorMessages: Record<string, string> = {
         'invalid': 'Access Denied: Invalid administrator credentials or security token.',

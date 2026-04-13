@@ -4,8 +4,13 @@ import { Settings, ShieldCheck } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
-export default async function SettingsPage({ params }: { params: Promise<{ slug: string }> }) {
-    const { slug } = await params;
+export default async function SettingsPage(
+    props: {
+        params: Promise<{ slug: string }>;
+        searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+    }
+) {
+    const { slug } = await props.params;
     const settings = await getHospitalSettings();
 
     return (

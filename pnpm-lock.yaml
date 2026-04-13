@@ -186,6 +186,9 @@ importers:
       '@amisimedos/chat':
         specifier: workspace:^
         version: link:../../packages/chat
+      '@amisimedos/constants':
+        specifier: workspace:*
+        version: link:../../packages/constants
       '@amisimedos/db':
         specifier: workspace:^
         version: link:../../packages/db
@@ -346,8 +349,13 @@ importers:
 
   packages/config: {}
 
+  packages/constants: {}
+
   packages/db:
     dependencies:
+      '@amisimedos/constants':
+        specifier: workspace:*
+        version: link:../constants
       '@prisma/client':
         specifier: ^5.13.0
         version: 5.22.0(prisma@5.22.0)

@@ -10,8 +10,13 @@ import {
 } from 'lucide-react';
 import { getLabOrderWithResults, recordLabResult } from '@/app/actions/lab-actions';
 
-export default async function LabEntryPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = await params;
+export default async function LabEntryPage(
+    props: {
+        params: Promise<{ slug: string; id: string }>;
+        searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+    }
+) {
+    const { id } = await props.params;
     const order = await getLabOrderWithResults(id);
 
     if (!order) {

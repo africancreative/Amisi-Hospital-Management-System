@@ -2,16 +2,15 @@ import Link from 'next/link';
 import { Plus, User, Search, Calendar, ChevronRight, UserPlus } from 'lucide-react';
 import { getPatients } from '@/app/actions/ehr-actions';
 
-export default async function PatientsPage({
-    params,
-    searchParams,
-}: {
-    params: Promise<{ slug: string }>;
-    searchParams: { q?: string };
-}) {
-    const { slug } = await params;
-    const query = searchParams.q;
-    const patients = await getPatients(query);
+export default async function PatientsPage(
+    props: {
+        params: Promise<{ slug: string }>;
+        searchParams: Promise<{ q?: string }>;
+    }
+) {
+    const { slug } = await props.params;
+    const { q } = await props.searchParams;
+    const patients = await getPatients(q);
 
     return (
         <div className="flex-1 overflow-y-auto p-8 bg-gray-50 dark:bg-gray-900">

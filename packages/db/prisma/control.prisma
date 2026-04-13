@@ -17,6 +17,8 @@ enum TenantStatus {
 
 enum DeploymentTier {
   CLINIC
+  HOSPITAL
+  NETWORK
   GENERAL
   RESEARCH
 }

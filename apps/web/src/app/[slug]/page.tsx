@@ -4,8 +4,13 @@ import { getTenantDashboardStats } from "../actions/dashboard-actions";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-export default async function TenantPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
+export default async function TenantPage(
+  props: {
+    params: Promise<{ slug: string }>;
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+  }
+) {
+  const { slug } = await props.params;
   const cookieStore = await cookies();
   const userRole = cookieStore.get('amisi-user-role')?.value;
 

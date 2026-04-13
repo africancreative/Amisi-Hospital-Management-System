@@ -30,7 +30,7 @@ export default function DiagnosticsPage() {
     const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
 
     // 1. Fetch Diagnostic Orders
-    const { data: orders, isLoading } = api.lab.getOrders.useQuery();
+    const { data: orders, isLoading } = api.lab.getActiveOrders.useQuery();
 
     const handleOrderSelect = (order: any) => {
         setSelectedOrder(order);
@@ -105,7 +105,7 @@ export default function DiagnosticsPage() {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-800">
-                                {orders?.map((order) => (
+                                {(orders as any[])?.map((order) => (
                                     <tr 
                                         key={order.id} 
                                         onClick={() => handleOrderSelect(order)}

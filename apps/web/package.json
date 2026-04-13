@@ -10,6 +10,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@amisimedos/constants": "workspace:*",
     "@amisimedos/auth": "workspace:^",
     "@amisimedos/chat": "workspace:^",
     "@amisimedos/db": "workspace:^",

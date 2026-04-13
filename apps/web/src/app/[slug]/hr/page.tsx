@@ -17,8 +17,13 @@ import { getEmployees } from '@/app/actions/hr-actions';
 
 export const dynamic = 'force-dynamic';
 
-export default async function HRDashboardPage({ params }: { params: Promise<{ slug: string }> }) {
-    const { slug } = await params;
+export default async function HRDashboardPage(
+    props: {
+        params: Promise<{ slug: string }>;
+        searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+    }
+) {
+    const { slug } = await props.params;
     const employees = await getEmployees();
 
     return (

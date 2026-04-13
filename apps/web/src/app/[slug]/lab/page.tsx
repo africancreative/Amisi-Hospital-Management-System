@@ -12,8 +12,13 @@ import {
 import Link from 'next/link';
 import { getPendingLabOrders, updateLabOrderStatus } from '@/app/actions/lab-actions';
 
-export default async function LabDashboardPage({ params }: { params: Promise<{ slug: string }> }) {
-    const { slug } = await params;
+export default async function LabDashboardPage(
+    props: {
+        params: Promise<{ slug: string }>;
+        searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+    }
+) {
+    const { slug } = await props.params;
     const orders = await getPendingLabOrders();
 
     return (

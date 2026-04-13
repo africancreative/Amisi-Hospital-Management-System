@@ -65,6 +65,8 @@ export type PatientIndex = $Result.DefaultSelection<Prisma.$PatientIndexPayload>
 export namespace $Enums {
   export const DeploymentTier: {
   CLINIC: 'CLINIC',
+  HOSPITAL: 'HOSPITAL',
+  NETWORK: 'NETWORK',
   GENERAL: 'GENERAL',
   RESEARCH: 'RESEARCH'
 };

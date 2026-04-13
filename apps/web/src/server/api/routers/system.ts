@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { router, superAdminProcedure } from '@/server/trpc/trpc';
-import { getControlDb, DeploymentTier } from '@amisimedos/db/client';
+import { getControlDb } from '@amisimedos/db/client';
+import { DeploymentTier } from '@amisimedos/constants';
 import { revalidatePath } from 'next/cache';
 
 /**

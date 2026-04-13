@@ -87,7 +87,12 @@ const DOMAINS = [
     }
 ];
 
-export default async function HospitalDetailPage(props: { params: Promise<{ id: string }> }) {
+export default async function HospitalDetailPage(
+    props: {
+        params: Promise<{ id: string }>;
+        searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+    }
+) {
     const params = await props.params;
     const tenant = await getTenantById(params.id);
 

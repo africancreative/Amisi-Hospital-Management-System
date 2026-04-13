@@ -278,6 +278,8 @@ exports.Prisma.NullsOrder = {
 };
 exports.DeploymentTier = exports.$Enums.DeploymentTier = {
   CLINIC: 'CLINIC',
+  HOSPITAL: 'HOSPITAL',
+  NETWORK: 'NETWORK',
   GENERAL: 'GENERAL',
   RESEARCH: 'RESEARCH'
 };

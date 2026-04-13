@@ -7,7 +7,8 @@
     "exports": {
         ".": "./dist/index.js",
         "./client": "./dist/client.js",
-        "./provision": "./dist/provision.js"
+        "./management": "./dist/provision.js",
+        "./types": "./dist/types.js"
     },
     "scripts": {
         "build": "pnpm generate && tsc",
@@ -24,6 +25,7 @@
         "db:seed:all": "npx tsx src/seed-all-tenants.ts"
     },
     "dependencies": {
+        "@amisimedos/constants": "workspace:*",
         "@prisma/client": "^5.13.0",
         "buffer": "^6.0.3",
         "dotenv": "^16.4.5",
