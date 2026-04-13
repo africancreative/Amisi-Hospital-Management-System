@@ -1,5 +1,5 @@
 import { TRPCError } from '@trpc/server';
-import { db } from '@amisimedos/db';
+import { db } from '@amisimedos/db/client';
 
 /**
  * Clinical Resilience Billing Middleware

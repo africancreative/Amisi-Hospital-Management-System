@@ -1,4 +1,4 @@
-import { getTenantDb as getTenantDbFromPackage, getControlDb, type TenantClient } from '@amisimedos/db';
+import { getTenantDb as getTenantDbFromPackage, getControlDb, type TenantClient } from '@amisimedos/db/client';
 import { headers } from 'next/headers';
 export { getControlDb, type TenantClient };
 

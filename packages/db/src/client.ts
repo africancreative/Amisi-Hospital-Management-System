@@ -116,3 +116,7 @@ export const disposeClients = async () => {
         global.prismaTenants.clear();
     }
 };
+
+// --- Re-exports for Simplified Platform Interaction ---
+export { DeploymentTier } from '../generated/control-client';
+

@@ -1,14 +1,13 @@
 import { z } from 'zod';
-import { createTRPCRouter, publicProcedure, protectedProcedure } from '../trpc';
-import { db as controlDb } from '@amisimedos/db/control';
-import { getTenantDb } from '@/lib/db';
+import { router, publicProcedure, protectedProcedure } from '@/server/trpc/trpc';
+import { getControlDb, getTenantDb } from '@amisimedos/db/client';
 
 /**
  * Cloud Analytics Router
  * 
  * Aggregates statistics across multiple hospital tenants for executive oversight.
  */
-export const analyticsRouter = createTRPCRouter({
+export const analyticsRouter = router({
   
   /**
    * Cross-Tenant Global Overview
@@ -18,8 +17,9 @@ export const analyticsRouter = createTRPCRouter({
     .meta({ cloudOnly: true })
     .query(async () => {
       // 1. Fetch all active tenants from the Control Database
-      const tenants = await controlDb.tenant.findMany({
-        where: { status: 'ACTIVE' }
+      const db = getControlDb();
+      const tenants = await db.tenant.findMany({
+        where: { status: 'active' }
       });
 
       let totalAdmissions = 0;

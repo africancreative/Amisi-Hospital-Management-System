@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
-import { ControlClient } from '@amisimedos/db';
+import { getControlDb, getTenantBySlug, TenantClient } from '@amisimedos/db/client';
+import { type Permission } from '@amisimedos/auth';
 
-const controlDb = new ControlClient();
+const controlDb = getControlDb();
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);

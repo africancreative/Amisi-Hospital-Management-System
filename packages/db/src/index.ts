@@ -1,6 +1,5 @@
 export * from './config';
 export * from './client';
-export * from './provision';
 export * from './neon';
 export * from './update';
 export * from './lib/kms';

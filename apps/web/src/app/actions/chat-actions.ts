@@ -1,6 +1,6 @@
 'use server';
 
-import { TenantClient } from '@amisimedos/db';
+import { TenantClient } from '@amisimedos/db/client';
 import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 

@@ -30,6 +30,35 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+        // Redirection Firewall: Swap infrastructure logic for web-safe mocks
+        config.resolve.alias = {
+            ...config.resolve.alias,
+            './provision': path.resolve(__dirname, '../../packages/db/src/provision.web.ts'),
+            '@amisimedos/db/management': path.resolve(__dirname, '../../packages/db/src/provision.web.ts'),
+        };
+
+        config.resolve.fallback = {
+            ...config.resolve.fallback,
+            fs: false,
+            path: false,
+            child_process: false,
+            crypto: false,
+            os: false,
+            dotenv: false,
+            net: false,
+            tls: false,
+            dns: false,
+            readline: false,
+        };
+    }
+    return config;
+  },
 };
 
 export default nextConfig;
+
+
+
+

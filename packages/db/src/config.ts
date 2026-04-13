@@ -1,38 +1,30 @@
 import { z } from 'zod';
-import * as dotenv from 'dotenv';
-import path from 'path';
-import fs from 'fs';
 
 /**
- * Resilient env loader — tries multiple commonly resolved paths so this
- * package works correctly whether consumed by:
- *   - Next.js (which loads from apps/web/.env.local natively)
- *   - CLI scripts (tsx seed-*.ts) run from packages/db/
- *   - Compiled dist/ output (where __dirname differs)
+ * Resilient env loader — only executed on the server.
  */
 function loadEnv() {
-    const candidates = [
-        // From compiled dist/ → packages/db/dist/ → go up 4 levels to workspace root
-        path.join(__dirname, '../../../../.env'),
-        // From source src/ → packages/db/src/ → go up 3 levels to workspace root
-        path.join(__dirname, '../../../.env'),
-        // From workspace root directly
-        path.join(process.cwd(), '.env'),
-        // From apps/web (Next.js working directory in dev)
-        path.join(process.cwd(), '../../.env'),
-    ];
+    if (typeof window !== 'undefined') return;
+    
+    try {
+        // Dynamic require protects the browser bundler from seeing these imports
+        const fs = require('fs');
+        const path = require('path');
+        const dotenv = require('dotenv');
 
-    for (const candidate of candidates) {
-        if (fs.existsSync(candidate)) {
-            dotenv.config({ path: candidate });
-            break;
+        const candidates = [
+            path.join(process.cwd(), '.env'),
+            path.join(process.cwd(), '.env.local'),
+        ];
+
+        for (const candidate of candidates) {
+            if (fs.existsSync(candidate)) {
+                dotenv.config({ path: candidate });
+                break;
+            }
         }
-    }
-
-    // Also try the Next.js .env.local in apps/web
-    const nextLocalEnv = path.join(process.cwd(), '.env.local');
-    if (fs.existsSync(nextLocalEnv)) {
-        dotenv.config({ path: nextLocalEnv, override: false });
+    } catch (e) {
+        // Silently fail if modules not available (e.g. browser context during build)
     }
 }
 

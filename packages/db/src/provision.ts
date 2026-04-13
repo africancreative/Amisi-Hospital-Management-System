@@ -1,8 +1,5 @@
 import { getControlDb, TenantClient } from './client';
 import { DeploymentTier } from '../generated/control-client';
-import { execSync } from 'child_process';
-import crypto from 'crypto';
-import path from 'path';
 
 export interface ExtendedSettings {
     contactEmail?: string | null;
@@ -37,6 +34,11 @@ export async function provisionTenant(
     admin?: AdminInfo
 ) {
     console.log(`[Provision] Starting provisioning for tenant: ${name} (${slug})`);
+
+    const _require = eval('require');
+    const crypto = _require('crypto');
+    const path = _require('path');
+    const { execSync } = _require('child_process');
 
     // Create a unique reference ID for KMS encryption
     const keyRef = `kms-amisi-${crypto.randomBytes(16).toString('hex')}`;

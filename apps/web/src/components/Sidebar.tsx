@@ -15,12 +15,31 @@ import {
     Package,
     Briefcase,
     BookOpen,
-    LogOut
+    LogOut,
+    Lock,
+    Shield
 } from 'lucide-react';
 import { BillingResilienceWidget } from './BillingResilienceWidget';
 import { api } from '@/trpc/react';
+import { logout } from '@/app/actions/auth-actions';
 
-// ... (navigation array remains above)
+const navigation = [
+    { name: 'Dashboard', href: '/', icon: LayoutDashboard },
+    { name: 'Patients', href: '/patients', icon: Users, module: 'EHR', roles: ['DOCTOR', 'NURSE', 'ADMIN'] },
+    { name: 'Billing', href: '/billing', icon: DollarSign, module: 'BILLING', roles: ['ACCOUNTANT', 'ADMIN'] },
+    { name: 'Laboratory', href: '/lab', icon: Microscope, module: 'LAB', roles: ['LAB_TECH', 'DOCTOR', 'ADMIN'] },
+    { name: 'Pharmacy', href: '/pharmacy', icon: Pill, module: 'PHARMACY', roles: ['PHARMACIST', 'DOCTOR', 'ADMIN'] },
+    { name: 'Inventory', href: '/inventory', icon: Package, module: 'INVENTORY', roles: ['PHARMACIST', 'ADMIN'] },
+    { name: 'HR & Payroll', href: '/hr', icon: Briefcase, module: 'HR', roles: ['HR', 'ADMIN'] },
+    { name: 'Accounting', href: '/accounting', icon: BookOpen, module: 'ACCOUNTING', roles: ['ACCOUNTANT', 'ADMIN'] },
+    
+    // System Level Routes (SuperAdmin)
+    { name: 'Hospitals', href: '/admin/hospitals', icon: Building2, system: true },
+    { name: 'Platform Users', href: '/admin/users', icon: Users, system: true },
+    { name: 'Security', href: '/admin/security', icon: Lock, system: true },
+    { name: 'Analytics', href: '/admin/analytics', icon: Activity, system: true },
+    { name: 'Platform Settings', href: '/admin/settings', icon: Settings, system: true },
+];
 
 export default function Sidebar({
     enabledModules = [],

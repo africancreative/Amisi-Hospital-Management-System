@@ -1,6 +1,6 @@
 'use server';
 
-import { getControlDb, DeploymentTier, createTenantDatabase, provisionTenant } from '@amisimedos/db';
+import { getControlDb, DeploymentTier } from '@amisimedos/db/client';
 import { revalidatePath } from 'next/cache';
 import { ensureSuperAdmin } from '@/lib/auth-utils';
 import { Client, Environment, LogLevel } from "@paypal/paypal-server-sdk";
@@ -29,25 +29,32 @@ export async function createTenantWithModules(data: {
     // In this system, provisionTenant expects enabledModules as a mapping or list
     // Based on tenant-actions.ts, it's often a boolean mapping.
     const db = getControlDb();
-    const modules = await db.module.findMany({
-        where: { id: { in: data.selectedModuleIds } }
-    });
+        const hospital = await db.tenant.create({
+            data: {
+                name: data.name,
+                slug: data.slug,
+                dbUrl: dbUrl || undefined,
+                tier: data.tier as DeploymentTier,
+                status: 'provisioning',
+                modules: {
+                    create: data.selectedModuleIds.map(id => ({
+                        module: { connect: { id } }
+                    }))
+                }
+            }
+        });
 
-    const enabledModules: Record<string, boolean> = {};
-    modules.forEach(m => {
-        enabledModules[m.code.toLowerCase()] = true;
-    });
+        // Dynamic import to prevent Node.js module leaks
+        const { provisionTenant } = await import('@amisimedos/db/management' as any);
 
-    // 3. Trigger Core Provisioning Logic
-    await provisionTenant(
-        data.name,
-        data.slug,
-        data.region,
-        dbUrl,
-        data.tier,
-        {}, // Default settings
-        enabledModules
-    );
+        await provisionTenant({
+            tenantId: hospital.id,
+            slug: data.slug,
+            dbUrl: dbUrl || undefined,
+            tier: data.tier,
+            settings: {},
+            enabledModules: {}
+        });
 
     revalidatePath('/system/hospitals');
     revalidatePath('/system/dashboard');

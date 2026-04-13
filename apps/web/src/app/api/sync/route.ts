@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getTenantDb } from '@/lib/db';
-import { ControlClient, TenantClient } from '@amisimedos/db';
+import { ControlClient, TenantClient } from '@amisimedos/db/client';
 import { resolveSemanticConflict } from '@amisimedos/sync/resolver';
 import crypto from 'crypto';
 

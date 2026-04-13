@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Permission, hasPermission } from '@amisimedos/auth';
-import { Role } from '@amisimedos/db';
+import { Role } from '@amisimedos/db/client';
 
 interface PermissionGuardProps {
   permission: Permission;

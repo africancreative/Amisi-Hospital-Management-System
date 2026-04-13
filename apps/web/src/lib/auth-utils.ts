@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers';
-import { Role } from '@amisimedos/db';
+import { Role } from '@amisimedos/db/client';
 import { Permission, hasPermission as checkPermission } from '@amisimedos/auth';
 
 /**

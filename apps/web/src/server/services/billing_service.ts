@@ -1,4 +1,4 @@
-import { type TenantClient } from '@amisimedos/db';
+import { type TenantClient } from '@amisimedos/db/client';
 
 /**
  * Billing Service

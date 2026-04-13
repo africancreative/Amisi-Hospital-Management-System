@@ -1,7 +1,7 @@
 'use server';
 
 import { getControlDb } from '@/lib/db';
-import { TenantClient } from '@amisimedos/db';
+import { TenantClient } from '@amisimedos/db/client';
 import { ensureSuperAdmin } from '@/lib/auth-utils';
 
 export type GlobalAuditEntry = {

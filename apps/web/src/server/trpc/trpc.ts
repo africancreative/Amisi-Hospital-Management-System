@@ -2,7 +2,7 @@ import { initTRPC, TRPCError } from '@trpc/server';
 import { type Context } from './context';
 import { ZodError } from 'zod';
 import { checkBillingStatus } from './billing-middleware';
-import { Role } from '@amisimedos/db';
+import { Role } from '@amisimedos/db/client';
 import { Permission, hasPermission } from '@amisimedos/auth';
 
 /**
@@ -81,10 +81,28 @@ const isAuthed = t.middleware(({ ctx, next }) => {
 });
 
 /**
+ * Middleware: Enforce Platform SuperAdmin (SAs)
+ */
+const isSuperAdmin = t.middleware(({ ctx, next }) => {
+  if (!ctx.session || !ctx.session.isSystemAdmin) {
+    throw new TRPCError({
+      code: 'FORBIDDEN',
+      message: '[Access Denied] This operation is reserved for AmisiMedOS Platform Administrators.',
+    });
+  }
+  return next({
+    ctx: {
+      session: { ...ctx.session, isSystemAdmin: true },
+    },
+  });
+});
+
+/**
  * Base Procedures for AmisiMedOS Clinical Workflows
  */
 export const tenantProcedure = publicProcedure.use(enforceTenant);
 export const protectedProcedure = tenantProcedure.use(isAuthed);
+export const superAdminProcedure = publicProcedure.use(isAuthed).use(isSuperAdmin);
 
 /**
  * Middleware: Enforce Specific Capability (RBAC)

@@ -1,6 +1,6 @@
 import { getServerRole } from '@/lib/auth-utils';
 import { redirect } from 'next/navigation';
-import { Role } from '@amisimedos/db';
+import { Role } from '@amisimedos/db/client';
 
 interface RoleGuardProps {
     children: React.ReactNode;

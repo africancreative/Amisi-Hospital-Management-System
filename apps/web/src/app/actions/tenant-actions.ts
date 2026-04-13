@@ -1,6 +1,6 @@
 'use server';
 
-import { getControlDb, DeploymentTier, createTenantDatabase, provisionTenant, syncTenantSettings } from '@amisimedos/db';
+import { getControlDb, DeploymentTier } from '@amisimedos/db/client';
 import { revalidatePath } from 'next/cache';
 import { ensureSuperAdmin } from '@/lib/auth-utils';
 import { hashPassword } from '@amisimedos/auth';
@@ -48,6 +48,7 @@ export async function createTenant(formData: FormData) {
     console.log(`[Provisioning Action] Starting automated flow for ${slug}...`);
 
     // 1. Automate Database Creation via Neon
+    const { createTenantDatabase } = await import('@amisimedos/db/management' as any);
     const { dbUrl } = await createTenantDatabase(slug);
     console.log(`[Provisioning Action] Neon DB generated: ${dbUrl}`);
 
@@ -55,6 +56,7 @@ export async function createTenant(formData: FormData) {
     const passwordHash = await hashPassword(adminPassword);
 
     // 3. Trigger Core Provisioning Logic
+    const { provisionTenant } = await import('@amisimedos/db/management' as any);
     await provisionTenant(name, slug, region, dbUrl, tier, {
         contactEmail,
         phone,
@@ -131,6 +133,7 @@ export async function updateTenantFull(id: string, data: any) {
     // 2. Sync to the isolated local DB if connectivity is available
     // This propagates branding changes (Name, Logo, Address)
     try {
+        const { syncTenantSettings } = await import('@amisimedos/db/management' as any);
         await syncTenantSettings(id, settings);
     } catch (e) {
         console.error(`[Admin Action] Sync failed for ${updatedTenant.slug}. Settings may be out of sync.`, e);
@@ -156,6 +159,7 @@ export async function cloneTenant(sourceId: string, newConfig: any) {
     
     // In a real scenario, we might want to copy more settings, 
     // but for now we inherit Modules and Tier.
+    const { provisionTenant } = await import('@amisimedos/db/management' as any);
     await provisionTenant(
         name,
         slug,

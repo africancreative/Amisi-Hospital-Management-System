@@ -6,7 +6,8 @@
     "types": "./dist/index.d.ts",
     "exports": {
         ".": "./dist/index.js",
-        "./client": "./dist/client.js"
+        "./client": "./dist/client.js",
+        "./provision": "./dist/provision.js"
     },
     "scripts": {
         "build": "pnpm generate && tsc",

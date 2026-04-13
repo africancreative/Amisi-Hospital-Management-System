@@ -1,4 +1,4 @@
-import { getTenantBySlug } from '@amisimedos/db';
+import { getTenantBySlug } from '@amisimedos/db/client';
 import { type NextRequest } from 'next/server';
 
 /**
@@ -30,6 +30,7 @@ export const createTRPCContext = async (opts: { req: NextRequest }) => {
     userId: req.cookies.get('amisi-user-id')?.value,
     role: req.cookies.get('amisi-user-role')?.value,
     tenantId: req.cookies.get('amisi-tenant-id')?.value,
+    isSystemAdmin: req.cookies.get('amisi-is-system-admin')?.value === 'true',
   };
 
   return {

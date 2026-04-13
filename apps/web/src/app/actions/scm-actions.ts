@@ -6,7 +6,7 @@ import { ensureRole } from '@/lib/auth-utils';
 import { logAudit } from '@/lib/audit';
 import { realtimeHub } from '@amisimedos/chat';
 import { getResolvedTenantId } from '@/lib/tenant';
-import { Role } from '@amisimedos/db';
+import { Role } from '@amisimedos/db/client';
 
 // Core Financial Settings
 const ADMIN_APPROVAL_THRESHOLD = 5000.00;

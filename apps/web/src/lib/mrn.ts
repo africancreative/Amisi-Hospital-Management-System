@@ -1,4 +1,4 @@
-import { TenantClient } from '@amisimedos/db';
+import { TenantClient } from '@amisimedos/db/client';
 
 /**
  * Generates a unique, deterministic Medical Record Number (MRN)
