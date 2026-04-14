@@ -1571,7 +1571,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\amisi\\OneDrive\\Documents\\GitHub\\Amisi-Hospital-Management-System\\packages\\db\\generated\\tenant-client",
+      "value": "/vercel/share/v0-project/packages/db/generated/tenant-client",
       "fromEnvVar": null
     },
     "config": {
@@ -1580,7 +1580,7 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "windows",
+        "value": "rhel-openssl-3.0.x",
         "native": true
       },
       {
@@ -1589,7 +1589,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\amisi\\OneDrive\\Documents\\GitHub\\Amisi-Hospital-Management-System\\packages\\db\\prisma\\tenant.prisma",
+    "sourceFilePath": "/vercel/share/v0-project/packages/db/prisma/tenant.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
@@ -1648,10 +1648,6 @@ warnEnvConflicts({
 const PrismaClient = getPrismaClient(config)
 exports.PrismaClient = PrismaClient
 Object.assign(exports, Prisma)
-
-// file annotations for bundling tools to include these files
-path.join(__dirname, "query_engine-windows.dll.node");
-path.join(process.cwd(), "generated/tenant-client/query_engine-windows.dll.node")
 
 // file annotations for bundling tools to include these files
 path.join(__dirname, "libquery_engine-rhel-openssl-3.0.x.so.node");

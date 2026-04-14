@@ -1570,7 +1570,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\amisi\\OneDrive\\Documents\\GitHub\\Amisi-Hospital-Management-System\\packages\\db\\generated\\tenant-client",
+      "value": "/vercel/share/v0-project/packages/db/generated/tenant-client",
       "fromEnvVar": null
     },
     "config": {
@@ -1579,7 +1579,7 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "windows",
+        "value": "rhel-openssl-3.0.x",
         "native": true
       },
       {
@@ -1588,7 +1588,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\amisi\\OneDrive\\Documents\\GitHub\\Amisi-Hospital-Management-System\\packages\\db\\prisma\\tenant.prisma",
+    "sourceFilePath": "/vercel/share/v0-project/packages/db/prisma/tenant.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {

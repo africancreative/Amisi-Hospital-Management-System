@@ -116,7 +116,7 @@ export default function OpdPage() {
                                         <div className="flex items-center gap-2">
                                             <span className="text-[10px] text-gray-500 font-mono tracking-tighter uppercase">{p.mrn}</span>
                                             <span className="h-1 w-1 rounded-full bg-gray-700"></span>
-                                            <span className="text-[10px] text-gray-500 font-bold uppercase">{format(new Date(p.dateOfBirth), 'dd MMM yyyy')}</span>
+                                            <span className="text-[10px] text-gray-500 font-bold uppercase">{format(new Date(p.dob), 'dd MMM yyyy')}</span>
                                         </div>
                                     </div>
                                 </div>
