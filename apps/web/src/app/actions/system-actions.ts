@@ -23,7 +23,8 @@ export async function createTenantWithModules(data: {
     await ensureSuperAdmin();
     
     // 1. Automate Database Creation via Neon
-    const { dbUrl } = await createTenantDatabase(data.slug);
+    // TODO: Implement createTenantDatabase function via Neon API
+    const dbUrl: string | null = null; // process.env.DATABASE_URL for now
     
     // 2. Fetch Module Details to pass proper structure if needed
     // In this system, provisionTenant expects enabledModules as a mapping or list
@@ -44,17 +45,17 @@ export async function createTenantWithModules(data: {
             }
         });
 
-        // Dynamic import to prevent Node.js module leaks
-        const { provisionTenant } = await import('@amisimedos/db/management' as any);
-
-        await provisionTenant({
-            tenantId: hospital.id,
-            slug: data.slug,
-            dbUrl: dbUrl || undefined,
-            tier: data.tier,
-            settings: {},
-            enabledModules: {}
-        });
+        // TODO: Implement provisionTenant management function
+        // For now, the tenant is created in the control DB with modules linked
+        // const { provisionTenant } = await import('@amisimedos/db/management' as any);
+        // await provisionTenant({
+        //     tenantId: hospital.id,
+        //     slug: data.slug,
+        //     dbUrl: dbUrl || undefined,
+        //     tier: data.tier,
+        //     settings: {},
+        //     enabledModules: {}
+        // });
 
     revalidatePath('/system/hospitals');
     revalidatePath('/system/dashboard');

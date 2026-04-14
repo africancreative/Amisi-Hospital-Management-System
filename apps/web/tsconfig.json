@@ -24,7 +24,9 @@
       "@amisimedos/auth": ["../../packages/auth/src/index"],
       "@amisimedos/auth/*": ["../../packages/auth/src/*"],
       "@amisimedos/db": ["../../packages/db/src/index"],
-      "@amisimedos/db/*": ["../../packages/db/src/*"]
+      "@amisimedos/db/*": ["../../packages/db/src/*"],
+      "@amisimedos/ui": ["../../packages/ui/src/index"],
+      "@amisimedos/ui/*": ["../../packages/ui/src/*"]
     }
   },
   "include": [
