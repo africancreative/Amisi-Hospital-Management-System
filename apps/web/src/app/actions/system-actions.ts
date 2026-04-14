@@ -24,7 +24,7 @@ export async function createTenantWithModules(data: {
     
     // 1. Automate Database Creation via Neon
     // TODO: Implement createTenantDatabase function via Neon API
-    const dbUrl: string | null = null; // process.env.DATABASE_URL for now
+    const dbUrl = process.env.DATABASE_URL || '';
     
     // 2. Fetch Module Details to pass proper structure if needed
     // In this system, provisionTenant expects enabledModules as a mapping or list
