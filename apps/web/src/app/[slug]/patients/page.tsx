@@ -38,7 +38,7 @@ export default async function PatientsPage(
                         <input
                             type="text"
                             name="q"
-                            defaultValue={query}
+                            defaultValue={q}
                             placeholder="Search by name, ID or phone..."
                             className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
                         />

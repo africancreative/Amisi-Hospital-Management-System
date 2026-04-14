@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { ShieldAlert, RotateCcw, Home, MessageSquare } from 'lucide-react';
-import { Button } from '@amisimedos/ui';
+import { Button } from '@/components/ui/button';
 
 export default function Error({
     error,

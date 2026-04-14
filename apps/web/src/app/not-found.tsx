@@ -1,7 +1,7 @@
 'use client';
 
 import { Search, Home, ArrowLeft } from 'lucide-react';
-import { Button } from '@amisimedos/ui';
+import { Button } from '@/components/ui/button';
 
 export default function NotFound() {
     return (

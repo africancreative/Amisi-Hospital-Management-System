@@ -2,7 +2,10 @@
 
 import { loginSystemAdmin } from '../../actions/auth-actions';
 import { getGlobalSettings } from '../../actions/system-actions';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Button, Label } from '@amisimedos/ui';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
 import { ShieldCheck } from 'lucide-react';
 
 export default async function SystemLoginPage(

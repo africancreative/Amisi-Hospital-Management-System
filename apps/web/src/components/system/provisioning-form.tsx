@@ -2,7 +2,10 @@
 
 import { useState } from 'react';
 import { createTenant } from '../../app/actions/tenant-actions';
-import { Button, Input, Card, CardContent, CardHeader, CardTitle, Label } from '@amisimedos/ui';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
 import { CheckCircle2, Loader2, Globe, Shield, Activity, ChevronRight, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
