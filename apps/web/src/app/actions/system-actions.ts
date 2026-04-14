@@ -34,7 +34,7 @@ export async function createTenantWithModules(data: {
             data: {
                 name: data.name,
                 slug: data.slug,
-                dbUrl: dbUrl || undefined,
+                dbUrl: dbUrl,
                 tier: data.tier as DeploymentTier,
                 status: 'provisioning',
                 modules: {
