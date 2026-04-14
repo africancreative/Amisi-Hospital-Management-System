@@ -118,8 +118,8 @@ export default function LaboratoryDashboard() {
                        </div>
                        <div className="p-3 bg-white/5 rounded-2xl border border-white/10 flex items-center gap-4">
                           <div className="text-right">
-                             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Priority</p>
-                             <p className="text-sm font-black text-rose-500">{activeOrder.urgency}</p>
+                             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Status</p>
+                             <p className="text-sm font-black text-rose-500">{activeOrder.status}</p>
                           </div>
                           <Clock className="text-slate-500" />
                        </div>
