@@ -35,7 +35,8 @@ export default function EmergencyPage() {
     } | null>(null);
 
     // 1. Fetch Recently Active Patients in ER
-    const { data: erPatients } = api.patient.getRecent.useQuery();
+    const { data: erData } = api.patient.list.useQuery({ limit: 10 });
+    const erPatients = erData?.items;
 
     const handlePatientSelect = (p: any) => {
         setSelectedPatient({

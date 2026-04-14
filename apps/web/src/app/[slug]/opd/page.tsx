@@ -33,7 +33,8 @@ export default function OpdPage() {
     } | null>(null);
 
     // 1. Fetch Recently Active Patients in OPD
-    const { data: opdPatients, isLoading } = api.patient.getRecent.useQuery();
+    const { data: opdData, isLoading } = api.patient.list.useQuery({ limit: 10 });
+    const opdPatients = opdData?.items;
 
     const handlePatientSelect = (patient: any) => {
         setSelectedPatient({

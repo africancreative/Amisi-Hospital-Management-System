@@ -20,8 +20,8 @@ export default function LaboratoryDashboard() {
   const [view, setView] = useState<'QUEUE' | 'ANALYZE'>('QUEUE');
 
   const stats = [
-    { label: 'Pending Collection', count: orders?.filter(o => o.status === 'PENDING').length || 0, icon: FlaskConical, color: 'text-amber-500' },
-    { label: 'In Analysis', count: orders?.filter(o => o.status === 'SAMPLE_COLLECTED').length || 0, icon: Beaker, color: 'text-blue-500' },
+    { label: 'Pending Collection', count: (orders as any[])?.filter(o => o.status === 'PENDING').length || 0, icon: FlaskConical, color: 'text-amber-500' },
+    { label: 'In Analysis', count: (orders as any[])?.filter(o => o.status === 'SAMPLE_COLLECTED').length || 0, icon: Beaker, color: 'text-blue-500' },
     { label: 'Critical Results', count: 0, icon: AlertCircle, color: 'text-rose-500' },
     { label: 'Completed Today', count: 0, icon: CheckCircle2, color: 'text-emerald-500' },
   ];
@@ -79,7 +79,7 @@ export default function LaboratoryDashboard() {
               <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest px-2">Active Worklist</h3>
               {isLoading ? (
                 <div className="p-8 text-center text-slate-500">Loading worklist...</div>
-              ) : orders?.map((order) => (
+              ) : (orders as any[])?.map((order) => (
                 <button 
                   key={order.id}
                   onClick={() => setActiveOrder(order)}
