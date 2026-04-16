@@ -27,10 +27,15 @@ export async function addEmployee(data: {
 
     const employee = await db.employee.create({
         data: {
-            ...data,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            email: data.email,
+            role: data.role as any,
+            department: data.department,
             baseSalary: new Decimal(data.baseSalary),
-            passwordHash: '@Amisi123', // Default password for new employees
-            status: 'active'
+            passwordHash: '@Amisi123',
+            status: 'active',
+            employeeId: data.employeeId,
         }
     });
 
