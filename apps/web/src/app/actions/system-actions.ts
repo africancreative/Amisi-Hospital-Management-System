@@ -23,6 +23,7 @@ export async function createTenantWithModules(data: {
     await ensureSuperAdmin();
     
     // 1. Automate Database Creation via Neon
+    const { createTenantDatabase } = await import('@amisimedos/db/neon' as any);
     const { dbUrl } = await createTenantDatabase(data.slug);
     
     // 2. Fetch Module Details to pass proper structure if needed
