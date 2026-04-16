@@ -179,11 +179,14 @@ exports.Prisma.PatientScalarFieldEnum = {
 exports.Prisma.ChatMessageScalarFieldEnum = {
   id: 'id',
   content: 'content',
+  messageType: 'messageType',
   patientId: 'patientId',
   authorId: 'authorId',
   authorName: 'authorName',
   authorRole: 'authorRole',
   timestamp: 'timestamp',
+  editedAt: 'editedAt',
+  isDeleted: 'isDeleted',
   isClinical: 'isClinical',
   isSystemGenerated: 'isSystemGenerated'
 };
@@ -191,19 +194,29 @@ exports.Prisma.ChatMessageScalarFieldEnum = {
 exports.Prisma.UserChatMessageScalarFieldEnum = {
   id: 'id',
   content: 'content',
+  messageType: 'messageType',
   senderId: 'senderId',
   receiverId: 'receiverId',
   groupId: 'groupId',
   read: 'read',
+  readAt: 'readAt',
   timestamp: 'timestamp',
+  editedAt: 'editedAt',
+  isDeleted: 'isDeleted',
   expiresAt: 'expiresAt'
 };
 
 exports.Prisma.ChatGroupScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  avatar: 'avatar',
   type: 'type',
-  createdAt: 'createdAt'
+  description: 'description',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  lastMessageAt: 'lastMessageAt',
+  isArchived: 'isArchived'
 };
 
 exports.Prisma.ChatMemberScalarFieldEnum = {
@@ -221,7 +234,17 @@ exports.Prisma.InternalAttachmentScalarFieldEnum = {
   url: 'url',
   fileName: 'fileName',
   fileSize: 'fileSize',
+  mimeType: 'mimeType',
+  duration: 'duration',
+  thumbnail: 'thumbnail',
   createdAt: 'createdAt'
+};
+
+exports.Prisma.ChatMessageReadReceiptScalarFieldEnum = {
+  id: 'id',
+  messageId: 'messageId',
+  userId: 'userId',
+  readAt: 'readAt'
 };
 
 exports.Prisma.AttachmentScalarFieldEnum = {
@@ -238,7 +261,9 @@ exports.Prisma.EncounterScalarFieldEnum = {
   id: 'id',
   patientId: 'patientId',
   visitId: 'visitId',
+  encounterType: 'encounterType',
   doctorName: 'doctorName',
+  doctorId: 'doctorId',
   type: 'type',
   notes: 'notes',
   plan: 'plan',
@@ -249,12 +274,42 @@ exports.Prisma.EncounterScalarFieldEnum = {
   isStabilized: 'isStabilized',
   dischargeSummary: 'dischargeSummary',
   dischargedAt: 'dischargedAt',
+  status: 'status',
+  department: 'department',
+  roomBed: 'roomBed',
+  checkedInAt: 'checkedInAt',
+  triagedAt: 'triagedAt',
+  seenAt: 'seenAt',
+  completedAt: 'completedAt',
   version: 'version',
   isSynced: 'isSynced',
   conflictStatus: 'conflictStatus',
   conflictData: 'conflictData',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
+};
+
+exports.Prisma.EncounterNoteScalarFieldEnum = {
+  id: 'id',
+  encounterId: 'encounterId',
+  authorId: 'authorId',
+  authorName: 'authorName',
+  authorRole: 'authorRole',
+  content: 'content',
+  noteType: 'noteType',
+  isPrivate: 'isPrivate',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.EncounterChatScalarFieldEnum = {
+  id: 'id',
+  encounterId: 'encounterId',
+  senderId: 'senderId',
+  senderName: 'senderName',
+  senderRole: 'senderRole',
+  content: 'content',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.VisitScalarFieldEnum = {
@@ -650,6 +705,7 @@ exports.Prisma.BillItemScalarFieldEnum = {
   id: 'id',
   visitId: 'visitId',
   invoiceId: 'invoiceId',
+  encounterId: 'encounterId',
   description: 'description',
   quantity: 'quantity',
   unitPrice: 'unitPrice',
@@ -1431,11 +1487,15 @@ exports.Prisma.ChangeLogScalarFieldEnum = {
 
 exports.Prisma.SyncQueueScalarFieldEnum = {
   id: 'id',
+  eventId: 'eventId',
   payload: 'payload',
   direction: 'direction',
   status: 'status',
   retryCount: 'retryCount',
   lastError: 'lastError',
+  nextAttemptAt: 'nextAttemptAt',
+  lockedAt: 'lockedAt',
+  lockedBy: 'lockedBy',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -1515,8 +1575,11 @@ exports.Prisma.ModelName = {
   ChatGroup: 'ChatGroup',
   ChatMember: 'ChatMember',
   InternalAttachment: 'InternalAttachment',
+  ChatMessageReadReceipt: 'ChatMessageReadReceipt',
   Attachment: 'Attachment',
   Encounter: 'Encounter',
+  EncounterNote: 'EncounterNote',
+  EncounterChat: 'EncounterChat',
   Visit: 'Visit',
   ClinicalNote: 'ClinicalNote',
   Ward: 'Ward',

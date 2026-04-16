@@ -1,5 +1,5 @@
 import { TRPCError } from '@trpc/server';
-import { db } from '@amisimedos/db/client';
+import type { TenantClient } from '@amisimedos/db/client';
 
 /**
  * Clinical Resilience Billing Middleware
@@ -9,15 +9,27 @@ import { db } from '@amisimedos/db/client';
  * or subscription expiration, providing a safety window for care.
  */
 
-export const checkBillingStatus = async (tenantId: string) => {
+export const checkBillingStatus = async (tenantDb: TenantClient) => {
   // 1. Fetch Local Subscription Cache from the Edge Node DB
   // In a local node, we prioritize the local cache to allow for offline operation.
-  const localSub = await db.localSubscription.findFirst({
+  const localSub = await tenantDb.localSubscription.findFirst({
     where: { id: 'singleton' }
   });
 
   if (!localSub) {
-    // If no record exists at all, this might be a new un-provisioned node
+    // Cloud can run without the local cache; Edge should not.
+    const isCloud = process.env.NODE_TYPE === 'CLOUD' || process.env.CLOUD_MODE === 'true';
+    if (isCloud) {
+      return {
+        isExpired: false,
+        isLockout: false,
+        isWithinGrace: false,
+        gracePeriodRemaining: 0,
+        planCode: 'UNKNOWN',
+        missingLocalSubscription: true,
+      };
+    }
+
     throw new TRPCError({
       code: 'FORBIDDEN',
       message: '[Billing Error] No active subscription record found on this node. Please connect to the Amisi Cloud Hub to initialize.',

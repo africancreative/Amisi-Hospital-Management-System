@@ -1,6 +1,7 @@
 import { getTenantDb } from './db';
 import { cookies, headers } from 'next/headers';
 import crypto from 'crypto';
+import type { TenantClient } from '@amisimedos/db/client';
 
 export type AuditAction = 'CREATE' | 'UPDATE' | 'DELETE' | 'ACCESS' | 'READ' | 'LOGIN' | 'EXPORT' | 'SYNC_CONFLICT' | 'SYSTEM_ROUTINE';
 
@@ -12,21 +13,25 @@ export async function logAudit({
     action,
     resource,
     resourceId,
-    details = {}
+    details = {},
+    db: providedDb,
+    actor,
 }: {
     action: AuditAction;
     resource: string;
     resourceId?: string;
     details?: any;
+    db?: TenantClient;
+    actor?: { id?: string | null; name?: string | null; role?: string | null };
 }) {
     try {
-        const db = await getTenantDb();
+        const db = providedDb ?? await getTenantDb();
         const cookieStore = await cookies();
         const headerList = await headers();
 
-        const actorId = cookieStore.get('amisi-user-id')?.value || 'SYSTEM';
-        const actorName = cookieStore.get('amisi-user-name')?.value || 'System Process';
-        const actorRole = cookieStore.get('amisi-user-role')?.value || 'SYSTEM';
+        const actorId = actor?.id || cookieStore.get('amisi-user-id')?.value || 'SYSTEM';
+        const actorName = actor?.name || cookieStore.get('amisi-user-name')?.value || 'System Process';
+        const actorRole = actor?.role || cookieStore.get('amisi-user-role')?.value || 'SYSTEM';
         const ipAddress = headerList.get('x-forwarded-for') || '127.0.0.1';
         const userAgent = headerList.get('user-agent') || 'Unknown';
 

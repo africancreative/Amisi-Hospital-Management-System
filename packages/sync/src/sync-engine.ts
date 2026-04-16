@@ -4,12 +4,11 @@ import { isOffline } from './connectivity';
 import { resolveSemanticConflict } from './resolver';
 import crypto from 'crypto';
 import { SyncBackoff } from './backoff';
+import { performIncrementalSync, verifyReplicationHealth, initiateBootstrap } from './recovery';
+import { decryptPayload } from './crypto';
 
 const CLOUD_SYNC_URL = process.env.CLOUD_SYNC_URL || 'https://api.amisigenuine.com/api/sync';
 const SYNC_SHARED_SECRET = process.env.SYNC_SHARED_SECRET!;
-
-import { initiateBootstrap } from './recovery';
-import { decryptPayload } from './crypto';
 
 /**
  * The Sync Engine handles:

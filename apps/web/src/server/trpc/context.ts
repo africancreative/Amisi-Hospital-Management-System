@@ -1,4 +1,4 @@
-import { getTenantBySlug } from '@amisimedos/db/client';
+import { getTenantBySlug, getTenantDb } from '@amisimedos/db/client';
 import { type NextRequest } from 'next/server';
 
 /**
@@ -13,15 +13,21 @@ export const createTRPCContext = async (opts: { req: NextRequest }) => {
   const { req } = opts;
   
   // 1. Multi-Tenant Routing (The Core of AmisiMedOS)
-  const tenantSlug = req.headers.get('x-tenant-slug');
+  const cookieTenantSlug = req.cookies.get('amisi-tenant-slug')?.value;
+  const tenantSlug = req.headers.get('x-tenant-slug') || cookieTenantSlug;
   
   let db = null;
-  if (tenantSlug) {
-    try {
+  try {
+    if (tenantSlug) {
       db = await getTenantBySlug(tenantSlug);
-    } catch (e) {
-      console.error(`[tRPC Context] Failed to resolve tenant for slug: ${tenantSlug}`, e);
+    } else {
+      const tenantIdFromCookie = req.cookies.get('amisi-tenant-id')?.value;
+      if (tenantIdFromCookie) {
+        db = await getTenantDb(tenantIdFromCookie);
+      }
     }
+  } catch (e) {
+    console.error(`[tRPC Context] Failed to resolve tenant DB client. tenantSlug=${tenantSlug ?? 'null'}`, e);
   }
 
   // 2. Auth Context (Integrating @amisimedos/auth)

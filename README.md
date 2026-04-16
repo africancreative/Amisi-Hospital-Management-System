@@ -7,11 +7,10 @@ Welcome to the **AmisiMedOS Distributed Health Infrastructure**. This monorepo h
 AmisiMedOS is built as a high-performance monorepo using **Turborepo** and **PNPM**, designed for both cloud-native and edge-capable deployments.
 
 ### Applications (`apps/`)
-### Applications (`apps/`)
 - **`web`**: Premium SaaS Managed Portal (Next.js 16+ / React 19).
 - **`api`**: Distributed Cloud Hub (Express / Node.js).
 - **`desktop`**: Clinical Edge Node (Tauri / Node.js).
-- **`mobile`**: Bedside Nursing Assistant (Expo / React Native).
+- **`mobile`**: Bedside Nursing Assistant (Flutter).
 
 ## 🚀 SaaS Infrastructure & Routing
 

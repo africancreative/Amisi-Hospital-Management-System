@@ -121,55 +121,72 @@ model Patient {
 }
 
 model ChatMessage {
-  id        String   @id @default(uuid())
-  content   String?  @db.Text
-  patientId String   @map("patient_id")
-  patient   Patient  @relation(fields: [patientId], references: [id])
-  authorId  String   @map("author_id")
-  authorName String  @map("author_name")
-  authorRole String  @map("author_role")
-  timestamp DateTime @default(now())
+  id          String   @id @default(uuid())
+  content     String?  @db.Text
+  messageType String   @default("TEXT") @map("message_type") // 'TEXT', 'IMAGE', 'VOICE', 'VIDEO', 'FILE', 'SYSTEM'
+  patientId   String   @map("patient_id")
+  patient     Patient  @relation(fields: [patientId], references: [id])
+  authorId    String   @map("author_id")
+  authorName  String   @map("author_name")
+  authorRole  String   @map("author_role")
+  timestamp   DateTime @default(now())
+  editedAt    DateTime? @map("edited_at")
+  isDeleted   Boolean  @default(false) @map("is_deleted")
   
-  isClinical Boolean @default(false) @map("is_clinical")
-  isSystemGenerated Boolean @default(false) @map("is_system_generated")
+  isClinical         Boolean @default(false) @map("is_clinical")
+  isSystemGenerated  Boolean @default(false) @map("is_system_generated")
   
   attachments Attachment[]
 
   @@index([patientId])
+  @@index([timestamp])
   @@map("chat_messages")
 }
 
 model UserChatMessage {
-  id        String   @id @default(uuid())
-  content   String   @db.Text
-  senderId  String   @map("sender_id")
-  sender    Employee @relation("SentMessages", fields: [senderId], references: [id])
-  receiverId String? @map("receiver_id")
-  receiver  Employee? @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  id          String   @id @default(uuid())
+  content     String   @db.Text
+  messageType String   @default("TEXT") @map("message_type") // 'TEXT', 'IMAGE', 'VOICE', 'VIDEO', 'FILE', 'SYSTEM'
+  senderId    String   @map("sender_id")
+  sender      Employee @relation("SentMessages", fields: [senderId], references: [id])
+  receiverId  String?  @map("receiver_id")
+  receiver    Employee? @relation("ReceivedMessages", fields: [receiverId], references: [id])
   
-  groupId    String?   @map("group_id")
-  group      ChatGroup? @relation(fields: [groupId], references: [id])
+  groupId     String?   @map("group_id")
+  group       ChatGroup? @relation(fields: [groupId], references: [id])
   
-  read      Boolean  @default(false)
-  timestamp DateTime @default(now())
-  expiresAt DateTime? @map("expires_at")
+  read        Boolean  @default(false)
+  readAt      DateTime? @map("read_at")
+  timestamp   DateTime @default(now())
+  editedAt    DateTime? @map("edited_at")
+  isDeleted   Boolean  @default(false) @map("is_deleted")
+  expiresAt   DateTime? @map("expires_at")
 
   attachments InternalAttachment[]
+  readReceipts ChatMessageReadReceipt[]
 
   @@index([senderId, receiverId])
   @@index([groupId])
+  @@index([timestamp])
   @@map("user_chat_messages")
 }
 
 model ChatGroup {
-  id        String   @id @default(uuid())
-  name      String?
-  type      String   @default("DIRECT") // 'DIRECT', 'GROUP', 'SYSTEM'
-  createdAt DateTime @default(now()) @map("created_at")
+  id          String   @id @default(uuid())
+  name        String?
+  avatar      String?
+  type        String   @default("DIRECT") // 'DIRECT', 'GROUP', 'SYSTEM'
+  description String?  @db.Text
+  createdById String?  @map("created_by_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  lastMessageAt DateTime? @map("last_message_at")
+  isArchived Boolean  @default(false) @map("is_archived")
   
   members   ChatMember[]
   messages  UserChatMessage[]
 
+  @@index([lastMessageAt])
   @@map("chat_groups")
 }
 
@@ -187,17 +204,32 @@ model ChatMember {
 }
 
 model InternalAttachment {
-  id        String   @id @default(uuid())
-  messageId String   @map("message_id")
-  message   UserChatMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
-  type      String   // 'image', 'voice', 'video', 'document'
-  url       String   @db.Text
-  fileName  String?  @map("file_name")
-  fileSize  Int?     @map("file_size")
-  createdAt DateTime @default(now()) @map("created_at")
+  id          String   @id @default(uuid())
+  messageId   String   @map("message_id")
+  message     UserChatMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  type        String   // 'image', 'voice', 'video', 'document'
+  url         String   @db.Text
+  fileName    String?  @map("file_name")
+  fileSize    Int?     @map("file_size")
+  mimeType    String?  @map("mime_type")
+  duration    Int?     // Duration in seconds for voice/video
+  thumbnail   String?  // Thumbnail URL for images/videos
+  createdAt   DateTime @default(now()) @map("created_at")
 
   @@index([messageId])
   @@map("internal_attachments")
+}
+
+model ChatMessageReadReceipt {
+  id         String   @id @default(uuid())
+  messageId  String   @map("message_id")
+  message    UserChatMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  userId     String   @map("user_id")
+  readAt     DateTime @default(now()) @map("read_at")
+
+  @@unique([messageId, userId])
+  @@index([userId, readAt])
+  @@map("chat_message_read_receipts")
 }
 
 model Attachment {
@@ -222,10 +254,12 @@ model Encounter {
   visitId   String?  @map("visit_id")
   visit     Visit?   @relation(fields: [visitId], references: [id])
   
+  encounterType String   @default("OPD") @map("encounter_type") // 'OPD', 'ED', 'IPD', 'DIAGNOSTICS'
   doctorName String  @map("doctor_name")
-  type       String  // e.g., 'Checkup', 'Emergency', 'Inpatient', 'Follow-up'
-  notes      String? @db.Text
-  plan       String? @db.Text
+  doctorId    String?  @map("doctor_id")
+  type       String   // e.g., 'Checkup', 'Emergency', 'Inpatient', 'Follow-up'
+  notes      String?  @db.Text
+  plan       String?  @db.Text
   
   // Triage & ED SOP (ESI Levels 1-5)
   esiLevel       Int?      @map("esi_level")
@@ -239,10 +273,21 @@ model Encounter {
   // IPD & Discharge
   dischargeSummary String? @map("discharge_summary") @db.Text
   dischargedAt     DateTime? @map("discharged_at")
+  
+  // Workflow Tracking
+  status          String   @default("IN_PROGRESS") @map("status") // 'CHECKED_IN', 'TRIAGED', 'IN_PROGRESS', 'COMPLETED', 'DISCHARGED'
+  department      String?  @map("department")
+  roomBed         String?  @map("room_bed")
+  
+  // Timestamps for workflow
+  checkedInAt    DateTime? @map("checked_in_at")
+  triagedAt       DateTime? @map("triaged_at")
+  seenAt          DateTime? @map("seen_at")
+  completedAt     DateTime? @map("completed_at")
 
   version   Int      @default(1)
   isSynced  Boolean  @default(false) @map("is_synced")
-  conflictStatus String? @map("conflict_status") // 'NONE', 'PENDING_MERGE'
+  conflictStatus String? @map("conflict_status")
   conflictData   Json?   @map("conflict_data")
 
   createdAt DateTime @default(now()) @map("created_at")
@@ -263,8 +308,42 @@ model Encounter {
   surgeryRequests   SurgeryRequest[]
   labOrders         LabOrder[]
   clinicalNotes     ClinicalNote[]
+  encounterNotes    EncounterNote[]
+  encounterChats    EncounterChat[]
+  billItems         BillItem[]
 
   @@map("encounters")
+}
+
+model EncounterNote {
+  id          String   @id @default(uuid())
+  encounterId String   @map("encounter_id")
+  encounter   Encounter @relation(fields: [encounterId], references: [id], onDelete: Cascade)
+  authorId    String   @map("author_id")
+  authorName  String   @map("author_name")
+  authorRole  String   @map("author_role")
+  content     String   @db.Text
+  noteType    String   @default("GENERAL") @map("note_type") // 'GENERAL', 'NURSING', 'DOCTOR', 'DISCHARGE', 'FOLLOW_UP'
+  isPrivate   Boolean  @default(false) @map("is_private")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([encounterId])
+  @@map("encounter_notes")
+}
+
+model EncounterChat {
+  id          String   @id @default(uuid())
+  encounterId String   @map("encounter_id")
+  encounter   Encounter @relation(fields: [encounterId], references: [id], onDelete: Cascade)
+  senderId    String   @map("sender_id")
+  senderName  String   @map("sender_name")
+  senderRole  String   @map("sender_role")
+  content     String   @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([encounterId])
+  @@map("encounter_chats")
 }
 
 model Visit {
@@ -906,6 +985,8 @@ model BillItem {
   visit             Visit    @relation(fields: [visitId], references: [id])
   invoiceId         String?  @map("invoice_id")
   invoice           Invoice? @relation(fields: [invoiceId], references: [id])
+  encounterId       String?  @map("encounter_id")
+  encounter         Encounter? @relation(fields: [encounterId], references: [id])
   
   description       String
   quantity          Decimal  @db.Decimal(10, 2)
@@ -1164,6 +1245,9 @@ model EventJournal {
   isSynced         Boolean  @default(false) @map("is_synced")
   direction        String   @default("OUTGOING") // 'OUTGOING' (Edge->Cloud), 'INCOMING' (Cloud->Edge)
   sequenceNumber   BigInt   @default(0) @map("sequence_number") // For ordered delta tracking
+
+  // 1 row per event: queue state (retries/locks) is tracked here.
+  syncQueue        SyncQueue?
 
   @@index([sequenceNumber])
   @@map("event_journal")
@@ -2155,14 +2239,25 @@ model ChangeLog {
 
 model SyncQueue {
   id          String   @id @default(uuid())
+
+  // 1:1 with EventJournal (unique event -> unique queue row)
+  eventId     String   @unique @map("event_id")
+  event       EventJournal @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
   payload     Json
   direction   String   @default("OUTGOING") // 'OUTGOING', 'INCOMING'
   status      String   @default("PENDING")  // 'PENDING', 'SENT', 'FAILED', 'APPLIED'
   retryCount  Int      @default(0) @map("retry_count")
   lastError   String?  @map("last_error")
+
+  nextAttemptAt DateTime @default(now()) @map("next_attempt_at")
+  lockedAt      DateTime? @map("locked_at")
+  lockedBy      String?  @map("locked_by")
   
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([status, nextAttemptAt])
 
   @@map("sync_queue")
 }

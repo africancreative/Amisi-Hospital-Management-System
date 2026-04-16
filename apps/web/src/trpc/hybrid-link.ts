@@ -20,6 +20,9 @@ export const hybridLink: TRPCLink<any> = (opts) => {
     // We create a one-off link with the dynamic URL and apply it to the current operation
     return httpBatchLink({
       url,
+      fetch(url, options) {
+        return fetch(url, { ...options, credentials: 'include' });
+      },
       headers() {
          const slug = typeof window !== 'undefined' ? window.location.pathname.split('/')[1] : '';
          return {

@@ -13,12 +13,15 @@ import { nursingRouter } from './routers/nursing';
 import { analyticsRouter } from './routers/analytics';
 import { clinicalRouter } from './routers/clinical';
 import { systemRouter } from './routers/system';
+import { auditRouter } from './routers/audit';
+import { authRouter } from './routers/auth';
 
 /**
  * Root tRPC Router
  */
 export const appRouter = router({
   system: systemRouter,
+  auth: authRouter,
   patient: patientRouter,
   billing: billingRouter,
   chat: chatRouter,

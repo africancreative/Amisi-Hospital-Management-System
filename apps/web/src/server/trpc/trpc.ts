@@ -44,7 +44,7 @@ const enforceTenant = t.middleware(async ({ ctx, next, type }) => {
 
   // Enforcement: 72-hour clinical grace check
   // This ensure that even if offline, we respect the last signed billing status
-  const billing = await checkBillingStatus(ctx.tenantSlug);
+  const billing = await checkBillingStatus(ctx.db);
 
   // Read-Only Enforcement: Block mutations if past grace period
   if (billing.isLockout && type === 'mutation') {
@@ -54,13 +54,7 @@ const enforceTenant = t.middleware(async ({ ctx, next, type }) => {
     });
   }
 
-  return next({
-    ctx: {
-      db: ctx.db,
-      tenantSlug: ctx.tenantSlug,
-      billing, // Attach billing status to context for UI/Procedure use
-    },
-  });
+  return next({ ctx: { ...ctx, billing } });
 });
 
 /**

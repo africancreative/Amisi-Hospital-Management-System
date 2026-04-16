@@ -1,36 +1,12 @@
 {
   "name": "@amisimedos/mobile",
+  "private": true,
   "version": "0.1.0",
-  "main": "expo-router/entry",
   "scripts": {
-    "start": "expo start",
-    "android": "expo run:android",
-    "ios": "expo run:ios",
-    "web": "expo start --web"
-  },
-  "dependencies": {
-    "expo": "~54.0.33",
-    "expo-status-bar": "~3.0.9",
-    "react": "19.1.0",
-    "react-native": "0.81.5",
-    "expo-router": "~4.0.17",
-    "expo-sqlite": "~16.0.7",
-    "expo-constants": "~18.0.2",
-    "expo-linking": "~8.0.3",
-    "react-native-safe-area-context": "5.2.0",
-    "react-native-screens": "^4.0.0",
-    "@tanstack/react-query": "^5.25.0",
-    "@trpc/client": "^11.0.0-rc.342",
-    "@trpc/react-query": "^11.0.0-rc.342",
-    "lucide-react-native": "^0.363.0",
-    "clsx": "^2.1.0",
-    "tailwind-merge": "^2.2.1",
-    "expo-network": "~7.0.5"
-  },
-  "devDependencies": {
-    "@types/react": "~19.1.0",
-    "typescript": "~5.9.2",
-    "@amisimedos/db": "workspace:*"
-  },
-  "private": true
+    "dev": "flutter run",
+    "build": "flutter build web",
+    "build:android": "flutter build apk",
+    "test": "flutter test",
+    "lint": "flutter analyze"
+  }
 }

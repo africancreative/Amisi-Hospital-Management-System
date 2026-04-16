@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { tenantProcedure, router, protectedProcedure, clinicalProcedure } from '@/server/trpc/trpc';
+import { router, clinicalProcedure } from '@/server/trpc/trpc';
 import { logAudit } from '@/lib/audit';
 
 /**
@@ -18,6 +18,8 @@ export const patientRouter = router({
       const { limit, cursor, search } = input;
       const take = limit ?? 50;
 
+      if (!ctx.db) throw new Error('Database not initialized');
+
       const items = await ctx.db.patient.findMany({
         take: take + 1,
         where: search ? {
@@ -35,7 +37,9 @@ export const patientRouter = router({
       await logAudit({
         action: 'READ',
         resource: 'PATIENT_LIST',
-        details: { search, resultCount: items.length }
+        details: { search, resultCount: items.length },
+        db: ctx.db,
+        actor: { id: ctx.session?.userId, role: ctx.session?.role },
       });
 
       let nextCursor: typeof cursor | undefined = undefined;
@@ -44,32 +48,27 @@ export const patientRouter = router({
         nextCursor = nextItem!.id;
       }
 
-      return {
-        items,
-        nextCursor,
-      };
+      return { items, nextCursor };
     }),
 
   getById: clinicalProcedure
     .input(z.string())
     .query(async ({ ctx, input }) => {
+      if (!ctx.db) throw new Error('Database not initialized');
+
       const patient = await ctx.db.patient.findUnique({
         where: { id: input },
-        include: {
-          encounters: {
-            take: 5,
-            orderBy: { createdAt: 'desc' },
-          },
-        },
+        include: { encounters: { take: 5, orderBy: { createdAt: 'desc' } } },
       });
 
       if (patient) {
-        // Audit Individual Access (High Sensitivity)
         await logAudit({
           action: 'ACCESS',
           resource: 'PATIENT',
           resourceId: patient.id,
-          details: { mrn: patient.mrn, name: `${patient.firstName} ${patient.lastName}` }
+          details: { mrn: patient.mrn, name: `${patient.firstName} ${patient.lastName}` },
+          db: ctx.db,
+          actor: { id: ctx.session?.userId, role: ctx.session?.role },
         });
       }
 
@@ -87,19 +86,19 @@ export const patientRouter = router({
       mrn: z.string(),
     }))
     .mutation(async ({ ctx, input }) => {
+      if (!ctx.db) throw new Error('Database not initialized');
+
       const patient = await ctx.db.patient.create({
-        data: {
-          ...input,
-          version: 1,
-          isSynced: false,
-        },
+        data: { ...input, version: 1, isSynced: false },
       });
 
       await logAudit({
         action: 'CREATE',
         resource: 'PATIENT',
         resourceId: patient.id,
-        details: { mrn: patient.mrn }
+        details: { mrn: patient.mrn },
+        db: ctx.db,
+        actor: { id: ctx.session?.userId, role: ctx.session?.role },
       });
 
       return patient;
@@ -116,24 +115,42 @@ export const patientRouter = router({
       email: z.string().email().optional(),
     }))
     .mutation(async ({ ctx, input }) => {
+      if (!ctx.db) throw new Error('Database not initialized');
+
       const { id, ...data } = input;
       const patient = await ctx.db.patient.update({
         where: { id },
-        data: {
-          ...data,
-          version: { increment: 1 },
-          isSynced: false,
-        },
+        data: { ...data, version: { increment: 1 }, isSynced: false },
       });
 
       await logAudit({
         action: 'UPDATE',
         resource: 'PATIENT',
         resourceId: patient.id,
-        details: { changedFields: Object.keys(data) }
+        details: { changedFields: Object.keys(data) },
+        db: ctx.db,
+        actor: { id: ctx.session?.userId, role: ctx.session?.role },
       });
 
       return patient;
     }),
-});
 
+  delete: clinicalProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      if (!ctx.db) throw new Error('Database not initialized');
+
+      await ctx.db.patient.delete({ where: { id: input.id } });
+
+      await logAudit({
+        action: 'DELETE',
+        resource: 'PATIENT',
+        resourceId: input.id,
+        details: {},
+        db: ctx.db,
+        actor: { id: ctx.session?.userId, role: ctx.session?.role },
+      });
+
+      return { success: true };
+    }),
+});

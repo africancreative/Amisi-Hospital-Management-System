@@ -1,7 +1,11 @@
 export * from './journal';
 export * from './purge-worker';
 export * from './connectivity';
+export * from './connectivity-auto';
 export * from './sync-engine';
+export * from './offline-fallback';
+export * from './recovery';
+export * from './routing';
 
 import { getTenantDb } from '@amisimedos/db';
 import { startPurgeWorker } from './purge-worker';
