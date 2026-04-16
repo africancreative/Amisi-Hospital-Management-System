@@ -16,12 +16,14 @@ export interface AuditEntry {
   details?: Record<string, any>;
   ipAddress?: string;
   userAgent?: string;
+  timestamp?: Date;
 }
 
 export interface AuditFilter {
   actorId?: string;
   action?: AuditAction;
   resource?: string;
+  resourceId?: string;
   startDate?: Date;
   endDate?: Date;
   limit?: number;
@@ -76,7 +78,7 @@ export class AuditService {
     this.lastHash = hash;
   }
 
-  public async logAsync(entry: Omit<AuditEntry, 'timestamp'>): void {
+  public async logAsync(entry: Omit<AuditEntry, 'timestamp'>): Promise<void> {
     this.log(entry).catch(err => console.error('[Audit] Failed to log:', err));
   }
 
