@@ -35,13 +35,11 @@ export async function createTenantWithModules(data: {
                 name: data.name,
                 slug: data.slug,
                 dbUrl: dbUrl || undefined,
+                encryptionKeyReference: data.slug,
+                region: data.region,
                 tier: data.tier as DeploymentTier,
-                status: 'provisioning',
-                modules: {
-                    create: data.selectedModuleIds.map(id => ({
-                        module: { connect: { id } }
-                    }))
-                }
+                status: 'active',
+                enabledModules: {},
             }
         });
 
