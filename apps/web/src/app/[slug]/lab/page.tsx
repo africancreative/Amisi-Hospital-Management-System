@@ -54,7 +54,7 @@ export default async function LabDashboardPage(
                                         <div>
                                             <div className="flex items-center gap-2 mb-1">
                                                 <h3 className="text-xl font-black">{order.testPanelId}</h3>
-                                                <PriorityPill priority={order.urgency} />
+                                                <PriorityPill priority={(order as any).urgency} />
                                             </div>
                                             <p className="text-xs text-gray-400 font-black uppercase tracking-widest mb-4 flex items-center gap-2">
                                                 <User className="h-3 w-3" />

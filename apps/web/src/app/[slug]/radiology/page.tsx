@@ -64,7 +64,7 @@ export default function RadiologyDashboard() {
              >
                 <div className="flex justify-between items-start mb-2">
                    <span className="text-[9px] font-black text-slate-500">ACC: {order.id.slice(0, 8)}</span>
-                   <span className={`text-[9px] font-black px-2 py-0.5 rounded-full ${order.urgency === 'STAT' ? 'bg-rose-500/20 text-rose-500' : 'bg-blue-500/20 text-blue-500'}`}>{order.urgency}</span>
+                   <span className={`text-[9px] font-black px-2 py-0.5 rounded-full ${order.priority === 'STAT' ? 'bg-rose-500/20 text-rose-500' : 'bg-blue-500/20 text-blue-500'}`}>{order.priority}</span>
                 </div>
                 <h4 className="font-bold text-white text-sm mb-1">{order.patient?.firstName} {order.patient?.lastName}</h4>
                 <div className="flex items-center gap-2">
