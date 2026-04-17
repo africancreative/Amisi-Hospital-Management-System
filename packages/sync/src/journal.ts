@@ -15,7 +15,7 @@ export async function recordEvent(
     payload: any,
     sharedSecret: string,
     direction: 'OUTGOING' | 'INCOMING' = 'OUTGOING'
-) {
+): Promise<any> {
     const payloadString = JSON.stringify(payload);
     
     // Use HMAC-SHA256 with the sharedSecret from Tenant Provisioning
