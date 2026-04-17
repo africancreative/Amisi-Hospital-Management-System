@@ -34,7 +34,7 @@ export default function HospitalModules() {
 
     useEffect(() => {
         if (hospital?.entitlements) {
-            setSelectedIds(hospital.entitlements.map(e => e.moduleId));
+            setSelectedIds(hospital.entitlements.map((e: typeof hospital.entitlements[number]) => e.moduleId));
         }
     }, [hospital]);
 
