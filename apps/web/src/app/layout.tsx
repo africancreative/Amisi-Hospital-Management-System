@@ -16,8 +16,8 @@ export const metadata: Metadata = {
   title: 'AmisiMedOS | Hospital Management System',
   description: 'Enterprise Hybrid-Cloud Hospital Management System',
   icons: {
-    icon: '/logo.png',
-    apple: '/logo.png',
+    icon: '/favicon.png',
+    apple: '/favicon.png',
   },
 };
 
