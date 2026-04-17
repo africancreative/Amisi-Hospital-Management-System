@@ -35,11 +35,21 @@ export function proxy(request: NextRequest) {
     // 2. Public Exception Paths
     const publicPaths = ['/login', '/system/login', '/lockout', '/api/auth'];
     if (pathname === '/' || publicPaths.some(path => pathname.startsWith(path))) {
+        if (pathname === '/' && process.env.NEXT_PUBLIC_IS_LOCAL_EDGE_NODE === 'true') {
+            const edgeTenant = process.env.NEXT_PUBLIC_EDGE_TENANT_ID || 'amisi-premier';
+            return NextResponse.redirect(new URL(`/${edgeTenant}/login`, request.url));
+        }
         return NextResponse.next();
     }
 
     // 3. System Admin paths
     if (pathname.startsWith('/system') || pathname.startsWith('/hospitals')) {
+        // Enforce CIA Triad Edge Restrict: Block SaaS features on Edge distributions
+        if (process.env.NEXT_PUBLIC_IS_LOCAL_EDGE_NODE === 'true') {
+            const edgeTenant = process.env.NEXT_PUBLIC_EDGE_TENANT_ID || 'amisi-premier';
+            return NextResponse.redirect(new URL(`/${edgeTenant}/login`, request.url));
+        }
+
         if (!isSystemAdmin) {
             return NextResponse.redirect(new URL('/system/login', request.url));
         }

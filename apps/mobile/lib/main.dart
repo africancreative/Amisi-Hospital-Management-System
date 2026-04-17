@@ -225,8 +225,20 @@ class _HospitalLoginScreenState extends State<HospitalLoginScreen> {
   bool _isLoading = false;
   bool _obscurePassword = true;
   String? _errorMessage;
-  bool _showHospitalForm = true;
   final ServerConfig _serverConfig = ServerConfig();
+
+  // SECURE TENANT ISOLATION: Use `--dart-define=TENANT_ID=amisi-premier` to physically compile out 
+  // the SaaS multi-tenant selection form, locking the universal distro to a single local hospital.
+  static const String secureEdgeTenant = String.fromEnvironment('TENANT_ID', defaultValue: '');
+  bool _showHospitalForm = secureEdgeTenant.isEmpty;
+
+  @override
+  void initState() {
+    super.initState();
+    if (secureEdgeTenant.isNotEmpty) {
+      _slugController.text = secureEdgeTenant;
+    }
+  }
 
   @override
   void dispose() {
