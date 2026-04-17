@@ -13,8 +13,12 @@ import PWARegistration from '@/components/PWARegistration';
 
 
 export const metadata: Metadata = {
-  title: 'AmisiMedOS Platinum | HMS',
-  description: 'Enterprise Hybrid-Cloud Hospital Management System by amisigenuine.com',
+  title: 'AmisiMedOS | Hospital Management System',
+  description: 'Enterprise Hybrid-Cloud Hospital Management System',
+  icons: {
+    icon: '/logo.png',
+    apple: '/logo.png',
+  },
 };
 
 export const dynamic = 'force-dynamic';
