@@ -1,0 +1,9 @@
+# Don't ignore node_modules - Prisma binaries are critical
+# .next build cache can be safely ignored
+.next
+dist
+coverage
+.DS_Store
+*.log
+.env.local
+.env.*.local
