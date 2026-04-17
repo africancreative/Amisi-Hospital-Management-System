@@ -56,7 +56,7 @@ export default function InternalChatSidebar() {
         );
     }
 
-    const activeGroup = conversations?.find(c => c.id === activeGroupId);
+    const activeGroup = conversations?.find((c: { id: string }) => c.id === activeGroupId);
 
     return (
         <div className="fixed top-0 right-0 bottom-0 w-[400px] bg-white dark:bg-gray-900 border-l border-gray-200 dark:border-gray-800 shadow-2xl z-50 flex flex-col animate-in slide-in-from-right-full duration-300">
@@ -84,7 +84,7 @@ export default function InternalChatSidebar() {
                     <div className="w-full flex flex-col">
                         <div className="p-4 flex-1 overflow-y-auto space-y-2">
                             <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-3">Your Groups</h3>
-                            {conversations?.map(group => (
+                            {conversations?.map((group: { id: string; type: string; name?: string }) => (
                                 <button
                                     key={group.id}
                                     onClick={() => setActiveGroupId(group.id)}
@@ -112,7 +112,7 @@ export default function InternalChatSidebar() {
                         </div>
 
                         <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-white dark:bg-gray-900">
-                            {messagesData?.messages.map(msg => {
+                            {messagesData?.messages.map((msg: { id: string; expiresAt?: Date; content: string }) => {
                                 const isEphemeral = !!msg.expiresAt;
                                 return (
                                     <div key={msg.id} className="flex flex-col gap-1 items-start">

@@ -8,11 +8,11 @@ export const syncRouter = router({
    */
   getSyncStatus: tenantProcedure
     .query(async ({ ctx }) => {
-      const nodes = await ctx.db.syncNode.findMany({
+      const nodes = await ctx.db!.syncNode.findMany({
         orderBy: { updatedAt: 'desc' }
       });
 
-      const unsyncedCount = await ctx.db.eventJournal.count({
+      const unsyncedCount = await ctx.db!.eventJournal.count({
         where: { isSynced: false, direction: 'OUTGOING' }
       });
 
@@ -46,7 +46,7 @@ export const syncRouter = router({
       status: z.string().default('HEALTHY')
     }))
     .mutation(async ({ ctx, input }) => {
-      return ctx.db.syncNode.upsert({
+      return ctx.db!.syncNode.upsert({
         where: { id: input.nodeId },
         update: {
           lastHeartbeat: new Date(),

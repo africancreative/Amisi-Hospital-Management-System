@@ -9,7 +9,7 @@ export const pharmacyRouter = router({
    */
   getInventory: tenantProcedure
     .query(async ({ ctx }) => {
-      return ctx.db.pharmacyInventory.findMany({
+      return ctx.db!.pharmacyInventory.findMany({
         include: {
           medication: true
         },
@@ -23,7 +23,7 @@ export const pharmacyRouter = router({
    */
   getPendingPrescriptions: tenantProcedure
     .query(async ({ ctx }) => {
-      return ctx.db.prescription.findMany({
+      return ctx.db!.prescription.findMany({
         where: {
           status: { in: ['pending', 'partial'] }
         },
@@ -47,7 +47,7 @@ export const pharmacyRouter = router({
       pharmacistId: z.string()
     }))
     .mutation(async ({ ctx, input }) => {
-      return ctx.db.$transaction(async (tx) => {
+      return ctx.db!.$transaction(async (tx) => {
         // 1. Resolve Inventory Item
         const inventory = await tx.pharmacyInventory.findUnique({
           where: { id: input.inventoryId },

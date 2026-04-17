@@ -19,12 +19,12 @@ export function ClinicalChat({ patientId }: ClinicalChatProps) {
   const [message, setMessage] = useState('');
   
   // 1. Fetch Chat History
-  const { data: messages, refetch } = api.chat.getMessages.useQuery({ 
+  const { data: messages, refetch } = api.chat.getPatientMessages.useQuery({ 
     patientId 
   });
 
   // 2. Send Message Mutation
-  const sendMessage = api.chat.sendMessage.useMutation({
+  const sendMessageMutation = api.chat.sendPatientMessage.useMutation({
     onSuccess: () => {
       setMessage('');
       refetch();
@@ -33,9 +33,11 @@ export function ClinicalChat({ patientId }: ClinicalChatProps) {
 
   const handleSend = () => {
     if (!message.trim()) return;
-    sendMessage.mutate({
+    sendMessageMutation.mutate({
       patientId,
-      content: message
+      content: message,
+      authorName: 'User',
+      authorRole: 'USER'
     });
   };
 
@@ -53,7 +55,7 @@ export function ClinicalChat({ patientId }: ClinicalChatProps) {
 
       {/* Messages Scroll Area */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-hide">
-        {messages?.map((msg) => (
+        {messages?.map((msg: { id: string; authorRole: string; content: string; authorName: string }) => (
           <div key={msg.id} className={`flex flex-col ${msg.authorRole === 'SYSTEM' ? 'items-center' : ''}`}>
             {msg.authorRole === 'SYSTEM' ? (
               <div className="bg-gray-800/50 rounded-full px-4 py-1 border border-gray-700">
@@ -97,7 +99,7 @@ export function ClinicalChat({ patientId }: ClinicalChatProps) {
             <button
               onClick={handleSend}
               className="h-10 w-10 flex items-center justify-center rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white transition-all shadow-lg active:scale-95 disabled:opacity-50"
-              disabled={sendMessage.isPending}
+              disabled={sendMessageMutation.isPending}
             >
               <Send className="h-4 w-4" />
             </button>

@@ -1,3 +1,5 @@
+import 'connectivity.dart';
+
 class RoundsService {
   final NetworkRouter _router;
 
@@ -5,23 +7,33 @@ class RoundsService {
 
   Future<List<Ward>> getWards() async {
     final data = await _router.get('/api/wards');
-    return (data as List).map((w) => Ward.fromJson(w)).toList();
+    return (data as List)
+        .map((w) => Ward.fromJson(w as Map<String, dynamic>))
+        .toList();
   }
 
   Future<List<Patient>> getWardPatients(String wardId) async {
     final data = await _router.get('/api/wards/$wardId/patients');
-    return (data as List).map((p) => Patient.fromJson(p)).toList();
+    return (data as List)
+        .map((p) => Patient.fromJson(p as Map<String, dynamic>))
+        .toList();
   }
 
   Future<List<Patient>> getMyRounds(String nurseId) async {
     final data = await _router.get('/api/rounds/nurse/$nurseId');
-    return (data as List).map((p) => Patient.fromJson(p)).toList();
+    return (data as List)
+        .map((p) => Patient.fromJson(p as Map<String, dynamic>))
+        .toList();
   }
 
   Future<void> startRound(String nurseId, String wardId) async {
     await _router.post(
       '/api/rounds/start',
-      body: {nurseId, wardId, startedAt: DateTime.now().toIso8601String()},
+      body: <String, dynamic>{
+        'nurseId': nurseId,
+        'wardId': wardId,
+        'startedAt': DateTime.now().toIso8601String(),
+      },
     );
   }
 
@@ -32,11 +44,11 @@ class RoundsService {
   ) async {
     await _router.post(
       '/api/rounds/complete',
-      body: {
-        nurseId,
-        patientId,
-        summary: summary.toJson(),
-        completedAt: DateTime.now().toIso8601String(),
+      body: <String, dynamic>{
+        'nurseId': nurseId,
+        'patientId': patientId,
+        'summary': summary.toJson(),
+        'completedAt': DateTime.now().toIso8601String(),
       },
     );
   }
@@ -48,11 +60,11 @@ class RoundsService {
   ) async {
     await _router.post(
       '/api/vitals',
-      body: {
-        patientId,
+      body: <String, dynamic>{
+        'patientId': patientId,
         ...vitals.toJson(),
-        recordedBy,
-        timestamp: DateTime.now().toIso8601String(),
+        'recordedBy': recordedBy,
+        'timestamp': DateTime.now().toIso8601String(),
       },
     );
   }
@@ -65,7 +77,13 @@ class RoundsService {
   ) async {
     await _router.post(
       '/api/clinical-notes',
-      body: {patientId, content, authorId, authorName, type: 'NURSING'},
+      body: <String, dynamic>{
+        'patientId': patientId,
+        'content': content,
+        'authorId': authorId,
+        'authorName': authorName,
+        'type': 'NURSING',
+      },
     );
   }
 }
@@ -86,11 +104,11 @@ class Ward {
   });
 
   factory Ward.fromJson(Map<String, dynamic> json) => Ward(
-    id: json['id'],
-    name: json['name'],
-    type: json['type'],
-    bedCount: json['bedCount'] ?? 0,
-    occupiedBeds: json['occupiedBeds'] ?? 0,
+    id: json['id'] as String,
+    name: json['name'] as String,
+    type: json['type'] as String,
+    bedCount: json['bedCount'] as int? ?? 0,
+    occupiedBeds: json['occupiedBeds'] as int? ?? 0,
   );
 }
 
@@ -116,14 +134,14 @@ class Patient {
   });
 
   factory Patient.fromJson(Map<String, dynamic> json) => Patient(
-    id: json['id'],
-    mrn: json['mrn'],
-    firstName: json['firstName'],
-    lastName: json['lastName'],
-    roomBed: json['roomBed'],
-    diagnosis: json['diagnosis'],
+    id: json['id'] as String,
+    mrn: json['mrn'] as String,
+    firstName: json['firstName'] as String,
+    lastName: json['lastName'] as String,
+    roomBed: json['roomBed'] as String?,
+    diagnosis: json['diagnosis'] as String?,
     allergies: List<String>.from(json['allergies'] ?? []),
-    status: json['status'] ?? 'STABLE',
+    status: json['status'] as String? ?? 'STABLE',
   );
 
   String get fullName => '$firstName $lastName';
@@ -146,7 +164,7 @@ class VitalSigns {
     this.spO2,
   });
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => <String, dynamic>{
     if (heartRate != null) 'heartRate': heartRate,
     if (bloodPressureSystolic != null)
       'bloodPressureSystolic': bloodPressureSystolic,
@@ -169,7 +187,7 @@ class RoundSummary {
     this.needsDoctorReview = false,
   });
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => <String, dynamic>{
     'summary': summary,
     'interventions': interventions,
     'needsDoctorReview': needsDoctorReview,

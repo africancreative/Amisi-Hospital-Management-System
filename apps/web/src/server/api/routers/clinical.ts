@@ -25,7 +25,7 @@ export const clinicalRouter = router({
       const billing = new BillingService(ctx.db);
 
       // 1. Create the Visit
-      const visit = await ctx.db.visit.create({
+      const visit = await ctx.db!.visit.create({
         data: {
           ...input,
           status: 'OPEN',
@@ -43,11 +43,11 @@ export const clinicalRouter = router({
       });
 
       // 3. Collaborative Documentation: Initial Note
-      await ctx.db.clinicalNote.create({
+      await ctx.db!.clinicalNote.create({
         data: {
           visitId: visit.id,
           patientId: input.patientId,
-          authorId: ctx.session.userId,
+          authorId: ctx.session.userId!,
           type: 'CONSULT',
           subjective: `Patient presented for ${input.type.toLowerCase()} care. Reason: ${input.reason || 'Not specified'}.`,
         }
@@ -77,11 +77,11 @@ export const clinicalRouter = router({
       const billing = new BillingService(ctx.db);
 
       // 1. Find Visit for patient data
-      const visit = await ctx.db.visit.findUnique({ where: { id: input.visitId } });
+      const visit = await ctx.db!.visit.findUnique({ where: { id: input.visitId } });
       if (!visit) throw new TRPCError({ code: 'NOT_FOUND' });
 
       // 2. Create Encounter (Triage stage)
-      const encounter = await ctx.db.encounter.create({
+      const encounter = await ctx.db!.encounter.create({
         data: {
           patientId: visit.patientId,
           visitId: visit.id,
@@ -112,12 +112,12 @@ export const clinicalRouter = router({
       });
 
       // 4. Collaborative Note
-      await ctx.db.clinicalNote.create({
+      await ctx.db!.clinicalNote.create({
         data: {
           visitId: visit.id,
           encounterId: encounter.id,
           patientId: visit.patientId,
-          authorId: ctx.session.userId,
+          authorId: ctx.session.userId!,
           type: 'NURSING',
           objective: `Triage completed. ESI Level: ${input.esiLevel || 'N/A'}. BP: ${input.vitals.bp}.`,
           content: input.triageNotes
@@ -142,14 +142,14 @@ export const clinicalRouter = router({
       const billing = new BillingService(ctx.db);
 
       // 1. Fetch Encounter
-      const encounter = await ctx.db.encounter.findUnique({ 
+      const encounter = await ctx.db!.encounter.findUnique({ 
         where: { id: input.encounterId },
         include: { visit: true }
       });
       if (!encounter || !encounter.visitId) throw new TRPCError({ code: 'NOT_FOUND' });
 
       // 2. Create Admission
-      const admission = await ctx.db.admission.create({
+      const admission = await ctx.db!.admission.create({
         data: {
           encounterId: input.encounterId,
           bedId: input.bedId,
@@ -161,7 +161,7 @@ export const clinicalRouter = router({
       });
 
       // 3. Update Bed Status
-      await ctx.db.bed.update({
+      await ctx.db!.bed.update({
         where: { id: input.bedId },
         data: { status: 'OCCUPIED' }
       });
@@ -193,18 +193,18 @@ export const clinicalRouter = router({
       const billing = new BillingService(ctx.db);
 
       // 1. Fetch Visit
-      const visit = await ctx.db.visit.findUnique({ where: { id: input.visitId } });
+      const visit = await ctx.db!.visit.findUnique({ where: { id: input.visitId } });
       if (!visit) throw new TRPCError({ code: 'NOT_FOUND' });
 
       // 2. Create Diagnostic Order
-      const order = await ctx.db.diagnosticOrder.create({
+      const order = await ctx.db!.diagnosticOrder.create({
         data: {
           patientId: visit.patientId,
           encounterId: input.encounterId,
           category: input.category,
           testName: input.testName,
           status: 'pending',
-          orderedBy: ctx.session.userId,
+          orderedBy: ctx.session.userId!,
         }
       });
 
@@ -217,7 +217,7 @@ export const clinicalRouter = router({
       });
 
       // 4. Clinical Chat: Auto-post order to team
-      await ctx.db.chatMessage.create({
+      await ctx.db!.chatMessage.create({
         data: {
           patientId: visit.patientId,
           authorId: 'SYSTEM',
@@ -237,7 +237,7 @@ export const clinicalRouter = router({
   getVisitNotes: tenantProcedure
     .input(z.object({ visitId: z.string() }))
     .query(async ({ ctx, input }) => {
-      return ctx.db.clinicalNote.findMany({
+      return ctx.db!.clinicalNote.findMany({
         where: { visitId: input.visitId },
         orderBy: { createdAt: 'desc' },
         include: { author: true }
@@ -247,7 +247,7 @@ export const clinicalRouter = router({
   getVisitEncounters: tenantProcedure
     .input(z.object({ visitId: z.string() }))
     .query(async ({ ctx, input }) => {
-      return ctx.db.encounter.findMany({
+      return ctx.db!.encounter.findMany({
         where: { visitId: input.visitId },
         orderBy: { createdAt: 'desc' },
         include: { vitals: true, admission: true }

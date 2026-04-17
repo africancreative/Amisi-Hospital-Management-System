@@ -65,6 +65,7 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     ANESTHESIOLOGIST: ['CONSULTATION_WRITE'],
     OT_MANAGER: ['SURGERY_SCHEDULE', 'WARD_TRACK_WRITE'],
     PATIENT_PORTAL: [],
+    SUPER_ADMIN: Object.keys(PERMISSIONS) as Permission[],
 };
 
 /**

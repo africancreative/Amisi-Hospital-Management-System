@@ -11,7 +11,7 @@ export const billingRouter = router({
     .input(z.string())
     .query(async ({ ctx, input }) => {
       if (!ctx.db) throw new Error('Database not initialized');
-      return ctx.db.invoice.findUnique({
+      return ctx.db!.invoice.findUnique({
         where: { id: input },
         include: { billItems: { include: { allocations: { include: { payment: true } } } }, payments: true }
       });
@@ -21,7 +21,7 @@ export const billingRouter = router({
     .input(z.string())
     .query(async ({ ctx, input }) => {
       if (!ctx.db) throw new Error('Database not initialized');
-      return ctx.db.visit.findUnique({
+      return ctx.db!.visit.findUnique({
         where: { id: input },
         include: { invoices: { include: { billItems: true, payments: true } } }
       });
@@ -42,7 +42,7 @@ export const billingRouter = router({
       const billing = new BillingService(ctx.db);
       const invoice = await billing.resolveActiveInvoice(visitId, patientId);
       const totalPrice = input.quantity * input.unitPrice;
-      const item = await ctx.db.billItem.create({
+      const item = await ctx.db!.billItem.create({
         data: { ...rest, totalPrice, visitId, invoiceId: invoice.id, status: 'UNPAID', version: 1, isSynced: false }
       });
       await billing.calculateInvoiceTotals(invoice.id);
@@ -59,7 +59,7 @@ export const billingRouter = router({
     .mutation(async ({ ctx, input }) => {
       if (!ctx.db) throw new Error('Database not initialized');
       const { invoiceId, ...data } = input;
-      return ctx.db.invoice.update({ where: { id: invoiceId }, data: { ...data, version: { increment: 1 }, isSynced: false } });
+      return ctx.db!.invoice.update({ where: { id: invoiceId }, data: { ...data, version: { increment: 1 }, isSynced: false } });
     }),
 
   recordPayment: protectedProcedure
@@ -75,9 +75,9 @@ export const billingRouter = router({
       if (!ctx.db) throw new Error('Database not initialized');
       const { allocations, invoiceId, autoAllocate, ...paymentData } = input;
       const billing = new BillingService(ctx.db);
-      const payment = await ctx.db.payment.create({ data: { ...paymentData, invoiceId, version: 1, isSynced: false } });
+      const payment = await ctx.db!.payment.create({ data: { ...paymentData, invoiceId, version: 1, isSynced: false } });
       if (allocations && allocations.length > 0) {
-        await ctx.db.$transaction(allocations.map(alloc => ctx.db.paymentAllocation.create({ data: { paymentId: payment.id, billItemId: alloc.billItemId, amount: alloc.amount } })));
+        await ctx.db!.$transaction(allocations.map(alloc => ctx.db!.paymentAllocation.create({ data: { paymentId: payment.id, billItemId: alloc.billItemId, amount: alloc.amount } })));
         await billing.calculateInvoiceTotals(invoiceId);
       } else if (autoAllocate) {
         await billing.autoAllocatePayment(payment.id, invoiceId);

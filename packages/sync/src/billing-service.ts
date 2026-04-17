@@ -21,7 +21,7 @@ export class BillingService {
     description: string;
     unitPrice: number;
     quantity?: number;
-    category: 'CONSULTATION' | 'LAB' | 'PHARMACY' | 'PROCEDURE' | 'EQUIPMENT' | 'STAY';
+    category: 'CONSULTATION' | 'LAB' | 'PHARMACY' | 'PROCEDURE' | 'EQUIPMENT' | 'STAY' | 'RADIOLOGY';
     inventoryItemId?: string;
     authorId?: string;
   }) {

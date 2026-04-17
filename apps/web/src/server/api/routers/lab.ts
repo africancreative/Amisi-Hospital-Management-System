@@ -9,7 +9,7 @@ export const labRouter = router({
    */
   getActiveOrders: tenantProcedure
     .query(async ({ ctx }) => {
-      return ctx.db.labOrder.findMany({
+      return ctx.db!.labOrder.findMany({
         where: {
           status: { in: ['PENDING', 'SAMPLE_COLLECTED', 'IN_ANALYSIS'] }
         },
@@ -34,7 +34,7 @@ export const labRouter = router({
       collectedById: z.string()
     }))
     .mutation(async ({ ctx, input }) => {
-      return ctx.db.$transaction(async (tx) => {
+      return ctx.db!.$transaction(async (tx) => {
         // 1. Create Sample Record
         const sample = await tx.labSample.create({
           data: {
@@ -119,7 +119,7 @@ export const labRouter = router({
       }))
     }))
     .mutation(async ({ ctx, input }) => {
-      return ctx.db.$transaction(async (tx) => {
+      return ctx.db!.$transaction(async (tx) => {
         // 1. Create Result Entries
         await tx.labResult.createMany({
           data: input.results.map(r => ({

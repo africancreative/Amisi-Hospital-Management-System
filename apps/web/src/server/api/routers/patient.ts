@@ -20,7 +20,7 @@ export const patientRouter = router({
 
       if (!ctx.db) throw new Error('Database not initialized');
 
-      const items = await ctx.db.patient.findMany({
+      const items = await ctx.db!.patient.findMany({
         take: take + 1,
         where: search ? {
           OR: [
@@ -56,7 +56,7 @@ export const patientRouter = router({
     .query(async ({ ctx, input }) => {
       if (!ctx.db) throw new Error('Database not initialized');
 
-      const patient = await ctx.db.patient.findUnique({
+      const patient = await ctx.db!.patient.findUnique({
         where: { id: input },
         include: { encounters: { take: 5, orderBy: { createdAt: 'desc' } } },
       });
@@ -88,7 +88,7 @@ export const patientRouter = router({
     .mutation(async ({ ctx, input }) => {
       if (!ctx.db) throw new Error('Database not initialized');
 
-      const patient = await ctx.db.patient.create({
+      const patient = await ctx.db!.patient.create({
         data: { ...input, version: 1, isSynced: false },
       });
 
@@ -118,7 +118,7 @@ export const patientRouter = router({
       if (!ctx.db) throw new Error('Database not initialized');
 
       const { id, ...data } = input;
-      const patient = await ctx.db.patient.update({
+      const patient = await ctx.db!.patient.update({
         where: { id },
         data: { ...data, version: { increment: 1 }, isSynced: false },
       });
@@ -140,7 +140,7 @@ export const patientRouter = router({
     .mutation(async ({ ctx, input }) => {
       if (!ctx.db) throw new Error('Database not initialized');
 
-      await ctx.db.patient.delete({ where: { id: input.id } });
+      await ctx.db!.patient.delete({ where: { id: input.id } });
 
       await logAudit({
         action: 'DELETE',

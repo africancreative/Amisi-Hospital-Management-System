@@ -9,7 +9,7 @@ export const radiologyRouter = router({
    */
   getActiveOrders: tenantProcedure
     .query(async ({ ctx }) => {
-      return ctx.db.radiologyOrder.findMany({
+      return ctx.db!.radiologyOrder.findMany({
         where: {
           status: { in: ['PENDING', 'SCHEDULED', 'IN_PROGRESS'] }
         },
@@ -30,7 +30,7 @@ export const radiologyRouter = router({
       studyId: z.string()
     }))
     .query(async ({ ctx, input }) => {
-      const study = await ctx.db.imagingStudy.findUnique({
+      const study = await ctx.db!.imagingStudy.findUnique({
         where: { id: input.studyId },
         include: {
           patient: true,
@@ -66,7 +66,7 @@ export const radiologyRouter = router({
       radiologistId: z.string()
     }))
     .mutation(async ({ ctx, input }) => {
-      return ctx.db.$transaction(async (tx) => {
+      return ctx.db!.$transaction(async (tx) => {
         // 1. Create Report
         const report = await tx.radiologyReport.create({
           data: {

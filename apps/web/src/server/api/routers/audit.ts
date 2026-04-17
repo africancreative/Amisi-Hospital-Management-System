@@ -16,7 +16,7 @@ export const auditRouter = router({
     .query(async ({ ctx, input }) => {
       const { limit, cursor } = input;
       
-      const logs = await ctx.db.auditLog.findMany({
+      const logs = await ctx.db!.auditLog.findMany({
         take: limit + 1,
         cursor: cursor ? { id: cursor } : undefined,
         orderBy: { timestamp: 'desc' },
@@ -38,7 +38,7 @@ export const auditRouter = router({
     .query(async ({ ctx }) => {
       // Basic integrity check logic (concept)
       // Iterate through logs and verify SHA-256 chain
-      const logs = await ctx.db.auditLog.findMany({
+      const logs = await ctx.db!.auditLog.findMany({
         orderBy: { timestamp: 'asc' },
         take: 100, // Limit check for demo
       });

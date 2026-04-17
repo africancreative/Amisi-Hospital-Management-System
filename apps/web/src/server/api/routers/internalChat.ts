@@ -18,7 +18,7 @@ export const internalChatRouter = router({
       const userId = ctx.session?.userId;
       if (!userId) throw new Error('Unauthorized');
 
-      return ctx.db.chatGroup.findMany({
+      return ctx.db!.chatGroup.findMany({
         where: {
           members: {
             some: { userId }
@@ -48,7 +48,7 @@ export const internalChatRouter = router({
       cursor: z.string().nullish(),
     }))
     .query(async ({ ctx, input }) => {
-      const messages = await ctx.db.userChatMessage.findMany({
+      const messages = await ctx.db!.userChatMessage.findMany({
         where: { 
             groupId: input.groupId,
             OR: [
@@ -98,7 +98,7 @@ export const internalChatRouter = router({
         ? new Date(Date.now() + input.expiresInMinutes * 60000) 
         : null;
 
-      const message = await ctx.db.userChatMessage.create({
+      const message = await ctx.db!.userChatMessage.create({
         data: {
           content: input.content,
           senderId: userId,
@@ -148,7 +148,7 @@ export const internalChatRouter = router({
 
       // If direct, try to find existing DM group
       if (input.type === 'DIRECT' && allParticipants.length === 2) {
-        const existing = await ctx.db.chatGroup.findFirst({
+        const existing = await ctx.db!.chatGroup.findFirst({
             where: {
                 type: 'DIRECT',
                 members: { every: { userId: { in: allParticipants } } }
@@ -157,7 +157,7 @@ export const internalChatRouter = router({
         if (existing) return existing;
       }
 
-      return ctx.db.chatGroup.create({
+      return ctx.db!.chatGroup.create({
         data: {
           name: input.name,
           type: input.type,

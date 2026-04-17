@@ -601,6 +601,7 @@ enum Role {
   ANESTHESIOLOGIST
   OT_MANAGER
   PATIENT_PORTAL
+  SUPER_ADMIN
 }
 
 model Employee {

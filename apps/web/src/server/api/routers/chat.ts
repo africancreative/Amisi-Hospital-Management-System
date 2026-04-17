@@ -13,7 +13,7 @@ export const chatRouter = router({
       limit: z.number().min(1).max(100).optional(),
     }))
     .query(async ({ ctx, input }) => {
-      return ctx.db.chatMessage.findMany({
+      return ctx.db!.chatMessage.findMany({
         where: { patientId: input.patientId },
         take: input.limit ?? 50,
         orderBy: { timestamp: 'desc' },
@@ -29,7 +29,7 @@ export const chatRouter = router({
       authorRole: z.string(),
     }))
     .mutation(async ({ ctx, input }) => {
-      return ctx.db.chatMessage.create({
+      return ctx.db!.chatMessage.create({
         data: {
           ...input,
           authorId: ctx.session.userId,
@@ -43,13 +43,13 @@ export const chatRouter = router({
       // Logic to find all users that have exchanged messages with current user
       const userId = ctx.session.userId;
       
-      const sent = await ctx.db.userChatMessage.findMany({
+      const sent = await ctx.db!.userChatMessage.findMany({
         where: { senderId: userId },
         distinct: ['receiverId'],
         include: { receiver: true }
       });
 
-      const received = await ctx.db.userChatMessage.findMany({
+      const received = await ctx.db!.userChatMessage.findMany({
         where: { receiverId: userId },
         distinct: ['senderId'],
         include: { sender: true }
@@ -65,7 +65,7 @@ export const chatRouter = router({
       content: z.string(),
     }))
     .mutation(async ({ ctx, input }) => {
-      return ctx.db.userChatMessage.create({
+      return ctx.db!.userChatMessage.create({
         data: {
           ...input,
           senderId: ctx.session.userId,

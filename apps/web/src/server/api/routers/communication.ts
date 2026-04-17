@@ -23,23 +23,23 @@ export const communicationRouter = router({
 
       // 1. Fetch diverse clinical events in parallel
       const [chats, notes, vitals, labs] = await Promise.all([
-        ctx.db.chatMessage.findMany({
+        ctx.db!.chatMessage.findMany({
           where: { patientId },
           include: { attachments: true },
           orderBy: { timestamp: 'desc' },
           take: input.limit,
         }),
-        ctx.db.clinicalNote.findMany({
+        ctx.db!.clinicalNote.findMany({
           where: { patientId },
           orderBy: { createdAt: 'desc' },
           take: input.limit,
         }),
-        ctx.db.vitals.findMany({
+        ctx.db!.vitals.findMany({
           where: { patientId },
           orderBy: { createdAt: 'desc' },
           take: input.limit,
         }),
-        ctx.db.labOrder.findMany({
+        ctx.db!.labOrder.findMany({
           where: { patientId },
           include: { results: true },
           orderBy: { createdAt: 'desc' },
@@ -104,7 +104,7 @@ export const communicationRouter = router({
       type: z.enum(['SOAP', 'NURSING', 'PROGRESS', 'CONSULT']).default('SOAP'),
     }))
     .mutation(async ({ ctx, input }) => {
-      return ctx.db.clinicalNote.create({
+      return ctx.db!.clinicalNote.create({
         data: {
           ...input,
           authorId: ctx.session?.userId || 'SYSTEM', // Maps to Employee.id
@@ -133,7 +133,7 @@ export const communicationRouter = router({
     .mutation(async ({ ctx, input }) => {
       const { attachments, ...rest } = input;
       
-      const message = await ctx.db.chatMessage.create({
+      const message = await ctx.db!.chatMessage.create({
         data: {
           ...rest,
           authorId: ctx.session?.userId || 'SYSTEM',

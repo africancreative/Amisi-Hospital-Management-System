@@ -37,11 +37,11 @@ export const analyticsRouter = router({
           
           // Simple revenue sum for the current month
           const revenue = await tenantDb.billItem.aggregate({
-            _sum: { price: true },
+            _sum: { totalPrice: true },
             where: { createdAt: { gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1) } }
           });
 
-          const revenueValue = Number(revenue._sum.price || 0);
+          const revenueValue = Number(revenue._sum.totalPrice || 0);
 
           totalPatients += patientCount;
           totalAdmissions += activeAdmissions;

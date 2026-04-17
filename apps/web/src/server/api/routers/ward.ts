@@ -9,7 +9,7 @@ export const wardRouter = router({
    */
   getWardsWithBeds: tenantProcedure
     .query(async ({ ctx }) => {
-      return ctx.db.ward.findMany({
+      return ctx.db!.ward.findMany({
         include: {
           beds: {
             include: {
@@ -40,7 +40,7 @@ export const wardRouter = router({
       admissionReason: z.string().optional()
     }))
     .mutation(async ({ ctx, input }) => {
-      return ctx.db.$transaction(async (tx) => {
+      return ctx.db!.$transaction(async (tx) => {
         // 1. Check bed availability
         const bed = await tx.bed.findUnique({
           where: { id: input.bedId }
@@ -86,7 +86,7 @@ export const wardRouter = router({
       reason: z.string().optional()
     }))
     .mutation(async ({ ctx, input }) => {
-      return ctx.db.$transaction(async (tx) => {
+      return ctx.db!.$transaction(async (tx) => {
         // 1. Check target bed
         const toBed = await tx.bed.findUnique({ where: { id: input.toBedId } });
         if (!toBed || toBed.status !== 'AVAILABLE') {
@@ -127,7 +127,7 @@ export const wardRouter = router({
       bedId: z.string()
     }))
     .mutation(async ({ ctx, input }) => {
-      return ctx.db.$transaction(async (tx) => {
+      return ctx.db!.$transaction(async (tx) => {
         // 1. Update Admission status
         await tx.admission.update({
           where: { id: input.admissionId },

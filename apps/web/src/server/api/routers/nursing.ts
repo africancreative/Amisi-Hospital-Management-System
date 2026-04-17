@@ -10,7 +10,7 @@ export const nursingRouter = router({
    */
   getAdmittedPatients: tenantProcedure
     .query(async ({ ctx }) => {
-      return ctx.db.admission.findMany({
+      return ctx.db!.admission.findMany({
         where: { status: 'ADMITTED' },
         include: {
           encounter: {
@@ -56,7 +56,7 @@ export const nursingRouter = router({
     }))
     .mutation(async ({ ctx, input }) => {
       // 1. Fetch patient to determine NEWS2 Scale (COPD toggle)
-      const patient = await ctx.db.patient.findUnique({
+      const patient = await ctx.db!.patient.findUnique({
         where: { id: input.patientId },
         select: { respiratoryScale: true }
       });
@@ -73,11 +73,10 @@ export const nursingRouter = router({
       const riskLevel = getRiskLevel(news2Score);
 
       // 4. Save Vitals Log
-      return ctx.db.vitalsLog.create({
+      return ctx.db!.vitalsLog.create({
         data: {
           ...input,
           news2Score,
-          riskLevel,
           isCritical: riskLevel !== 'LOW' || news2Score >= 5,
           recordedAt: new Date()
         }
@@ -94,7 +93,7 @@ export const nursingRouter = router({
       limit: z.number().default(20)
     }))
     .query(async ({ ctx, input }) => {
-      return ctx.db.vitalsLog.findMany({
+      return ctx.db!.vitalsLog.findMany({
         where: { patientId: input.patientId },
         orderBy: { recordedAt: 'desc' },
         take: input.limit
@@ -116,7 +115,7 @@ export const nursingRouter = router({
       notes: z.string().optional()
     }))
     .mutation(async ({ ctx, input }) => {
-      return ctx.db.medicationAdministration.create({
+      return ctx.db!.medicationAdministration.create({
         data: {
           ...input,
           administeredAt: new Date()

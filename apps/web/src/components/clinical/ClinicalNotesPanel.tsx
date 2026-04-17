@@ -42,7 +42,7 @@ export function ClinicalNotesPanel({ patientId, visitId, encounterId }: Clinical
           </div>
         )}
 
-        {notes?.map((note) => (
+        {notes?.map((note: { id: string; type: string; createdAt: Date; subjective?: string; objective?: string; content?: string; plan?: string }) => (
           <div key={note.id} className="group relative">
             <div className="absolute -inset-1 bg-gradient-to-r from-orange-500/10 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition duration-500 blur-sm"></div>
             <div className="relative bg-gray-900/40 border border-gray-800 rounded-xl p-4 shadow-xl hover:border-gray-700 transition-all duration-300">

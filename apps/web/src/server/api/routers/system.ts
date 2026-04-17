@@ -3,6 +3,7 @@ import { router, superAdminProcedure } from '@/server/trpc/trpc';
 import { getControlDb } from '@amisimedos/db/client';
 import { DeploymentTier } from '@amisimedos/constants';
 import { revalidatePath } from 'next/cache';
+import { hashPassword } from '@amisimedos/db/lib/crypto';
 
 /**
  * System/Platform Administration Router
@@ -100,10 +101,12 @@ export const systemRouter = router({
             region: z.string(),
             tier: z.nativeEnum(DeploymentTier),
             dbUrl: z.string().optional(),
-            selectedModuleIds: z.array(z.string())
+            selectedModuleIds: z.array(z.string()),
+            adminName: z.string().min(2),
+            adminEmail: z.string().email(),
+            adminPassword: z.string().min(8)
         }))
         .mutation(async ({ input }) => {
-            // Re-use logic from system-actions for consistency
             const db = getControlDb();
             
             // Resolve modules to get their codes
@@ -114,23 +117,28 @@ export const systemRouter = router({
             const enabledModulesMap: Record<string, boolean> = {};
             modules.forEach(m => enabledModulesMap[m.code.toLowerCase()] = true);
 
-            // Trigger Provisioning
-            // Dynamic import to prevent Node.js modules from leaking into the bundle
+            // Hash the admin password
+            const passwordHash = await hashPassword(input.adminPassword);
+
+            // Trigger Provisioning with admin info
             const { provisionTenant } = await import('@amisimedos/db/management' as any);
             
             const result = await provisionTenant(
                 input.name,
                 input.slug,
                 input.region,
-                input.dbUrl || '', // provisionTenant will auto-generate if empty later in the flow if configured, but here we expect the URL usually.
+                input.dbUrl || '',
                 input.tier,
-                {}, // settings
-                enabledModulesMap
+                {},
+                enabledModulesMap,
+                {
+                    name: input.adminName,
+                    email: input.adminEmail,
+                    passwordHash
+                }
             );
 
             // Also create the Module Entitlements (TenantModule records)
-            // provisionTenant currently handles the Tenant record and some initial setup
-            // but we want to ensure TenantModule records exist for the new UI.
             const tenant = await db.tenant.findUnique({ where: { slug: input.slug } });
             if (tenant) {
               await db.tenantModule.createMany({
@@ -143,7 +151,8 @@ export const systemRouter = router({
             }
 
             revalidatePath('/admin/hospitals');
-            return { success: true, tenant };
+            // Return the plain password so Super Admin can share it with the Hospital Admin
+            return { success: true, tenant, adminPassword: input.adminPassword };
         }),
 
     listAllModules: superAdminProcedure.query(async () => {
