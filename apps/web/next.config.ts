@@ -10,6 +10,8 @@ const nextConfig: NextConfig = {
   // correct relative paths that Prisma uses to locate its .node engine files.
   serverExternalPackages: [
     '@prisma/client',
+    '@prisma/control-client',
+    '@prisma/tenant-client',
     'prisma',
     '@amisimedos/db',
   ],
