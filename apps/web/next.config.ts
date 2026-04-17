@@ -20,16 +20,7 @@ const nextConfig: NextConfig = {
     "@amisimedos/ui",
     "@amisimedos/constants"
   ],
-  // Ensure Prisma engine binaries are captured in Vercel's file trace so they
-  // are included in the Lambda bundle alongside the server output.
-  outputFileTracingIncludes: {
-    "/**": [
-      "../../packages/db/generated/control-client/**",
-      "../../packages/db/generated/tenant-client/**",
-      "../../packages/db/prisma/control.prisma",
-      "../../packages/db/prisma/tenant.prisma",
-    ],
-  },
+
   async headers() {
     return [
       {
