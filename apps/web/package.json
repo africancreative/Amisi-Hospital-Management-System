@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev -H 0.0.0.0",
-    "build": "pnpm --filter @amisimedos/db db:generate && next build --webpack && pnpm run copy-prisma",
+    "build": "next build --webpack && pnpm run copy-prisma",
     "copy-prisma": "node -e \"const fs=require('fs');const path=require('path');const dest='.next/server/chunks';if(!fs.existsSync(dest))fs.mkdirSync(dest,{recursive:true});['control-client','tenant-client'].forEach(c=>{const src='../../packages/db/generated/'+c;if(fs.existsSync(src)){fs.readdirSync(src).filter(f=>f.endsWith('.node')).forEach(f=>{fs.copyFileSync(path.join(src,f),path.join(dest,f));});}});\"",
     "start": "next start",
     "lint": "eslint"
@@ -53,5 +53,6 @@
     "eslint-config-next": "16.1.6",
     "tailwindcss": "^4",
     "typescript": "^5"
-  }
+  },
+  "postinstall": "pnpm --filter @amisimedos/db db:generate"
 }
