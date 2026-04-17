@@ -96,7 +96,7 @@ export default function InpatientPage() {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 divide-x divide-y divide-gray-800">
-                        {admissions?.map((adm) => (
+                        {admissions?.map((adm: { id: string; encounter: { patient: { id: string; firstName: string; lastName: string; mrn: string }; visitId: string }; bed: { ward: { name: string }; number: string } }) => (
                             <div 
                                 key={adm.id} 
                                 onClick={() => handlePatientSelect(adm)}

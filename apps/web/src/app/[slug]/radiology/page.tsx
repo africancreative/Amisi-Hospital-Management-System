@@ -54,9 +54,9 @@ export default function RadiologyDashboard() {
               <LayoutGrid size={14} className="text-slate-500" />
            </div>
            
-           {ordersLoading ? (
-             <div className="p-8 text-center text-slate-700 text-xs">Syncing RIS server...</div>
-           ) : orders?.map((order) => (
+            {ordersLoading ? (
+              <div className="p-8 text-center text-slate-700 text-xs">Syncing RIS server...</div>
+            ) : orders?.map((order: { id: string; priority: string; patient?: { firstName: string; lastName: string }; modality: string; targetRegion: string }) => (
              <button 
                 key={order.id}
                 onClick={() => setActiveOrder(order)}

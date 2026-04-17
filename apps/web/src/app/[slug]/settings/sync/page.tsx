@@ -107,7 +107,7 @@ export default function SyncHealthPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800">
-              {sync?.nodes.map((node) => (
+              {sync?.nodes.map((node: { id: string; name: string; type: string; isHealthy: boolean; version: string; lastHeartbeat: Date }) => (
                 <tr key={node.id} className="hover:bg-slate-800/10 transition-colors">
                   <td className="p-4 font-semibold text-white">{node.name}</td>
                   <td className="p-4">

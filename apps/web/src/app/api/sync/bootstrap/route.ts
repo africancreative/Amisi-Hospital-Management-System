@@ -36,7 +36,7 @@ export async function GET(req: NextRequest) {
             bed: await tenantDb.bed.findMany(),
             admission: await tenantDb.admission.findMany({ where: { status: 'ADMITTED' } }),
             labOrder: await tenantDb.labOrder.findMany({ take: 2000 }),
-            pharmacyDispatch: await tenantDb.pharmacyDispatch.findMany({ take: 2000 }),
+            dispensingRecord: await tenantDb.dispensingRecord.findMany({ take: 2000 }),
         };
 
         return NextResponse.json({

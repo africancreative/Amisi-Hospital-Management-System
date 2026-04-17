@@ -21,9 +21,9 @@ export default function WardManagement() {
   const { data: wards, isLoading, refetch } = api.ward.getWardsWithBeds.useQuery();
   const [selectedBed, setSelectedBed] = useState<any>(null);
 
-  const totalBeds = wards?.reduce((acc, w) => acc + w.beds.length, 0) || 0;
-  const occupiedBeds = wards?.reduce((acc, w) => acc + w.beds.filter(b => b.status === 'OCCUPIED').length, 0) || 0;
-  const availableBeds = wards?.reduce((acc, w) => acc + w.beds.filter(b => b.status === 'AVAILABLE').length, 0) || 0;
+  const totalBeds = wards?.reduce((acc: number, w: { beds: unknown[] }) => acc + w.beds.length, 0) || 0;
+  const occupiedBeds = wards?.reduce((acc: number, w: { beds: { status: string }[] }) => acc + w.beds.filter(b => b.status === 'OCCUPIED').length, 0) || 0;
+  const availableBeds = wards?.reduce((acc: number, w: { beds: { status: string }[] }) => acc + w.beds.filter(b => b.status === 'AVAILABLE').length, 0) || 0;
 
   const stats = [
     { label: 'Total Capacity', value: totalBeds, icon: Hotel, color: 'text-blue-500' },
@@ -77,9 +77,9 @@ export default function WardManagement() {
         <div className="flex-1 flex gap-6 overflow-hidden">
            {/* Bed Matrix Grid */}
            <div className="flex-1 overflow-y-auto space-y-10 pr-2">
-              {isLoading ? (
-                <div className="p-20 text-center text-slate-600 italic">Syncing bed sensors...</div>
-              ) : wards?.map((ward) => (
+               {isLoading ? (
+                 <div className="p-20 text-center text-slate-600 italic">Syncing bed sensors...</div>
+               ) : wards?.map((ward: { id: string; name: string; type: string; beds: { id: string; status: string; number: string; admissions?: { encounter?: { patient: { firstName: string; lastName: string } } }[] }[] }) => (
                 <section key={ward.id} className="space-y-4">
                    <div className="flex justify-between items-end border-b border-white/5 pb-4">
                       <div>

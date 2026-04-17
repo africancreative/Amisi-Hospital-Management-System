@@ -34,7 +34,8 @@ export default function HospitalModules() {
 
     useEffect(() => {
         if (hospital?.entitlements) {
-            setSelectedIds(hospital.entitlements.map(e => e.moduleId));
+            const entitlements = hospital.entitlements as Array<{ moduleId: string }>;
+            setSelectedIds(entitlements.map(e => e.moduleId));
         }
     }, [hospital]);
 
@@ -138,7 +139,7 @@ export default function HospitalModules() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {allModules?.map((module) => {
+                    {allModules?.map((module: { id: string; name: string; description: string | null; code: string }) => {
                         const isEnabled = selectedIds.includes(module.id);
                         return (
                             <button 

@@ -99,7 +99,7 @@ export default function OpdPage() {
                     </div>
 
                     <div className="divide-y divide-gray-800">
-                        {opdPatients?.map((p) => (
+                        {opdPatients?.map((p: { id: string; firstName: string; lastName: string; mrn: string; dob: Date }) => (
                             <div 
                                 key={p.id} 
                                 onClick={() => handlePatientSelect(p)}

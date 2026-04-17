@@ -107,7 +107,7 @@ export default function EmergencyPage() {
                     </div>
 
                     <div className="divide-y divide-gray-800">
-                        {erPatients?.map((p, idx) => (
+                        {erPatients?.map((p: { id: string; firstName: string; lastName: string; mrn: string }, idx: number) => (
                             <div 
                                 key={p.id} 
                                 onClick={() => handlePatientSelect(p)}

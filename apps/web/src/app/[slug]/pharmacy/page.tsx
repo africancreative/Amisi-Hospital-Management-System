@@ -24,8 +24,8 @@ export default function PharmacyDashboard() {
 
   const stats = [
     { label: 'Pending Rx', count: prescriptions?.length || 0, icon: Pill, color: 'text-amber-500' },
-    { label: 'Low Stock', count: inventory?.filter(i => i.quantityOnHand < 50).length || 0, icon: AlertTriangle, color: 'text-rose-500' },
-    { label: 'Expiring Soon', count: inventory?.filter(i => {
+    { label: 'Low Stock', count: inventory?.filter((i: { quantityOnHand: number }) => i.quantityOnHand < 50).length || 0, icon: AlertTriangle, color: 'text-rose-500' },
+    { label: 'Expiring Soon', count: inventory?.filter((i: { expiryDate: Date }) => {
       const diff = new Date(i.expiryDate).getTime() - new Date().getTime();
       return diff < 1000 * 60 * 60 * 24 * 30; // 30 days
     }).length || 0, icon: History, color: 'text-blue-500' },
@@ -99,9 +99,9 @@ export default function PharmacyDashboard() {
              <>
                {/* Rx List */}
                <div className="w-80 flex flex-col gap-4 overflow-y-auto pr-2">
-                 {rxLoading ? (
-                   <div className="p-8 text-center text-slate-500">Searching prescriptions...</div>
-                 ) : prescriptions?.map((rx) => (
+                  {rxLoading ? (
+                    <div className="p-8 text-center text-slate-500">Searching prescriptions...</div>
+                  ) : prescriptions?.map((rx: { id: string; patient?: { firstName: string; lastName: string }; items: unknown[]; orderedBy: string }) => (
                    <button 
                      key={rx.id}
                      onClick={() => setActiveRx(rx)}
@@ -213,9 +213,9 @@ export default function PharmacyDashboard() {
                          </tr>
                       </thead>
                       <tbody className="divide-y divide-white/5">
-                         {invLoading ? (
-                            <tr><td colSpan={6} className="p-8 text-center text-slate-600">Syncing stock...</td></tr>
-                         ) : inventory?.map((item) => (
+                          {invLoading ? (
+                             <tr><td colSpan={6} className="p-8 text-center text-slate-600">Syncing stock...</td></tr>
+                          ) : inventory?.map((item: { id: string; medication: { name: string; genericName: string; unit: string }; batchNumber: string; quantityOnHand: number; expiryDate: Date }) => (
                             <tr key={item.id} className="hover:bg-white/[0.02] transition-colors">
                                <td className="p-4">
                                   <p className="font-black text-white">{item.medication.name}</p>

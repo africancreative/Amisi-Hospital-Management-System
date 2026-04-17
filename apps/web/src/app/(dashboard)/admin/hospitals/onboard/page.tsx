@@ -13,7 +13,12 @@ import {
     Rocket,
     AlertCircle,
     Info,
-    Layers
+    Layers,
+    User,
+    Mail,
+    Lock,
+    Copy,
+    Check
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { DeploymentTier } from '@amisimedos/constants';
@@ -30,13 +35,25 @@ export default function OnboardHospital() {
         region: 'US-EAST-1',
         tier: DeploymentTier.CLINIC as DeploymentTier,
         dbUrl: '',
-        selectedModuleIds: [] as string[]
+        selectedModuleIds: [] as string[],
+        adminName: '',
+        adminEmail: '',
+        adminPassword: ''
     });
+    
+    const [generatedPassword, setGeneratedPassword] = useState('');
+    const [copied, setCopied] = useState(false);
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
 
     const { data: modules } = trpc.system.listAllModules.useQuery();
     const onboard = trpc.system.onboardTenant.useMutation({
-        onSuccess: () => {
-            router.push('/admin/hospitals');
+        onSuccess: (result: { adminPassword?: string }) => {
+            if (result.adminPassword) {
+                setGeneratedPassword(result.adminPassword);
+                setShowSuccessModal(true);
+            } else {
+                router.push('/admin/hospitals');
+            }
         }
     });
 
@@ -59,14 +76,14 @@ export default function OnboardHospital() {
             <div className="w-full max-w-4xl">
                 {/* Progress Bar */}
                 <div className="mb-12 flex items-center justify-center gap-4">
-                    {[1, 2, 3].map((i) => (
+                    {[1, 2, 3, 4].map((i) => (
                         <div key={i} className="flex items-center gap-4">
                             <div className={`h-10 w-10 rounded-full flex items-center justify-center font-bold transition-all ${
                                 step >= i ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'bg-slate-900 text-slate-600 border border-slate-800'
                             }`}>
                                 {step > i ? <CheckCircle2 size={20} /> : i}
                             </div>
-                            {i < 3 && <div className={`h-1 w-12 rounded-full ${step > i ? 'bg-blue-600' : 'bg-slate-800'}`} />}
+                            {i < 4 && <div className={`h-1 w-12 rounded-full ${step > i ? 'bg-blue-600' : 'bg-slate-800'}`} />}
                         </div>
                     ))}
                 </div>
@@ -204,7 +221,7 @@ export default function OnboardHospital() {
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
-                                {modules?.map((module) => (
+                                {modules?.map((module: { id: string; name: string; code: string }) => (
                                     <button 
                                         key={module.id}
                                         onClick={() => toggleModule(module.id)}
@@ -244,6 +261,76 @@ export default function OnboardHospital() {
                         </div>
                     )}
 
+                    {/* Step 4: Hospital Admin Credentials */}
+                    {step === 4 && (
+                        <div className="relative z-10 animate-in fade-in slide-in-from-right-4 duration-500">
+                            <div className="mb-8">
+                                <h1 className="text-3xl font-bold text-white mb-2">Hospital Admin Account</h1>
+                                <p className="text-slate-400">Create the primary administrator account for this hospital.</p>
+                            </div>
+
+                            <div className="p-6 rounded-2xl bg-slate-950 border border-emerald-500/20 mb-6">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <Shield className="text-emerald-400" size={20} />
+                                    <h3 className="font-bold text-emerald-400 uppercase text-sm tracking-widest">Initial Super User</h3>
+                                </div>
+                                <p className="text-sm text-slate-400">
+                                    This admin will be able to create additional users, manage roles, and configure the hospital settings.
+                                    Please store these credentials securely.
+                                </p>
+                            </div>
+
+                            <div className="space-y-6">
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">Full Name</label>
+                                    <div className="relative">
+                                        <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                                        <input 
+                                            type="text"
+                                            placeholder="e.g. Jane Doe"
+                                            className="w-full pl-12 pr-6 py-4 bg-slate-950 border border-slate-800 rounded-2xl text-white focus:ring-2 focus:ring-emerald-500/50 outline-none transition-all"
+                                            value={formData.adminName}
+                                            onChange={(e) => setFormData({...formData, adminName: e.target.value})}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">Email Address</label>
+                                    <div className="relative">
+                                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                                        <input 
+                                            type="email"
+                                            placeholder="admin@hospital.com"
+                                            className="w-full pl-12 pr-6 py-4 bg-slate-950 border border-slate-800 rounded-2xl text-white focus:ring-2 focus:ring-emerald-500/50 outline-none transition-all"
+                                            value={formData.adminEmail}
+                                            onChange={(e) => setFormData({...formData, adminEmail: e.target.value})}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">Password</label>
+                                    <div className="relative">
+                                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                                        <input 
+                                            type="password"
+                                            placeholder="Minimum 8 characters"
+                                            className="w-full pl-12 pr-6 py-4 bg-slate-950 border border-slate-800 rounded-2xl text-white focus:ring-2 focus:ring-emerald-500/50 outline-none transition-all"
+                                            value={formData.adminPassword}
+                                            onChange={(e) => setFormData({...formData, adminPassword: e.target.value})}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="mt-6 p-4 bg-amber-500/5 border border-amber-500/20 rounded-2xl flex items-start gap-3">
+                                <AlertCircle size={16} className="text-amber-500 shrink-0 mt-0.5" />
+                                <span className="text-xs text-amber-300">The admin will be created with ADMIN role and full permissions (*). Make sure to change the password after first login.</span>
+                            </div>
+                        </div>
+                    )}
+
                     {/* Navigation Buttons */}
                     <div className="mt-12 flex items-center justify-between pt-8 border-t border-slate-800/50 relative z-10">
                         <button 
@@ -256,8 +343,12 @@ export default function OnboardHospital() {
                         </button>
 
                         <button 
-                            onClick={step === 3 ? () => onboard.mutate(formData) : nextStep}
-                            disabled={isSubmitting || (step === 1 && (!formData.name || !formData.slug))}
+                            onClick={step === 4 ? () => onboard.mutate(formData) : nextStep}
+                            disabled={
+                                isSubmitting || 
+                                (step === 1 && (!formData.name || !formData.slug)) ||
+                                (step === 4 && (!formData.adminName || !formData.adminEmail || formData.adminPassword.length < 8))
+                            }
                             className="group flex items-center gap-3 px-10 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl font-bold transition-all shadow-xl shadow-blue-600/20 active:scale-95 disabled:opacity-50 disabled:grayscale"
                         >
                             {isSubmitting ? (
@@ -267,7 +358,7 @@ export default function OnboardHospital() {
                                 </>
                             ) : (
                                 <>
-                                    {step === 3 ? 'Deploy Hospital' : 'Next Step'}
+                                    {step === 4 ? 'Deploy Hospital' : 'Next Step'}
                                     <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
                                 </>
                             )}
@@ -297,6 +388,61 @@ export default function OnboardHospital() {
                     background: #334155;
                 }
             `}</style>
+
+            {/* Success Modal */}
+            {showSuccessModal && (
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                    <div className="bg-slate-900 rounded-[2rem] border border-emerald-500/30 p-10 max-w-lg w-full shadow-2xl shadow-emerald-500/10">
+                        <div className="text-center mb-8">
+                            <div className="h-20 w-20 rounded-full bg-emerald-500/20 flex items-center justify-center mx-auto mb-6">
+                                <CheckCircle2 size={40} className="text-emerald-500" />
+                            </div>
+                            <h2 className="text-2xl font-bold text-white mb-2">Hospital Provisioned!</h2>
+                            <p className="text-slate-400">The hospital has been successfully created. Save the admin credentials below.</p>
+                        </div>
+
+                        <div className="space-y-4 mb-8">
+                            <div className="p-4 bg-slate-950 rounded-2xl border border-slate-800">
+                                <label className="text-[10px] text-slate-500 uppercase font-black tracking-widest">Email</label>
+                                <p className="text-white font-mono mt-1">{formData.adminEmail}</p>
+                            </div>
+                            <div className="p-4 bg-slate-950 rounded-2xl border border-slate-800">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <label className="text-[10px] text-slate-500 uppercase font-black tracking-widest">Password</label>
+                                        <p className="text-white font-mono mt-1">{generatedPassword}</p>
+                                    </div>
+                                    <button
+                                        onClick={() => {
+                                            navigator.clipboard.writeText(generatedPassword);
+                                            setCopied(true);
+                                            setTimeout(() => setCopied(false), 2000);
+                                        }}
+                                        className="p-2 bg-slate-800 hover:bg-slate-700 rounded-xl transition-colors"
+                                    >
+                                        {copied ? <Check size={18} className="text-emerald-500" /> : <Copy size={18} className="text-slate-400" />}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-2xl mb-8">
+                            <div className="flex items-start gap-3">
+                                <AlertCircle size={16} className="text-amber-500 shrink-0 mt-0.5" />
+                                <span className="text-xs text-amber-300">Store these credentials securely. The password cannot be recovered later.</span>
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={() => router.push('/admin/hospitals')}
+                            className="w-full py-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl font-bold transition-all flex items-center justify-center gap-2"
+                        >
+                            Go to Hospitals
+                            <ChevronRight size={18} />
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
