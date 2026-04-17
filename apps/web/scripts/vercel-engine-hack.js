@@ -14,33 +14,50 @@ const srcTenant = path.resolve(__dirname, '../../../packages/db/node_modules/@pr
 const targetControl = path.resolve(__dirname, '../node_modules/@prisma/control-client');
 const targetTenant = path.resolve(__dirname, '../node_modules/@prisma/tenant-client');
 
-function copyEngines(src, target, label) {
+// Ensure @prisma directory exists in web's node_modules
+const prismaDir = path.resolve(__dirname, '../node_modules/@prisma');
+if (!fs.existsSync(prismaDir)) {
+  fs.mkdirSync(prismaDir, { recursive: true });
+}
+
+function copyDir(src, dest) {
+  if (!fs.existsSync(src)) return false;
+  
+  if (!fs.existsSync(dest)) {
+    fs.mkdirSync(dest, { recursive: true });
+  }
+
+  const files = fs.readdirSync(src);
+  files.forEach(file => {
+    const srcPath = path.join(src, file);
+    const destPath = path.join(dest, file);
+    
+    const stat = fs.statSync(srcPath);
+    if (stat.isDirectory()) {
+      copyDir(srcPath, destPath);
+    } else {
+      fs.copyFileSync(srcPath, destPath);
+    }
+  });
+  
+  return true;
+}
+
+function copyClient(src, target, label) {
   if (!fs.existsSync(src)) {
     console.log(`[Vercel Engine Hack] Skipping ${label} - Source not found: ${src}`);
     return;
   }
 
-  const files = fs.readdirSync(src);
-  const engines = files.filter(f => f.endsWith('.node'));
-
-  if (!fs.existsSync(target)) {
-    fs.mkdirSync(target, { recursive: true });
+  console.log(`[Vercel Engine Hack] Copying ${label} from ${src} to ${target}`);
+  const success = copyDir(src, target);
+  
+  if (success) {
+    console.log(`[Vercel Engine Hack] Successfully copied ${label}`);
   }
-
-  // Copy the engine binaries AND the package.json so Node module resolution doesn't choke
-  const filesToCopy = [...engines, 'package.json', 'index.js', 'index.d.ts'];
-
-  filesToCopy.forEach(f => {
-    const srcFile = path.join(src, f);
-    const destFile = path.join(target, f);
-    if (fs.existsSync(srcFile)) {
-      fs.copyFileSync(srcFile, destFile);
-      console.log(`[Vercel Engine Hack] Copied ${f} -> ${destFile}`);
-    }
-  });
 }
 
-copyEngines(srcControl, targetControl, 'control-client');
-copyEngines(srcTenant, targetTenant, 'tenant-client');
+copyClient(srcControl, targetControl, 'control-client');
+copyClient(srcTenant, targetTenant, 'tenant-client');
 
 console.log('[Vercel Engine Hack] Complete.');

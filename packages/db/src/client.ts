@@ -1,3 +1,6 @@
+// Initialize Prisma environment (must be first)
+import './prisma-init';
+
 import { PrismaClient as ControlClientRaw } from '@prisma/control-client';
 import { PrismaClient as TenantClientRaw } from '@prisma/tenant-client';
 import { config } from './config';

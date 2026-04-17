@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev -H 0.0.0.0",
-    "build": "pnpm --filter @amisimedos/db build && pnpm --filter @amisimedos/ui build && pnpm --filter @amisimedos/sync build && pnpm --filter @amisimedos/chat build && node scripts/vercel-engine-hack.js && next build --webpack",
+    "build": "pnpm --filter @amisimedos/db build && pnpm --filter @amisimedos/ui build && pnpm --filter @amisimedos/sync build && pnpm --filter @amisimedos/chat build && node scripts/validate-prisma-setup.js && node scripts/vercel-engine-hack.js && next build",
     "copy-prisma": "node scripts/copy-prisma.js",
     "start": "next start",
     "lint": "eslint"

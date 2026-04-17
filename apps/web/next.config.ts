@@ -17,14 +17,15 @@ const nextConfig: NextConfig = {
   ],
   outputFileTracingIncludes: {
     "/*": [
-      "../../packages/db/node_modules/@prisma/control-client/**/*",
-      "../../packages/db/node_modules/@prisma/tenant-client/**/*",
-      "../../packages/db/node_modules/@prisma/client/**/*",
+      "../../packages/db/node_modules/@prisma/**/*",
+      "../../packages/db/generated/**/*",
     ],
     "/api/**/*": [
-      "../../packages/db/node_modules/@prisma/control-client/**/*",
-      "../../packages/db/node_modules/@prisma/tenant-client/**/*",
-      "../../packages/db/node_modules/@prisma/client/**/*",
+      "../../packages/db/node_modules/@prisma/**/*",
+      "../../packages/db/generated/**/*",
+    ],
+    "**": [
+      "../../packages/db/node_modules/@prisma/**/*",
     ]
   },
   transpilePackages: [
