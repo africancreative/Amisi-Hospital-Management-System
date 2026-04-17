@@ -1,5 +1,4 @@
 {
-  "rootDirectory": "apps/web",
   "buildCommand": "cd ../.. && pnpm --filter @amisimedos/db build && pnpm --filter @amisimedos/ui build && pnpm --filter @amisimedos/sync build && pnpm --filter @amisimedos/chat build && cd apps/web && next build --webpack",
   "installCommand": "cd ../.. && pnpm install",
   "outputDirectory": ".next",
