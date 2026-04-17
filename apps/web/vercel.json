@@ -1,6 +1,6 @@
 {
   "buildCommand": "pnpm --filter @amisimedos/db db:generate && pnpm build",
-  "installCommand": "pnpm install --ignore-workspace-root-check",
+  "installCommand": "pnpm install --include-workspace-root",
   "outputDirectory": ".next",
   "framework": "nextjs"
 }
