@@ -15,6 +15,18 @@ const nextConfig: NextConfig = {
     'prisma',
     '@amisimedos/db',
   ],
+  outputFileTracingIncludes: {
+    "/*": [
+      "../../packages/db/node_modules/@prisma/control-client/**/*",
+      "../../packages/db/node_modules/@prisma/tenant-client/**/*",
+      "../../packages/db/node_modules/@prisma/client/**/*",
+    ],
+    "/api/**/*": [
+      "../../packages/db/node_modules/@prisma/control-client/**/*",
+      "../../packages/db/node_modules/@prisma/tenant-client/**/*",
+      "../../packages/db/node_modules/@prisma/client/**/*",
+    ]
+  },
   transpilePackages: [
     "@amisimedos/auth",
     "@amisimedos/chat",
