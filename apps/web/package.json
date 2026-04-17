@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev -H 0.0.0.0",
-    "build": "pnpm --filter @amisimedos/db build && pnpm --filter @amisimedos/ui build && pnpm --filter @amisimedos/sync build && pnpm --filter @amisimedos/chat build && next build --webpack && pnpm run copy-prisma",
+    "build": "pnpm --filter @amisimedos/db build && pnpm --filter @amisimedos/ui build && pnpm --filter @amisimedos/sync build && pnpm --filter @amisimedos/chat build && pnpm run copy-prisma && next build --webpack",
     "copy-prisma": "node scripts/copy-prisma.js",
     "start": "next start",
     "lint": "eslint"
