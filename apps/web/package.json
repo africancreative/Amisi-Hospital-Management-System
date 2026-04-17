@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev -H 0.0.0.0",
     "build": "pnpm --filter @amisimedos/db db:generate && next build --webpack && pnpm run copy-prisma",
-    "copy-prisma": "powershell -Command \"if (!(Test-Path .next/server/chunks)) { New-Item -ItemType Directory -Path .next/server/chunks }; Get-ChildItem ../../packages/db/generated/*-client/*.node | Copy-Item -Destination .next/server/chunks/ -Force -ErrorAction SilentlyContinue\"",
+    "copy-prisma": "sh -c 'mkdir -p .next/server/chunks && cp ../../packages/db/generated/*-client/*.node .next/server/chunks/ 2>/dev/null || true'",
     "start": "next start",
     "lint": "eslint"
   },
