@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev -H 0.0.0.0",
     "build": "pnpm --filter @amisimedos/db build && pnpm --filter @amisimedos/ui build && pnpm --filter @amisimedos/sync build && pnpm --filter @amisimedos/chat build && next build --webpack && pnpm run copy-prisma",
-    "copy-prisma": "node -e \"const fs=require('fs');const path=require('path');const dest='.next/server/chunks';if(!fs.existsSync(dest))fs.mkdirSync(dest,{recursive:true});['control-client','tenant-client'].forEach(c=>{const src='../../packages/db/generated/'+c;if(fs.existsSync(src)){fs.readdirSync(src).filter(f=>f.endsWith('.node')).forEach(f=>{fs.copyFileSync(path.join(src,f),path.join(dest,f));});}});\"",
+    "copy-prisma": "node -e \"const fs=require('fs');const path=require('path');const src='../../packages/db/generated';const dest1='.next/server';const dest2='generated';const dest3='.prisma';['control-client','tenant-client'].forEach(c=>{const s=path.join(src,c);if(fs.existsSync(s)){const files=fs.readdirSync(s).filter(f=>f.endsWith('.node'));files.forEach(f=>{const srcFile=path.join(s,f);fs.copyFileSync(srcFile,path.join(dest1,f));fs.copyFileSync(srcFile,path.join(dest2,f));fs.copyFileSync(srcFile,path.join(dest3,f));});}});\"",
     "start": "next start",
     "lint": "eslint"
   },
