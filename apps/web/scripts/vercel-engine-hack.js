@@ -8,11 +8,11 @@
 const fs = require('fs');
 const path = require('path');
 
-const srcControl = path.resolve(__dirname, '../../../packages/db/node_modules/@prisma/control-client');
-const srcTenant = path.resolve(__dirname, '../../../packages/db/node_modules/@prisma/tenant-client');
+const srcControl = path.resolve(__dirname, '../../../packages/db/generated/control-client');
+const srcTenant = path.resolve(__dirname, '../../../packages/db/generated/tenant-client');
 
-const targetControl = path.resolve(__dirname, '../node_modules/@prisma/control-client');
-const targetTenant = path.resolve(__dirname, '../node_modules/@prisma/tenant-client');
+const targetControl = path.resolve(__dirname, '../generated/control-client');
+const targetTenant = path.resolve(__dirname, '../generated/tenant-client');
 
 function copyEngines(src, target, label) {
   if (!fs.existsSync(src)) {

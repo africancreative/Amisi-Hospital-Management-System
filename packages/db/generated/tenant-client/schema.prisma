@@ -1290,7 +1290,7 @@ model SyncNode {
 }
 
 // ===========================================================================
-// SPECIALIZED UNITS — ICU, Oncology, Maternity
+// SPECIALIZED UNITS â€” ICU, Oncology, Maternity
 // ===========================================================================
 
 model ICUMonitoring {
@@ -1308,7 +1308,7 @@ model ICUMonitoring {
 
   // Ventilator settings
   ventilatorMode String?  @map("ventilator_mode") // 'IPPV','SIMV','CPAP','BiPAP','NONE'
-  fio2           Decimal? @db.Decimal(4, 2) // 0.21–1.00
+  fio2           Decimal? @db.Decimal(4, 2) // 0.21â€“1.00
   tidalVolume    Int?     @map("tidal_volume") // mL
   peep           Decimal? @db.Decimal(4, 1) // cmH2O
 
@@ -1346,7 +1346,7 @@ model VitalsLog {
   spO2            Int?
   gcs             Int? // Glasgow Coma Scale (ICU)
   urineOutputMl   Int?     @map("urine_output_ml") // Per-hour
-  painScore       Int?     @map("pain_score") // 0–10
+  painScore       Int?     @map("pain_score") // 0â€“10
   news2Score      Int?     @map("news2_score") // National Early Warning Score 2
 
   // Drug infusion snapshot (ICU drips)
@@ -1409,9 +1409,9 @@ model ChemoSession {
 
   // Pre-chemo assessment gate
   anc             Decimal? @db.Decimal(5, 2) // Absolute Neutrophil Count
-  platelets       Int? // Platelet count (10³/µL)
+  platelets       Int? // Platelet count (10Â³/ÂµL)
   weightKg        Decimal? @map("weight_kg") @db.Decimal(5, 1)
-  bsa             Decimal? @db.Decimal(4, 2) // Body Surface Area (m²)
+  bsa             Decimal? @db.Decimal(4, 2) // Body Surface Area (mÂ²)
   preChemoCleared Boolean  @default(false) @map("pre_chemo_cleared")
 
   // Drug infusions and outcomes (JSONB for CTCAE flexibility)
@@ -1527,7 +1527,7 @@ model DeliveryLog {
 }
 
 // ===========================================================================
-// AMISI PHARMOS — Standalone Pharmacy Dispensing Module
+// AMISI PHARMOS â€” Standalone Pharmacy Dispensing Module
 // ===========================================================================
 
 model Medication {
@@ -1669,10 +1669,10 @@ model ControlledSubstanceLog {
 
 // ===========================================================================
 // HEALTH INFORMATION MANAGEMENT (HIM) MODULE
-// HIPAA Compliant — EMR/EHR Governance, ROI, Consent, Immutable Audit Chain
+// HIPAA Compliant â€” EMR/EHR Governance, ROI, Consent, Immutable Audit Chain
 // ===========================================================================
 
-// Record version snapshot — full EMR state at any point in time
+// Record version snapshot â€” full EMR state at any point in time
 model RecordVersion {
   id        String  @id @default(uuid())
   patientId String  @map("patient_id")
@@ -1704,7 +1704,7 @@ model RecordVersion {
   @@map("record_versions")
 }
 
-// Release of Information (ROI) — HIPAA Authorization Requests
+// Release of Information (ROI) â€” HIPAA Authorization Requests
 model ReleaseRequest {
   id        String  @id @default(uuid())
   patientId String  @map("patient_id")
@@ -1749,7 +1749,7 @@ model ReleaseRequest {
   @@map("release_requests")
 }
 
-// HIPAA Consent Forms — Authorization to Use/Disclose PHI
+// HIPAA Consent Forms â€” Authorization to Use/Disclose PHI
 model ConsentForm {
   id        String  @id @default(uuid())
   patientId String  @map("patient_id")
@@ -1786,7 +1786,7 @@ model ConsentForm {
   @@map("consent_forms")
 }
 
-// Record Access Grant — role-based permission grants for specific patient records
+// Record Access Grant â€” role-based permission grants for specific patient records
 model RecordAccessGrant {
   id        String  @id @default(uuid())
   patientId String  @map("patient_id")

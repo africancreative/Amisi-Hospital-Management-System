@@ -45,7 +45,8 @@ export function proxy(request: NextRequest) {
     // 3. System Admin paths
     if (pathname.startsWith('/system') || pathname.startsWith('/hospitals')) {
         // Enforce CIA Triad Edge Restrict: Block SaaS features on Edge distributions
-        if (process.env.NEXT_PUBLIC_IS_LOCAL_EDGE_NODE === 'true') {
+        // Exception: Allow access during local dev server execution
+        if (process.env.NODE_ENV !== 'development' && process.env.NEXT_PUBLIC_IS_LOCAL_EDGE_NODE === 'true') {
             const edgeTenant = process.env.NEXT_PUBLIC_EDGE_TENANT_ID || 'amisi-premier';
             return NextResponse.redirect(new URL(`/${edgeTenant}/login`, request.url));
         }

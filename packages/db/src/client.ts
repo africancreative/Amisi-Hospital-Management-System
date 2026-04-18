@@ -1,5 +1,5 @@
-import { PrismaClient as ControlClientRaw } from '@prisma/control-client';
-import { PrismaClient as TenantClientRaw } from '@prisma/tenant-client';
+import { PrismaClient as ControlClientRaw } from '../generated/control-client';
+import { PrismaClient as TenantClientRaw } from '../generated/tenant-client';
 import { config } from './config';
 import { withJournaling } from './extension-journal';
 

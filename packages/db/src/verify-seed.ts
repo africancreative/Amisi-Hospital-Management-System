@@ -10,10 +10,10 @@ async function verify() {
     });
 
     const employees = await tenantDb.employee.findMany();
-    console.log('Employees found:', employees.map(e => ({ name: `${e.firstName} ${e.lastName}`, email: e.email, role: e.role })));
+    console.log('Employees found:', employees.map((e: any) => ({ name: `${e.firstName} ${e.lastName}`, email: e.email, role: e.role })));
 
     const patients = await tenantDb.patient.findMany();
-    console.log('Patients found:', patients.map(p => ({ name: `${p.firstName} ${p.lastName}`, dob: p.dob })));
+    console.log('Patients found:', patients.map((p: any) => ({ name: `${p.firstName} ${p.lastName}`, dob: p.dob })));
 
     const settings = await tenantDb.hospitalSettings.findFirst();
     console.log('Hospital Settings:', settings ? settings.hospitalName : 'Not found');
