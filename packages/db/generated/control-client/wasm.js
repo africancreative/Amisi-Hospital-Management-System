@@ -133,6 +133,11 @@ exports.Prisma.TenantScalarFieldEnum = {
   status: 'status',
   suspensionReason: 'suspensionReason',
   suspendedAt: 'suspendedAt',
+  address: 'address',
+  logoUrl: 'logoUrl',
+  primaryColor: 'primaryColor',
+  secondaryColor: 'secondaryColor',
+  trialEndsAt: 'trialEndsAt',
   enabledModules: 'enabledModules',
   publicKeySpki: 'publicKeySpki',
   sharedSecret: 'sharedSecret',
@@ -252,6 +257,19 @@ exports.Prisma.PatientIndexScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.TenantUsageScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  subscriptionId: 'subscriptionId',
+  date: 'date',
+  activeUsers: 'activeUsers',
+  activePatients: 'activePatients',
+  storageUsedMb: 'storageUsedMb',
+  apiCallsCount: 'apiCallsCount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -299,7 +317,8 @@ exports.Prisma.ModelName = {
   SystemPayment: 'SystemPayment',
   Plan: 'Plan',
   Subscription: 'Subscription',
-  PatientIndex: 'PatientIndex'
+  PatientIndex: 'PatientIndex',
+  TenantUsage: 'TenantUsage'
 };
 
 /**

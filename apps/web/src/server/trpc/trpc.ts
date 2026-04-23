@@ -2,6 +2,7 @@ import { initTRPC, TRPCError } from '@trpc/server';
 import { type Context } from './context';
 import { ZodError } from 'zod';
 import { checkBillingStatus } from './billing-middleware';
+import { getControlDb } from '@amisimedos/db/client';
 import { Role } from '@amisimedos/db/client';
 import { Permission, hasPermission } from '@amisimedos/auth';
 
@@ -45,6 +46,30 @@ const enforceTenant = t.middleware(async ({ ctx, next, type }) => {
   // Enforcement: 72-hour clinical grace check
   // This ensure that even if offline, we respect the last signed billing status
   const billing = await checkBillingStatus(ctx.db);
+
+  // ── SaaS License Enforcement ──
+  // Check Control Plane for Suspension/Trial Status
+  const controlDb = getControlDb();
+  const tenant = await controlDb.tenant.findUnique({
+    where: { slug: ctx.tenantSlug },
+    select: { status: true, trialEndsAt: true }
+  });
+
+  if (tenant) {
+    if (tenant.status === 'suspended') {
+      throw new TRPCError({
+        code: 'FORBIDDEN',
+        message: '[Hospital Suspended] Access to this clinical node has been administratively restricted.',
+      });
+    }
+
+    if (tenant.trialEndsAt && new Date() > new Date(tenant.trialEndsAt)) {
+      throw new TRPCError({
+        code: 'PAYMENT_REQUIRED',
+        message: '[Demo Expired] Your 3-day enterprise demo has expired. Please contact AmisiMedOS support.',
+      });
+    }
+  }
 
   // Read-Only Enforcement: Block mutations if past grace period
   if (billing.isLockout && type === 'mutation') {
@@ -126,4 +151,7 @@ export const requirePermission = (permission: Permission) =>
 export const clinicalProcedure = protectedProcedure.use(requirePermission('CONSULTATION_WRITE'));
 export const financeProcedure = protectedProcedure.use(requirePermission('LEDGER_VIEW'));
 export const adminProcedure = protectedProcedure.use(requirePermission('RECORDS_WRITE'));
+export const hrProcedure = protectedProcedure.use(requirePermission('PAYROLL_PROCESS'));
+export const inventoryProcedure = protectedProcedure.use(requirePermission('INV_AUDIT'));
+export const labProcedure = protectedProcedure.use(requirePermission('LIS_RESULT_WRITE'));
 

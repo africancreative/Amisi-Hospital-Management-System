@@ -58,7 +58,7 @@ export class ClinicalWorkflowService {
                 visitId: visit.id,
                 encounterType: input.encounterType,
                 doctorId: input.doctorId,
-                doctorName: input.doctorName,
+                doctorName: input.doctorName || 'Unknown Doctor',
                 type: this.getEncounterTypeName(input.encounterType),
                 department: input.department,
                 status: 'CHECKED_IN',
@@ -178,7 +178,7 @@ export class ClinicalWorkflowService {
             encounterId,
             description: `Consultation - ${doctorName}`,
             quantity: 1,
-            unitPrice: this.getConsultationPrice(encounter.encounterType),
+            unitPrice: this.getConsultationPrice(encounter.encounterType as EncounterType),
             category: 'CONSULTATION'
         });
 
@@ -302,7 +302,8 @@ export class ClinicalWorkflowService {
 
         const bed = await this.db.bed.update({
             where: { id: bedId },
-            data: { status: 'OCCUPIED' }
+            data: { status: 'OCCUPIED' },
+            include: { ward: true }
         });
 
         const billItem = await this.createBillItem({

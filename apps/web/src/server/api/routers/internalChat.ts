@@ -127,6 +127,12 @@ export const internalChatRouter = router({
         );
       }
 
+      // Update Group's lastMessageAt
+      await ctx.db!.chatGroup.update({
+        where: { id: input.groupId },
+        data: { lastMessageAt: new Date() }
+      });
+
       return message;
     }),
 

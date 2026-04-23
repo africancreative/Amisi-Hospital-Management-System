@@ -19,10 +19,10 @@ export default async function TenantPage(
   }
 
   const stats = await getTenantDashboardStats();
-  return <TenantDashboard stats={stats} slug={slug} />;
+  return <TenantDashboard stats={stats} slug={slug} userRole={userRole} />;
 }
 
-function TenantDashboard({ stats, slug }: { stats: any, slug: string }) {
+function TenantDashboard({ stats, slug, userRole }: { stats: any, slug: string, userRole: string }) {
   return (
     <div className="flex-1 overflow-y-auto p-8 bg-gray-50 dark:bg-[#0a0a0b]">
       <div className="mx-auto max-w-7xl">
@@ -55,9 +55,18 @@ function TenantDashboard({ stats, slug }: { stats: any, slug: string }) {
             </div>
           </div>
           <div className="space-y-6">
-            <QuickAction icon={Users} label="Manage Staff" href={`/${slug}/users`} color="blue" />
-            <QuickAction icon={Microscope} label="Lab Results" href={`/${slug}/lab`} color="rose" />
-            <QuickAction icon={Pill} label="Pharmacy Stock" href={`/${slug}/inventory`} color="amber" />
+            {(userRole === 'ADMIN' || userRole === 'HR' || userRole === 'HR_MANAGER') && (
+              <QuickAction icon={Users} label="Manage Staff" href={`/${slug}/hr`} color="blue" />
+            )}
+            {(userRole === 'ADMIN' || userRole === 'DOCTOR' || userRole === 'NURSE' || userRole === 'LAB_TECH') && (
+              <QuickAction icon={Microscope} label="Lab Results" href={`/${slug}/lab`} color="rose" />
+            )}
+            {(userRole === 'ADMIN' || userRole === 'PHARMACIST' || userRole === 'INVENTORY_CLERK') && (
+              <QuickAction icon={Pill} label="Pharmacy Stock" href={`/${slug}/inventory`} color="amber" />
+            )}
+            {(userRole === 'ADMIN' || userRole === 'ACCOUNTANT') && (
+              <QuickAction icon={DollarSign} label="Financials" href={`/${slug}/billing`} color="blue" />
+            )}
           </div>
         </div>
       </div>

@@ -70,6 +70,27 @@ export const wardRouter = router({
           data: { status: 'OCCUPIED' }
         });
 
+        // 4. Timeline Event
+        const encounter = await tx.encounter.findUnique({ 
+          where: { id: input.encounterId },
+          include: { patient: true }
+        });
+
+        if (encounter) {
+          await tx.patientTimelineEvent.create({
+            data: {
+              patientId: encounter.patientId,
+              eventType: 'ADMISSION_CREATED',
+              title: 'Patient Admitted',
+              description: `Admitted to ${bed.number} (${bed.wardId}). Reason: ${input.admissionReason || 'Clinical Management'}`,
+              actorId: ctx.session.userId,
+              actorRole: ctx.session.role,
+              encounterId: input.encounterId,
+              visitId: encounter.visitId
+            }
+          });
+        }
+
         return admission;
       });
     }),
@@ -113,6 +134,27 @@ export const wardRouter = router({
         await tx.bed.update({ where: { id: input.fromBedId }, data: { status: 'AVAILABLE' } });
         await tx.bed.update({ where: { id: input.toBedId }, data: { status: 'OCCUPIED' } });
 
+        // 5. Timeline Event
+        const admission = await tx.admission.findUnique({
+          where: { id: input.admissionId },
+          include: { encounter: true }
+        });
+
+        if (admission?.encounter) {
+          await tx.patientTimelineEvent.create({
+            data: {
+              patientId: admission.encounter.patientId,
+              eventType: 'PATIENT_TRANSFERRED',
+              title: 'Bed Transfer',
+              description: `Transferred from bed ${input.fromBedId} to ${input.toBedId}. Reason: ${input.reason || 'None provided'}`,
+              actorId: ctx.session.userId,
+              actorRole: ctx.session.role,
+              encounterId: admission.encounterId,
+              visitId: admission.encounter.visitId
+            }
+          });
+        }
+
         return { success: true };
       });
     }),
@@ -143,7 +185,67 @@ export const wardRouter = router({
           data: { status: 'CLEANING' }
         });
 
+        // 3. Timeline Event
+        const admission = await tx.admission.findUnique({
+          where: { id: input.admissionId },
+          include: { encounter: true }
+        });
+
+        if (admission?.encounter) {
+          await tx.patientTimelineEvent.create({
+            data: {
+              patientId: admission.encounter.patientId,
+              eventType: 'DISCHARGE_FINALIZED',
+              title: 'Patient Discharged',
+              description: 'Inpatient admission finalized. Patient discharged from ward.',
+              actorId: ctx.session.userId,
+              actorRole: ctx.session.role,
+              encounterId: admission.encounterId,
+              visitId: admission.encounter.visitId
+            }
+          });
+        }
+
         return { success: true };
       });
+    }),
+
+  /**
+   * markBedClean
+   * Transitions a bed from 'CLEANING' back to 'AVAILABLE'.
+   */
+  markBedClean: tenantProcedure
+    .input(z.object({
+      bedId: z.string()
+    }))
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db!.bed.update({
+        where: { id: input.bedId },
+        data: { status: 'AVAILABLE' }
+      });
+    }),
+
+  /**
+   * getWardOccupancy
+   * High-level stats for ward management dashboard.
+   */
+  getWardOccupancy: tenantProcedure
+    .query(async ({ ctx }) => {
+      const wards = await ctx.db!.ward.findMany({
+        include: {
+          beds: {
+            select: { status: true }
+          }
+        }
+      });
+
+      return wards.map(w => ({
+        id: w.id,
+        name: w.name,
+        totalBeds: w.beds.length,
+        occupied: w.beds.filter(b => b.status === 'OCCUPIED').length,
+        cleaning: w.beds.filter(b => b.status === 'CLEANING').length,
+        available: w.beds.filter(b => b.status === 'AVAILABLE').length,
+      }));
     })
 });

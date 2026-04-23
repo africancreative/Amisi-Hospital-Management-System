@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Building2, Save, Trash2, Globe, Shield, Database, LayoutGrid, AlertTriangle, Copy, Power, PowerOff } from 'lucide-react';
+import { Building2, Save, Trash2, Globe, Shield, Database, LayoutGrid, AlertTriangle, Copy, Power, PowerOff, Loader2 } from 'lucide-react';
 import { updateTenantFull, updateTenantStatus, deleteTenant, cloneTenant } from '@/app/actions/tenant-actions';
 import { useRouter } from 'next/navigation';
 
@@ -41,6 +41,8 @@ export function HospitalEditForm({ tenant }: HospitalEditFormProps) {
         taxId: tenant.taxId || '',
         logoUrl: tenant.logoUrl || '',
         marketingSlogan: tenant.marketingSlogan || '',
+        primaryColor: tenant.primaryColor || '#2563EB',
+        secondaryColor: tenant.secondaryColor || '#0F172A',
         enabledModules: tenant.enabledModules || {},
     });
 
@@ -52,6 +54,32 @@ export function HospitalEditForm({ tenant }: HospitalEditFormProps) {
                 [moduleId]: !prev.enabledModules[moduleId]
             }
         }));
+    };
+
+    const [isUploading, setIsUploading] = useState(false);
+
+    const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setIsUploading(true);
+        const formDataUpload = new FormData();
+        formDataUpload.append('file', file);
+
+        try {
+            const res = await fetch('/api/system/upload', {
+                method: 'POST',
+                body: formDataUpload
+            });
+            const data = await res.json();
+            if (data.url) {
+                setFormData(prev => ({ ...prev, logoUrl: data.url }));
+            }
+        } catch (err) {
+            console.error("Upload failed", err);
+        } finally {
+            setIsUploading(false);
+        }
     };
 
     const handleSave = async () => {
@@ -153,6 +181,62 @@ export function HospitalEditForm({ tenant }: HospitalEditFormProps) {
                             onChange={e => setFormData({ ...formData, taxId: e.target.value })}
                             className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white placeholder-neutral-600 focus:outline-none focus:border-blue-500/50 transition-all font-medium"
                         />
+                    </div>
+                    
+                    {/* Logo & Colors */}
+                    <div className="space-y-4">
+                        <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest pl-1">Hospital Logo</label>
+                        <div className="flex items-center gap-4">
+                            <button 
+                                type="button" 
+                                onClick={() => document.getElementById('logo-upload-edit')?.click()}
+                                className="flex-1 bg-white/5 hover:bg-white/10 border-dashed border-white/20 h-16 rounded-2xl flex items-center justify-center gap-2 text-neutral-400 text-xs font-bold uppercase"
+                                disabled={isUploading}
+                            >
+                                {isUploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                                {isUploading ? 'Uploading...' : 'Upload Logo'}
+                            </button>
+                            <input id="logo-upload-edit" type="file" className="hidden" accept="image/*" onChange={handleLogoUpload} />
+                            {formData.logoUrl && (
+                                <div className="h-16 w-16 rounded-2xl bg-white/5 border border-white/10 p-2 overflow-hidden flex items-center justify-center">
+                                    <img src={formData.logoUrl} alt="Preview" className="max-h-full max-w-full object-contain" />
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-4">
+                            <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest pl-1">Primary Color</label>
+                            <div className="flex gap-2">
+                                <input 
+                                    type="color" 
+                                    value={formData.primaryColor}
+                                    onChange={e => setFormData({ ...formData, primaryColor: e.target.value })}
+                                    className="h-12 w-12 p-1 bg-white/5 border border-white/10 rounded-xl cursor-pointer"
+                                />
+                                <input 
+                                    value={formData.primaryColor}
+                                    onChange={e => setFormData({ ...formData, primaryColor: e.target.value })}
+                                    className="flex-1 bg-white/5 border border-white/10 rounded-xl px-3 text-xs font-mono uppercase text-white"
+                                />
+                            </div>
+                        </div>
+                        <div className="space-y-4">
+                            <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest pl-1">Secondary Color</label>
+                            <div className="flex gap-2">
+                                <input 
+                                    type="color" 
+                                    value={formData.secondaryColor}
+                                    onChange={e => setFormData({ ...formData, secondaryColor: e.target.value })}
+                                    className="h-12 w-12 p-1 bg-white/5 border border-white/10 rounded-xl cursor-pointer"
+                                />
+                                <input 
+                                    value={formData.secondaryColor}
+                                    onChange={e => setFormData({ ...formData, secondaryColor: e.target.value })}
+                                    className="flex-1 bg-white/5 border border-white/10 rounded-xl px-3 text-xs font-mono uppercase text-white"
+                                />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>

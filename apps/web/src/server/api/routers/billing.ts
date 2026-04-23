@@ -16,6 +16,15 @@ export const billingRouter = router({
         include: { billItems: { include: { allocations: { include: { payment: true } } } }, payments: true }
       });
     }),
+  getOpenInvoices: tenantProcedure
+    .query(async ({ ctx }) => {
+      if (!ctx.db) throw new Error('Database not initialized');
+      return ctx.db!.invoice.findMany({
+        where: { status: { in: ['OPEN', 'PARTIAL'] } },
+        orderBy: { createdAt: 'desc' },
+        include: { patient: true, visit: true }
+      });
+    }),
 
   getVisitBill: tenantProcedure
     .input(z.string())
@@ -35,15 +44,37 @@ export const billingRouter = router({
       quantity: z.number(),
       unitPrice: z.number(),
       category: z.string(),
+      taxRate: z.number().default(0),
+      discountAmount: z.number().default(0),
+      discountReason: z.string().optional(),
+      isExempt: z.boolean().default(false),
+      exemptionReason: z.string().optional(),
+      currency: z.string().default('USD')
     }))
     .mutation(async ({ ctx, input }) => {
       if (!ctx.db) throw new Error('Database not initialized');
-      const { visitId, patientId, ...rest } = input;
+      const { visitId, patientId, taxRate, discountAmount, isExempt, ...rest } = input;
       const billing = new BillingService(ctx.db);
+      
       const invoice = await billing.resolveActiveInvoice(visitId, patientId);
-      const totalPrice = input.quantity * input.unitPrice;
+      
+      // Calculate dynamic prices
+      const pricing = billing.calculateDynamicPrice(input.unitPrice, input.quantity, taxRate, discountAmount, isExempt);
+      
       const item = await ctx.db!.billItem.create({
-        data: { ...rest, totalPrice, visitId, invoiceId: invoice.id, status: 'UNPAID', version: 1, isSynced: false }
+        data: { 
+          ...rest,
+          taxRate,
+          discountAmount,
+          isExempt,
+          taxAmount: pricing.taxAmount,
+          totalPrice: pricing.totalPrice,
+          visitId, 
+          invoiceId: invoice.id, 
+          status: 'UNPAID', 
+          version: 1, 
+          isSynced: false 
+        }
       });
       await billing.calculateInvoiceTotals(invoice.id);
       return item;
@@ -67,6 +98,7 @@ export const billingRouter = router({
       invoiceId: z.string(),
       amount: z.number(),
       method: z.string(),
+      currency: z.string().default('USD'),
       reference: z.string().optional(),
       autoAllocate: z.boolean().default(true),
       allocations: z.array(z.object({ billItemId: z.string(), amount: z.number() })).optional()
@@ -85,5 +117,26 @@ export const billingRouter = router({
         await billing.calculateInvoiceTotals(invoiceId);
       }
       return payment;
+    }),
+
+  /**
+   * getPrintableDocument
+   * Generates HTML for receipts (Thermal) or invoices (A4).
+   */
+  getPrintableDocument: tenantProcedure
+    .input(z.object({
+      invoiceId: z.string(),
+      format: z.enum(['THERMAL', 'A4']),
+      type: z.enum(['RECEIPT', 'INVOICE'])
+    }))
+    .query(async ({ ctx, input }) => {
+      const { PrintService } = await import('@amisimedos/billing');
+      const printer = new PrintService(ctx.db!);
+      
+      if (input.type === 'RECEIPT') {
+        return printer.printReceipt(input.invoiceId, input.format);
+      } else {
+        return printer.printInvoice(input.invoiceId, input.format);
+      }
     }),
 });

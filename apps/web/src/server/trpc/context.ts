@@ -34,6 +34,7 @@ export const createTRPCContext = async (opts: { req: NextRequest }) => {
   // Simplified for this stage - extraction from cookies/headers
   const session = {
     userId: req.cookies.get('amisi-user-id')?.value,
+    userName: req.cookies.get('amisi-user-name')?.value,
     role: req.cookies.get('amisi-user-role')?.value,
     tenantId: req.cookies.get('amisi-tenant-id')?.value,
     isSystemAdmin: req.cookies.get('amisi-is-system-admin')?.value === 'true',

@@ -4,9 +4,9 @@ import 'package:amisimedos_mobile/main.dart';
 
 void main() {
   testWidgets('AmisiMedOS app launches', (WidgetTester tester) async {
-    await tester.pumpWidget(const AmisiMedOSApp());
+    await tester.pumpWidget(const AmisiApp());
 
-    expect(find.text('AmisiMedOS'), findsOneWidget);
-    expect(find.text('Hospital Management System'), findsOneWidget);
+    expect(find.text('AMISIMEDOS'), findsOneWidget);
+    expect(find.text('ENTERPRISE HEALTHCARE NODE'), findsOneWidget);
   });
 }

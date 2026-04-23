@@ -1,6 +1,7 @@
-import { tenantProcedure, router } from '@/server/trpc/trpc';
+import { tenantProcedure, router, clinicalProcedure, labProcedure } from '@/server/trpc/trpc';
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
+import { logAudit } from '@/lib/audit';
 
 export const labRouter = router({
   /**
@@ -26,7 +27,7 @@ export const labRouter = router({
    * collectSample
    * Marks a lab order sample as collected and triggers billing.
    */
-  collectSample: tenantProcedure
+  collectSample: clinicalProcedure
     .input(z.object({
       orderId: z.string(),
       specimenType: z.string(),
@@ -34,7 +35,7 @@ export const labRouter = router({
       collectedById: z.string()
     }))
     .mutation(async ({ ctx, input }) => {
-      return ctx.db!.$transaction(async (tx) => {
+      const result = await ctx.db!.$transaction(async (tx) => {
         // 1. Create Sample Record
         const sample = await tx.labSample.create({
           data: {
@@ -101,13 +102,23 @@ export const labRouter = router({
 
         return { sample, order };
       });
+
+      await logAudit({
+        action: 'UPDATE',
+        resource: 'LabOrder',
+        resourceId: input.orderId,
+        details: { action: 'COLLECT_SAMPLE', specimen: input.specimenType },
+        actor: { id: ctx.session.userId, name: ctx.session.userName, role: ctx.session.role }
+      });
+
+      return result;
     }),
 
   /**
    * recordResults
    * Input multiple biomarker results for a single lab order.
    */
-  recordResults: tenantProcedure
+  recordResults: labProcedure
     .input(z.object({
       orderId: z.string(),
       results: z.array(z.object({
@@ -119,7 +130,7 @@ export const labRouter = router({
       }))
     }))
     .mutation(async ({ ctx, input }) => {
-      return ctx.db!.$transaction(async (tx) => {
+      const result = await ctx.db!.$transaction(async (tx) => {
         // 1. Create Result Entries
         await tx.labResult.createMany({
           data: input.results.map(r => ({
@@ -128,11 +139,136 @@ export const labRouter = router({
           }))
         });
 
-        // 2. Advance Status to Analysis/Competed (pending validation)
-        return tx.labOrder.update({
+        const order = await tx.labOrder.findUnique({ where: { id: input.orderId } });
+
+        // 2. Advance Status to Analysis
+        const updatedOrder = await tx.labOrder.update({
           where: { id: input.orderId },
           data: { status: 'IN_ANALYSIS' }
         });
+
+        // 3. Timeline Event
+        if (order?.patientId) {
+          await tx.patientTimelineEvent.create({
+            data: {
+              patientId: order.patientId,
+              eventType: 'LAB_RESULT_UPLOADED',
+              title: 'Lab results uploaded',
+              description: `Results for ${order.testPanelId} are now in analysis.`,
+              actorId: ctx.session.userId,
+              actorRole: ctx.session.role,
+            }
+          });
+        }
+
+        return updatedOrder;
       });
+
+      await logAudit({
+        action: 'UPDATE',
+        resource: 'LabOrder',
+        resourceId: input.orderId,
+        details: { action: 'RECORD_RESULTS', count: input.results.length },
+        actor: { id: ctx.session.userId, name: ctx.session.userName, role: ctx.session.role }
+      });
+
+      return result;
+    }),
+
+  /**
+   * createOrder
+   * Doctor initiates a lab order.
+   */
+  createOrder: clinicalProcedure
+    .input(z.object({
+      patientId: z.string(),
+      encounterId: z.string().optional(),
+      testPanelId: z.string(),
+      urgency: z.enum(['ROUTINE', 'STAT', 'ASAP']).default('ROUTINE'),
+      clinicalNotes: z.string().optional(),
+      billedAmount: z.number().optional()
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const order = await ctx.db!.labOrder.create({
+        data: {
+          ...input,
+          orderedById: ctx.session.userId,
+          status: 'PENDING'
+        }
+      });
+
+      // Timeline Event
+      await ctx.db!.patientTimelineEvent.create({
+        data: {
+          patientId: input.patientId,
+          eventType: 'LAB_ORDER_CREATED',
+          title: 'Lab order created',
+          description: `Order for ${input.testPanelId} (${input.urgency})`,
+          actorId: ctx.session.userId,
+          actorRole: ctx.session.role,
+          encounterId: input.encounterId
+        }
+      });
+
+      return order;
+    }),
+
+  /**
+   * finalizeReport
+   * Pathologist validates results and signs off.
+   */
+  finalizeReport: labProcedure
+    .input(z.object({
+      orderId: z.string(),
+      pathologistId: z.string(),
+      clinicalInterpretation: z.string().optional(),
+      isCritical: z.boolean().default(false),
+      pdfUrl: z.string().optional()
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const result = await ctx.db!.$transaction(async (tx) => {
+        const report = await tx.labReport.create({
+          data: {
+            labOrderId: input.orderId,
+            pathologistId: input.pathologistId,
+            clinicalInterpretation: input.clinicalInterpretation,
+            isCritical: input.isCritical,
+            pdfUrl: input.pdfUrl,
+            status: 'FINAL',
+            validatedAt: new Date()
+          }
+        });
+
+        const order = await tx.labOrder.update({
+          where: { id: input.orderId },
+          data: { status: 'COMPLETED' }
+        });
+
+        // Timeline Event
+        if (order.patientId) {
+          await tx.patientTimelineEvent.create({
+            data: {
+              patientId: order.patientId,
+              eventType: 'LAB_REPORT_FINALIZED',
+              title: 'Lab report finalized',
+              description: `Report for ${order.testPanelId} is now available. ${input.isCritical ? '⚠️ CRITICAL FINDINGS' : ''}`,
+              actorId: ctx.session.userId,
+              actorRole: ctx.session.role,
+            }
+          });
+        }
+
+        return report;
+      });
+
+      await logAudit({
+        action: 'UPDATE',
+        resource: 'LabOrder',
+        resourceId: input.orderId,
+        details: { action: 'FINALIZE_REPORT', isCritical: input.isCritical },
+        actor: { id: ctx.session.userId, name: ctx.session.userName, role: ctx.session.role }
+      });
+
+      return result;
     })
 });

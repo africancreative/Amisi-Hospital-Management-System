@@ -264,3 +264,28 @@ export async function revokeApiKey(tenantId: string, keyToRevoke: string) {
     });
     revalidatePath('/system/dashboard');
 }
+
+export async function getTenantLicense(tenantId: string) {
+    const db = getControlDb();
+    const tenant = await db.tenant.findUnique({
+        where: { id: tenantId },
+        select: {
+            id: true,
+            status: true,
+            trialEndsAt: true,
+            tier: true,
+        }
+    });
+
+    if (!tenant) return null;
+
+    const isSuspended = tenant.status === 'suspended';
+    const isDemoExpired = tenant.trialEndsAt ? new Date().getTime() > new Date(tenant.trialEndsAt).getTime() : false;
+
+    return {
+        ...tenant,
+        isSuspended,
+        isDemoExpired,
+        isBlocked: isSuspended || isDemoExpired
+    };
+}

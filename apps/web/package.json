@@ -4,15 +4,16 @@
   "private": true,
   "scripts": {
     "dev": "next dev -H 0.0.0.0",
-    "build": "pnpm --filter @amisimedos/db build && pnpm --filter @amisimedos/ui build && pnpm --filter @amisimedos/sync build && pnpm --filter @amisimedos/chat build && node scripts/vercel-engine-hack.js && next build --webpack",
+    "build": "pnpm --filter @amisimedos/db build && pnpm --filter @amisimedos/billing build && pnpm --filter @amisimedos/ui build && pnpm --filter @amisimedos/sync build && pnpm --filter @amisimedos/chat build && node scripts/vercel-engine-hack.js && next build --webpack",
     "copy-prisma": "node scripts/copy-prisma.js",
-    "start": "next start",
+    "start": "node server.mjs",
     "lint": "eslint"
   },
   "dependencies": {
-    "@amisimedos/constants": "workspace:*",
     "@amisimedos/auth": "workspace:^",
+    "@amisimedos/billing": "workspace:^",
     "@amisimedos/chat": "workspace:^",
+    "@amisimedos/constants": "workspace:*",
     "@amisimedos/db": "workspace:^",
     "@amisimedos/sync": "workspace:^",
     "@amisimedos/ui": "workspace:^",
@@ -42,6 +43,7 @@
     "recharts": "^2.15.1",
     "resend": "^6.10.0",
     "tailwind-merge": "^3.5.0",
+    "uuid": "^9.0.1",
     "zod": "^3.23.8"
   },
   "devDependencies": {
@@ -49,6 +51,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/uuid": "^9.0.8",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "tailwindcss": "^4",

@@ -8,6 +8,8 @@ import RoleSwitcher from '@/components/RoleSwitcher';
 import { TrpcProvider } from '@/trpc/Provider';
 import InternalChatSidebar from '@/components/InternalChatSidebar';
 import PWARegistration from '@/components/PWARegistration';
+import { getTenantLicense } from './actions/system-actions';
+import { TenantLockout } from '@/components/TenantLockout';
 
 
 
@@ -51,6 +53,19 @@ export default async function RootLayout({
     // 2. Resolve Module Entitlements (only if tenant is known)
     if (tenantId) {
       try {
+        const license = await getTenantLicense(tenantId);
+        
+        // 3. License Check (Skip for System Admins)
+        if (!isSystemAdmin && license && license.isBlocked) {
+          return (
+            <html lang="en" className="dark">
+              <body>
+                <TenantLockout reason={license.isSuspended ? 'SUSPENDED' : 'DEMO_EXPIRED'} />
+              </body>
+            </html>
+          );
+        }
+
         const moduleSet = await getTenantModules(tenantId);
         enabledModules = Array.from(moduleSet);
       } catch (modErr) {

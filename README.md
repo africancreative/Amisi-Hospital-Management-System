@@ -23,13 +23,19 @@ AmisiMedOS uses **Path-Based Multi-Tenancy**. Each hospital instance is resolved
 ### System Administration (Control Plane)
 - **URL**: `http://localhost:3000` (Access via padlock icon in footer)
 - **Email**: `admin@amisigenuine.com`
-- **Password**: `admin123`
+- **Password**: `@AmisiAdmin2026`
 
 ### Demo Hospital (Clinical Node)
 - **URL**: `http://localhost:3000/amisi-premier`
 - **Nursing Account**: `nurse@demo.com` / `nurse123`
 - **Physician Account**: `doctor@demo.com` / `doctor123`
 - **Branch Admin**: `admin@demo.com` / `admin123`
+
+## ✨ Premium Features
+- **Official Branding**: Integrated "Amisi MedOS" official logo and visual language across all platforms.
+- **SaaS Lifecycle**: Dynamic hospital provisioning with branding controls and 3-day demo expiration enforcement.
+- **Offline Resilience**: Local Edge synchronization for clinical ward rounds and medication administration (MAR).
+- **Bedside Assistant**: Flutter-based mobile app for real-time clinical tracking even in zero-connectivity wards.
 
 ## 🛠 Getting Started
 

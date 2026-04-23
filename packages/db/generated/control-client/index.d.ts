@@ -58,6 +58,11 @@ export type Subscription = $Result.DefaultSelection<Prisma.$SubscriptionPayload>
  * 
  */
 export type PatientIndex = $Result.DefaultSelection<Prisma.$PatientIndexPayload>
+/**
+ * Model TenantUsage
+ * 
+ */
+export type TenantUsage = $Result.DefaultSelection<Prisma.$TenantUsagePayload>
 
 /**
  * Enums
@@ -304,6 +309,16 @@ export class PrismaClient<
     * ```
     */
   get patientIndex(): Prisma.PatientIndexDelegate<ExtArgs>;
+
+  /**
+   * `prisma.tenantUsage`: Exposes CRUD operations for the **TenantUsage** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more TenantUsages
+    * const tenantUsages = await prisma.tenantUsage.findMany()
+    * ```
+    */
+  get tenantUsage(): Prisma.TenantUsageDelegate<ExtArgs>;
 }
 
 export namespace Prisma {
@@ -753,7 +768,8 @@ export namespace Prisma {
     SystemPayment: 'SystemPayment',
     Plan: 'Plan',
     Subscription: 'Subscription',
-    PatientIndex: 'PatientIndex'
+    PatientIndex: 'PatientIndex',
+    TenantUsage: 'TenantUsage'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -769,7 +785,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "tenant" | "module" | "tenantModule" | "systemAdmin" | "globalSettings" | "systemPayment" | "plan" | "subscription" | "patientIndex"
+      modelProps: "tenant" | "module" | "tenantModule" | "systemAdmin" | "globalSettings" | "systemPayment" | "plan" | "subscription" | "patientIndex" | "tenantUsage"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1403,6 +1419,76 @@ export namespace Prisma {
           }
         }
       }
+      TenantUsage: {
+        payload: Prisma.$TenantUsagePayload<ExtArgs>
+        fields: Prisma.TenantUsageFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.TenantUsageFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantUsagePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.TenantUsageFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantUsagePayload>
+          }
+          findFirst: {
+            args: Prisma.TenantUsageFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantUsagePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.TenantUsageFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantUsagePayload>
+          }
+          findMany: {
+            args: Prisma.TenantUsageFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantUsagePayload>[]
+          }
+          create: {
+            args: Prisma.TenantUsageCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantUsagePayload>
+          }
+          createMany: {
+            args: Prisma.TenantUsageCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.TenantUsageCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantUsagePayload>[]
+          }
+          delete: {
+            args: Prisma.TenantUsageDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantUsagePayload>
+          }
+          update: {
+            args: Prisma.TenantUsageUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantUsagePayload>
+          }
+          deleteMany: {
+            args: Prisma.TenantUsageDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.TenantUsageUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.TenantUsageUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantUsagePayload>
+          }
+          aggregate: {
+            args: Prisma.TenantUsageAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTenantUsage>
+          }
+          groupBy: {
+            args: Prisma.TenantUsageGroupByArgs<ExtArgs>
+            result: $Utils.Optional<TenantUsageGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.TenantUsageCountArgs<ExtArgs>
+            result: $Utils.Optional<TenantUsageCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1567,12 +1653,14 @@ export namespace Prisma {
     entitlements: number
     payments: number
     subscriptions: number
+    usages: number
   }
 
   export type TenantCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     entitlements?: boolean | TenantCountOutputTypeCountEntitlementsArgs
     payments?: boolean | TenantCountOutputTypeCountPaymentsArgs
     subscriptions?: boolean | TenantCountOutputTypeCountSubscriptionsArgs
+    usages?: boolean | TenantCountOutputTypeCountUsagesArgs
   }
 
   // Custom InputTypes
@@ -1605,6 +1693,13 @@ export namespace Prisma {
    */
   export type TenantCountOutputTypeCountSubscriptionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: SubscriptionWhereInput
+  }
+
+  /**
+   * TenantCountOutputType without action
+   */
+  export type TenantCountOutputTypeCountUsagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TenantUsageWhereInput
   }
 
 
@@ -1671,6 +1766,37 @@ export namespace Prisma {
 
 
   /**
+   * Count Type SubscriptionCountOutputType
+   */
+
+  export type SubscriptionCountOutputType = {
+    usages: number
+  }
+
+  export type SubscriptionCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    usages?: boolean | SubscriptionCountOutputTypeCountUsagesArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * SubscriptionCountOutputType without action
+   */
+  export type SubscriptionCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SubscriptionCountOutputType
+     */
+    select?: SubscriptionCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * SubscriptionCountOutputType without action
+   */
+  export type SubscriptionCountOutputTypeCountUsagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TenantUsageWhereInput
+  }
+
+
+  /**
    * Models
    */
 
@@ -1695,6 +1821,11 @@ export namespace Prisma {
     status: $Enums.TenantStatus | null
     suspensionReason: string | null
     suspendedAt: Date | null
+    address: string | null
+    logoUrl: string | null
+    primaryColor: string | null
+    secondaryColor: string | null
+    trialEndsAt: Date | null
     publicKeySpki: string | null
     sharedSecret: string | null
     createdAt: Date | null
@@ -1712,6 +1843,11 @@ export namespace Prisma {
     status: $Enums.TenantStatus | null
     suspensionReason: string | null
     suspendedAt: Date | null
+    address: string | null
+    logoUrl: string | null
+    primaryColor: string | null
+    secondaryColor: string | null
+    trialEndsAt: Date | null
     publicKeySpki: string | null
     sharedSecret: string | null
     createdAt: Date | null
@@ -1729,6 +1865,11 @@ export namespace Prisma {
     status: number
     suspensionReason: number
     suspendedAt: number
+    address: number
+    logoUrl: number
+    primaryColor: number
+    secondaryColor: number
+    trialEndsAt: number
     enabledModules: number
     publicKeySpki: number
     sharedSecret: number
@@ -1749,6 +1890,11 @@ export namespace Prisma {
     status?: true
     suspensionReason?: true
     suspendedAt?: true
+    address?: true
+    logoUrl?: true
+    primaryColor?: true
+    secondaryColor?: true
+    trialEndsAt?: true
     publicKeySpki?: true
     sharedSecret?: true
     createdAt?: true
@@ -1766,6 +1912,11 @@ export namespace Prisma {
     status?: true
     suspensionReason?: true
     suspendedAt?: true
+    address?: true
+    logoUrl?: true
+    primaryColor?: true
+    secondaryColor?: true
+    trialEndsAt?: true
     publicKeySpki?: true
     sharedSecret?: true
     createdAt?: true
@@ -1783,6 +1934,11 @@ export namespace Prisma {
     status?: true
     suspensionReason?: true
     suspendedAt?: true
+    address?: true
+    logoUrl?: true
+    primaryColor?: true
+    secondaryColor?: true
+    trialEndsAt?: true
     enabledModules?: true
     publicKeySpki?: true
     sharedSecret?: true
@@ -1874,6 +2030,11 @@ export namespace Prisma {
     status: $Enums.TenantStatus
     suspensionReason: string | null
     suspendedAt: Date | null
+    address: string | null
+    logoUrl: string | null
+    primaryColor: string | null
+    secondaryColor: string | null
+    trialEndsAt: Date | null
     enabledModules: JsonValue
     publicKeySpki: string | null
     sharedSecret: string | null
@@ -1909,6 +2070,11 @@ export namespace Prisma {
     status?: boolean
     suspensionReason?: boolean
     suspendedAt?: boolean
+    address?: boolean
+    logoUrl?: boolean
+    primaryColor?: boolean
+    secondaryColor?: boolean
+    trialEndsAt?: boolean
     enabledModules?: boolean
     publicKeySpki?: boolean
     sharedSecret?: boolean
@@ -1917,6 +2083,7 @@ export namespace Prisma {
     entitlements?: boolean | Tenant$entitlementsArgs<ExtArgs>
     payments?: boolean | Tenant$paymentsArgs<ExtArgs>
     subscriptions?: boolean | Tenant$subscriptionsArgs<ExtArgs>
+    usages?: boolean | Tenant$usagesArgs<ExtArgs>
     _count?: boolean | TenantCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["tenant"]>
 
@@ -1931,6 +2098,11 @@ export namespace Prisma {
     status?: boolean
     suspensionReason?: boolean
     suspendedAt?: boolean
+    address?: boolean
+    logoUrl?: boolean
+    primaryColor?: boolean
+    secondaryColor?: boolean
+    trialEndsAt?: boolean
     enabledModules?: boolean
     publicKeySpki?: boolean
     sharedSecret?: boolean
@@ -1949,6 +2121,11 @@ export namespace Prisma {
     status?: boolean
     suspensionReason?: boolean
     suspendedAt?: boolean
+    address?: boolean
+    logoUrl?: boolean
+    primaryColor?: boolean
+    secondaryColor?: boolean
+    trialEndsAt?: boolean
     enabledModules?: boolean
     publicKeySpki?: boolean
     sharedSecret?: boolean
@@ -1960,6 +2137,7 @@ export namespace Prisma {
     entitlements?: boolean | Tenant$entitlementsArgs<ExtArgs>
     payments?: boolean | Tenant$paymentsArgs<ExtArgs>
     subscriptions?: boolean | Tenant$subscriptionsArgs<ExtArgs>
+    usages?: boolean | Tenant$usagesArgs<ExtArgs>
     _count?: boolean | TenantCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type TenantIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -1970,6 +2148,7 @@ export namespace Prisma {
       entitlements: Prisma.$TenantModulePayload<ExtArgs>[]
       payments: Prisma.$SystemPaymentPayload<ExtArgs>[]
       subscriptions: Prisma.$SubscriptionPayload<ExtArgs>[]
+      usages: Prisma.$TenantUsagePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -1982,6 +2161,11 @@ export namespace Prisma {
       status: $Enums.TenantStatus
       suspensionReason: string | null
       suspendedAt: Date | null
+      address: string | null
+      logoUrl: string | null
+      primaryColor: string | null
+      secondaryColor: string | null
+      trialEndsAt: Date | null
       enabledModules: Prisma.JsonValue
       publicKeySpki: string | null
       sharedSecret: string | null
@@ -2354,6 +2538,7 @@ export namespace Prisma {
     entitlements<T extends Tenant$entitlementsArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$entitlementsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TenantModulePayload<ExtArgs>, T, "findMany"> | Null>
     payments<T extends Tenant$paymentsArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SystemPaymentPayload<ExtArgs>, T, "findMany"> | Null>
     subscriptions<T extends Tenant$subscriptionsArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$subscriptionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SubscriptionPayload<ExtArgs>, T, "findMany"> | Null>
+    usages<T extends Tenant$usagesArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$usagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TenantUsagePayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2393,6 +2578,11 @@ export namespace Prisma {
     readonly status: FieldRef<"Tenant", 'TenantStatus'>
     readonly suspensionReason: FieldRef<"Tenant", 'String'>
     readonly suspendedAt: FieldRef<"Tenant", 'DateTime'>
+    readonly address: FieldRef<"Tenant", 'String'>
+    readonly logoUrl: FieldRef<"Tenant", 'String'>
+    readonly primaryColor: FieldRef<"Tenant", 'String'>
+    readonly secondaryColor: FieldRef<"Tenant", 'String'>
+    readonly trialEndsAt: FieldRef<"Tenant", 'DateTime'>
     readonly enabledModules: FieldRef<"Tenant", 'Json'>
     readonly publicKeySpki: FieldRef<"Tenant", 'String'>
     readonly sharedSecret: FieldRef<"Tenant", 'String'>
@@ -2769,6 +2959,26 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: SubscriptionScalarFieldEnum | SubscriptionScalarFieldEnum[]
+  }
+
+  /**
+   * Tenant.usages
+   */
+  export type Tenant$usagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantUsage
+     */
+    select?: TenantUsageSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantUsageInclude<ExtArgs> | null
+    where?: TenantUsageWhereInput
+    orderBy?: TenantUsageOrderByWithRelationInput | TenantUsageOrderByWithRelationInput[]
+    cursor?: TenantUsageWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TenantUsageScalarFieldEnum | TenantUsageScalarFieldEnum[]
   }
 
   /**
@@ -9133,6 +9343,8 @@ export namespace Prisma {
     updatedAt?: boolean
     tenant?: boolean | TenantDefaultArgs<ExtArgs>
     plan?: boolean | PlanDefaultArgs<ExtArgs>
+    usages?: boolean | Subscription$usagesArgs<ExtArgs>
+    _count?: boolean | SubscriptionCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["subscription"]>
 
   export type SubscriptionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -9166,6 +9378,8 @@ export namespace Prisma {
   export type SubscriptionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     tenant?: boolean | TenantDefaultArgs<ExtArgs>
     plan?: boolean | PlanDefaultArgs<ExtArgs>
+    usages?: boolean | Subscription$usagesArgs<ExtArgs>
+    _count?: boolean | SubscriptionCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type SubscriptionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     tenant?: boolean | TenantDefaultArgs<ExtArgs>
@@ -9177,6 +9391,7 @@ export namespace Prisma {
     objects: {
       tenant: Prisma.$TenantPayload<ExtArgs>
       plan: Prisma.$PlanPayload<ExtArgs>
+      usages: Prisma.$TenantUsagePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -9555,6 +9770,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     tenant<T extends TenantDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TenantDefaultArgs<ExtArgs>>): Prisma__TenantClient<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
     plan<T extends PlanDefaultArgs<ExtArgs> = {}>(args?: Subset<T, PlanDefaultArgs<ExtArgs>>): Prisma__PlanClient<$Result.GetResult<Prisma.$PlanPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    usages<T extends Subscription$usagesArgs<ExtArgs> = {}>(args?: Subset<T, Subscription$usagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TenantUsagePayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -9909,6 +10125,26 @@ export namespace Prisma {
      * Filter which Subscriptions to delete
      */
     where?: SubscriptionWhereInput
+  }
+
+  /**
+   * Subscription.usages
+   */
+  export type Subscription$usagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantUsage
+     */
+    select?: TenantUsageSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantUsageInclude<ExtArgs> | null
+    where?: TenantUsageWhereInput
+    orderBy?: TenantUsageOrderByWithRelationInput | TenantUsageOrderByWithRelationInput[]
+    cursor?: TenantUsageWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TenantUsageScalarFieldEnum | TenantUsageScalarFieldEnum[]
   }
 
   /**
@@ -10829,6 +11065,1051 @@ export namespace Prisma {
 
 
   /**
+   * Model TenantUsage
+   */
+
+  export type AggregateTenantUsage = {
+    _count: TenantUsageCountAggregateOutputType | null
+    _avg: TenantUsageAvgAggregateOutputType | null
+    _sum: TenantUsageSumAggregateOutputType | null
+    _min: TenantUsageMinAggregateOutputType | null
+    _max: TenantUsageMaxAggregateOutputType | null
+  }
+
+  export type TenantUsageAvgAggregateOutputType = {
+    activeUsers: number | null
+    activePatients: number | null
+    storageUsedMb: Decimal | null
+    apiCallsCount: number | null
+  }
+
+  export type TenantUsageSumAggregateOutputType = {
+    activeUsers: number | null
+    activePatients: number | null
+    storageUsedMb: Decimal | null
+    apiCallsCount: number | null
+  }
+
+  export type TenantUsageMinAggregateOutputType = {
+    id: string | null
+    tenantId: string | null
+    subscriptionId: string | null
+    date: Date | null
+    activeUsers: number | null
+    activePatients: number | null
+    storageUsedMb: Decimal | null
+    apiCallsCount: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type TenantUsageMaxAggregateOutputType = {
+    id: string | null
+    tenantId: string | null
+    subscriptionId: string | null
+    date: Date | null
+    activeUsers: number | null
+    activePatients: number | null
+    storageUsedMb: Decimal | null
+    apiCallsCount: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type TenantUsageCountAggregateOutputType = {
+    id: number
+    tenantId: number
+    subscriptionId: number
+    date: number
+    activeUsers: number
+    activePatients: number
+    storageUsedMb: number
+    apiCallsCount: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type TenantUsageAvgAggregateInputType = {
+    activeUsers?: true
+    activePatients?: true
+    storageUsedMb?: true
+    apiCallsCount?: true
+  }
+
+  export type TenantUsageSumAggregateInputType = {
+    activeUsers?: true
+    activePatients?: true
+    storageUsedMb?: true
+    apiCallsCount?: true
+  }
+
+  export type TenantUsageMinAggregateInputType = {
+    id?: true
+    tenantId?: true
+    subscriptionId?: true
+    date?: true
+    activeUsers?: true
+    activePatients?: true
+    storageUsedMb?: true
+    apiCallsCount?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type TenantUsageMaxAggregateInputType = {
+    id?: true
+    tenantId?: true
+    subscriptionId?: true
+    date?: true
+    activeUsers?: true
+    activePatients?: true
+    storageUsedMb?: true
+    apiCallsCount?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type TenantUsageCountAggregateInputType = {
+    id?: true
+    tenantId?: true
+    subscriptionId?: true
+    date?: true
+    activeUsers?: true
+    activePatients?: true
+    storageUsedMb?: true
+    apiCallsCount?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type TenantUsageAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TenantUsage to aggregate.
+     */
+    where?: TenantUsageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TenantUsages to fetch.
+     */
+    orderBy?: TenantUsageOrderByWithRelationInput | TenantUsageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: TenantUsageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TenantUsages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TenantUsages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned TenantUsages
+    **/
+    _count?: true | TenantUsageCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: TenantUsageAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: TenantUsageSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: TenantUsageMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: TenantUsageMaxAggregateInputType
+  }
+
+  export type GetTenantUsageAggregateType<T extends TenantUsageAggregateArgs> = {
+        [P in keyof T & keyof AggregateTenantUsage]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTenantUsage[P]>
+      : GetScalarType<T[P], AggregateTenantUsage[P]>
+  }
+
+
+
+
+  export type TenantUsageGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TenantUsageWhereInput
+    orderBy?: TenantUsageOrderByWithAggregationInput | TenantUsageOrderByWithAggregationInput[]
+    by: TenantUsageScalarFieldEnum[] | TenantUsageScalarFieldEnum
+    having?: TenantUsageScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: TenantUsageCountAggregateInputType | true
+    _avg?: TenantUsageAvgAggregateInputType
+    _sum?: TenantUsageSumAggregateInputType
+    _min?: TenantUsageMinAggregateInputType
+    _max?: TenantUsageMaxAggregateInputType
+  }
+
+  export type TenantUsageGroupByOutputType = {
+    id: string
+    tenantId: string
+    subscriptionId: string
+    date: Date
+    activeUsers: number
+    activePatients: number
+    storageUsedMb: Decimal
+    apiCallsCount: number
+    createdAt: Date
+    updatedAt: Date
+    _count: TenantUsageCountAggregateOutputType | null
+    _avg: TenantUsageAvgAggregateOutputType | null
+    _sum: TenantUsageSumAggregateOutputType | null
+    _min: TenantUsageMinAggregateOutputType | null
+    _max: TenantUsageMaxAggregateOutputType | null
+  }
+
+  type GetTenantUsageGroupByPayload<T extends TenantUsageGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<TenantUsageGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof TenantUsageGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], TenantUsageGroupByOutputType[P]>
+            : GetScalarType<T[P], TenantUsageGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type TenantUsageSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    subscriptionId?: boolean
+    date?: boolean
+    activeUsers?: boolean
+    activePatients?: boolean
+    storageUsedMb?: boolean
+    apiCallsCount?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+    subscription?: boolean | SubscriptionDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["tenantUsage"]>
+
+  export type TenantUsageSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    subscriptionId?: boolean
+    date?: boolean
+    activeUsers?: boolean
+    activePatients?: boolean
+    storageUsedMb?: boolean
+    apiCallsCount?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+    subscription?: boolean | SubscriptionDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["tenantUsage"]>
+
+  export type TenantUsageSelectScalar = {
+    id?: boolean
+    tenantId?: boolean
+    subscriptionId?: boolean
+    date?: boolean
+    activeUsers?: boolean
+    activePatients?: boolean
+    storageUsedMb?: boolean
+    apiCallsCount?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type TenantUsageInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+    subscription?: boolean | SubscriptionDefaultArgs<ExtArgs>
+  }
+  export type TenantUsageIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+    subscription?: boolean | SubscriptionDefaultArgs<ExtArgs>
+  }
+
+  export type $TenantUsagePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "TenantUsage"
+    objects: {
+      tenant: Prisma.$TenantPayload<ExtArgs>
+      subscription: Prisma.$SubscriptionPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      tenantId: string
+      subscriptionId: string
+      date: Date
+      activeUsers: number
+      activePatients: number
+      storageUsedMb: Prisma.Decimal
+      apiCallsCount: number
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["tenantUsage"]>
+    composites: {}
+  }
+
+  type TenantUsageGetPayload<S extends boolean | null | undefined | TenantUsageDefaultArgs> = $Result.GetResult<Prisma.$TenantUsagePayload, S>
+
+  type TenantUsageCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<TenantUsageFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: TenantUsageCountAggregateInputType | true
+    }
+
+  export interface TenantUsageDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['TenantUsage'], meta: { name: 'TenantUsage' } }
+    /**
+     * Find zero or one TenantUsage that matches the filter.
+     * @param {TenantUsageFindUniqueArgs} args - Arguments to find a TenantUsage
+     * @example
+     * // Get one TenantUsage
+     * const tenantUsage = await prisma.tenantUsage.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends TenantUsageFindUniqueArgs>(args: SelectSubset<T, TenantUsageFindUniqueArgs<ExtArgs>>): Prisma__TenantUsageClient<$Result.GetResult<Prisma.$TenantUsagePayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one TenantUsage that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {TenantUsageFindUniqueOrThrowArgs} args - Arguments to find a TenantUsage
+     * @example
+     * // Get one TenantUsage
+     * const tenantUsage = await prisma.tenantUsage.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends TenantUsageFindUniqueOrThrowArgs>(args: SelectSubset<T, TenantUsageFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TenantUsageClient<$Result.GetResult<Prisma.$TenantUsagePayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first TenantUsage that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TenantUsageFindFirstArgs} args - Arguments to find a TenantUsage
+     * @example
+     * // Get one TenantUsage
+     * const tenantUsage = await prisma.tenantUsage.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends TenantUsageFindFirstArgs>(args?: SelectSubset<T, TenantUsageFindFirstArgs<ExtArgs>>): Prisma__TenantUsageClient<$Result.GetResult<Prisma.$TenantUsagePayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first TenantUsage that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TenantUsageFindFirstOrThrowArgs} args - Arguments to find a TenantUsage
+     * @example
+     * // Get one TenantUsage
+     * const tenantUsage = await prisma.tenantUsage.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends TenantUsageFindFirstOrThrowArgs>(args?: SelectSubset<T, TenantUsageFindFirstOrThrowArgs<ExtArgs>>): Prisma__TenantUsageClient<$Result.GetResult<Prisma.$TenantUsagePayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more TenantUsages that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TenantUsageFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all TenantUsages
+     * const tenantUsages = await prisma.tenantUsage.findMany()
+     * 
+     * // Get first 10 TenantUsages
+     * const tenantUsages = await prisma.tenantUsage.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const tenantUsageWithIdOnly = await prisma.tenantUsage.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends TenantUsageFindManyArgs>(args?: SelectSubset<T, TenantUsageFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TenantUsagePayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a TenantUsage.
+     * @param {TenantUsageCreateArgs} args - Arguments to create a TenantUsage.
+     * @example
+     * // Create one TenantUsage
+     * const TenantUsage = await prisma.tenantUsage.create({
+     *   data: {
+     *     // ... data to create a TenantUsage
+     *   }
+     * })
+     * 
+     */
+    create<T extends TenantUsageCreateArgs>(args: SelectSubset<T, TenantUsageCreateArgs<ExtArgs>>): Prisma__TenantUsageClient<$Result.GetResult<Prisma.$TenantUsagePayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many TenantUsages.
+     * @param {TenantUsageCreateManyArgs} args - Arguments to create many TenantUsages.
+     * @example
+     * // Create many TenantUsages
+     * const tenantUsage = await prisma.tenantUsage.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends TenantUsageCreateManyArgs>(args?: SelectSubset<T, TenantUsageCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many TenantUsages and returns the data saved in the database.
+     * @param {TenantUsageCreateManyAndReturnArgs} args - Arguments to create many TenantUsages.
+     * @example
+     * // Create many TenantUsages
+     * const tenantUsage = await prisma.tenantUsage.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many TenantUsages and only return the `id`
+     * const tenantUsageWithIdOnly = await prisma.tenantUsage.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends TenantUsageCreateManyAndReturnArgs>(args?: SelectSubset<T, TenantUsageCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TenantUsagePayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a TenantUsage.
+     * @param {TenantUsageDeleteArgs} args - Arguments to delete one TenantUsage.
+     * @example
+     * // Delete one TenantUsage
+     * const TenantUsage = await prisma.tenantUsage.delete({
+     *   where: {
+     *     // ... filter to delete one TenantUsage
+     *   }
+     * })
+     * 
+     */
+    delete<T extends TenantUsageDeleteArgs>(args: SelectSubset<T, TenantUsageDeleteArgs<ExtArgs>>): Prisma__TenantUsageClient<$Result.GetResult<Prisma.$TenantUsagePayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one TenantUsage.
+     * @param {TenantUsageUpdateArgs} args - Arguments to update one TenantUsage.
+     * @example
+     * // Update one TenantUsage
+     * const tenantUsage = await prisma.tenantUsage.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends TenantUsageUpdateArgs>(args: SelectSubset<T, TenantUsageUpdateArgs<ExtArgs>>): Prisma__TenantUsageClient<$Result.GetResult<Prisma.$TenantUsagePayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more TenantUsages.
+     * @param {TenantUsageDeleteManyArgs} args - Arguments to filter TenantUsages to delete.
+     * @example
+     * // Delete a few TenantUsages
+     * const { count } = await prisma.tenantUsage.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends TenantUsageDeleteManyArgs>(args?: SelectSubset<T, TenantUsageDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TenantUsages.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TenantUsageUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many TenantUsages
+     * const tenantUsage = await prisma.tenantUsage.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends TenantUsageUpdateManyArgs>(args: SelectSubset<T, TenantUsageUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one TenantUsage.
+     * @param {TenantUsageUpsertArgs} args - Arguments to update or create a TenantUsage.
+     * @example
+     * // Update or create a TenantUsage
+     * const tenantUsage = await prisma.tenantUsage.upsert({
+     *   create: {
+     *     // ... data to create a TenantUsage
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the TenantUsage we want to update
+     *   }
+     * })
+     */
+    upsert<T extends TenantUsageUpsertArgs>(args: SelectSubset<T, TenantUsageUpsertArgs<ExtArgs>>): Prisma__TenantUsageClient<$Result.GetResult<Prisma.$TenantUsagePayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of TenantUsages.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TenantUsageCountArgs} args - Arguments to filter TenantUsages to count.
+     * @example
+     * // Count the number of TenantUsages
+     * const count = await prisma.tenantUsage.count({
+     *   where: {
+     *     // ... the filter for the TenantUsages we want to count
+     *   }
+     * })
+    **/
+    count<T extends TenantUsageCountArgs>(
+      args?: Subset<T, TenantUsageCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], TenantUsageCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a TenantUsage.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TenantUsageAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TenantUsageAggregateArgs>(args: Subset<T, TenantUsageAggregateArgs>): Prisma.PrismaPromise<GetTenantUsageAggregateType<T>>
+
+    /**
+     * Group by TenantUsage.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TenantUsageGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends TenantUsageGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: TenantUsageGroupByArgs['orderBy'] }
+        : { orderBy?: TenantUsageGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, TenantUsageGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTenantUsageGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the TenantUsage model
+   */
+  readonly fields: TenantUsageFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for TenantUsage.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__TenantUsageClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    tenant<T extends TenantDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TenantDefaultArgs<ExtArgs>>): Prisma__TenantClient<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    subscription<T extends SubscriptionDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SubscriptionDefaultArgs<ExtArgs>>): Prisma__SubscriptionClient<$Result.GetResult<Prisma.$SubscriptionPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the TenantUsage model
+   */ 
+  interface TenantUsageFieldRefs {
+    readonly id: FieldRef<"TenantUsage", 'String'>
+    readonly tenantId: FieldRef<"TenantUsage", 'String'>
+    readonly subscriptionId: FieldRef<"TenantUsage", 'String'>
+    readonly date: FieldRef<"TenantUsage", 'DateTime'>
+    readonly activeUsers: FieldRef<"TenantUsage", 'Int'>
+    readonly activePatients: FieldRef<"TenantUsage", 'Int'>
+    readonly storageUsedMb: FieldRef<"TenantUsage", 'Decimal'>
+    readonly apiCallsCount: FieldRef<"TenantUsage", 'Int'>
+    readonly createdAt: FieldRef<"TenantUsage", 'DateTime'>
+    readonly updatedAt: FieldRef<"TenantUsage", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * TenantUsage findUnique
+   */
+  export type TenantUsageFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantUsage
+     */
+    select?: TenantUsageSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantUsageInclude<ExtArgs> | null
+    /**
+     * Filter, which TenantUsage to fetch.
+     */
+    where: TenantUsageWhereUniqueInput
+  }
+
+  /**
+   * TenantUsage findUniqueOrThrow
+   */
+  export type TenantUsageFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantUsage
+     */
+    select?: TenantUsageSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantUsageInclude<ExtArgs> | null
+    /**
+     * Filter, which TenantUsage to fetch.
+     */
+    where: TenantUsageWhereUniqueInput
+  }
+
+  /**
+   * TenantUsage findFirst
+   */
+  export type TenantUsageFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantUsage
+     */
+    select?: TenantUsageSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantUsageInclude<ExtArgs> | null
+    /**
+     * Filter, which TenantUsage to fetch.
+     */
+    where?: TenantUsageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TenantUsages to fetch.
+     */
+    orderBy?: TenantUsageOrderByWithRelationInput | TenantUsageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TenantUsages.
+     */
+    cursor?: TenantUsageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TenantUsages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TenantUsages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TenantUsages.
+     */
+    distinct?: TenantUsageScalarFieldEnum | TenantUsageScalarFieldEnum[]
+  }
+
+  /**
+   * TenantUsage findFirstOrThrow
+   */
+  export type TenantUsageFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantUsage
+     */
+    select?: TenantUsageSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantUsageInclude<ExtArgs> | null
+    /**
+     * Filter, which TenantUsage to fetch.
+     */
+    where?: TenantUsageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TenantUsages to fetch.
+     */
+    orderBy?: TenantUsageOrderByWithRelationInput | TenantUsageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TenantUsages.
+     */
+    cursor?: TenantUsageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TenantUsages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TenantUsages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TenantUsages.
+     */
+    distinct?: TenantUsageScalarFieldEnum | TenantUsageScalarFieldEnum[]
+  }
+
+  /**
+   * TenantUsage findMany
+   */
+  export type TenantUsageFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantUsage
+     */
+    select?: TenantUsageSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantUsageInclude<ExtArgs> | null
+    /**
+     * Filter, which TenantUsages to fetch.
+     */
+    where?: TenantUsageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TenantUsages to fetch.
+     */
+    orderBy?: TenantUsageOrderByWithRelationInput | TenantUsageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing TenantUsages.
+     */
+    cursor?: TenantUsageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TenantUsages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TenantUsages.
+     */
+    skip?: number
+    distinct?: TenantUsageScalarFieldEnum | TenantUsageScalarFieldEnum[]
+  }
+
+  /**
+   * TenantUsage create
+   */
+  export type TenantUsageCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantUsage
+     */
+    select?: TenantUsageSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantUsageInclude<ExtArgs> | null
+    /**
+     * The data needed to create a TenantUsage.
+     */
+    data: XOR<TenantUsageCreateInput, TenantUsageUncheckedCreateInput>
+  }
+
+  /**
+   * TenantUsage createMany
+   */
+  export type TenantUsageCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many TenantUsages.
+     */
+    data: TenantUsageCreateManyInput | TenantUsageCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * TenantUsage createManyAndReturn
+   */
+  export type TenantUsageCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantUsage
+     */
+    select?: TenantUsageSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many TenantUsages.
+     */
+    data: TenantUsageCreateManyInput | TenantUsageCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantUsageIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TenantUsage update
+   */
+  export type TenantUsageUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantUsage
+     */
+    select?: TenantUsageSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantUsageInclude<ExtArgs> | null
+    /**
+     * The data needed to update a TenantUsage.
+     */
+    data: XOR<TenantUsageUpdateInput, TenantUsageUncheckedUpdateInput>
+    /**
+     * Choose, which TenantUsage to update.
+     */
+    where: TenantUsageWhereUniqueInput
+  }
+
+  /**
+   * TenantUsage updateMany
+   */
+  export type TenantUsageUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update TenantUsages.
+     */
+    data: XOR<TenantUsageUpdateManyMutationInput, TenantUsageUncheckedUpdateManyInput>
+    /**
+     * Filter which TenantUsages to update
+     */
+    where?: TenantUsageWhereInput
+  }
+
+  /**
+   * TenantUsage upsert
+   */
+  export type TenantUsageUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantUsage
+     */
+    select?: TenantUsageSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantUsageInclude<ExtArgs> | null
+    /**
+     * The filter to search for the TenantUsage to update in case it exists.
+     */
+    where: TenantUsageWhereUniqueInput
+    /**
+     * In case the TenantUsage found by the `where` argument doesn't exist, create a new TenantUsage with this data.
+     */
+    create: XOR<TenantUsageCreateInput, TenantUsageUncheckedCreateInput>
+    /**
+     * In case the TenantUsage was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<TenantUsageUpdateInput, TenantUsageUncheckedUpdateInput>
+  }
+
+  /**
+   * TenantUsage delete
+   */
+  export type TenantUsageDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantUsage
+     */
+    select?: TenantUsageSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantUsageInclude<ExtArgs> | null
+    /**
+     * Filter which TenantUsage to delete.
+     */
+    where: TenantUsageWhereUniqueInput
+  }
+
+  /**
+   * TenantUsage deleteMany
+   */
+  export type TenantUsageDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TenantUsages to delete
+     */
+    where?: TenantUsageWhereInput
+  }
+
+  /**
+   * TenantUsage without action
+   */
+  export type TenantUsageDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantUsage
+     */
+    select?: TenantUsageSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantUsageInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -10853,6 +12134,11 @@ export namespace Prisma {
     status: 'status',
     suspensionReason: 'suspensionReason',
     suspendedAt: 'suspendedAt',
+    address: 'address',
+    logoUrl: 'logoUrl',
+    primaryColor: 'primaryColor',
+    secondaryColor: 'secondaryColor',
+    trialEndsAt: 'trialEndsAt',
     enabledModules: 'enabledModules',
     publicKeySpki: 'publicKeySpki',
     sharedSecret: 'sharedSecret',
@@ -10997,6 +12283,22 @@ export namespace Prisma {
   };
 
   export type PatientIndexScalarFieldEnum = (typeof PatientIndexScalarFieldEnum)[keyof typeof PatientIndexScalarFieldEnum]
+
+
+  export const TenantUsageScalarFieldEnum: {
+    id: 'id',
+    tenantId: 'tenantId',
+    subscriptionId: 'subscriptionId',
+    date: 'date',
+    activeUsers: 'activeUsers',
+    activePatients: 'activePatients',
+    storageUsedMb: 'storageUsedMb',
+    apiCallsCount: 'apiCallsCount',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type TenantUsageScalarFieldEnum = (typeof TenantUsageScalarFieldEnum)[keyof typeof TenantUsageScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -11173,6 +12475,11 @@ export namespace Prisma {
     status?: EnumTenantStatusFilter<"Tenant"> | $Enums.TenantStatus
     suspensionReason?: StringNullableFilter<"Tenant"> | string | null
     suspendedAt?: DateTimeNullableFilter<"Tenant"> | Date | string | null
+    address?: StringNullableFilter<"Tenant"> | string | null
+    logoUrl?: StringNullableFilter<"Tenant"> | string | null
+    primaryColor?: StringNullableFilter<"Tenant"> | string | null
+    secondaryColor?: StringNullableFilter<"Tenant"> | string | null
+    trialEndsAt?: DateTimeNullableFilter<"Tenant"> | Date | string | null
     enabledModules?: JsonFilter<"Tenant">
     publicKeySpki?: StringNullableFilter<"Tenant"> | string | null
     sharedSecret?: StringNullableFilter<"Tenant"> | string | null
@@ -11181,6 +12488,7 @@ export namespace Prisma {
     entitlements?: TenantModuleListRelationFilter
     payments?: SystemPaymentListRelationFilter
     subscriptions?: SubscriptionListRelationFilter
+    usages?: TenantUsageListRelationFilter
   }
 
   export type TenantOrderByWithRelationInput = {
@@ -11194,6 +12502,11 @@ export namespace Prisma {
     status?: SortOrder
     suspensionReason?: SortOrderInput | SortOrder
     suspendedAt?: SortOrderInput | SortOrder
+    address?: SortOrderInput | SortOrder
+    logoUrl?: SortOrderInput | SortOrder
+    primaryColor?: SortOrderInput | SortOrder
+    secondaryColor?: SortOrderInput | SortOrder
+    trialEndsAt?: SortOrderInput | SortOrder
     enabledModules?: SortOrder
     publicKeySpki?: SortOrderInput | SortOrder
     sharedSecret?: SortOrderInput | SortOrder
@@ -11202,6 +12515,7 @@ export namespace Prisma {
     entitlements?: TenantModuleOrderByRelationAggregateInput
     payments?: SystemPaymentOrderByRelationAggregateInput
     subscriptions?: SubscriptionOrderByRelationAggregateInput
+    usages?: TenantUsageOrderByRelationAggregateInput
   }
 
   export type TenantWhereUniqueInput = Prisma.AtLeast<{
@@ -11218,6 +12532,11 @@ export namespace Prisma {
     status?: EnumTenantStatusFilter<"Tenant"> | $Enums.TenantStatus
     suspensionReason?: StringNullableFilter<"Tenant"> | string | null
     suspendedAt?: DateTimeNullableFilter<"Tenant"> | Date | string | null
+    address?: StringNullableFilter<"Tenant"> | string | null
+    logoUrl?: StringNullableFilter<"Tenant"> | string | null
+    primaryColor?: StringNullableFilter<"Tenant"> | string | null
+    secondaryColor?: StringNullableFilter<"Tenant"> | string | null
+    trialEndsAt?: DateTimeNullableFilter<"Tenant"> | Date | string | null
     enabledModules?: JsonFilter<"Tenant">
     publicKeySpki?: StringNullableFilter<"Tenant"> | string | null
     sharedSecret?: StringNullableFilter<"Tenant"> | string | null
@@ -11226,6 +12545,7 @@ export namespace Prisma {
     entitlements?: TenantModuleListRelationFilter
     payments?: SystemPaymentListRelationFilter
     subscriptions?: SubscriptionListRelationFilter
+    usages?: TenantUsageListRelationFilter
   }, "id" | "slug">
 
   export type TenantOrderByWithAggregationInput = {
@@ -11239,6 +12559,11 @@ export namespace Prisma {
     status?: SortOrder
     suspensionReason?: SortOrderInput | SortOrder
     suspendedAt?: SortOrderInput | SortOrder
+    address?: SortOrderInput | SortOrder
+    logoUrl?: SortOrderInput | SortOrder
+    primaryColor?: SortOrderInput | SortOrder
+    secondaryColor?: SortOrderInput | SortOrder
+    trialEndsAt?: SortOrderInput | SortOrder
     enabledModules?: SortOrder
     publicKeySpki?: SortOrderInput | SortOrder
     sharedSecret?: SortOrderInput | SortOrder
@@ -11263,6 +12588,11 @@ export namespace Prisma {
     status?: EnumTenantStatusWithAggregatesFilter<"Tenant"> | $Enums.TenantStatus
     suspensionReason?: StringNullableWithAggregatesFilter<"Tenant"> | string | null
     suspendedAt?: DateTimeNullableWithAggregatesFilter<"Tenant"> | Date | string | null
+    address?: StringNullableWithAggregatesFilter<"Tenant"> | string | null
+    logoUrl?: StringNullableWithAggregatesFilter<"Tenant"> | string | null
+    primaryColor?: StringNullableWithAggregatesFilter<"Tenant"> | string | null
+    secondaryColor?: StringNullableWithAggregatesFilter<"Tenant"> | string | null
+    trialEndsAt?: DateTimeNullableWithAggregatesFilter<"Tenant"> | Date | string | null
     enabledModules?: JsonWithAggregatesFilter<"Tenant">
     publicKeySpki?: StringNullableWithAggregatesFilter<"Tenant"> | string | null
     sharedSecret?: StringNullableWithAggregatesFilter<"Tenant"> | string | null
@@ -11825,6 +13155,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Subscription"> | Date | string
     tenant?: XOR<TenantRelationFilter, TenantWhereInput>
     plan?: XOR<PlanRelationFilter, PlanWhereInput>
+    usages?: TenantUsageListRelationFilter
   }
 
   export type SubscriptionOrderByWithRelationInput = {
@@ -11840,6 +13171,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     tenant?: TenantOrderByWithRelationInput
     plan?: PlanOrderByWithRelationInput
+    usages?: TenantUsageOrderByRelationAggregateInput
   }
 
   export type SubscriptionWhereUniqueInput = Prisma.AtLeast<{
@@ -11858,6 +13190,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Subscription"> | Date | string
     tenant?: XOR<TenantRelationFilter, TenantWhereInput>
     plan?: XOR<PlanRelationFilter, PlanWhereInput>
+    usages?: TenantUsageListRelationFilter
   }, "id">
 
   export type SubscriptionOrderByWithAggregationInput = {
@@ -11954,6 +13287,92 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"PatientIndex"> | Date | string
   }
 
+  export type TenantUsageWhereInput = {
+    AND?: TenantUsageWhereInput | TenantUsageWhereInput[]
+    OR?: TenantUsageWhereInput[]
+    NOT?: TenantUsageWhereInput | TenantUsageWhereInput[]
+    id?: StringFilter<"TenantUsage"> | string
+    tenantId?: StringFilter<"TenantUsage"> | string
+    subscriptionId?: StringFilter<"TenantUsage"> | string
+    date?: DateTimeFilter<"TenantUsage"> | Date | string
+    activeUsers?: IntFilter<"TenantUsage"> | number
+    activePatients?: IntFilter<"TenantUsage"> | number
+    storageUsedMb?: DecimalFilter<"TenantUsage"> | Decimal | DecimalJsLike | number | string
+    apiCallsCount?: IntFilter<"TenantUsage"> | number
+    createdAt?: DateTimeFilter<"TenantUsage"> | Date | string
+    updatedAt?: DateTimeFilter<"TenantUsage"> | Date | string
+    tenant?: XOR<TenantRelationFilter, TenantWhereInput>
+    subscription?: XOR<SubscriptionRelationFilter, SubscriptionWhereInput>
+  }
+
+  export type TenantUsageOrderByWithRelationInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    subscriptionId?: SortOrder
+    date?: SortOrder
+    activeUsers?: SortOrder
+    activePatients?: SortOrder
+    storageUsedMb?: SortOrder
+    apiCallsCount?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    tenant?: TenantOrderByWithRelationInput
+    subscription?: SubscriptionOrderByWithRelationInput
+  }
+
+  export type TenantUsageWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    tenantId_date?: TenantUsageTenantIdDateCompoundUniqueInput
+    AND?: TenantUsageWhereInput | TenantUsageWhereInput[]
+    OR?: TenantUsageWhereInput[]
+    NOT?: TenantUsageWhereInput | TenantUsageWhereInput[]
+    tenantId?: StringFilter<"TenantUsage"> | string
+    subscriptionId?: StringFilter<"TenantUsage"> | string
+    date?: DateTimeFilter<"TenantUsage"> | Date | string
+    activeUsers?: IntFilter<"TenantUsage"> | number
+    activePatients?: IntFilter<"TenantUsage"> | number
+    storageUsedMb?: DecimalFilter<"TenantUsage"> | Decimal | DecimalJsLike | number | string
+    apiCallsCount?: IntFilter<"TenantUsage"> | number
+    createdAt?: DateTimeFilter<"TenantUsage"> | Date | string
+    updatedAt?: DateTimeFilter<"TenantUsage"> | Date | string
+    tenant?: XOR<TenantRelationFilter, TenantWhereInput>
+    subscription?: XOR<SubscriptionRelationFilter, SubscriptionWhereInput>
+  }, "id" | "tenantId_date">
+
+  export type TenantUsageOrderByWithAggregationInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    subscriptionId?: SortOrder
+    date?: SortOrder
+    activeUsers?: SortOrder
+    activePatients?: SortOrder
+    storageUsedMb?: SortOrder
+    apiCallsCount?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: TenantUsageCountOrderByAggregateInput
+    _avg?: TenantUsageAvgOrderByAggregateInput
+    _max?: TenantUsageMaxOrderByAggregateInput
+    _min?: TenantUsageMinOrderByAggregateInput
+    _sum?: TenantUsageSumOrderByAggregateInput
+  }
+
+  export type TenantUsageScalarWhereWithAggregatesInput = {
+    AND?: TenantUsageScalarWhereWithAggregatesInput | TenantUsageScalarWhereWithAggregatesInput[]
+    OR?: TenantUsageScalarWhereWithAggregatesInput[]
+    NOT?: TenantUsageScalarWhereWithAggregatesInput | TenantUsageScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"TenantUsage"> | string
+    tenantId?: StringWithAggregatesFilter<"TenantUsage"> | string
+    subscriptionId?: StringWithAggregatesFilter<"TenantUsage"> | string
+    date?: DateTimeWithAggregatesFilter<"TenantUsage"> | Date | string
+    activeUsers?: IntWithAggregatesFilter<"TenantUsage"> | number
+    activePatients?: IntWithAggregatesFilter<"TenantUsage"> | number
+    storageUsedMb?: DecimalWithAggregatesFilter<"TenantUsage"> | Decimal | DecimalJsLike | number | string
+    apiCallsCount?: IntWithAggregatesFilter<"TenantUsage"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"TenantUsage"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"TenantUsage"> | Date | string
+  }
+
   export type TenantCreateInput = {
     id?: string
     name: string
@@ -11965,6 +13384,11 @@ export namespace Prisma {
     status?: $Enums.TenantStatus
     suspensionReason?: string | null
     suspendedAt?: Date | string | null
+    address?: string | null
+    logoUrl?: string | null
+    primaryColor?: string | null
+    secondaryColor?: string | null
+    trialEndsAt?: Date | string | null
     enabledModules?: JsonNullValueInput | InputJsonValue
     publicKeySpki?: string | null
     sharedSecret?: string | null
@@ -11973,6 +13397,7 @@ export namespace Prisma {
     entitlements?: TenantModuleCreateNestedManyWithoutTenantInput
     payments?: SystemPaymentCreateNestedManyWithoutTenantInput
     subscriptions?: SubscriptionCreateNestedManyWithoutTenantInput
+    usages?: TenantUsageCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateInput = {
@@ -11986,6 +13411,11 @@ export namespace Prisma {
     status?: $Enums.TenantStatus
     suspensionReason?: string | null
     suspendedAt?: Date | string | null
+    address?: string | null
+    logoUrl?: string | null
+    primaryColor?: string | null
+    secondaryColor?: string | null
+    trialEndsAt?: Date | string | null
     enabledModules?: JsonNullValueInput | InputJsonValue
     publicKeySpki?: string | null
     sharedSecret?: string | null
@@ -11994,6 +13424,7 @@ export namespace Prisma {
     entitlements?: TenantModuleUncheckedCreateNestedManyWithoutTenantInput
     payments?: SystemPaymentUncheckedCreateNestedManyWithoutTenantInput
     subscriptions?: SubscriptionUncheckedCreateNestedManyWithoutTenantInput
+    usages?: TenantUsageUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUpdateInput = {
@@ -12007,6 +13438,11 @@ export namespace Prisma {
     status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
     suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
     suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     enabledModules?: JsonNullValueInput | InputJsonValue
     publicKeySpki?: NullableStringFieldUpdateOperationsInput | string | null
     sharedSecret?: NullableStringFieldUpdateOperationsInput | string | null
@@ -12015,6 +13451,7 @@ export namespace Prisma {
     entitlements?: TenantModuleUpdateManyWithoutTenantNestedInput
     payments?: SystemPaymentUpdateManyWithoutTenantNestedInput
     subscriptions?: SubscriptionUpdateManyWithoutTenantNestedInput
+    usages?: TenantUsageUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateInput = {
@@ -12028,6 +13465,11 @@ export namespace Prisma {
     status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
     suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
     suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     enabledModules?: JsonNullValueInput | InputJsonValue
     publicKeySpki?: NullableStringFieldUpdateOperationsInput | string | null
     sharedSecret?: NullableStringFieldUpdateOperationsInput | string | null
@@ -12036,6 +13478,7 @@ export namespace Prisma {
     entitlements?: TenantModuleUncheckedUpdateManyWithoutTenantNestedInput
     payments?: SystemPaymentUncheckedUpdateManyWithoutTenantNestedInput
     subscriptions?: SubscriptionUncheckedUpdateManyWithoutTenantNestedInput
+    usages?: TenantUsageUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantCreateManyInput = {
@@ -12049,6 +13492,11 @@ export namespace Prisma {
     status?: $Enums.TenantStatus
     suspensionReason?: string | null
     suspendedAt?: Date | string | null
+    address?: string | null
+    logoUrl?: string | null
+    primaryColor?: string | null
+    secondaryColor?: string | null
+    trialEndsAt?: Date | string | null
     enabledModules?: JsonNullValueInput | InputJsonValue
     publicKeySpki?: string | null
     sharedSecret?: string | null
@@ -12067,6 +13515,11 @@ export namespace Prisma {
     status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
     suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
     suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     enabledModules?: JsonNullValueInput | InputJsonValue
     publicKeySpki?: NullableStringFieldUpdateOperationsInput | string | null
     sharedSecret?: NullableStringFieldUpdateOperationsInput | string | null
@@ -12085,6 +13538,11 @@ export namespace Prisma {
     status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
     suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
     suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     enabledModules?: JsonNullValueInput | InputJsonValue
     publicKeySpki?: NullableStringFieldUpdateOperationsInput | string | null
     sharedSecret?: NullableStringFieldUpdateOperationsInput | string | null
@@ -12731,6 +14189,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     tenant: TenantCreateNestedOneWithoutSubscriptionsInput
     plan: PlanCreateNestedOneWithoutSubscriptionsInput
+    usages?: TenantUsageCreateNestedManyWithoutSubscriptionInput
   }
 
   export type SubscriptionUncheckedCreateInput = {
@@ -12744,6 +14203,7 @@ export namespace Prisma {
     autoRenew?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    usages?: TenantUsageUncheckedCreateNestedManyWithoutSubscriptionInput
   }
 
   export type SubscriptionUpdateInput = {
@@ -12757,6 +14217,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tenant?: TenantUpdateOneRequiredWithoutSubscriptionsNestedInput
     plan?: PlanUpdateOneRequiredWithoutSubscriptionsNestedInput
+    usages?: TenantUsageUpdateManyWithoutSubscriptionNestedInput
   }
 
   export type SubscriptionUncheckedUpdateInput = {
@@ -12770,6 +14231,7 @@ export namespace Prisma {
     autoRenew?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    usages?: TenantUsageUncheckedUpdateManyWithoutSubscriptionNestedInput
   }
 
   export type SubscriptionCreateManyInput = {
@@ -12879,6 +14341,95 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type TenantUsageCreateInput = {
+    id?: string
+    date: Date | string
+    activeUsers?: number
+    activePatients?: number
+    storageUsedMb?: Decimal | DecimalJsLike | number | string
+    apiCallsCount?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tenant: TenantCreateNestedOneWithoutUsagesInput
+    subscription: SubscriptionCreateNestedOneWithoutUsagesInput
+  }
+
+  export type TenantUsageUncheckedCreateInput = {
+    id?: string
+    tenantId: string
+    subscriptionId: string
+    date: Date | string
+    activeUsers?: number
+    activePatients?: number
+    storageUsedMb?: Decimal | DecimalJsLike | number | string
+    apiCallsCount?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TenantUsageUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    activeUsers?: IntFieldUpdateOperationsInput | number
+    activePatients?: IntFieldUpdateOperationsInput | number
+    storageUsedMb?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    apiCallsCount?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenant?: TenantUpdateOneRequiredWithoutUsagesNestedInput
+    subscription?: SubscriptionUpdateOneRequiredWithoutUsagesNestedInput
+  }
+
+  export type TenantUsageUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    subscriptionId?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    activeUsers?: IntFieldUpdateOperationsInput | number
+    activePatients?: IntFieldUpdateOperationsInput | number
+    storageUsedMb?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    apiCallsCount?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TenantUsageCreateManyInput = {
+    id?: string
+    tenantId: string
+    subscriptionId: string
+    date: Date | string
+    activeUsers?: number
+    activePatients?: number
+    storageUsedMb?: Decimal | DecimalJsLike | number | string
+    apiCallsCount?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TenantUsageUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    activeUsers?: IntFieldUpdateOperationsInput | number
+    activePatients?: IntFieldUpdateOperationsInput | number
+    storageUsedMb?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    apiCallsCount?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TenantUsageUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    subscriptionId?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    activeUsers?: IntFieldUpdateOperationsInput | number
+    activePatients?: IntFieldUpdateOperationsInput | number
+    storageUsedMb?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    apiCallsCount?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -12985,6 +14536,12 @@ export namespace Prisma {
     none?: SubscriptionWhereInput
   }
 
+  export type TenantUsageListRelationFilter = {
+    every?: TenantUsageWhereInput
+    some?: TenantUsageWhereInput
+    none?: TenantUsageWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -13002,6 +14559,10 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
+  export type TenantUsageOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type TenantCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
@@ -13013,6 +14574,11 @@ export namespace Prisma {
     status?: SortOrder
     suspensionReason?: SortOrder
     suspendedAt?: SortOrder
+    address?: SortOrder
+    logoUrl?: SortOrder
+    primaryColor?: SortOrder
+    secondaryColor?: SortOrder
+    trialEndsAt?: SortOrder
     enabledModules?: SortOrder
     publicKeySpki?: SortOrder
     sharedSecret?: SortOrder
@@ -13031,6 +14597,11 @@ export namespace Prisma {
     status?: SortOrder
     suspensionReason?: SortOrder
     suspendedAt?: SortOrder
+    address?: SortOrder
+    logoUrl?: SortOrder
+    primaryColor?: SortOrder
+    secondaryColor?: SortOrder
+    trialEndsAt?: SortOrder
     publicKeySpki?: SortOrder
     sharedSecret?: SortOrder
     createdAt?: SortOrder
@@ -13048,6 +14619,11 @@ export namespace Prisma {
     status?: SortOrder
     suspensionReason?: SortOrder
     suspendedAt?: SortOrder
+    address?: SortOrder
+    logoUrl?: SortOrder
+    primaryColor?: SortOrder
+    secondaryColor?: SortOrder
+    trialEndsAt?: SortOrder
     publicKeySpki?: SortOrder
     sharedSecret?: SortOrder
     createdAt?: SortOrder
@@ -13619,6 +15195,69 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
+  export type SubscriptionRelationFilter = {
+    is?: SubscriptionWhereInput
+    isNot?: SubscriptionWhereInput
+  }
+
+  export type TenantUsageTenantIdDateCompoundUniqueInput = {
+    tenantId: string
+    date: Date | string
+  }
+
+  export type TenantUsageCountOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    subscriptionId?: SortOrder
+    date?: SortOrder
+    activeUsers?: SortOrder
+    activePatients?: SortOrder
+    storageUsedMb?: SortOrder
+    apiCallsCount?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TenantUsageAvgOrderByAggregateInput = {
+    activeUsers?: SortOrder
+    activePatients?: SortOrder
+    storageUsedMb?: SortOrder
+    apiCallsCount?: SortOrder
+  }
+
+  export type TenantUsageMaxOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    subscriptionId?: SortOrder
+    date?: SortOrder
+    activeUsers?: SortOrder
+    activePatients?: SortOrder
+    storageUsedMb?: SortOrder
+    apiCallsCount?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TenantUsageMinOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    subscriptionId?: SortOrder
+    date?: SortOrder
+    activeUsers?: SortOrder
+    activePatients?: SortOrder
+    storageUsedMb?: SortOrder
+    apiCallsCount?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TenantUsageSumOrderByAggregateInput = {
+    activeUsers?: SortOrder
+    activePatients?: SortOrder
+    storageUsedMb?: SortOrder
+    apiCallsCount?: SortOrder
+  }
+
   export type TenantModuleCreateNestedManyWithoutTenantInput = {
     create?: XOR<TenantModuleCreateWithoutTenantInput, TenantModuleUncheckedCreateWithoutTenantInput> | TenantModuleCreateWithoutTenantInput[] | TenantModuleUncheckedCreateWithoutTenantInput[]
     connectOrCreate?: TenantModuleCreateOrConnectWithoutTenantInput | TenantModuleCreateOrConnectWithoutTenantInput[]
@@ -13640,6 +15279,13 @@ export namespace Prisma {
     connect?: SubscriptionWhereUniqueInput | SubscriptionWhereUniqueInput[]
   }
 
+  export type TenantUsageCreateNestedManyWithoutTenantInput = {
+    create?: XOR<TenantUsageCreateWithoutTenantInput, TenantUsageUncheckedCreateWithoutTenantInput> | TenantUsageCreateWithoutTenantInput[] | TenantUsageUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: TenantUsageCreateOrConnectWithoutTenantInput | TenantUsageCreateOrConnectWithoutTenantInput[]
+    createMany?: TenantUsageCreateManyTenantInputEnvelope
+    connect?: TenantUsageWhereUniqueInput | TenantUsageWhereUniqueInput[]
+  }
+
   export type TenantModuleUncheckedCreateNestedManyWithoutTenantInput = {
     create?: XOR<TenantModuleCreateWithoutTenantInput, TenantModuleUncheckedCreateWithoutTenantInput> | TenantModuleCreateWithoutTenantInput[] | TenantModuleUncheckedCreateWithoutTenantInput[]
     connectOrCreate?: TenantModuleCreateOrConnectWithoutTenantInput | TenantModuleCreateOrConnectWithoutTenantInput[]
@@ -13659,6 +15305,13 @@ export namespace Prisma {
     connectOrCreate?: SubscriptionCreateOrConnectWithoutTenantInput | SubscriptionCreateOrConnectWithoutTenantInput[]
     createMany?: SubscriptionCreateManyTenantInputEnvelope
     connect?: SubscriptionWhereUniqueInput | SubscriptionWhereUniqueInput[]
+  }
+
+  export type TenantUsageUncheckedCreateNestedManyWithoutTenantInput = {
+    create?: XOR<TenantUsageCreateWithoutTenantInput, TenantUsageUncheckedCreateWithoutTenantInput> | TenantUsageCreateWithoutTenantInput[] | TenantUsageUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: TenantUsageCreateOrConnectWithoutTenantInput | TenantUsageCreateOrConnectWithoutTenantInput[]
+    createMany?: TenantUsageCreateManyTenantInputEnvelope
+    connect?: TenantUsageWhereUniqueInput | TenantUsageWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -13727,6 +15380,20 @@ export namespace Prisma {
     deleteMany?: SubscriptionScalarWhereInput | SubscriptionScalarWhereInput[]
   }
 
+  export type TenantUsageUpdateManyWithoutTenantNestedInput = {
+    create?: XOR<TenantUsageCreateWithoutTenantInput, TenantUsageUncheckedCreateWithoutTenantInput> | TenantUsageCreateWithoutTenantInput[] | TenantUsageUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: TenantUsageCreateOrConnectWithoutTenantInput | TenantUsageCreateOrConnectWithoutTenantInput[]
+    upsert?: TenantUsageUpsertWithWhereUniqueWithoutTenantInput | TenantUsageUpsertWithWhereUniqueWithoutTenantInput[]
+    createMany?: TenantUsageCreateManyTenantInputEnvelope
+    set?: TenantUsageWhereUniqueInput | TenantUsageWhereUniqueInput[]
+    disconnect?: TenantUsageWhereUniqueInput | TenantUsageWhereUniqueInput[]
+    delete?: TenantUsageWhereUniqueInput | TenantUsageWhereUniqueInput[]
+    connect?: TenantUsageWhereUniqueInput | TenantUsageWhereUniqueInput[]
+    update?: TenantUsageUpdateWithWhereUniqueWithoutTenantInput | TenantUsageUpdateWithWhereUniqueWithoutTenantInput[]
+    updateMany?: TenantUsageUpdateManyWithWhereWithoutTenantInput | TenantUsageUpdateManyWithWhereWithoutTenantInput[]
+    deleteMany?: TenantUsageScalarWhereInput | TenantUsageScalarWhereInput[]
+  }
+
   export type TenantModuleUncheckedUpdateManyWithoutTenantNestedInput = {
     create?: XOR<TenantModuleCreateWithoutTenantInput, TenantModuleUncheckedCreateWithoutTenantInput> | TenantModuleCreateWithoutTenantInput[] | TenantModuleUncheckedCreateWithoutTenantInput[]
     connectOrCreate?: TenantModuleCreateOrConnectWithoutTenantInput | TenantModuleCreateOrConnectWithoutTenantInput[]
@@ -13767,6 +15434,20 @@ export namespace Prisma {
     update?: SubscriptionUpdateWithWhereUniqueWithoutTenantInput | SubscriptionUpdateWithWhereUniqueWithoutTenantInput[]
     updateMany?: SubscriptionUpdateManyWithWhereWithoutTenantInput | SubscriptionUpdateManyWithWhereWithoutTenantInput[]
     deleteMany?: SubscriptionScalarWhereInput | SubscriptionScalarWhereInput[]
+  }
+
+  export type TenantUsageUncheckedUpdateManyWithoutTenantNestedInput = {
+    create?: XOR<TenantUsageCreateWithoutTenantInput, TenantUsageUncheckedCreateWithoutTenantInput> | TenantUsageCreateWithoutTenantInput[] | TenantUsageUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: TenantUsageCreateOrConnectWithoutTenantInput | TenantUsageCreateOrConnectWithoutTenantInput[]
+    upsert?: TenantUsageUpsertWithWhereUniqueWithoutTenantInput | TenantUsageUpsertWithWhereUniqueWithoutTenantInput[]
+    createMany?: TenantUsageCreateManyTenantInputEnvelope
+    set?: TenantUsageWhereUniqueInput | TenantUsageWhereUniqueInput[]
+    disconnect?: TenantUsageWhereUniqueInput | TenantUsageWhereUniqueInput[]
+    delete?: TenantUsageWhereUniqueInput | TenantUsageWhereUniqueInput[]
+    connect?: TenantUsageWhereUniqueInput | TenantUsageWhereUniqueInput[]
+    update?: TenantUsageUpdateWithWhereUniqueWithoutTenantInput | TenantUsageUpdateWithWhereUniqueWithoutTenantInput[]
+    updateMany?: TenantUsageUpdateManyWithWhereWithoutTenantInput | TenantUsageUpdateManyWithWhereWithoutTenantInput[]
+    deleteMany?: TenantUsageScalarWhereInput | TenantUsageScalarWhereInput[]
   }
 
   export type TenantModuleCreateNestedManyWithoutModuleInput = {
@@ -13929,6 +15610,20 @@ export namespace Prisma {
     connect?: PlanWhereUniqueInput
   }
 
+  export type TenantUsageCreateNestedManyWithoutSubscriptionInput = {
+    create?: XOR<TenantUsageCreateWithoutSubscriptionInput, TenantUsageUncheckedCreateWithoutSubscriptionInput> | TenantUsageCreateWithoutSubscriptionInput[] | TenantUsageUncheckedCreateWithoutSubscriptionInput[]
+    connectOrCreate?: TenantUsageCreateOrConnectWithoutSubscriptionInput | TenantUsageCreateOrConnectWithoutSubscriptionInput[]
+    createMany?: TenantUsageCreateManySubscriptionInputEnvelope
+    connect?: TenantUsageWhereUniqueInput | TenantUsageWhereUniqueInput[]
+  }
+
+  export type TenantUsageUncheckedCreateNestedManyWithoutSubscriptionInput = {
+    create?: XOR<TenantUsageCreateWithoutSubscriptionInput, TenantUsageUncheckedCreateWithoutSubscriptionInput> | TenantUsageCreateWithoutSubscriptionInput[] | TenantUsageUncheckedCreateWithoutSubscriptionInput[]
+    connectOrCreate?: TenantUsageCreateOrConnectWithoutSubscriptionInput | TenantUsageCreateOrConnectWithoutSubscriptionInput[]
+    createMany?: TenantUsageCreateManySubscriptionInputEnvelope
+    connect?: TenantUsageWhereUniqueInput | TenantUsageWhereUniqueInput[]
+  }
+
   export type TenantUpdateOneRequiredWithoutSubscriptionsNestedInput = {
     create?: XOR<TenantCreateWithoutSubscriptionsInput, TenantUncheckedCreateWithoutSubscriptionsInput>
     connectOrCreate?: TenantCreateOrConnectWithoutSubscriptionsInput
@@ -13943,6 +15638,62 @@ export namespace Prisma {
     upsert?: PlanUpsertWithoutSubscriptionsInput
     connect?: PlanWhereUniqueInput
     update?: XOR<XOR<PlanUpdateToOneWithWhereWithoutSubscriptionsInput, PlanUpdateWithoutSubscriptionsInput>, PlanUncheckedUpdateWithoutSubscriptionsInput>
+  }
+
+  export type TenantUsageUpdateManyWithoutSubscriptionNestedInput = {
+    create?: XOR<TenantUsageCreateWithoutSubscriptionInput, TenantUsageUncheckedCreateWithoutSubscriptionInput> | TenantUsageCreateWithoutSubscriptionInput[] | TenantUsageUncheckedCreateWithoutSubscriptionInput[]
+    connectOrCreate?: TenantUsageCreateOrConnectWithoutSubscriptionInput | TenantUsageCreateOrConnectWithoutSubscriptionInput[]
+    upsert?: TenantUsageUpsertWithWhereUniqueWithoutSubscriptionInput | TenantUsageUpsertWithWhereUniqueWithoutSubscriptionInput[]
+    createMany?: TenantUsageCreateManySubscriptionInputEnvelope
+    set?: TenantUsageWhereUniqueInput | TenantUsageWhereUniqueInput[]
+    disconnect?: TenantUsageWhereUniqueInput | TenantUsageWhereUniqueInput[]
+    delete?: TenantUsageWhereUniqueInput | TenantUsageWhereUniqueInput[]
+    connect?: TenantUsageWhereUniqueInput | TenantUsageWhereUniqueInput[]
+    update?: TenantUsageUpdateWithWhereUniqueWithoutSubscriptionInput | TenantUsageUpdateWithWhereUniqueWithoutSubscriptionInput[]
+    updateMany?: TenantUsageUpdateManyWithWhereWithoutSubscriptionInput | TenantUsageUpdateManyWithWhereWithoutSubscriptionInput[]
+    deleteMany?: TenantUsageScalarWhereInput | TenantUsageScalarWhereInput[]
+  }
+
+  export type TenantUsageUncheckedUpdateManyWithoutSubscriptionNestedInput = {
+    create?: XOR<TenantUsageCreateWithoutSubscriptionInput, TenantUsageUncheckedCreateWithoutSubscriptionInput> | TenantUsageCreateWithoutSubscriptionInput[] | TenantUsageUncheckedCreateWithoutSubscriptionInput[]
+    connectOrCreate?: TenantUsageCreateOrConnectWithoutSubscriptionInput | TenantUsageCreateOrConnectWithoutSubscriptionInput[]
+    upsert?: TenantUsageUpsertWithWhereUniqueWithoutSubscriptionInput | TenantUsageUpsertWithWhereUniqueWithoutSubscriptionInput[]
+    createMany?: TenantUsageCreateManySubscriptionInputEnvelope
+    set?: TenantUsageWhereUniqueInput | TenantUsageWhereUniqueInput[]
+    disconnect?: TenantUsageWhereUniqueInput | TenantUsageWhereUniqueInput[]
+    delete?: TenantUsageWhereUniqueInput | TenantUsageWhereUniqueInput[]
+    connect?: TenantUsageWhereUniqueInput | TenantUsageWhereUniqueInput[]
+    update?: TenantUsageUpdateWithWhereUniqueWithoutSubscriptionInput | TenantUsageUpdateWithWhereUniqueWithoutSubscriptionInput[]
+    updateMany?: TenantUsageUpdateManyWithWhereWithoutSubscriptionInput | TenantUsageUpdateManyWithWhereWithoutSubscriptionInput[]
+    deleteMany?: TenantUsageScalarWhereInput | TenantUsageScalarWhereInput[]
+  }
+
+  export type TenantCreateNestedOneWithoutUsagesInput = {
+    create?: XOR<TenantCreateWithoutUsagesInput, TenantUncheckedCreateWithoutUsagesInput>
+    connectOrCreate?: TenantCreateOrConnectWithoutUsagesInput
+    connect?: TenantWhereUniqueInput
+  }
+
+  export type SubscriptionCreateNestedOneWithoutUsagesInput = {
+    create?: XOR<SubscriptionCreateWithoutUsagesInput, SubscriptionUncheckedCreateWithoutUsagesInput>
+    connectOrCreate?: SubscriptionCreateOrConnectWithoutUsagesInput
+    connect?: SubscriptionWhereUniqueInput
+  }
+
+  export type TenantUpdateOneRequiredWithoutUsagesNestedInput = {
+    create?: XOR<TenantCreateWithoutUsagesInput, TenantUncheckedCreateWithoutUsagesInput>
+    connectOrCreate?: TenantCreateOrConnectWithoutUsagesInput
+    upsert?: TenantUpsertWithoutUsagesInput
+    connect?: TenantWhereUniqueInput
+    update?: XOR<XOR<TenantUpdateToOneWithWhereWithoutUsagesInput, TenantUpdateWithoutUsagesInput>, TenantUncheckedUpdateWithoutUsagesInput>
+  }
+
+  export type SubscriptionUpdateOneRequiredWithoutUsagesNestedInput = {
+    create?: XOR<SubscriptionCreateWithoutUsagesInput, SubscriptionUncheckedCreateWithoutUsagesInput>
+    connectOrCreate?: SubscriptionCreateOrConnectWithoutUsagesInput
+    upsert?: SubscriptionUpsertWithoutUsagesInput
+    connect?: SubscriptionWhereUniqueInput
+    update?: XOR<XOR<SubscriptionUpdateToOneWithWhereWithoutUsagesInput, SubscriptionUpdateWithoutUsagesInput>, SubscriptionUncheckedUpdateWithoutUsagesInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -14276,6 +16027,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     plan: PlanCreateNestedOneWithoutSubscriptionsInput
+    usages?: TenantUsageCreateNestedManyWithoutSubscriptionInput
   }
 
   export type SubscriptionUncheckedCreateWithoutTenantInput = {
@@ -14288,6 +16040,7 @@ export namespace Prisma {
     autoRenew?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    usages?: TenantUsageUncheckedCreateNestedManyWithoutSubscriptionInput
   }
 
   export type SubscriptionCreateOrConnectWithoutTenantInput = {
@@ -14297,6 +16050,40 @@ export namespace Prisma {
 
   export type SubscriptionCreateManyTenantInputEnvelope = {
     data: SubscriptionCreateManyTenantInput | SubscriptionCreateManyTenantInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TenantUsageCreateWithoutTenantInput = {
+    id?: string
+    date: Date | string
+    activeUsers?: number
+    activePatients?: number
+    storageUsedMb?: Decimal | DecimalJsLike | number | string
+    apiCallsCount?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    subscription: SubscriptionCreateNestedOneWithoutUsagesInput
+  }
+
+  export type TenantUsageUncheckedCreateWithoutTenantInput = {
+    id?: string
+    subscriptionId: string
+    date: Date | string
+    activeUsers?: number
+    activePatients?: number
+    storageUsedMb?: Decimal | DecimalJsLike | number | string
+    apiCallsCount?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TenantUsageCreateOrConnectWithoutTenantInput = {
+    where: TenantUsageWhereUniqueInput
+    create: XOR<TenantUsageCreateWithoutTenantInput, TenantUsageUncheckedCreateWithoutTenantInput>
+  }
+
+  export type TenantUsageCreateManyTenantInputEnvelope = {
+    data: TenantUsageCreateManyTenantInput | TenantUsageCreateManyTenantInput[]
     skipDuplicates?: boolean
   }
 
@@ -14394,6 +16181,38 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Subscription"> | Date | string
   }
 
+  export type TenantUsageUpsertWithWhereUniqueWithoutTenantInput = {
+    where: TenantUsageWhereUniqueInput
+    update: XOR<TenantUsageUpdateWithoutTenantInput, TenantUsageUncheckedUpdateWithoutTenantInput>
+    create: XOR<TenantUsageCreateWithoutTenantInput, TenantUsageUncheckedCreateWithoutTenantInput>
+  }
+
+  export type TenantUsageUpdateWithWhereUniqueWithoutTenantInput = {
+    where: TenantUsageWhereUniqueInput
+    data: XOR<TenantUsageUpdateWithoutTenantInput, TenantUsageUncheckedUpdateWithoutTenantInput>
+  }
+
+  export type TenantUsageUpdateManyWithWhereWithoutTenantInput = {
+    where: TenantUsageScalarWhereInput
+    data: XOR<TenantUsageUpdateManyMutationInput, TenantUsageUncheckedUpdateManyWithoutTenantInput>
+  }
+
+  export type TenantUsageScalarWhereInput = {
+    AND?: TenantUsageScalarWhereInput | TenantUsageScalarWhereInput[]
+    OR?: TenantUsageScalarWhereInput[]
+    NOT?: TenantUsageScalarWhereInput | TenantUsageScalarWhereInput[]
+    id?: StringFilter<"TenantUsage"> | string
+    tenantId?: StringFilter<"TenantUsage"> | string
+    subscriptionId?: StringFilter<"TenantUsage"> | string
+    date?: DateTimeFilter<"TenantUsage"> | Date | string
+    activeUsers?: IntFilter<"TenantUsage"> | number
+    activePatients?: IntFilter<"TenantUsage"> | number
+    storageUsedMb?: DecimalFilter<"TenantUsage"> | Decimal | DecimalJsLike | number | string
+    apiCallsCount?: IntFilter<"TenantUsage"> | number
+    createdAt?: DateTimeFilter<"TenantUsage"> | Date | string
+    updatedAt?: DateTimeFilter<"TenantUsage"> | Date | string
+  }
+
   export type TenantModuleCreateWithoutModuleInput = {
     id?: string
     isEnabled?: boolean
@@ -14449,6 +16268,11 @@ export namespace Prisma {
     status?: $Enums.TenantStatus
     suspensionReason?: string | null
     suspendedAt?: Date | string | null
+    address?: string | null
+    logoUrl?: string | null
+    primaryColor?: string | null
+    secondaryColor?: string | null
+    trialEndsAt?: Date | string | null
     enabledModules?: JsonNullValueInput | InputJsonValue
     publicKeySpki?: string | null
     sharedSecret?: string | null
@@ -14456,6 +16280,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     payments?: SystemPaymentCreateNestedManyWithoutTenantInput
     subscriptions?: SubscriptionCreateNestedManyWithoutTenantInput
+    usages?: TenantUsageCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutEntitlementsInput = {
@@ -14469,6 +16294,11 @@ export namespace Prisma {
     status?: $Enums.TenantStatus
     suspensionReason?: string | null
     suspendedAt?: Date | string | null
+    address?: string | null
+    logoUrl?: string | null
+    primaryColor?: string | null
+    secondaryColor?: string | null
+    trialEndsAt?: Date | string | null
     enabledModules?: JsonNullValueInput | InputJsonValue
     publicKeySpki?: string | null
     sharedSecret?: string | null
@@ -14476,6 +16306,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     payments?: SystemPaymentUncheckedCreateNestedManyWithoutTenantInput
     subscriptions?: SubscriptionUncheckedCreateNestedManyWithoutTenantInput
+    usages?: TenantUsageUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutEntitlementsInput = {
@@ -14530,6 +16361,11 @@ export namespace Prisma {
     status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
     suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
     suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     enabledModules?: JsonNullValueInput | InputJsonValue
     publicKeySpki?: NullableStringFieldUpdateOperationsInput | string | null
     sharedSecret?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14537,6 +16373,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     payments?: SystemPaymentUpdateManyWithoutTenantNestedInput
     subscriptions?: SubscriptionUpdateManyWithoutTenantNestedInput
+    usages?: TenantUsageUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutEntitlementsInput = {
@@ -14550,6 +16387,11 @@ export namespace Prisma {
     status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
     suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
     suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     enabledModules?: JsonNullValueInput | InputJsonValue
     publicKeySpki?: NullableStringFieldUpdateOperationsInput | string | null
     sharedSecret?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14557,6 +16399,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     payments?: SystemPaymentUncheckedUpdateManyWithoutTenantNestedInput
     subscriptions?: SubscriptionUncheckedUpdateManyWithoutTenantNestedInput
+    usages?: TenantUsageUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type ModuleUpsertWithoutTenantsInput = {
@@ -14601,6 +16444,11 @@ export namespace Prisma {
     status?: $Enums.TenantStatus
     suspensionReason?: string | null
     suspendedAt?: Date | string | null
+    address?: string | null
+    logoUrl?: string | null
+    primaryColor?: string | null
+    secondaryColor?: string | null
+    trialEndsAt?: Date | string | null
     enabledModules?: JsonNullValueInput | InputJsonValue
     publicKeySpki?: string | null
     sharedSecret?: string | null
@@ -14608,6 +16456,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     entitlements?: TenantModuleCreateNestedManyWithoutTenantInput
     subscriptions?: SubscriptionCreateNestedManyWithoutTenantInput
+    usages?: TenantUsageCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutPaymentsInput = {
@@ -14621,6 +16470,11 @@ export namespace Prisma {
     status?: $Enums.TenantStatus
     suspensionReason?: string | null
     suspendedAt?: Date | string | null
+    address?: string | null
+    logoUrl?: string | null
+    primaryColor?: string | null
+    secondaryColor?: string | null
+    trialEndsAt?: Date | string | null
     enabledModules?: JsonNullValueInput | InputJsonValue
     publicKeySpki?: string | null
     sharedSecret?: string | null
@@ -14628,6 +16482,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     entitlements?: TenantModuleUncheckedCreateNestedManyWithoutTenantInput
     subscriptions?: SubscriptionUncheckedCreateNestedManyWithoutTenantInput
+    usages?: TenantUsageUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutPaymentsInput = {
@@ -14657,6 +16512,11 @@ export namespace Prisma {
     status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
     suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
     suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     enabledModules?: JsonNullValueInput | InputJsonValue
     publicKeySpki?: NullableStringFieldUpdateOperationsInput | string | null
     sharedSecret?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14664,6 +16524,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     entitlements?: TenantModuleUpdateManyWithoutTenantNestedInput
     subscriptions?: SubscriptionUpdateManyWithoutTenantNestedInput
+    usages?: TenantUsageUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutPaymentsInput = {
@@ -14677,6 +16538,11 @@ export namespace Prisma {
     status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
     suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
     suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     enabledModules?: JsonNullValueInput | InputJsonValue
     publicKeySpki?: NullableStringFieldUpdateOperationsInput | string | null
     sharedSecret?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14684,6 +16550,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     entitlements?: TenantModuleUncheckedUpdateManyWithoutTenantNestedInput
     subscriptions?: SubscriptionUncheckedUpdateManyWithoutTenantNestedInput
+    usages?: TenantUsageUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type SubscriptionCreateWithoutPlanInput = {
@@ -14696,6 +16563,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     tenant: TenantCreateNestedOneWithoutSubscriptionsInput
+    usages?: TenantUsageCreateNestedManyWithoutSubscriptionInput
   }
 
   export type SubscriptionUncheckedCreateWithoutPlanInput = {
@@ -14708,6 +16576,7 @@ export namespace Prisma {
     autoRenew?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    usages?: TenantUsageUncheckedCreateNestedManyWithoutSubscriptionInput
   }
 
   export type SubscriptionCreateOrConnectWithoutPlanInput = {
@@ -14747,6 +16616,11 @@ export namespace Prisma {
     status?: $Enums.TenantStatus
     suspensionReason?: string | null
     suspendedAt?: Date | string | null
+    address?: string | null
+    logoUrl?: string | null
+    primaryColor?: string | null
+    secondaryColor?: string | null
+    trialEndsAt?: Date | string | null
     enabledModules?: JsonNullValueInput | InputJsonValue
     publicKeySpki?: string | null
     sharedSecret?: string | null
@@ -14754,6 +16628,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     entitlements?: TenantModuleCreateNestedManyWithoutTenantInput
     payments?: SystemPaymentCreateNestedManyWithoutTenantInput
+    usages?: TenantUsageCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutSubscriptionsInput = {
@@ -14767,6 +16642,11 @@ export namespace Prisma {
     status?: $Enums.TenantStatus
     suspensionReason?: string | null
     suspendedAt?: Date | string | null
+    address?: string | null
+    logoUrl?: string | null
+    primaryColor?: string | null
+    secondaryColor?: string | null
+    trialEndsAt?: Date | string | null
     enabledModules?: JsonNullValueInput | InputJsonValue
     publicKeySpki?: string | null
     sharedSecret?: string | null
@@ -14774,6 +16654,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     entitlements?: TenantModuleUncheckedCreateNestedManyWithoutTenantInput
     payments?: SystemPaymentUncheckedCreateNestedManyWithoutTenantInput
+    usages?: TenantUsageUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutSubscriptionsInput = {
@@ -14818,6 +16699,40 @@ export namespace Prisma {
     create: XOR<PlanCreateWithoutSubscriptionsInput, PlanUncheckedCreateWithoutSubscriptionsInput>
   }
 
+  export type TenantUsageCreateWithoutSubscriptionInput = {
+    id?: string
+    date: Date | string
+    activeUsers?: number
+    activePatients?: number
+    storageUsedMb?: Decimal | DecimalJsLike | number | string
+    apiCallsCount?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tenant: TenantCreateNestedOneWithoutUsagesInput
+  }
+
+  export type TenantUsageUncheckedCreateWithoutSubscriptionInput = {
+    id?: string
+    tenantId: string
+    date: Date | string
+    activeUsers?: number
+    activePatients?: number
+    storageUsedMb?: Decimal | DecimalJsLike | number | string
+    apiCallsCount?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TenantUsageCreateOrConnectWithoutSubscriptionInput = {
+    where: TenantUsageWhereUniqueInput
+    create: XOR<TenantUsageCreateWithoutSubscriptionInput, TenantUsageUncheckedCreateWithoutSubscriptionInput>
+  }
+
+  export type TenantUsageCreateManySubscriptionInputEnvelope = {
+    data: TenantUsageCreateManySubscriptionInput | TenantUsageCreateManySubscriptionInput[]
+    skipDuplicates?: boolean
+  }
+
   export type TenantUpsertWithoutSubscriptionsInput = {
     update: XOR<TenantUpdateWithoutSubscriptionsInput, TenantUncheckedUpdateWithoutSubscriptionsInput>
     create: XOR<TenantCreateWithoutSubscriptionsInput, TenantUncheckedCreateWithoutSubscriptionsInput>
@@ -14840,6 +16755,11 @@ export namespace Prisma {
     status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
     suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
     suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     enabledModules?: JsonNullValueInput | InputJsonValue
     publicKeySpki?: NullableStringFieldUpdateOperationsInput | string | null
     sharedSecret?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14847,6 +16767,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     entitlements?: TenantModuleUpdateManyWithoutTenantNestedInput
     payments?: SystemPaymentUpdateManyWithoutTenantNestedInput
+    usages?: TenantUsageUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutSubscriptionsInput = {
@@ -14860,6 +16781,11 @@ export namespace Prisma {
     status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
     suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
     suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     enabledModules?: JsonNullValueInput | InputJsonValue
     publicKeySpki?: NullableStringFieldUpdateOperationsInput | string | null
     sharedSecret?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14867,6 +16793,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     entitlements?: TenantModuleUncheckedUpdateManyWithoutTenantNestedInput
     payments?: SystemPaymentUncheckedUpdateManyWithoutTenantNestedInput
+    usages?: TenantUsageUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type PlanUpsertWithoutSubscriptionsInput = {
@@ -14912,6 +16839,210 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type TenantUsageUpsertWithWhereUniqueWithoutSubscriptionInput = {
+    where: TenantUsageWhereUniqueInput
+    update: XOR<TenantUsageUpdateWithoutSubscriptionInput, TenantUsageUncheckedUpdateWithoutSubscriptionInput>
+    create: XOR<TenantUsageCreateWithoutSubscriptionInput, TenantUsageUncheckedCreateWithoutSubscriptionInput>
+  }
+
+  export type TenantUsageUpdateWithWhereUniqueWithoutSubscriptionInput = {
+    where: TenantUsageWhereUniqueInput
+    data: XOR<TenantUsageUpdateWithoutSubscriptionInput, TenantUsageUncheckedUpdateWithoutSubscriptionInput>
+  }
+
+  export type TenantUsageUpdateManyWithWhereWithoutSubscriptionInput = {
+    where: TenantUsageScalarWhereInput
+    data: XOR<TenantUsageUpdateManyMutationInput, TenantUsageUncheckedUpdateManyWithoutSubscriptionInput>
+  }
+
+  export type TenantCreateWithoutUsagesInput = {
+    id?: string
+    name: string
+    slug: string
+    dbUrl: string
+    encryptionKeyReference: string
+    tier?: $Enums.DeploymentTier
+    region: string
+    status?: $Enums.TenantStatus
+    suspensionReason?: string | null
+    suspendedAt?: Date | string | null
+    address?: string | null
+    logoUrl?: string | null
+    primaryColor?: string | null
+    secondaryColor?: string | null
+    trialEndsAt?: Date | string | null
+    enabledModules?: JsonNullValueInput | InputJsonValue
+    publicKeySpki?: string | null
+    sharedSecret?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    entitlements?: TenantModuleCreateNestedManyWithoutTenantInput
+    payments?: SystemPaymentCreateNestedManyWithoutTenantInput
+    subscriptions?: SubscriptionCreateNestedManyWithoutTenantInput
+  }
+
+  export type TenantUncheckedCreateWithoutUsagesInput = {
+    id?: string
+    name: string
+    slug: string
+    dbUrl: string
+    encryptionKeyReference: string
+    tier?: $Enums.DeploymentTier
+    region: string
+    status?: $Enums.TenantStatus
+    suspensionReason?: string | null
+    suspendedAt?: Date | string | null
+    address?: string | null
+    logoUrl?: string | null
+    primaryColor?: string | null
+    secondaryColor?: string | null
+    trialEndsAt?: Date | string | null
+    enabledModules?: JsonNullValueInput | InputJsonValue
+    publicKeySpki?: string | null
+    sharedSecret?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    entitlements?: TenantModuleUncheckedCreateNestedManyWithoutTenantInput
+    payments?: SystemPaymentUncheckedCreateNestedManyWithoutTenantInput
+    subscriptions?: SubscriptionUncheckedCreateNestedManyWithoutTenantInput
+  }
+
+  export type TenantCreateOrConnectWithoutUsagesInput = {
+    where: TenantWhereUniqueInput
+    create: XOR<TenantCreateWithoutUsagesInput, TenantUncheckedCreateWithoutUsagesInput>
+  }
+
+  export type SubscriptionCreateWithoutUsagesInput = {
+    id?: string
+    status?: string
+    startDate?: Date | string
+    endDate?: Date | string | null
+    signedToken?: string | null
+    autoRenew?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tenant: TenantCreateNestedOneWithoutSubscriptionsInput
+    plan: PlanCreateNestedOneWithoutSubscriptionsInput
+  }
+
+  export type SubscriptionUncheckedCreateWithoutUsagesInput = {
+    id?: string
+    tenantId: string
+    planId: string
+    status?: string
+    startDate?: Date | string
+    endDate?: Date | string | null
+    signedToken?: string | null
+    autoRenew?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SubscriptionCreateOrConnectWithoutUsagesInput = {
+    where: SubscriptionWhereUniqueInput
+    create: XOR<SubscriptionCreateWithoutUsagesInput, SubscriptionUncheckedCreateWithoutUsagesInput>
+  }
+
+  export type TenantUpsertWithoutUsagesInput = {
+    update: XOR<TenantUpdateWithoutUsagesInput, TenantUncheckedUpdateWithoutUsagesInput>
+    create: XOR<TenantCreateWithoutUsagesInput, TenantUncheckedCreateWithoutUsagesInput>
+    where?: TenantWhereInput
+  }
+
+  export type TenantUpdateToOneWithWhereWithoutUsagesInput = {
+    where?: TenantWhereInput
+    data: XOR<TenantUpdateWithoutUsagesInput, TenantUncheckedUpdateWithoutUsagesInput>
+  }
+
+  export type TenantUpdateWithoutUsagesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    dbUrl?: StringFieldUpdateOperationsInput | string
+    encryptionKeyReference?: StringFieldUpdateOperationsInput | string
+    tier?: EnumDeploymentTierFieldUpdateOperationsInput | $Enums.DeploymentTier
+    region?: StringFieldUpdateOperationsInput | string
+    status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
+    suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    enabledModules?: JsonNullValueInput | InputJsonValue
+    publicKeySpki?: NullableStringFieldUpdateOperationsInput | string | null
+    sharedSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    entitlements?: TenantModuleUpdateManyWithoutTenantNestedInput
+    payments?: SystemPaymentUpdateManyWithoutTenantNestedInput
+    subscriptions?: SubscriptionUpdateManyWithoutTenantNestedInput
+  }
+
+  export type TenantUncheckedUpdateWithoutUsagesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    dbUrl?: StringFieldUpdateOperationsInput | string
+    encryptionKeyReference?: StringFieldUpdateOperationsInput | string
+    tier?: EnumDeploymentTierFieldUpdateOperationsInput | $Enums.DeploymentTier
+    region?: StringFieldUpdateOperationsInput | string
+    status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
+    suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    enabledModules?: JsonNullValueInput | InputJsonValue
+    publicKeySpki?: NullableStringFieldUpdateOperationsInput | string | null
+    sharedSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    entitlements?: TenantModuleUncheckedUpdateManyWithoutTenantNestedInput
+    payments?: SystemPaymentUncheckedUpdateManyWithoutTenantNestedInput
+    subscriptions?: SubscriptionUncheckedUpdateManyWithoutTenantNestedInput
+  }
+
+  export type SubscriptionUpsertWithoutUsagesInput = {
+    update: XOR<SubscriptionUpdateWithoutUsagesInput, SubscriptionUncheckedUpdateWithoutUsagesInput>
+    create: XOR<SubscriptionCreateWithoutUsagesInput, SubscriptionUncheckedCreateWithoutUsagesInput>
+    where?: SubscriptionWhereInput
+  }
+
+  export type SubscriptionUpdateToOneWithWhereWithoutUsagesInput = {
+    where?: SubscriptionWhereInput
+    data: XOR<SubscriptionUpdateWithoutUsagesInput, SubscriptionUncheckedUpdateWithoutUsagesInput>
+  }
+
+  export type SubscriptionUpdateWithoutUsagesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    signedToken?: NullableStringFieldUpdateOperationsInput | string | null
+    autoRenew?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenant?: TenantUpdateOneRequiredWithoutSubscriptionsNestedInput
+    plan?: PlanUpdateOneRequiredWithoutSubscriptionsNestedInput
+  }
+
+  export type SubscriptionUncheckedUpdateWithoutUsagesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    planId?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    signedToken?: NullableStringFieldUpdateOperationsInput | string | null
+    autoRenew?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type TenantModuleCreateManyTenantInput = {
     id?: string
     moduleId: string
@@ -14942,6 +17073,18 @@ export namespace Prisma {
     endDate?: Date | string | null
     signedToken?: string | null
     autoRenew?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TenantUsageCreateManyTenantInput = {
+    id?: string
+    subscriptionId: string
+    date: Date | string
+    activeUsers?: number
+    activePatients?: number
+    storageUsedMb?: Decimal | DecimalJsLike | number | string
+    apiCallsCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -15022,6 +17165,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     plan?: PlanUpdateOneRequiredWithoutSubscriptionsNestedInput
+    usages?: TenantUsageUpdateManyWithoutSubscriptionNestedInput
   }
 
   export type SubscriptionUncheckedUpdateWithoutTenantInput = {
@@ -15034,6 +17178,7 @@ export namespace Prisma {
     autoRenew?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    usages?: TenantUsageUncheckedUpdateManyWithoutSubscriptionNestedInput
   }
 
   export type SubscriptionUncheckedUpdateManyWithoutTenantInput = {
@@ -15044,6 +17189,42 @@ export namespace Prisma {
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     signedToken?: NullableStringFieldUpdateOperationsInput | string | null
     autoRenew?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TenantUsageUpdateWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    activeUsers?: IntFieldUpdateOperationsInput | number
+    activePatients?: IntFieldUpdateOperationsInput | number
+    storageUsedMb?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    apiCallsCount?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    subscription?: SubscriptionUpdateOneRequiredWithoutUsagesNestedInput
+  }
+
+  export type TenantUsageUncheckedUpdateWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    subscriptionId?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    activeUsers?: IntFieldUpdateOperationsInput | number
+    activePatients?: IntFieldUpdateOperationsInput | number
+    storageUsedMb?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    apiCallsCount?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TenantUsageUncheckedUpdateManyWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    subscriptionId?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    activeUsers?: IntFieldUpdateOperationsInput | number
+    activePatients?: IntFieldUpdateOperationsInput | number
+    storageUsedMb?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    apiCallsCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -15106,6 +17287,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tenant?: TenantUpdateOneRequiredWithoutSubscriptionsNestedInput
+    usages?: TenantUsageUpdateManyWithoutSubscriptionNestedInput
   }
 
   export type SubscriptionUncheckedUpdateWithoutPlanInput = {
@@ -15118,6 +17300,7 @@ export namespace Prisma {
     autoRenew?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    usages?: TenantUsageUncheckedUpdateManyWithoutSubscriptionNestedInput
   }
 
   export type SubscriptionUncheckedUpdateManyWithoutPlanInput = {
@@ -15128,6 +17311,54 @@ export namespace Prisma {
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     signedToken?: NullableStringFieldUpdateOperationsInput | string | null
     autoRenew?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TenantUsageCreateManySubscriptionInput = {
+    id?: string
+    tenantId: string
+    date: Date | string
+    activeUsers?: number
+    activePatients?: number
+    storageUsedMb?: Decimal | DecimalJsLike | number | string
+    apiCallsCount?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TenantUsageUpdateWithoutSubscriptionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    activeUsers?: IntFieldUpdateOperationsInput | number
+    activePatients?: IntFieldUpdateOperationsInput | number
+    storageUsedMb?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    apiCallsCount?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenant?: TenantUpdateOneRequiredWithoutUsagesNestedInput
+  }
+
+  export type TenantUsageUncheckedUpdateWithoutSubscriptionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    activeUsers?: IntFieldUpdateOperationsInput | number
+    activePatients?: IntFieldUpdateOperationsInput | number
+    storageUsedMb?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    apiCallsCount?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TenantUsageUncheckedUpdateManyWithoutSubscriptionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    activeUsers?: IntFieldUpdateOperationsInput | number
+    activePatients?: IntFieldUpdateOperationsInput | number
+    storageUsedMb?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    apiCallsCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -15149,6 +17380,10 @@ export namespace Prisma {
      * @deprecated Use PlanCountOutputTypeDefaultArgs instead
      */
     export type PlanCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = PlanCountOutputTypeDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use SubscriptionCountOutputTypeDefaultArgs instead
+     */
+    export type SubscriptionCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = SubscriptionCountOutputTypeDefaultArgs<ExtArgs>
     /**
      * @deprecated Use TenantDefaultArgs instead
      */
@@ -15185,6 +17420,10 @@ export namespace Prisma {
      * @deprecated Use PatientIndexDefaultArgs instead
      */
     export type PatientIndexArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = PatientIndexDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use TenantUsageDefaultArgs instead
+     */
+    export type TenantUsageArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = TenantUsageDefaultArgs<ExtArgs>
 
   /**
    * Batch Payload for updateMany & deleteMany & createMany

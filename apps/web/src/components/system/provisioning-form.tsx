@@ -18,6 +18,33 @@ export function ProvisioningForm() {
         );
     };
 
+    const [logoUrl, setLogoUrl] = useState<string | null>(null);
+    const [isUploading, setIsUploading] = useState(false);
+
+    async function handleLogoUpload(e: React.ChangeEvent<HTMLInputElement>) {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setIsUploading(true);
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            const res = await fetch('/api/system/upload', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await res.json();
+            if (data.url) {
+                setLogoUrl(data.url);
+            }
+        } catch (err) {
+            console.error("Upload failed", err);
+        } finally {
+            setIsUploading(false);
+        }
+    }
+
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         setIsProvisioning(true);
@@ -25,6 +52,9 @@ export function ProvisioningForm() {
         setStatus(['Initializing connection to Control Plane...']);
 
         const formData = new FormData(e.currentTarget);
+        if (logoUrl) {
+            formData.set('logoUrl', logoUrl);
+        }
         
         try {
             // Simulated progress steps for better UX
@@ -131,6 +161,72 @@ export function ProvisioningForm() {
                                 <option value="GENERAL">GENERAL (Dedicated Node)</option>
                                 <option value="RESEARCH">RESEARCH (High Availability)</option>
                             </select>
+                        </div>
+                    </div>
+                    
+                    <div className="space-y-2">
+                        <Label className="text-neutral-400 font-black uppercase tracking-wider text-[10px]">Physical Address</Label>
+                        <Input name="detailedAddress" required placeholder="123 Health Ave, Nairobi, Kenya" className="bg-white/5 border-white/5 focus:border-blue-500/50 rounded-xl h-12 font-bold" />
+                    </div>
+                </CardContent>
+            </Card>
+
+            <Card className="bg-neutral-900/40 border-white/5 backdrop-blur-xl rounded-3xl overflow-hidden shadow-2xl">
+                <CardHeader className="border-b border-white/5 p-8 bg-white/5">
+                    <div className="flex items-center gap-4">
+                        <div className="h-12 w-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-400">
+                            <Shield className="h-6 w-6" />
+                        </div>
+                        <div>
+                            <CardTitle className="text-2xl font-black text-white italic">Hospital Branding</CardTitle>
+                            <p className="text-neutral-500 text-xs font-bold uppercase tracking-widest">Logo and visual identity</p>
+                        </div>
+                    </div>
+                </CardHeader>
+                <CardContent className="p-8 space-y-8">
+                    <div className="flex items-start gap-8">
+                        <div className="flex-1 space-y-4">
+                            <Label className="text-neutral-400 font-black uppercase tracking-wider text-[10px]">Hospital Logo</Label>
+                            <div className="flex items-center gap-4">
+                                <Button 
+                                    type="button" 
+                                    onClick={() => document.getElementById('logo-upload')?.click()}
+                                    className="bg-white/5 hover:bg-white/10 border-dashed border-white/20 h-24 w-full rounded-2xl flex flex-col gap-2 items-center justify-center text-neutral-400"
+                                    disabled={isUploading}
+                                >
+                                    {isUploading ? (
+                                        <Loader2 className="h-6 w-6 animate-spin" />
+                                    ) : (
+                                        <>
+                                            <Activity className="h-6 w-6" />
+                                            <span className="text-[10px] font-black uppercase tracking-widest">Upload PNG/JPG</span>
+                                        </>
+                                    )}
+                                </Button>
+                                <input id="logo-upload" type="file" className="hidden" accept="image/*" onChange={handleLogoUpload} />
+                                
+                                {logoUrl && (
+                                    <div className="h-24 w-24 rounded-2xl bg-white/5 border border-white/10 p-2 overflow-hidden flex items-center justify-center">
+                                        <img src={logoUrl} alt="Preview" className="max-h-full max-w-full object-contain" />
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                        <div className="flex-1 space-y-6">
+                            <div className="space-y-2">
+                                <Label className="text-neutral-400 font-black uppercase tracking-wider text-[10px]">Primary Color</Label>
+                                <div className="flex gap-4">
+                                    <Input name="primaryColor" type="color" defaultValue="#2563EB" className="h-12 w-12 p-1 bg-white/5 border-white/5 rounded-xl cursor-pointer" />
+                                    <Input name="primaryColorText" type="text" defaultValue="#2563EB" className="bg-white/5 border-white/5 flex-1 rounded-xl h-12 font-mono uppercase" />
+                                </div>
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="text-neutral-400 font-black uppercase tracking-wider text-[10px]">Secondary Color</Label>
+                                <div className="flex gap-4">
+                                    <Input name="secondaryColor" type="color" defaultValue="#0F172A" className="h-12 w-12 p-1 bg-white/5 border-white/5 rounded-xl cursor-pointer" />
+                                    <Input name="secondaryColorText" type="text" defaultValue="#0F172A" className="bg-white/5 border-white/5 flex-1 rounded-xl h-12 font-mono uppercase" />
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </CardContent>

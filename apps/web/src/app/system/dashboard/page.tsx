@@ -9,6 +9,7 @@ import { SystemSettingsForm } from "@/components/system/SystemSettingsForm";
 import { ApiKeyManager } from "@/components/system/ApiKeyManager";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 export default async function SystemDashboardPage({
   searchParams,
@@ -103,18 +104,25 @@ export default async function SystemDashboardPage({
                 <div className="grid gap-4">
                   {tenants.map((tenant: any) => (
                     <div key={tenant.id} className="flex items-center gap-6 p-6 rounded-[2rem] bg-white/[0.03] border border-white/5 group hover:border-blue-500/30 transition-all hover:bg-blue-600/[0.03] hover:translate-x-2">
-                      <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-blue-500/20 to-indigo-500/10 flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform shadow-xl">
-                        <Building2 className="h-7 w-7" />
+                      <div 
+                        className="h-14 w-14 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-xl overflow-hidden"
+                        style={{ backgroundColor: `${tenant.primaryColor || '#2563EB'}20` }}
+                      >
+                        {tenant.logoUrl ? (
+                            <img src={tenant.logoUrl} alt={tenant.name} className="h-10 w-10 object-contain" />
+                        ) : (
+                            <Building2 className="h-7 w-7" style={{ color: tenant.primaryColor || '#2563EB' }} />
+                        )}
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-1">
                             <p className="text-xl font-black text-white tracking-widest uppercase italic">{tenant.name}</p>
                             <span className="h-1 w-1 rounded-full bg-neutral-800" />
-                            <span className="text-[8px] font-black text-blue-500 uppercase tracking-widest">{tenant.tier}</span>
+                            <span className="text-[8px] font-black uppercase tracking-widest" style={{ color: tenant.primaryColor || '#2563EB' }}>{tenant.tier}</span>
                         </div>
                         <div className="flex items-center gap-4">
                             <p className="text-[10px] text-neutral-500 uppercase tracking-[0.2em] font-bold">
-                                {tenant.slug}.amisi.health
+                                amisi.health/{tenant.slug}
                             </p>
                             <span className="text-[10px] text-neutral-600 font-bold uppercase tracking-widest flex items-center gap-2">
                                 <Globe className="h-3 w-3" />
@@ -125,17 +133,38 @@ export default async function SystemDashboardPage({
                       <div className="flex items-center gap-6">
                          <div className="text-right">
                             <div className="flex items-center gap-2 justify-end mb-1">
-                                <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/50" />
-                                <span className="text-[10px] font-black text-white uppercase tracking-widest">Active</span>
+                                <div className={cn(
+                                    "h-1.5 w-1.5 rounded-full shadow-lg",
+                                    tenant.status === 'active' ? "bg-emerald-500 shadow-emerald-500/50" : "bg-rose-500 shadow-rose-500/50"
+                                )} />
+                                <span className={cn(
+                                    "text-[10px] font-black uppercase tracking-widest",
+                                    tenant.status === 'active' ? "text-emerald-500" : "text-rose-500"
+                                )}>
+                                    {tenant.status}
+                                </span>
                             </div>
-                            <p className="text-[10px] text-neutral-600 font-bold uppercase tracking-widest">Ping: 12ms</p>
+                            {tenant.trialEndsAt && (
+                                <p className="text-[8px] text-neutral-500 font-bold uppercase tracking-widest">
+                                    Trial Ends: {new Date(tenant.trialEndsAt).toLocaleDateString()}
+                                </p>
+                            )}
                          </div>
-                         <Link 
-                            href={`/system/hospitals/${tenant.id}/edit`}
-                            className="bg-neutral-800 hover:bg-blue-600 text-[10px] font-black uppercase tracking-widest py-4 px-6 rounded-2xl text-neutral-400 hover:text-white transition-all active:scale-95 border border-white/5 shadow-xl"
-                          >
-                            Access Node
-                          </Link>
+                         <div className="flex items-center gap-2">
+                             <Link 
+                                href={`/${tenant.slug}`}
+                                target="_blank"
+                                className="bg-neutral-800 hover:bg-emerald-600 text-[10px] font-black uppercase tracking-widest py-4 px-6 rounded-2xl text-neutral-400 hover:text-white transition-all active:scale-95 border border-white/5 shadow-xl"
+                              >
+                                View Portal
+                              </Link>
+                             <Link 
+                                href={`/system/hospitals/${tenant.id}/edit`}
+                                className="bg-neutral-800 hover:bg-blue-600 text-[10px] font-black uppercase tracking-widest py-4 px-6 rounded-2xl text-neutral-400 hover:text-white transition-all active:scale-95 border border-white/5 shadow-xl"
+                              >
+                                Manage Node
+                              </Link>
+                         </div>
                       </div>
                     </div>
                   ))}

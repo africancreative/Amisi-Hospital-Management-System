@@ -8,6 +8,9 @@ export interface ExtendedSettings {
     taxId?: string | null;
     logoUrl?: string | null;
     marketingSlogan?: string | null;
+    primaryColor?: string | null;
+    secondaryColor?: string | null;
+    trialDays?: number;
 }
 
 export interface AdminInfo {
@@ -48,6 +51,10 @@ export async function provisionTenant(
 
     const controlDb = getControlDb();
 
+    const trialEndsAt = settings?.trialDays 
+        ? new Date(Date.now() + settings.trialDays * 24 * 60 * 60 * 1000)
+        : null;
+
     console.log(`[Provision] Storing tenant metadata in Control Plane...`);
     const tenant = await controlDb.tenant.create({
         data: {
@@ -58,6 +65,11 @@ export async function provisionTenant(
             encryptionKeyReference: keyRef,
             sharedSecret,
             tier: tier,
+            address: settings?.detailedAddress,
+            logoUrl: settings?.logoUrl,
+            primaryColor: settings?.primaryColor || "#2563EB",
+            secondaryColor: settings?.secondaryColor || "#0F172A",
+            trialEndsAt: trialEndsAt,
             enabledModules: enabledModules || getDefaultModulesForTier(tier)
         }
     });

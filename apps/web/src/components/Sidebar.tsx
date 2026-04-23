@@ -85,8 +85,8 @@ export default function Sidebar({
                 <div className="flex items-center gap-4">
                     <div className="relative group">
                         <div className="absolute -inset-1 bg-emerald-500 rounded-xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-                        <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-gray-900 border border-emerald-500/50 font-black text-emerald-500 shadow-2xl text-xl">
-                            A
+                        <div className="relative flex h-10 w-10 items-center justify-center bg-gray-900 border border-emerald-500/50 font-black text-emerald-500 shadow-2xl">
+                            <img src="/logo.png" alt="Logo" className="h-full w-full object-contain" />
                         </div>
                     </div>
                     <div className="flex flex-col">

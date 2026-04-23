@@ -34,6 +34,16 @@ model Tenant {
   status                 TenantStatus   @default(active)
   suspensionReason       String?        @map("suspension_reason")
   suspendedAt            DateTime?      @map("suspended_at")
+  
+  // Branding & Identity
+  address                String?
+  logoUrl                String?        @map("logo_url")
+  primaryColor           String?        @map("primary_color") @default("#2563EB")
+  secondaryColor         String?        @map("secondary_color") @default("#0F172A")
+  
+  // Lifecycle
+  trialEndsAt            DateTime?      @map("trial_ends_at")
+  
   enabledModules         Json           @map("enabled_modules") @default("{}")
   publicKeySpki          String?        @map("public_key_spki") @db.Text
   sharedSecret           String?        @map("shared_secret") @db.Text
@@ -43,6 +53,7 @@ model Tenant {
   entitlements           TenantModule[]
   payments               SystemPayment[]
   subscriptions          Subscription[]
+  usages                 TenantUsage[]
 
   @@map("tenants")
 }
@@ -192,6 +203,8 @@ model Subscription {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  usages    TenantUsage[]
+
   @@map("subscriptions")
 }
 
@@ -209,3 +222,24 @@ model PatientIndex {
   @@map("patient_index")
 }
 
+model TenantUsage {
+  id              String   @id @default(uuid())
+  tenantId        String   @map("tenant_id")
+  subscriptionId  String   @map("subscription_id")
+  
+  date            DateTime @db.Date
+  activeUsers     Int      @default(0) @map("active_users")
+  activePatients  Int      @default(0) @map("active_patients")
+  storageUsedMb   Decimal  @default(0) @map("storage_used_mb") @db.Decimal(10, 2)
+  apiCallsCount   Int      @default(0) @map("api_calls_count")
+  
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  tenant          Tenant   @relation(fields: [tenantId], references: [id])
+  subscription    Subscription @relation(fields: [subscriptionId], references: [id])
+
+  @@unique([tenantId, date])
+  @@index([subscriptionId])
+  @@map("tenant_usage")
+}

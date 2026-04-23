@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'auth.dart';
 
 enum ConnectionStatus { online, offline, degraded, unknown }
 
@@ -12,42 +14,43 @@ class ConnectivityService extends ChangeNotifier {
 
   ConnectionStatus _status = ConnectionStatus.unknown;
   String _currentEndpoint = '';
-  List<String> _endpoints = [];
-  Timer? _checkTimer;
-  bool _isInitialized = false;
+  bool _useLocal = false;
+  final List<String> _healthEndpoints = [];
+  final _connectivity = Connectivity();
+  StreamSubscription<List<ConnectivityResult>>? _subscription;
 
   ConnectionStatus get status => _status;
   String get currentEndpoint => _currentEndpoint;
+  bool get useLocal => _useLocal;
   bool get isOnline =>
       _status == ConnectionStatus.online ||
       _status == ConnectionStatus.degraded;
   bool get isOffline => _status == ConnectionStatus.offline;
 
-  void configure({List<String>? localEndpoints, String? cloudEndpoint}) {
-    _endpoints = [
-      ...?localEndpoints,
-      cloudEndpoint ?? 'https://api.amisigenuine.com/api/health',
-    ];
+  Future<void> initialize() async {
+    _subscription = _connectivity.onConnectivityChanged.listen((results) {
+      check();
+    });
+    await check();
   }
 
-  Future<void> initialize() async {
-    if (_isInitialized) return;
-    _isInitialized = true;
-
-    await check();
-    _checkTimer = Timer.periodic(const Duration(seconds: 10), (_) => check());
+  void configure(String slug, {String? localIp, int localPort = 3000}) {
+    _healthEndpoints.clear();
+    final config = ServerConfig();
+    if (localIp != null) {
+        config.setLocalServer(ip: localIp, port: localPort);
+    }
+    _healthEndpoints.addAll(config.getHealthEndpoints(slug));
   }
 
   @override
   void dispose() {
-    _checkTimer?.cancel();
+    _subscription?.cancel();
     super.dispose();
   }
 
-  void notifyListeners() {}
-
   Future<void> check() async {
-    for (final endpoint in _endpoints) {
+    for (final endpoint in _healthEndpoints) {
       try {
         final start = DateTime.now();
         final response = await _fetch(endpoint);
@@ -57,7 +60,8 @@ class ConnectivityService extends ChangeNotifier {
           _status = latency > 5000
               ? ConnectionStatus.degraded
               : ConnectionStatus.online;
-          _currentEndpoint = endpoint;
+          _currentEndpoint = endpoint.replaceAll('/api/health', '');
+          _useLocal = endpoint.contains('192.168') || endpoint.contains('localhost') || endpoint.contains('10.0.2.2');
           notifyListeners();
           return;
         }
@@ -68,6 +72,7 @@ class ConnectivityService extends ChangeNotifier {
 
     _status = ConnectionStatus.offline;
     _currentEndpoint = '';
+    _useLocal = false;
     notifyListeners();
   }
 
@@ -83,49 +88,36 @@ class ConnectivityService extends ChangeNotifier {
       return false;
     }
   }
-
-  void setOffline() {
-    _status = ConnectionStatus.offline;
-    notifyListeners();
-  }
-
-  void setOnline() {
-    _status = ConnectionStatus.online;
-    notifyListeners();
-  }
 }
 
 class NetworkRouter {
-  final ConnectivityService _connectivity;
-  String? _localEndpoint;
-  String? _cloudEndpoint;
-
-  NetworkRouter({
-    ConnectivityService? connectivity,
-    String? localEndpoint,
-    String? cloudEndpoint,
-  }) : _connectivity = connectivity ?? ConnectivityService(),
-       _localEndpoint = localEndpoint,
-       _cloudEndpoint = cloudEndpoint;
+  final ConnectivityService _connectivity = ConnectivityService();
+  final AuthState _auth = AuthState();
 
   String get currentEndpoint {
-    if (_connectivity.isOnline && _localEndpoint != null) {
-      return _localEndpoint!;
+    if (_connectivity.isOnline && _connectivity.currentEndpoint.isNotEmpty) {
+      return _connectivity.currentEndpoint;
     }
-    return _cloudEndpoint ?? _localEndpoint ?? '';
+    return ServerConfig.cloudBaseUrl;
   }
 
-  bool get useLocal => _connectivity.isOnline && _localEndpoint != null;
+  Map<String, String> _injectHeaders(Map<String, String>? headers) {
+    final h = Map<String, String>.from(headers ?? {});
+    if (_auth.hospitalSlug != null) {
+      h['x-tenant-slug'] = _auth.hospitalSlug!;
+    }
+    return h;
+  }
 
   Future<dynamic> get(String path, {Map<String, String>? headers}) async {
+    final h = _injectHeaders(headers);
     final url = '$currentEndpoint$path';
     try {
-      final response = await _httpGet(url, headers: headers);
-      return response;
+      return await _httpGet(url, headers: h);
     } catch (e) {
-      if (useLocal && _cloudEndpoint != null) {
-        final cloudUrl = '$_cloudEndpoint$path';
-        return await _httpGet(cloudUrl, headers: headers);
+      if (_connectivity.useLocal) {
+        final cloudUrl = '${ServerConfig.cloudBaseUrl}$path';
+        return await _httpGet(cloudUrl, headers: h);
       }
       rethrow;
     }
@@ -136,14 +128,14 @@ class NetworkRouter {
     dynamic body,
     Map<String, String>? headers,
   }) async {
+    final h = _injectHeaders(headers);
     final url = '$currentEndpoint$path';
     try {
-      final response = await _httpPost(url, body: body, headers: headers);
-      return response;
+      return await _httpPost(url, body: body, headers: h);
     } catch (e) {
-      if (useLocal && _cloudEndpoint != null) {
-        final cloudUrl = '$_cloudEndpoint$path';
-        return await _httpPost(cloudUrl, body: body, headers: headers);
+      if (_connectivity.useLocal) {
+        final cloudUrl = '${ServerConfig.cloudBaseUrl}$path';
+        return await _httpPost(cloudUrl, body: body, headers: h);
       }
       rethrow;
     }
@@ -180,7 +172,7 @@ class NetworkRouter {
       if (body.isEmpty) return null;
       return jsonDecode(body);
     }
-    throw HttpException('Request failed: ${response.statusCode}');
+    throw HttpException('Request failed: ${response.statusCode} - $body');
   }
 }
 

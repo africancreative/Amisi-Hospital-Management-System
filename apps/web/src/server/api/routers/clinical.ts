@@ -1,7 +1,8 @@
-import { tenantProcedure, router } from '@/server/trpc/trpc';
+import { tenantProcedure, router, clinicalProcedure } from '@/server/trpc/trpc';
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { BillingService } from '@amisimedos/sync/billing-service';
+import { logAudit } from '@/lib/audit';
 
 /**
  * Unified Clinical Router
@@ -15,7 +16,7 @@ export const clinicalRouter = router({
    * OPD / ED Registration
    * Initializes a patient visit and creates a 'Registration Fee'.
    */
-  startVisit: tenantProcedure
+  startVisit: clinicalProcedure
     .input(z.object({
       patientId: z.string(),
       type: z.enum(['OUTPATIENT', 'EMERGENCY']),
@@ -24,7 +25,6 @@ export const clinicalRouter = router({
     .mutation(async ({ ctx, input }) => {
       const billing = new BillingService(ctx.db);
 
-      // 1. Create the Visit
       const visit = await ctx.db!.visit.create({
         data: {
           ...input,
@@ -33,7 +33,6 @@ export const clinicalRouter = router({
         }
       });
 
-      // 2. Automated Billing: Registration Fee
       const fee = input.type === 'EMERGENCY' ? 25.00 : 15.00;
       await billing.recordServiceCharge({
         visitId: visit.id,
@@ -42,7 +41,6 @@ export const clinicalRouter = router({
         category: 'PROCEDURE'
       });
 
-      // 3. Collaborative Documentation: Initial Note
       await ctx.db!.clinicalNote.create({
         data: {
           visitId: visit.id,
@@ -53,6 +51,14 @@ export const clinicalRouter = router({
         }
       });
 
+      await logAudit({
+        action: 'CREATE',
+        resource: 'Visit',
+        resourceId: visit.id,
+        details: { type: input.type, patientId: input.patientId },
+        actor: { id: ctx.session.userId, name: ctx.session.userName, role: ctx.session.role }
+      });
+
       return visit;
     }),
 
@@ -60,7 +66,7 @@ export const clinicalRouter = router({
    * Triage Module (Standardized for ED/OPD)
    * Logs vitals, ESI level, and creates a 'Triage Fee'.
    */
-  recordTriage: tenantProcedure
+  recordTriage: clinicalProcedure
     .input(z.object({
       visitId: z.string(),
       esiLevel: z.number().optional(),
@@ -251,6 +257,99 @@ export const clinicalRouter = router({
         where: { visitId: input.visitId },
         orderBy: { createdAt: 'desc' },
         include: { vitals: true, admission: true }
+      });
+    }),
+
+  /**
+   * createPrescription
+   * Doctor creates a new medication prescription.
+   */
+  createPrescription: clinicalProcedure
+    .input(z.object({
+      patientId: z.string(),
+      encounterId: z.string().optional(),
+      notes: z.string().optional(),
+      items: z.array(z.object({
+        drugName: z.string(),
+        dosage: z.string(),
+        frequency: z.string(),
+        duration: z.string(),
+        quantity: z.number().int().positive()
+      }))
+    }))
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db!.$transaction(async (tx) => {
+        // 1. Create Prescription
+        const prescription = await tx.prescription.create({
+          data: {
+            patientId: input.patientId,
+            encounterId: input.encounterId,
+            orderedBy: ctx.session.userId!,
+            notes: input.notes,
+            status: 'pending',
+            items: {
+              create: input.items
+            }
+          },
+          include: { items: true }
+        });
+
+        // 2. Timeline Event
+        await tx.patientTimelineEvent.create({
+          data: {
+            patientId: input.patientId,
+            eventType: 'PRESCRIPTION_CREATED',
+            title: 'Prescription created',
+            description: `${input.items.length} items prescribed: ${input.items.map(i => i.drugName).join(', ')}`,
+            actorId: ctx.session.userId,
+            actorRole: ctx.session.role,
+            encounterId: input.encounterId
+          }
+        });
+
+        return prescription;
+      });
+    }),
+
+  /**
+   * addEncounterNote
+   * Adds a clinical note specifically linked to an encounter.
+   */
+  addEncounterNote: tenantProcedure
+    .input(z.object({
+      encounterId: z.string(),
+      content: z.string(),
+      noteType: z.enum(['GENERAL', 'NURSING', 'DOCTOR', 'DISCHARGE', 'FOLLOW_UP']).default('GENERAL'),
+      isPrivate: z.boolean().default(false)
+    }))
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db!.encounterNote.create({
+        data: {
+          ...input,
+          authorId: ctx.session.userId!,
+          authorName: ctx.session.userName || 'Unknown',
+          authorRole: ctx.session.role || 'STAFF'
+        }
+      });
+    }),
+
+  /**
+   * addEncounterChat
+   * Real-time collaboration chat within an encounter.
+   */
+  addEncounterChat: tenantProcedure
+    .input(z.object({
+      encounterId: z.string(),
+      content: z.string()
+    }))
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db!.encounterChat.create({
+        data: {
+          ...input,
+          senderId: ctx.session.userId!,
+          senderName: ctx.session.userName || 'Unknown',
+          senderRole: ctx.session.role || 'STAFF'
+        }
       });
     })
 });

@@ -116,6 +116,7 @@ model Patient {
   surgeryRequests     SurgeryRequest[]
   labOrders           LabOrder[]
   visits              Visit[]
+  timelineEvents      PatientTimelineEvent[]
 
   @@map("patients")
 }
@@ -132,6 +133,15 @@ model ChatMessage {
   timestamp   DateTime @default(now())
   editedAt    DateTime? @map("edited_at")
   isDeleted   Boolean  @default(false) @map("is_deleted")
+  
+  // Thread support
+  replyToId   String?  @map("reply_to_id")
+  replyTo     ChatMessage? @relation("MessageReplies", fields: [replyToId], references: [id])
+  replies     ChatMessage[] @relation("MessageReplies")
+
+  // Read receipts
+  isRead      Boolean  @default(false) @map("is_read")
+  readAt      DateTime? @map("read_at")
   
   isClinical         Boolean @default(false) @map("is_clinical")
   isSystemGenerated  Boolean @default(false) @map("is_system_generated")
@@ -240,6 +250,9 @@ model Attachment {
   url       String   @db.Text
   fileName  String?  @map("file_name")
   fileSize  Int?     @map("file_size")
+  mimeType  String?  @map("mime_type")
+  thumbnail String?  @db.Text  // Base64 or CDN URL for image/video preview
+  duration  Int?     // seconds, for voice/video
   createdAt DateTime @default(now()) @map("created_at")
 
   @@index([messageId])
@@ -382,19 +395,58 @@ model ClinicalNote {
   authorId    String   @map("author_id")
   author      Employee @relation(fields: [authorId], references: [id])
   
-  type        String   @default("SOAP") // 'SOAP', 'NURSING', 'PROGRESS', 'CONSULT'
+  type        String   @default("SOAP") // 'SOAP', 'NURSING', 'PROGRESS', 'CONSULT', 'DISCHARGE'
   subjective  String?  @db.Text
   objective   String?  @db.Text
   assessment  String?  @db.Text
   plan        String?  @db.Text
-  content     String?  @db.Text // For free-text notes
+  content     String?  @db.Text  // Free-text / discharge summary
+
+  // Doctor signature & lock
+  isLocked    Boolean  @default(false) @map("is_locked")   // Once signed, cannot be edited
+  signedAt    DateTime? @map("signed_at")
+  signedByName String?  @map("signed_by_name")
   
   version     Int      @default(1)
   isSynced    Boolean  @default(false) @map("is_synced")
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
+  timelineEvents PatientTimelineEvent[]
+
+  @@index([patientId])
+  @@index([visitId])
   @@map("clinical_notes")
+}
+
+// Patient Timeline — a unified audit trail across all clinical activity
+model PatientTimelineEvent {
+  id          String   @id @default(uuid())
+  patientId   String   @map("patient_id")
+  patient     Patient  @relation(fields: [patientId], references: [id])
+
+  // What kind of event this is
+  eventType   String   @map("event_type")
+  // e.g. 'VISIT_OPENED', 'NOTE_ADDED', 'LAB_ORDERED', 'MEDICATION_GIVEN',
+  //      'PAYMENT_POSTED', 'MESSAGE_SENT', 'VITAL_RECORDED', 'DISCHARGE'
+
+  title       String               // Human-readable headline
+  description String?  @db.Text   // Optional detail
+
+  // Optional links to the originating source records
+  visitId      String?  @map("visit_id")
+  encounterId  String?  @map("encounter_id")
+  clinicalNoteId String? @map("clinical_note_id")
+  clinicalNote ClinicalNote? @relation(fields: [clinicalNoteId], references: [id])
+
+  actorId      String?  @map("actor_id")
+  actorName    String?  @map("actor_name")
+  actorRole    String?  @map("actor_role")
+
+  occurredAt   DateTime @default(now()) @map("occurred_at")
+
+  @@index([patientId, occurredAt])
+  @@map("patient_timeline_events")
 }
 
 model Ward {
@@ -491,7 +543,12 @@ model InventoryItem {
   sku          String?  @unique
   quantity     Int      @default(0)
   unit         String   // 'tablet', 'vial', 'box'
-  minLevel     Int      @default(10) @map("min_level")
+
+  // Reorder / Alert thresholds
+  minLevel     Int      @default(10) @map("min_level")     // Triggers low-stock alert
+  reorderLevel Int      @default(20) @map("reorder_level") // Suggested reorder point
+  reorderQty   Int      @default(50) @map("reorder_qty")   // Suggested reorder quantity
+
   expiryDate   DateTime? @map("expiry_date")
   
   // Asset Management
@@ -514,7 +571,11 @@ model InventoryItem {
   maintenanceLogs   AssetMaintenance[]
   vendorCatalogItems VendorCatalogItem[]
   billItems         BillItem[]
+  stockMovements    StockMovement[]
+  stockAlerts       StockAlert[]
 
+  @@index([category])
+  @@index([quantity])
   @@map("inventory_items")
 }
 
@@ -932,6 +993,37 @@ model Allergy {
   @@map("allergies")
 }
 
+model TaxProfile {
+  id          String   @id @default(uuid())
+  name        String   // e.g., 'VAT', 'Zero Rated'
+  rate        Decimal  @db.Decimal(5, 2)
+  description String?
+  isActive    Boolean  @default(true) @map("is_active")
+
+  version     Int      @default(1)
+  isSynced    Boolean  @default(false) @map("is_synced")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("tax_profiles")
+}
+
+model PricingRule {
+  id          String   @id @default(uuid())
+  name        String   // e.g., 'Senior Citizen Discount'
+  type        String   // 'DISCOUNT_PERCENT', 'DISCOUNT_FIXED', 'EXEMPTION'
+  value       Decimal? @db.Decimal(10, 2)
+  priority    Int      @default(0) // Higher priority applies first
+  isActive    Boolean  @default(true) @map("is_active")
+
+  version     Int      @default(1)
+  isSynced    Boolean  @default(false) @map("is_synced")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("pricing_rules")
+}
+
 model Invoice {
   id          String   @id @default(uuid())
   patientId   String   @map("patient_id")
@@ -943,6 +1035,7 @@ model Invoice {
 
   totalAmount   Decimal  @default(0) @map("total_amount") @db.Decimal(10, 2)
   balanceDue    Decimal  @default(0) @map("balance_due") @db.Decimal(10, 2)
+  currency      String   @default("USD")
   status        String   @default("OPEN") // 'OPEN', 'PARTIAL', 'PAID', 'VOID'
   
   // Insurance Support
@@ -967,6 +1060,7 @@ model Payment {
   invoice           Invoice  @relation(fields: [invoiceId], references: [id])
 
   amount    Decimal
+  currency  String   @default("USD")
   method    String   // e.g., 'cash', 'card', 'insurance', 'mobile_money'
   reference String?  // e.g., Transaction ID
 
@@ -992,6 +1086,15 @@ model BillItem {
   description       String
   quantity          Decimal  @db.Decimal(10, 2)
   unitPrice         Decimal  @map("unit_price") @db.Decimal(10, 2)
+  currency          String   @default("USD")
+  
+  taxRate           Decimal  @default(0) @map("tax_rate") @db.Decimal(5, 2)
+  taxAmount         Decimal  @default(0) @map("tax_amount") @db.Decimal(10, 2)
+  discountAmount    Decimal  @default(0) @map("discount_amount") @db.Decimal(10, 2)
+  discountReason    String?  @map("discount_reason")
+  isExempt          Boolean  @default(false) @map("is_exempt")
+  exemptionReason   String?  @map("exemption_reason")
+  
   totalPrice        Decimal  @map("total_price") @db.Decimal(10, 2)
   
   status            String   @default("UNPAID") // 'UNPAID', 'PARTIAL', 'PAID'
@@ -1216,8 +1319,52 @@ model InventoryBatch {
   batchNumber String            @map("batch_number")
   expiryDate  DateTime?         @map("expiry_date")
   quantity    Int               @default(0)
+  costPrice   Decimal?          @map("cost_price") @db.Decimal(10, 2) // For FEFO costing
 
+  @@index([itemId])
+  @@index([expiryDate])
   @@map("inventory_batches")
+}
+
+// Tracks every stock-in / stock-out event with reason codes
+model StockMovement {
+  id          String   @id @default(uuid())
+  itemId      String   @map("item_id")
+  item        InventoryItem @relation(fields: [itemId], references: [id])
+
+  type        String   // 'IN', 'OUT', 'ADJUSTMENT', 'RETURN', 'EXPIRED_DISPOSAL'
+  quantity    Int      // Positive for IN, negative for OUT
+  reason      String?  // e.g., 'GRN-0042', 'Dispensed to Rx-7890', 'Cycle Count'
+  reference   String?  // PO number, Prescription ID, etc.
+  actorId     String?  @map("actor_id")
+  actorName   String?  @map("actor_name")
+
+  balanceAfter Int     @map("balance_after") // Snapshot of qty after this movement
+
+  version     Int      @default(1)
+  isSynced    Boolean  @default(false) @map("is_synced")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([itemId, createdAt])
+  @@map("stock_movements")
+}
+
+// Persistent alert records — low stock and near-expiry
+model StockAlert {
+  id          String   @id @default(uuid())
+  itemId      String   @map("item_id")
+  item        InventoryItem @relation(fields: [itemId], references: [id])
+
+  alertType   String   // 'LOW_STOCK', 'EXPIRING_SOON', 'EXPIRED', 'OVERSTOCK'
+  message     String
+  isResolved  Boolean  @default(false) @map("is_resolved")
+  resolvedAt  DateTime? @map("resolved_at")
+
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([itemId, isResolved])
+  @@index([alertType, isResolved])
+  @@map("stock_alerts")
 }
 
 model AssetMaintenance {
@@ -1246,6 +1393,7 @@ model EventJournal {
   isSynced         Boolean  @default(false) @map("is_synced")
   direction        String   @default("OUTGOING") // 'OUTGOING' (Edge->Cloud), 'INCOMING' (Cloud->Edge)
   sequenceNumber   BigInt   @default(0) @map("sequence_number") // For ordered delta tracking
+  deviceId         String?  @map("device_id") // Originating physical device (e.g., tablet, local PC)
 
   // 1 row per event: queue state (retries/locks) is tracked here.
   syncQueue        SyncQueue?
@@ -2233,6 +2381,7 @@ model ChangeLog {
   
   isProcessed Boolean  @default(false) @map("is_processed")
   nodeId      String?  @map("node_id") // Originating edge node
+  deviceId    String?  @map("device_id") // Originating physical device
 
   @@index([timestamp])
   @@map("change_log")

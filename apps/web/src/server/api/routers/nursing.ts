@@ -1,7 +1,8 @@
-import { tenantProcedure, router } from '@/server/trpc/trpc';
+import { tenantProcedure, router, clinicalProcedure } from '@/server/trpc/trpc';
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { calculateNEWS2, getRiskLevel } from '@amisimedos/sync/news2';
+import { logAudit } from '@/lib/audit';
 
 export const nursingRouter = router({
   /**
@@ -40,7 +41,7 @@ export const nursingRouter = router({
    * recordVitals
    * Log a new set of vitals and calculate clinical stability (NEWS2).
    */
-  recordVitals: tenantProcedure
+  recordVitals: clinicalProcedure
     .input(z.object({
       patientId: z.string(),
       encounterId: z.string().optional(),
@@ -73,7 +74,7 @@ export const nursingRouter = router({
       const riskLevel = getRiskLevel(news2Score);
 
       // 4. Save Vitals Log
-      return ctx.db!.vitalsLog.create({
+      const log = await ctx.db!.vitalsLog.create({
         data: {
           ...input,
           news2Score,
@@ -81,6 +82,29 @@ export const nursingRouter = router({
           recordedAt: new Date()
         }
       });
+
+      // 5. Timeline Event
+      await ctx.db!.patientTimelineEvent.create({
+        data: {
+          patientId: input.patientId,
+          eventType: 'VITAL_RECORDED',
+          title: `Vitals recorded (NEWS2: ${news2Score})`,
+          description: `BP: ${input.bloodPressure || 'N/A'}, HR: ${input.heartRate || 'N/A'}, Temp: ${input.temperature || 'N/A'}. Status: ${riskLevel} RISK.`,
+          actorId: ctx.session.userId,
+          actorRole: ctx.session.role,
+          encounterId: input.encounterId
+        }
+      });
+
+      await logAudit({
+        action: 'CREATE',
+        resource: 'Vitals',
+        resourceId: log.id,
+        details: { patientId: input.patientId, news2Score },
+        actor: { id: ctx.session.userId, name: ctx.session.userName, role: ctx.session.role }
+      });
+
+      return log;
     }),
 
   /**
@@ -104,7 +128,7 @@ export const nursingRouter = router({
    * administerMedication
    * Record that a medication from a prescription was given.
    */
-  administerMedication: tenantProcedure
+  administerMedication: clinicalProcedure
     .input(z.object({
       encounterId: z.string(),
       medicationName: z.string(),
@@ -115,12 +139,43 @@ export const nursingRouter = router({
       notes: z.string().optional()
     }))
     .mutation(async ({ ctx, input }) => {
-      return ctx.db!.medicationAdministration.create({
+      const admin = await ctx.db!.medicationAdministration.create({
         data: {
           ...input,
           administeredAt: new Date()
         }
       });
+
+      // Timeline Event
+      const encounter = await ctx.db!.encounter.findUnique({
+        where: { id: input.encounterId },
+        select: { patientId: true, visitId: true }
+      });
+
+      if (encounter) {
+        await ctx.db!.patientTimelineEvent.create({
+          data: {
+            patientId: encounter.patientId,
+            eventType: 'MEDICATION_GIVEN',
+            title: `Medication Administered: ${input.medicationName}`,
+            description: `${input.dosage} via ${input.route}. Status: ${input.status}.`,
+            actorId: ctx.session.userId,
+            actorRole: ctx.session.role,
+            encounterId: input.encounterId,
+            visitId: encounter.visitId
+          }
+        });
+      }
+
+      await logAudit({
+        action: 'UPDATE',
+        resource: 'MedicationAdministration',
+        resourceId: admin.id,
+        details: { medication: input.medicationName, patientId: encounter?.patientId },
+        actor: { id: ctx.session.userId, name: ctx.session.userName, role: ctx.session.role }
+      });
+
+      return admin;
     })
 });
 

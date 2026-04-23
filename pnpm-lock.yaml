@@ -121,6 +121,9 @@ importers:
       '@amisimedos/auth':
         specifier: workspace:^
         version: link:../../packages/auth
+      '@amisimedos/billing':
+        specifier: workspace:^
+        version: link:../../packages/billing
       '@amisimedos/chat':
         specifier: workspace:^
         version: link:../../packages/chat
@@ -214,6 +217,9 @@ importers:
       tailwind-merge:
         specifier: ^3.5.0
         version: 3.5.0
+      uuid:
+        specifier: ^9.0.1
+        version: 9.0.1
       zod:
         specifier: ^3.23.8
         version: 3.25.76
@@ -230,6 +236,9 @@ importers:
       '@types/react-dom':
         specifier: ^19
         version: 19.2.3(@types/react@19.2.14)
+      '@types/uuid':
+        specifier: ^9.0.8
+        version: 9.0.8
       eslint:
         specifier: ^9
         version: 9.39.4(jiti@2.6.1)
@@ -268,6 +277,12 @@ importers:
       '@amisimedos/config':
         specifier: workspace:^
         version: link:../config
+      '@types/express':
+        specifier: ^4.17.21
+        version: 4.17.25
+      '@types/node':
+        specifier: ^20.12.7
+        version: 20.19.39
       typescript:
         specifier: ^5.4.5
         version: 5.9.3
@@ -2481,6 +2496,7 @@ packages:
   '@xmldom/xmldom@0.8.12':
     resolution: {integrity: sha512-9k/gHF6n/pAi/9tqr3m3aqkuiNosYTurLLUtc7xQ9sxB/wm7WPygCv8GYa6mS0fLJEHhqMC1ATYhz++U/lRHqg==}
     engines: {node: '>=10.0.0'}
+    deprecated: this version has critical issues, please update to the latest version
 
   abort-controller@3.0.0:
     resolution: {integrity: sha512-h8lQ8tacZYnR3vNQTgibj+tODHI5/+l06Au2Pcriv/Gmet0eaj4TwWH41sO9wnHDiQsEj19q0drzdWdeAHtweg==}

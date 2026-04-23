@@ -24,6 +24,8 @@ export async function createTenant(formData: FormData) {
     const taxId = formData.get('taxId') as string | null;
     const logoUrl = formData.get('logoUrl') as string | null;
     const marketingSlogan = formData.get('marketingSlogan') as string | null;
+    const primaryColor = formData.get('primaryColor') as string | null;
+    const secondaryColor = formData.get('secondaryColor') as string | null;
 
     const tier = (formData.get('tier') as DeploymentTier) || 'CLINIC';
 
@@ -65,7 +67,10 @@ export async function createTenant(formData: FormData) {
         detailedAddress,
         taxId,
         logoUrl,
-        marketingSlogan
+        marketingSlogan,
+        primaryColor,
+        secondaryColor,
+        trialDays: 3 // Fixed 3-day demo period
     }, enabledModules, {
         name: adminName,
         email: adminEmail,

@@ -82,25 +82,72 @@ export const radiologyRouter = router({
         });
 
         // 2. Update Study Status
-        await tx.imagingStudy.update({
+        const study = await tx.imagingStudy.update({
           where: { id: input.studyId },
           data: { status: 'REPORTED' }
         });
 
         // 3. Update parent order status if all studies are reported
-        const study = await tx.imagingStudy.findUnique({
-          where: { id: input.studyId },
-          select: { orderId: true }
-        });
-
         if (study?.orderId) {
           await tx.radiologyOrder.update({
              where: { id: study.orderId },
              data: { status: 'COMPLETED' }
           });
+
+          // 4. Timeline Event
+          await tx.patientTimelineEvent.create({
+            data: {
+              patientId: study.patientId,
+              eventType: 'RADIOLOGY_REPORT_SIGNED',
+              title: 'Radiology report signed',
+              description: `Report for ${study.studyDescription || 'study'} finalized. ${input.isCritical ? '⚠️ CRITICAL FINDINGS' : ''}`,
+              actorId: ctx.session.userId,
+              actorRole: ctx.session.role,
+              encounterId: study.encounterId
+            }
+          });
         }
 
         return report;
       });
+    }),
+
+  /**
+   * createOrder
+   * Doctor initiates a radiology order.
+   */
+  createOrder: tenantProcedure
+    .input(z.object({
+      patientId: z.string(),
+      encounterId: z.string(),
+      modality: z.enum(['XRAY', 'CT', 'MRI', 'US', 'PET', 'NM']),
+      targetRegion: z.string(),
+      clinicalIndication: z.string(),
+      priority: z.enum(['ROUTINE', 'URGENT', 'STAT']).default('ROUTINE'),
+      billedAmount: z.number().optional()
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const order = await ctx.db!.radiologyOrder.create({
+        data: {
+          ...input,
+          orderedById: ctx.session.userId!,
+          status: 'PENDING'
+        }
+      });
+
+      // Timeline Event
+      await ctx.db!.patientTimelineEvent.create({
+        data: {
+          patientId: input.patientId,
+          eventType: 'RADIOLOGY_ORDER_CREATED',
+          title: 'Radiology order created',
+          description: `${input.modality} of ${input.targetRegion} (${input.priority})`,
+          actorId: ctx.session.userId,
+          actorRole: ctx.session.role,
+          encounterId: input.encounterId
+        }
+      });
+
+      return order;
     })
 });

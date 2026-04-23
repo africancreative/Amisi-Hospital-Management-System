@@ -187,6 +187,9 @@ exports.Prisma.ChatMessageScalarFieldEnum = {
   timestamp: 'timestamp',
   editedAt: 'editedAt',
   isDeleted: 'isDeleted',
+  replyToId: 'replyToId',
+  isRead: 'isRead',
+  readAt: 'readAt',
   isClinical: 'isClinical',
   isSystemGenerated: 'isSystemGenerated'
 };
@@ -254,6 +257,9 @@ exports.Prisma.AttachmentScalarFieldEnum = {
   url: 'url',
   fileName: 'fileName',
   fileSize: 'fileSize',
+  mimeType: 'mimeType',
+  thumbnail: 'thumbnail',
+  duration: 'duration',
   createdAt: 'createdAt'
 };
 
@@ -338,10 +344,28 @@ exports.Prisma.ClinicalNoteScalarFieldEnum = {
   assessment: 'assessment',
   plan: 'plan',
   content: 'content',
+  isLocked: 'isLocked',
+  signedAt: 'signedAt',
+  signedByName: 'signedByName',
   version: 'version',
   isSynced: 'isSynced',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PatientTimelineEventScalarFieldEnum = {
+  id: 'id',
+  patientId: 'patientId',
+  eventType: 'eventType',
+  title: 'title',
+  description: 'description',
+  visitId: 'visitId',
+  encounterId: 'encounterId',
+  clinicalNoteId: 'clinicalNoteId',
+  actorId: 'actorId',
+  actorName: 'actorName',
+  actorRole: 'actorRole',
+  occurredAt: 'occurredAt'
 };
 
 exports.Prisma.WardScalarFieldEnum = {
@@ -407,6 +431,8 @@ exports.Prisma.InventoryItemScalarFieldEnum = {
   quantity: 'quantity',
   unit: 'unit',
   minLevel: 'minLevel',
+  reorderLevel: 'reorderLevel',
+  reorderQty: 'reorderQty',
   expiryDate: 'expiryDate',
   isAsset: 'isAsset',
   serialNumber: 'serialNumber',
@@ -672,6 +698,31 @@ exports.Prisma.AllergyScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.TaxProfileScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  rate: 'rate',
+  description: 'description',
+  isActive: 'isActive',
+  version: 'version',
+  isSynced: 'isSynced',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PricingRuleScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  type: 'type',
+  value: 'value',
+  priority: 'priority',
+  isActive: 'isActive',
+  version: 'version',
+  isSynced: 'isSynced',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.InvoiceScalarFieldEnum = {
   id: 'id',
   patientId: 'patientId',
@@ -679,6 +730,7 @@ exports.Prisma.InvoiceScalarFieldEnum = {
   visitId: 'visitId',
   totalAmount: 'totalAmount',
   balanceDue: 'balanceDue',
+  currency: 'currency',
   status: 'status',
   payerType: 'payerType',
   insurancePolicyNumber: 'insurancePolicyNumber',
@@ -693,6 +745,7 @@ exports.Prisma.PaymentScalarFieldEnum = {
   id: 'id',
   invoiceId: 'invoiceId',
   amount: 'amount',
+  currency: 'currency',
   method: 'method',
   reference: 'reference',
   version: 'version',
@@ -709,6 +762,13 @@ exports.Prisma.BillItemScalarFieldEnum = {
   description: 'description',
   quantity: 'quantity',
   unitPrice: 'unitPrice',
+  currency: 'currency',
+  taxRate: 'taxRate',
+  taxAmount: 'taxAmount',
+  discountAmount: 'discountAmount',
+  discountReason: 'discountReason',
+  isExempt: 'isExempt',
+  exemptionReason: 'exemptionReason',
   totalPrice: 'totalPrice',
   status: 'status',
   category: 'category',
@@ -844,7 +904,33 @@ exports.Prisma.InventoryBatchScalarFieldEnum = {
   locationId: 'locationId',
   batchNumber: 'batchNumber',
   expiryDate: 'expiryDate',
-  quantity: 'quantity'
+  quantity: 'quantity',
+  costPrice: 'costPrice'
+};
+
+exports.Prisma.StockMovementScalarFieldEnum = {
+  id: 'id',
+  itemId: 'itemId',
+  type: 'type',
+  quantity: 'quantity',
+  reason: 'reason',
+  reference: 'reference',
+  actorId: 'actorId',
+  actorName: 'actorName',
+  balanceAfter: 'balanceAfter',
+  version: 'version',
+  isSynced: 'isSynced',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.StockAlertScalarFieldEnum = {
+  id: 'id',
+  itemId: 'itemId',
+  alertType: 'alertType',
+  message: 'message',
+  isResolved: 'isResolved',
+  resolvedAt: 'resolvedAt',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.AssetMaintenanceScalarFieldEnum = {
@@ -868,7 +954,8 @@ exports.Prisma.EventJournalScalarFieldEnum = {
   publicKeyId: 'publicKeyId',
   isSynced: 'isSynced',
   direction: 'direction',
-  sequenceNumber: 'sequenceNumber'
+  sequenceNumber: 'sequenceNumber',
+  deviceId: 'deviceId'
 };
 
 exports.Prisma.AuditLogScalarFieldEnum = {
@@ -1482,7 +1569,8 @@ exports.Prisma.ChangeLogScalarFieldEnum = {
   userId: 'userId',
   timestamp: 'timestamp',
   isProcessed: 'isProcessed',
-  nodeId: 'nodeId'
+  nodeId: 'nodeId',
+  deviceId: 'deviceId'
 };
 
 exports.Prisma.SyncQueueScalarFieldEnum = {
@@ -1583,6 +1671,7 @@ exports.Prisma.ModelName = {
   EncounterChat: 'EncounterChat',
   Visit: 'Visit',
   ClinicalNote: 'ClinicalNote',
+  PatientTimelineEvent: 'PatientTimelineEvent',
   Ward: 'Ward',
   Bed: 'Bed',
   Admission: 'Admission',
@@ -1603,6 +1692,8 @@ exports.Prisma.ModelName = {
   Vitals: 'Vitals',
   Diagnosis: 'Diagnosis',
   Allergy: 'Allergy',
+  TaxProfile: 'TaxProfile',
+  PricingRule: 'PricingRule',
   Invoice: 'Invoice',
   Payment: 'Payment',
   BillItem: 'BillItem',
@@ -1619,6 +1710,8 @@ exports.Prisma.ModelName = {
   InventoryLocation: 'InventoryLocation',
   InventoryBin: 'InventoryBin',
   InventoryBatch: 'InventoryBatch',
+  StockMovement: 'StockMovement',
+  StockAlert: 'StockAlert',
   AssetMaintenance: 'AssetMaintenance',
   EventJournal: 'EventJournal',
   AuditLog: 'AuditLog',

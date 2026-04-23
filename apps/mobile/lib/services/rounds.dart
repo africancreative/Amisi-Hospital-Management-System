@@ -1,7 +1,11 @@
 import 'connectivity.dart';
+import 'database_service.dart';
+import 'sync_service.dart';
 
 class RoundsService {
   final NetworkRouter _router;
+  final _db = DatabaseService();
+  final _sync = SyncService();
 
   RoundsService(this._router);
 
@@ -13,10 +17,20 @@ class RoundsService {
   }
 
   Future<List<Patient>> getWardPatients(String wardId) async {
-    final data = await _router.get('/api/wards/$wardId/patients');
-    return (data as List)
-        .map((p) => Patient.fromJson(p as Map<String, dynamic>))
-        .toList();
+    try {
+        final data = await _router.get('/api/wards/$wardId/patients');
+        final patients = (data as List)
+            .map((p) => Patient.fromJson(p as Map<String, dynamic>))
+            .toList();
+        
+        // Cache patients for offline use
+        await _db.cachePatients(data);
+        return patients;
+    } catch (e) {
+        // Fallback to cache
+        final cached = await _db.getCachedPatients();
+        return cached.map((p) => Patient.fromJson(p)).toList();
+    }
   }
 
   Future<List<Patient>> getMyRounds(String nurseId) async {
@@ -27,13 +41,13 @@ class RoundsService {
   }
 
   Future<void> startRound(String nurseId, String wardId) async {
-    await _router.post(
-      '/api/rounds/start',
-      body: <String, dynamic>{
-        'nurseId': nurseId,
-        'wardId': wardId,
-        'startedAt': DateTime.now().toIso8601String(),
-      },
+    await _sync.recordRounds(
+        patientId: 'WARD_$wardId', // Special key for ward rounds start
+        data: {
+            'action': 'START_ROUND',
+            'nurseId': nurseId,
+            'wardId': wardId,
+        }
     );
   }
 
@@ -42,14 +56,13 @@ class RoundsService {
     String patientId,
     RoundSummary summary,
   ) async {
-    await _router.post(
-      '/api/rounds/complete',
-      body: <String, dynamic>{
-        'nurseId': nurseId,
-        'patientId': patientId,
-        'summary': summary.toJson(),
-        'completedAt': DateTime.now().toIso8601String(),
-      },
+    await _sync.recordRounds(
+        patientId: patientId,
+        data: {
+            'action': 'COMPLETE_ROUND',
+            'nurseId': nurseId,
+            'summary': summary.toJson(),
+        }
     );
   }
 
@@ -58,14 +71,13 @@ class RoundsService {
     VitalSigns vitals,
     String recordedBy,
   ) async {
-    await _router.post(
-      '/api/vitals',
-      body: <String, dynamic>{
-        'patientId': patientId,
-        ...vitals.toJson(),
-        'recordedBy': recordedBy,
-        'timestamp': DateTime.now().toIso8601String(),
-      },
+    await _sync.recordRounds(
+        patientId: patientId,
+        data: {
+            'action': 'ADD_VITAL',
+            ...vitals.toJson(),
+            'recordedBy': recordedBy,
+        }
     );
   }
 
@@ -75,15 +87,15 @@ class RoundsService {
     String authorId,
     String authorName,
   ) async {
-    await _router.post(
-      '/api/clinical-notes',
-      body: <String, dynamic>{
-        'patientId': patientId,
-        'content': content,
-        'authorId': authorId,
-        'authorName': authorName,
-        'type': 'NURSING',
-      },
+    await _sync.recordRounds(
+        patientId: patientId,
+        data: {
+            'action': 'ADD_NOTE',
+            'content': content,
+            'authorId': authorId,
+            'authorName': authorName,
+            'type': 'NURSING',
+        }
     );
   }
 }

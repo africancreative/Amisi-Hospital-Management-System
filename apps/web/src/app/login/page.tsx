@@ -29,8 +29,8 @@ export default function LoginPage() {
             <div className="w-full max-w-md p-6 relative z-10">
                 <div className="flex justify-center mb-8">
                     <div className="flex items-center gap-3 bg-white/5 p-3 rounded-2xl border border-white/10 backdrop-blur-md shadow-xl">
-                        <div className="p-2 bg-blue-600 rounded-lg">
-                            <Hospital className="w-6 h-6 text-white" />
+                        <div className="p-0.5 bg-white/5 border border-white/10">
+                            <img src="/logo.png" alt="Logo" className="w-10 h-10 object-contain" />
                         </div>
                         <span className="text-xl font-bold text-white tracking-tight uppercase tracking-tighter italic">AmisiMedOS</span>
                     </div>
@@ -39,8 +39,8 @@ export default function LoginPage() {
                 <Card className="bg-neutral-900/50 border-white/10 backdrop-blur-xl shadow-2xl rounded-3xl overflow-hidden">
                     <CardHeader className="space-y-1 pb-8">
                         <div className="flex justify-center mb-4">
-                            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500 shadow-xl shadow-amber-500/20">
-                                <span className="text-2xl font-bold text-white uppercase italic">H</span>
+                            <div className="flex h-16 w-16 items-center justify-center bg-white/5 border border-white/10 shadow-xl p-1">
+                                <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
                             </div>
                         </div>
                         <CardTitle className="text-2xl font-bold text-white text-center">Hospital Staff Login</CardTitle>

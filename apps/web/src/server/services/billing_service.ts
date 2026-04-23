@@ -12,6 +12,21 @@ export class BillingService {
   constructor(private db: TenantClient) {}
 
   /**
+   * Calculates the final price of an item given its base price, tax rate, and discounts.
+   * Logic: (Base Price - Discount) + Tax = Final Price
+   */
+  calculateDynamicPrice(unitPrice: number, quantity: number, taxRate: number, discountAmount: number, isExempt: boolean) {
+    const subtotal = (unitPrice * quantity) - discountAmount;
+    const finalSubtotal = subtotal > 0 ? subtotal : 0; // Prevent negative prices
+    const taxAmount = isExempt ? 0 : finalSubtotal * (taxRate / 100);
+    return {
+      subtotal: finalSubtotal,
+      taxAmount,
+      totalPrice: finalSubtotal + taxAmount,
+    };
+  }
+
+  /**
    * Resolves or creates an active invoice for a Visit.
    * Ensures that every service request is immediately billed.
    */

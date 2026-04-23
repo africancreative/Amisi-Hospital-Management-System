@@ -92,10 +92,20 @@ async function seedComprehensive() {
         }
     });
 
-    // 2.2 Encounters
+    // 2.2 Visit & Encounter
+    const visit = await db.visit.create({
+        data: {
+            patientId: daniel.id,
+            type: 'OUTPATIENT',
+            status: 'OPEN',
+            reason: 'General checkup'
+        }
+    });
+
     const encounter = await db.encounter.create({
         data: {
             patientId: daniel.id,
+            visitId: visit.id,
             doctorName: 'Dr. Sarah Amisi',
             type: 'CONSULTATION',
             notes: 'Patient presents with mild fatigue. General checkup performed.',
@@ -141,6 +151,7 @@ async function seedComprehensive() {
         data: {
             patientId: daniel.id,
             encounterId: encounter.id,
+            visitId: visit.id,
             totalAmount: new Decimal(2500),
             balanceDue: new Decimal(0),
             status: 'PAID',
@@ -152,7 +163,7 @@ async function seedComprehensive() {
                         unitPrice: new Decimal(1000), 
                         totalPrice: new Decimal(1000),
                         category: 'CONSULTATION',
-                        visitId: encounter.id // Schema requires visitId or similar, encounterId is on Invoice
+                        visitId: visit.id
                     },
                     { 
                         description: 'Lab Panel', 
@@ -160,7 +171,7 @@ async function seedComprehensive() {
                         unitPrice: new Decimal(1500), 
                         totalPrice: new Decimal(1500),
                         category: 'LAB',
-                        visitId: encounter.id
+                        visitId: visit.id
                     },
                 ]
             }

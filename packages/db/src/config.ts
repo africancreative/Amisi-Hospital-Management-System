@@ -13,14 +13,17 @@ function loadEnv() {
         const dotenv = require('dotenv');
 
         const candidates = [
-            path.join(process.cwd(), '.env'),
             path.join(process.cwd(), '.env.local'),
+            path.join(process.cwd(), '.env'),
+            path.join(process.cwd(), '../../.env'), // Root from apps/x
+            path.join(process.cwd(), '../../../.env'), // Root from apps/x/y
+            path.join(__dirname, '../.env'), // Relative to this package's dist or src
+            path.join(__dirname, '../../.env'), // Relative to root from this package
         ];
 
         for (const candidate of candidates) {
             if (fs.existsSync(candidate)) {
                 dotenv.config({ path: candidate });
-                break;
             }
         }
     } catch (e) {

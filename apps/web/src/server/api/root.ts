@@ -15,6 +15,7 @@ import { clinicalRouter } from './routers/clinical';
 import { systemRouter } from './routers/system';
 import { auditRouter } from './routers/audit';
 import { authRouter } from './routers/auth';
+import { hrRouter } from './routers/hr';
 
 /**
  * Root tRPC Router
@@ -36,6 +37,7 @@ export const appRouter = router({
   analytics: analyticsRouter,
   clinical: clinicalRouter,
   audit: auditRouter,
+  hr: hrRouter,
 });
 
 
