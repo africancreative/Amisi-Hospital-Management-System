@@ -225,6 +225,7 @@ exports.Prisma.PlanScalarFieldEnum = {
   description: 'description',
   price: 'price',
   currency: 'currency',
+  billingCycle: 'billingCycle',
   features: 'features',
   maxPatients: 'maxPatients',
   maxUsers: 'maxUsers',
@@ -306,6 +307,11 @@ exports.TenantStatus = exports.$Enums.TenantStatus = {
   active: 'active',
   suspended: 'suspended',
   terminated: 'terminated'
+};
+
+exports.BillingCycle = exports.$Enums.BillingCycle = {
+  MONTHLY: 'MONTHLY',
+  YEARLY: 'YEARLY'
 };
 
 exports.Prisma.ModelName = {

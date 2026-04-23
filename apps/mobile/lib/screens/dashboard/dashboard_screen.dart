@@ -182,10 +182,10 @@ class DashboardScreen extends StatelessWidget {
     final List<Map<String, dynamic>> modules = [
       {'title': 'PMI (Patients)', 'icon': LucideIcons.bookOpen, 'color': primaryColor, 'route': '/patients'},
       {'title': 'RCM (Billing)', 'icon': LucideIcons.creditCard, 'color': const Color(0xFF10B981), 'route': '/billing'},
+      {'title': 'Staff Chat', 'icon': LucideIcons.messageSquare, 'color': Colors.purple, 'route': '/chat'},
       {'title': 'Pharmacy', 'icon': LucideIcons.pill, 'color': Colors.indigo, 'route': '/pharmacy'},
       {'title': 'Lab Results', 'icon': LucideIcons.flaskConical, 'color': Colors.amber, 'route': '/lab'},
       {'title': 'Inpatient', 'icon': LucideIcons.bed, 'color': const Color(0xFFE11D48), 'route': '/ipd'},
-      {'title': 'Inventory', 'icon': LucideIcons.box, 'color': Colors.teal, 'route': '/inventory'},
     ];
 
     return GridView.builder(

@@ -42,6 +42,12 @@ export default async function LandingPage() {
             </span>
           </div>
 
+          {/* Nav Links */}
+          <div className="hidden md:flex items-center gap-8">
+            <Link href="/pricing" className="text-sm font-bold text-neutral-400 hover:text-white transition-colors">Pricing</Link>
+            <Link href="/#features" className="text-sm font-bold text-neutral-400 hover:text-white transition-colors">Features</Link>
+          </div>
+
           {/* CTA only — no system admin link */}
           <div className="flex items-center gap-4">
             {isSystemAdmin ? (

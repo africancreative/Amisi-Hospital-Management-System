@@ -162,6 +162,11 @@ model SystemPayment {
   @@map("system_payments")
 }
 
+enum BillingCycle {
+  MONTHLY
+  YEARLY
+}
+
 model Plan {
   id          String   @id @default(uuid())
   name        String
@@ -169,6 +174,7 @@ model Plan {
   description String?
   price       Decimal  @db.Decimal(10, 2)
   currency    String   @default("USD")
+  billingCycle BillingCycle @default(MONTHLY) @map("billing_cycle")
   features    Json     @default("[]") // List of enabled feature codes
   
   maxPatients Int      @default(100) @map("max_patients")

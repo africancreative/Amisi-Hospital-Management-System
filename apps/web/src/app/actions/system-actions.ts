@@ -289,3 +289,12 @@ export async function getTenantLicense(tenantId: string) {
         isBlocked: isSuspended || isDemoExpired
     };
 }
+
+export async function getPayPalClientId() {
+    const db = getControlDb();
+    const settings = await db.globalSettings.findUnique({
+        where: { id: 'singleton' },
+        select: { paypalClientId: true }
+    });
+    return settings?.paypalClientId || process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || 'test';
+}

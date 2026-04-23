@@ -2,5 +2,15 @@
   "buildCommand": "pnpm build",
   "installCommand": "pnpm install",
   "outputDirectory": ".next",
-  "framework": "nextjs"
+  "framework": "nextjs",
+  "functions": {
+    "src/app/api/trpc/**/*": {
+      "maxDuration": 10,
+      "memory": 1024
+    },
+    "src/app/api/[[...path]]/**/*": {
+      "maxDuration": 15,
+      "memory": 1024
+    }
+  }
 }

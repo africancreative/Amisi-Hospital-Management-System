@@ -9,6 +9,7 @@ import 'screens/auth/login_screen.dart';
 import 'screens/dashboard/dashboard_screen.dart';
 import 'screens/patients/patient_list_screen.dart';
 import 'screens/billing/billing_list_screen.dart';
+import 'screens/chat/chat_list_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -60,6 +61,7 @@ class AmisiApp extends StatelessWidget {
         '/dashboard': (context) => const DashboardScreen(),
         '/patients': (context) => const PatientListScreen(),
         '/billing': (context) => const BillingListScreen(),
+        '/chat': (context) => const ChatListScreen(),
         // Placeholder routes for other modules
         '/pharmacy': (context) => _buildPlaceholder(context, 'PHARMACY'),
         '/lab': (context) => _buildPlaceholder(context, 'LABORATORY'),

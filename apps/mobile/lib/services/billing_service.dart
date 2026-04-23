@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'connectivity.dart';
+import 'sync_service.dart';
 
 class Invoice {
   final String id;
@@ -56,27 +57,20 @@ class BillingService {
     required double unitPrice,
     required String category,
   }) async {
-    try {
-      await _router.post(
-        '/api/trpc/billing.createBillItem?batch=1',
-        body: {
-          "0": {
-            "visitId": visitId,
-            "patientId": patientId,
-            "description": description,
-            "quantity": quantity,
-            "unitPrice": unitPrice,
-            "category": category,
-            "taxRate": 0,
-            "discountAmount": 0,
-            "isExempt": false
-          }
-        },
-      );
-    } catch (e) {
-      print('[BillingService] Charge capture failed: $e');
-      rethrow;
-    }
+    final syncService = SyncService();
+    await syncService.recordBillItem(
+      patientId: patientId,
+      visitId: visitId,
+      data: {
+        "description": description,
+        "quantity": quantity,
+        "unitPrice": unitPrice,
+        "category": category,
+        "taxRate": 0,
+        "discountAmount": 0,
+        "isExempt": false
+      },
+    );
   }
 
   Future<void> recordPayment({

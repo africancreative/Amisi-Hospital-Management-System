@@ -87,6 +87,14 @@ export const TenantStatus: {
 
 export type TenantStatus = (typeof TenantStatus)[keyof typeof TenantStatus]
 
+
+export const BillingCycle: {
+  MONTHLY: 'MONTHLY',
+  YEARLY: 'YEARLY'
+};
+
+export type BillingCycle = (typeof BillingCycle)[keyof typeof BillingCycle]
+
 }
 
 export type DeploymentTier = $Enums.DeploymentTier
@@ -96,6 +104,10 @@ export const DeploymentTier: typeof $Enums.DeploymentTier
 export type TenantStatus = $Enums.TenantStatus
 
 export const TenantStatus: typeof $Enums.TenantStatus
+
+export type BillingCycle = $Enums.BillingCycle
+
+export const BillingCycle: typeof $Enums.BillingCycle
 
 /**
  * ##  Prisma Client ʲˢ
@@ -8084,6 +8096,7 @@ export namespace Prisma {
     description: string | null
     price: Decimal | null
     currency: string | null
+    billingCycle: $Enums.BillingCycle | null
     maxPatients: number | null
     maxUsers: number | null
     maxBeds: number | null
@@ -8099,6 +8112,7 @@ export namespace Prisma {
     description: string | null
     price: Decimal | null
     currency: string | null
+    billingCycle: $Enums.BillingCycle | null
     maxPatients: number | null
     maxUsers: number | null
     maxBeds: number | null
@@ -8114,6 +8128,7 @@ export namespace Prisma {
     description: number
     price: number
     currency: number
+    billingCycle: number
     features: number
     maxPatients: number
     maxUsers: number
@@ -8146,6 +8161,7 @@ export namespace Prisma {
     description?: true
     price?: true
     currency?: true
+    billingCycle?: true
     maxPatients?: true
     maxUsers?: true
     maxBeds?: true
@@ -8161,6 +8177,7 @@ export namespace Prisma {
     description?: true
     price?: true
     currency?: true
+    billingCycle?: true
     maxPatients?: true
     maxUsers?: true
     maxBeds?: true
@@ -8176,6 +8193,7 @@ export namespace Prisma {
     description?: true
     price?: true
     currency?: true
+    billingCycle?: true
     features?: true
     maxPatients?: true
     maxUsers?: true
@@ -8279,6 +8297,7 @@ export namespace Prisma {
     description: string | null
     price: Decimal
     currency: string
+    billingCycle: $Enums.BillingCycle
     features: JsonValue
     maxPatients: number
     maxUsers: number
@@ -8314,6 +8333,7 @@ export namespace Prisma {
     description?: boolean
     price?: boolean
     currency?: boolean
+    billingCycle?: boolean
     features?: boolean
     maxPatients?: boolean
     maxUsers?: boolean
@@ -8332,6 +8352,7 @@ export namespace Prisma {
     description?: boolean
     price?: boolean
     currency?: boolean
+    billingCycle?: boolean
     features?: boolean
     maxPatients?: boolean
     maxUsers?: boolean
@@ -8348,6 +8369,7 @@ export namespace Prisma {
     description?: boolean
     price?: boolean
     currency?: boolean
+    billingCycle?: boolean
     features?: boolean
     maxPatients?: boolean
     maxUsers?: boolean
@@ -8375,6 +8397,7 @@ export namespace Prisma {
       description: string | null
       price: Prisma.Decimal
       currency: string
+      billingCycle: $Enums.BillingCycle
       features: Prisma.JsonValue
       maxPatients: number
       maxUsers: number
@@ -8782,6 +8805,7 @@ export namespace Prisma {
     readonly description: FieldRef<"Plan", 'String'>
     readonly price: FieldRef<"Plan", 'Decimal'>
     readonly currency: FieldRef<"Plan", 'String'>
+    readonly billingCycle: FieldRef<"Plan", 'BillingCycle'>
     readonly features: FieldRef<"Plan", 'Json'>
     readonly maxPatients: FieldRef<"Plan", 'Int'>
     readonly maxUsers: FieldRef<"Plan", 'Int'>
@@ -12244,6 +12268,7 @@ export namespace Prisma {
     description: 'description',
     price: 'price',
     currency: 'currency',
+    billingCycle: 'billingCycle',
     features: 'features',
     maxPatients: 'maxPatients',
     maxUsers: 'maxUsers',
@@ -12427,6 +12452,20 @@ export namespace Prisma {
    * Reference to a field of type 'Boolean'
    */
   export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+  /**
+   * Reference to a field of type 'BillingCycle'
+   */
+  export type EnumBillingCycleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BillingCycle'>
+    
+
+
+  /**
+   * Reference to a field of type 'BillingCycle[]'
+   */
+  export type ListEnumBillingCycleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BillingCycle[]'>
     
 
 
@@ -13052,6 +13091,7 @@ export namespace Prisma {
     description?: StringNullableFilter<"Plan"> | string | null
     price?: DecimalFilter<"Plan"> | Decimal | DecimalJsLike | number | string
     currency?: StringFilter<"Plan"> | string
+    billingCycle?: EnumBillingCycleFilter<"Plan"> | $Enums.BillingCycle
     features?: JsonFilter<"Plan">
     maxPatients?: IntFilter<"Plan"> | number
     maxUsers?: IntFilter<"Plan"> | number
@@ -13069,6 +13109,7 @@ export namespace Prisma {
     description?: SortOrderInput | SortOrder
     price?: SortOrder
     currency?: SortOrder
+    billingCycle?: SortOrder
     features?: SortOrder
     maxPatients?: SortOrder
     maxUsers?: SortOrder
@@ -13089,6 +13130,7 @@ export namespace Prisma {
     description?: StringNullableFilter<"Plan"> | string | null
     price?: DecimalFilter<"Plan"> | Decimal | DecimalJsLike | number | string
     currency?: StringFilter<"Plan"> | string
+    billingCycle?: EnumBillingCycleFilter<"Plan"> | $Enums.BillingCycle
     features?: JsonFilter<"Plan">
     maxPatients?: IntFilter<"Plan"> | number
     maxUsers?: IntFilter<"Plan"> | number
@@ -13106,6 +13148,7 @@ export namespace Prisma {
     description?: SortOrderInput | SortOrder
     price?: SortOrder
     currency?: SortOrder
+    billingCycle?: SortOrder
     features?: SortOrder
     maxPatients?: SortOrder
     maxUsers?: SortOrder
@@ -13130,6 +13173,7 @@ export namespace Prisma {
     description?: StringNullableWithAggregatesFilter<"Plan"> | string | null
     price?: DecimalWithAggregatesFilter<"Plan"> | Decimal | DecimalJsLike | number | string
     currency?: StringWithAggregatesFilter<"Plan"> | string
+    billingCycle?: EnumBillingCycleWithAggregatesFilter<"Plan"> | $Enums.BillingCycle
     features?: JsonWithAggregatesFilter<"Plan">
     maxPatients?: IntWithAggregatesFilter<"Plan"> | number
     maxUsers?: IntWithAggregatesFilter<"Plan"> | number
@@ -14069,6 +14113,7 @@ export namespace Prisma {
     description?: string | null
     price: Decimal | DecimalJsLike | number | string
     currency?: string
+    billingCycle?: $Enums.BillingCycle
     features?: JsonNullValueInput | InputJsonValue
     maxPatients?: number
     maxUsers?: number
@@ -14086,6 +14131,7 @@ export namespace Prisma {
     description?: string | null
     price: Decimal | DecimalJsLike | number | string
     currency?: string
+    billingCycle?: $Enums.BillingCycle
     features?: JsonNullValueInput | InputJsonValue
     maxPatients?: number
     maxUsers?: number
@@ -14103,6 +14149,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     currency?: StringFieldUpdateOperationsInput | string
+    billingCycle?: EnumBillingCycleFieldUpdateOperationsInput | $Enums.BillingCycle
     features?: JsonNullValueInput | InputJsonValue
     maxPatients?: IntFieldUpdateOperationsInput | number
     maxUsers?: IntFieldUpdateOperationsInput | number
@@ -14120,6 +14167,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     currency?: StringFieldUpdateOperationsInput | string
+    billingCycle?: EnumBillingCycleFieldUpdateOperationsInput | $Enums.BillingCycle
     features?: JsonNullValueInput | InputJsonValue
     maxPatients?: IntFieldUpdateOperationsInput | number
     maxUsers?: IntFieldUpdateOperationsInput | number
@@ -14137,6 +14185,7 @@ export namespace Prisma {
     description?: string | null
     price: Decimal | DecimalJsLike | number | string
     currency?: string
+    billingCycle?: $Enums.BillingCycle
     features?: JsonNullValueInput | InputJsonValue
     maxPatients?: number
     maxUsers?: number
@@ -14153,6 +14202,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     currency?: StringFieldUpdateOperationsInput | string
+    billingCycle?: EnumBillingCycleFieldUpdateOperationsInput | $Enums.BillingCycle
     features?: JsonNullValueInput | InputJsonValue
     maxPatients?: IntFieldUpdateOperationsInput | number
     maxUsers?: IntFieldUpdateOperationsInput | number
@@ -14169,6 +14219,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     currency?: StringFieldUpdateOperationsInput | string
+    billingCycle?: EnumBillingCycleFieldUpdateOperationsInput | $Enums.BillingCycle
     features?: JsonNullValueInput | InputJsonValue
     maxPatients?: IntFieldUpdateOperationsInput | number
     maxUsers?: IntFieldUpdateOperationsInput | number
@@ -15034,6 +15085,13 @@ export namespace Prisma {
     amount?: SortOrder
   }
 
+  export type EnumBillingCycleFilter<$PrismaModel = never> = {
+    equals?: $Enums.BillingCycle | EnumBillingCycleFieldRefInput<$PrismaModel>
+    in?: $Enums.BillingCycle[] | ListEnumBillingCycleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.BillingCycle[] | ListEnumBillingCycleFieldRefInput<$PrismaModel>
+    not?: NestedEnumBillingCycleFilter<$PrismaModel> | $Enums.BillingCycle
+  }
+
   export type IntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -15052,6 +15110,7 @@ export namespace Prisma {
     description?: SortOrder
     price?: SortOrder
     currency?: SortOrder
+    billingCycle?: SortOrder
     features?: SortOrder
     maxPatients?: SortOrder
     maxUsers?: SortOrder
@@ -15075,6 +15134,7 @@ export namespace Prisma {
     description?: SortOrder
     price?: SortOrder
     currency?: SortOrder
+    billingCycle?: SortOrder
     maxPatients?: SortOrder
     maxUsers?: SortOrder
     maxBeds?: SortOrder
@@ -15090,6 +15150,7 @@ export namespace Prisma {
     description?: SortOrder
     price?: SortOrder
     currency?: SortOrder
+    billingCycle?: SortOrder
     maxPatients?: SortOrder
     maxUsers?: SortOrder
     maxBeds?: SortOrder
@@ -15103,6 +15164,16 @@ export namespace Prisma {
     maxPatients?: SortOrder
     maxUsers?: SortOrder
     maxBeds?: SortOrder
+  }
+
+  export type EnumBillingCycleWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.BillingCycle | EnumBillingCycleFieldRefInput<$PrismaModel>
+    in?: $Enums.BillingCycle[] | ListEnumBillingCycleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.BillingCycle[] | ListEnumBillingCycleFieldRefInput<$PrismaModel>
+    not?: NestedEnumBillingCycleWithAggregatesFilter<$PrismaModel> | $Enums.BillingCycle
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumBillingCycleFilter<$PrismaModel>
+    _max?: NestedEnumBillingCycleFilter<$PrismaModel>
   }
 
   export type IntWithAggregatesFilter<$PrismaModel = never> = {
@@ -15562,6 +15633,10 @@ export namespace Prisma {
     connect?: SubscriptionWhereUniqueInput | SubscriptionWhereUniqueInput[]
   }
 
+  export type EnumBillingCycleFieldUpdateOperationsInput = {
+    set?: $Enums.BillingCycle
+  }
+
   export type IntFieldUpdateOperationsInput = {
     set?: number
     increment?: number
@@ -15924,6 +15999,23 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedBoolFilter<$PrismaModel>
     _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type NestedEnumBillingCycleFilter<$PrismaModel = never> = {
+    equals?: $Enums.BillingCycle | EnumBillingCycleFieldRefInput<$PrismaModel>
+    in?: $Enums.BillingCycle[] | ListEnumBillingCycleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.BillingCycle[] | ListEnumBillingCycleFieldRefInput<$PrismaModel>
+    not?: NestedEnumBillingCycleFilter<$PrismaModel> | $Enums.BillingCycle
+  }
+
+  export type NestedEnumBillingCycleWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.BillingCycle | EnumBillingCycleFieldRefInput<$PrismaModel>
+    in?: $Enums.BillingCycle[] | ListEnumBillingCycleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.BillingCycle[] | ListEnumBillingCycleFieldRefInput<$PrismaModel>
+    not?: NestedEnumBillingCycleWithAggregatesFilter<$PrismaModel> | $Enums.BillingCycle
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumBillingCycleFilter<$PrismaModel>
+    _max?: NestedEnumBillingCycleFilter<$PrismaModel>
   }
 
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
@@ -16669,6 +16761,7 @@ export namespace Prisma {
     description?: string | null
     price: Decimal | DecimalJsLike | number | string
     currency?: string
+    billingCycle?: $Enums.BillingCycle
     features?: JsonNullValueInput | InputJsonValue
     maxPatients?: number
     maxUsers?: number
@@ -16685,6 +16778,7 @@ export namespace Prisma {
     description?: string | null
     price: Decimal | DecimalJsLike | number | string
     currency?: string
+    billingCycle?: $Enums.BillingCycle
     features?: JsonNullValueInput | InputJsonValue
     maxPatients?: number
     maxUsers?: number
@@ -16814,6 +16908,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     currency?: StringFieldUpdateOperationsInput | string
+    billingCycle?: EnumBillingCycleFieldUpdateOperationsInput | $Enums.BillingCycle
     features?: JsonNullValueInput | InputJsonValue
     maxPatients?: IntFieldUpdateOperationsInput | number
     maxUsers?: IntFieldUpdateOperationsInput | number
@@ -16830,6 +16925,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     currency?: StringFieldUpdateOperationsInput | string
+    billingCycle?: EnumBillingCycleFieldUpdateOperationsInput | $Enums.BillingCycle
     features?: JsonNullValueInput | InputJsonValue
     maxPatients?: IntFieldUpdateOperationsInput | number
     maxUsers?: IntFieldUpdateOperationsInput | number

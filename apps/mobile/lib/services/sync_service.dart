@@ -120,4 +120,35 @@ class SyncService {
       payload: payload,
     );
   }
+
+  Future<void> recordBillItem({
+    required String patientId,
+    required String visitId,
+    required Map<String, dynamic> data,
+  }) async {
+    const endpoint = '/api/trpc/billing.createBillItem?batch=1';
+    final payload = {
+      "0": {
+        'patientId': patientId,
+        'visitId': visitId,
+        ...data,
+        'timestamp': DateTime.now().toIso8601String(),
+      }
+    };
+
+    if (_connectivity.isOnline) {
+      try {
+        await NetworkRouter().post(endpoint, body: payload);
+        return;
+      } catch (e) {
+        debugPrint('[Sync] Online push failed, queueing instead.');
+      }
+    }
+
+    await _db.addToQueue(
+      actionType: 'BILLING',
+      endpoint: endpoint,
+      payload: payload,
+    );
+  }
 }

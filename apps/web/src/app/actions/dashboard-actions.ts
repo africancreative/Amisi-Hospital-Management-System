@@ -2,6 +2,7 @@
 
 import { getControlDb, getTenantDb } from '@/lib/db';
 import { ensureRole, ensureSuperAdmin } from '@/lib/auth-utils';
+import { cookies } from 'next/headers';
 
 export async function getPlatformDashboardStats() {
     await ensureSuperAdmin();
@@ -52,4 +53,17 @@ export async function getTenantDashboardStats() {
         pendingLabs: pendingLabs.toString(),
         totalRevenue: new Intl.NumberFormat('en-KE', { style: 'currency', currency: 'KES' }).format(totalRevenue)
     };
+}
+
+export async function getTenantSubscription() {
+    const controlDb = getControlDb();
+    const cookieStore = await cookies();
+    const tenantId = cookieStore.get('amisi-tenant-id')?.value;
+    
+    if (!tenantId) return null;
+
+    return await controlDb.subscription.findFirst({
+        where: { tenantId, status: 'ACTIVE' },
+        include: { plan: true }
+    });
 }
