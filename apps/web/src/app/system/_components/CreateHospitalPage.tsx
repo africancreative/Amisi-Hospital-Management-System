@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { ProvisioningForm } from "../../../../components/system/provisioning-form";
+import { ProvisioningForm } from "@/components/system/provisioning-form";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 

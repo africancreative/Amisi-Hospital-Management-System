@@ -6,7 +6,7 @@ import {
   Baby, Bone, Layers3
 } from "lucide-react";
 import Link from "next/link";
-import { getGlobalSettings } from "./actions/system-actions";
+import { getGlobalSettings } from "../actions/system-actions";
 import { cookies } from "next/headers";
 import { getControlDb } from "@/lib/db";
 
