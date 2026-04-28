@@ -33,7 +33,7 @@ export function proxy(request: NextRequest) {
     const isSystemAdmin = cookieStore.get('amisi-is-system-admin')?.value === 'true';
 
     // 2. Public Exception Paths
-    const publicPaths = ['/login', '/system/login', '/lockout', '/api/auth'];
+    const publicPaths = ['/login', '/system/login', '/lockout', '/api/auth', '/pricing'];
     if (pathname === '/' || publicPaths.some(path => pathname.startsWith(path))) {
         if (pathname === '/' && process.env.NEXT_PUBLIC_IS_LOCAL_EDGE_NODE === 'true') {
             const edgeTenant = process.env.NEXT_PUBLIC_EDGE_TENANT_ID || 'amisi-premier';

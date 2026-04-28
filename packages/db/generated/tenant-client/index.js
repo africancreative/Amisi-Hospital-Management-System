@@ -1728,7 +1728,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/home/amisi/Documents/Dev/Amisi-Hospital-Management-System/packages/db/generated/tenant-client",
+      "value": "/vercel/share/v0-project/packages/db/generated/tenant-client",
       "fromEnvVar": null
     },
     "config": {
@@ -1737,7 +1737,7 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "debian-openssl-3.0.x",
+        "value": "rhel-openssl-3.0.x",
         "native": true
       },
       {
@@ -1746,12 +1746,11 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/home/amisi/Documents/Dev/Amisi-Hospital-Management-System/packages/db/prisma/tenant.prisma",
+    "sourceFilePath": "/vercel/share/v0-project/packages/db/prisma/tenant.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null,
-    "schemaEnvPath": "../../.env"
+    "rootEnvPath": null
   },
   "relativePath": "../../prisma",
   "clientVersion": "5.22.0",
@@ -1806,10 +1805,6 @@ warnEnvConflicts({
 const PrismaClient = getPrismaClient(config)
 exports.PrismaClient = PrismaClient
 Object.assign(exports, Prisma)
-
-// file annotations for bundling tools to include these files
-path.join(__dirname, "libquery_engine-debian-openssl-3.0.x.so.node");
-path.join(process.cwd(), "generated/tenant-client/libquery_engine-debian-openssl-3.0.x.so.node")
 
 // file annotations for bundling tools to include these files
 path.join(__dirname, "libquery_engine-rhel-openssl-3.0.x.so.node");
