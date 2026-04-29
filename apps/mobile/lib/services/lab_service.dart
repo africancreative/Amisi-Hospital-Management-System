@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'connectivity.dart';
 
 class LabOrder {
@@ -18,7 +17,8 @@ class LabOrder {
 
   factory LabOrder.fromJson(Map<String, dynamic> json) => LabOrder(
     id: json['id'],
-    patientName: '${json['patient']['firstName']} ${json['patient']['lastName']}',
+    patientName:
+        '${json['patient']['firstName']} ${json['patient']['lastName']}',
     testPanelId: json['testPanelId'],
     status: json['status'],
     orderedAt: json['orderedAt'],
@@ -59,8 +59,8 @@ class LabService {
             "orderId": orderId,
             "specimenType": specimenType,
             "barcode": barcode,
-            "collectedById": collectedById
-          }
+            "collectedById": collectedById,
+          },
         },
       );
     } catch (e) {
@@ -77,10 +77,7 @@ class LabService {
       await _router.post(
         '/api/trpc/lab.recordResults?batch=1',
         body: {
-          "0": {
-            "orderId": orderId,
-            "results": results
-          }
+          "0": {"orderId": orderId, "results": results},
         },
       );
     } catch (e) {

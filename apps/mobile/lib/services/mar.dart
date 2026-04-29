@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:async';
 import 'database_service.dart';
 import 'sync_service.dart';
@@ -6,7 +5,7 @@ import 'sync_service.dart';
 class MARService {
   final _db = DatabaseService();
   final _sync = SyncService();
-  
+
   // Mock data for demo (fallback if cache is empty)
   final List<Map<String, dynamic>> _medications = [
     {
@@ -16,7 +15,9 @@ class MARService {
       'drugName': 'Paracetamol',
       'dosage': '500mg',
       'frequency': 'TDS',
-      'scheduledAt': DateTime.now().add(const Duration(hours: -1)).toIso8601String(),
+      'scheduledAt': DateTime.now()
+          .add(const Duration(hours: -1))
+          .toIso8601String(),
       'status': 'DUE',
     },
     // ... other mock meds
@@ -37,18 +38,15 @@ class MARService {
   }) async {
     // 1. Update local state instantly (Optimistic UI)
     // In a real app, we would update the SQLite cache here
-    
+
     // 2. Add to Sync Queue via SyncService
     await _sync.recordMAR(
       patientId: patientId,
       data: {
         'medicationId': medicationId,
         'administeredBy': administeredBy,
-        'vitals': {
-          'hr': heartRate,
-          'bp': bloodPressure,
-        },
-      }
+        'vitals': {'hr': heartRate, 'bp': bloodPressure},
+      },
     );
 
     return true;

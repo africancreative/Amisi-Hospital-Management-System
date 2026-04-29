@@ -291,10 +291,59 @@ export async function getTenantLicense(tenantId: string) {
 }
 
 export async function getPayPalClientId() {
-    const db = getControlDb();
-    const settings = await db.globalSettings.findUnique({
-        where: { id: 'singleton' },
-        select: { paypalClientId: true }
-    });
-    return settings?.paypalClientId || process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || 'test';
+    try {
+        const db = getControlDb();
+        const settings = await db.globalSettings.findUnique({
+            where: { id: 'singleton' },
+            select: { paypalClientId: true }
+        });
+        return settings?.paypalClientId || process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || 'test';
+    } catch (error) {
+        console.warn('[System Action] Failed to fetch PayPal Client ID from DB. Falling back to env vars.');
+        return process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || 'test';
+    }
+}
+
+export async function notifyCheckoutAttempt(data: any, plan: any) {
+    const resendApiKey = process.env.RESEND_API_KEY;
+    const checkoutUrl = `http://localhost:3000/checkout?plan=${plan.name.split(' ')[0].toUpperCase()}`;
+
+    if (!resendApiKey) {
+        console.log('\n[MOCK EMAIL SYSTEM] ===========================');
+        console.log(`[To: amisi@amisigenuine.com] New Pending Checkout: ${data.name}`);
+        console.log(`[To: ${data.adminEmail}] Complete your AmisiMedOS Setup`);
+        console.log(`[Resume Link]: ${checkoutUrl}`);
+        console.log('===============================================\n');
+        return { success: true, mocked: true };
+    }
+
+    try {
+        const { Resend } = await import('resend');
+        const resend = new Resend(resendApiKey);
+
+        await resend.emails.send({
+            from: 'system@amisigenuine.com', // You must verify this domain in Resend
+            to: 'amisi@amisigenuine.com',
+            subject: `New Pending Checkout: ${data.name}`,
+            html: `<p>A new hospital has started checkout.</p>
+                   <p><strong>Hospital:</strong> ${data.name} (${data.slug})</p>
+                   <p><strong>Admin Email:</strong> ${data.adminEmail}</p>
+                   <p><strong>Plan:</strong> ${plan.name}</p>`
+        });
+
+        await resend.emails.send({
+            from: 'sales@amisigenuine.com', // You must verify this domain in Resend
+            to: data.adminEmail,
+            subject: `Complete your AmisiMedOS Setup`,
+            html: `<p>Hello ${data.adminName || 'Admin'},</p>
+                   <p>Thank you for choosing AmisiMedOS for <strong>${data.name}</strong>!</p>
+                   <p>If you weren't able to complete your payment, you can resume your checkout process at any time by clicking the link below:</p>
+                   <p><a href="${checkoutUrl}">Resume Checkout & Pay via PayPal</a></p>
+                   <p>Best Regards,<br/>The AmisiMedOS Team</p>`
+        });
+        return { success: true, mocked: false };
+    } catch (e) {
+        console.error("Failed to send checkout notification emails", e);
+        return { success: false };
+    }
 }

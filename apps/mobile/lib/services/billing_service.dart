@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'connectivity.dart';
 import 'sync_service.dart';
 
@@ -24,7 +23,9 @@ class Invoice {
     status: json['status'],
     totalAmount: (json['totalAmount'] as num).toDouble(),
     paidAmount: (json['paidAmount'] as num).toDouble(),
-    patientName: json['patient'] != null ? '${json['patient']['firstName']} ${json['patient']['lastName']}' : null,
+    patientName: json['patient'] != null
+        ? '${json['patient']['firstName']} ${json['patient']['lastName']}'
+        : null,
     createdAt: json['createdAt'],
   );
 }
@@ -68,7 +69,7 @@ class BillingService {
         "category": category,
         "taxRate": 0,
         "discountAmount": 0,
-        "isExempt": false
+        "isExempt": false,
       },
     );
   }
@@ -87,8 +88,8 @@ class BillingService {
             "amount": amount,
             "method": method,
             "currency": "USD",
-            "autoAllocate": true
-          }
+            "autoAllocate": true,
+          },
         },
       );
     } catch (e) {

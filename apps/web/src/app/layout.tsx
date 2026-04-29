@@ -10,6 +10,7 @@ import InternalChatSidebar from '@/components/InternalChatSidebar';
 import PWARegistration from '@/components/PWARegistration';
 import { getTenantLicense } from './actions/system-actions';
 import { TenantLockout } from '@/components/TenantLockout';
+import Navbar from '@/components/Navbar';
 
 
 
@@ -78,18 +79,26 @@ export default async function RootLayout({
         <body className="font-sans bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 flex min-h-screen" suppressHydrationWarning>
           <TrpcProvider>
             <PWARegistration />
-            {isLoggedIn && (
-              <Sidebar
-
-                enabledModules={enabledModules}
-                userRole={userRole}
-                userName={userName}
-                isSystemAdmin={isSystemAdmin}
-              />
+            {isLoggedIn ? (
+              <>
+                <Sidebar
+                  enabledModules={enabledModules}
+                  userRole={userRole}
+                  userName={userName}
+                  isSystemAdmin={isSystemAdmin}
+                />
+                <main className="flex-1 flex flex-col h-screen overflow-hidden">
+                  {children}
+                </main>
+              </>
+            ) : (
+              <div className="flex-1 flex flex-col h-screen overflow-hidden w-full">
+                <Navbar />
+                <main className="flex-1 overflow-y-auto overflow-x-hidden bg-[#07070a]">
+                  {children}
+                </main>
+              </div>
             )}
-            <main className="flex-1 flex flex-col h-screen overflow-hidden">
-              {children}
-            </main>
             {isLoggedIn && <RoleSwitcher />}
             {isLoggedIn && <InternalChatSidebar />}
           </TrpcProvider>

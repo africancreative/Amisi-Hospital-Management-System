@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'connectivity.dart';
 import 'database_service.dart';
 import 'auth.dart';
-import 'dart:io';
 
 class SyncService {
   static final SyncService _instance = SyncService._internal();
@@ -133,7 +132,7 @@ class SyncService {
         'visitId': visitId,
         ...data,
         'timestamp': DateTime.now().toIso8601String(),
-      }
+      },
     };
 
     if (_connectivity.isOnline) {

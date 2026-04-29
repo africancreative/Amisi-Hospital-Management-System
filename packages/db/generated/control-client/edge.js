@@ -305,7 +305,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/home/amisi/Documents/Dev/Amisi-Hospital-Management-System/packages/db/generated/control-client",
+      "value": "/home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/packages/db/generated/control-client",
       "fromEnvVar": null
     },
     "config": {
@@ -314,7 +314,7 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "debian-openssl-3.0.x",
+        "value": "rhel-openssl-3.0.x",
         "native": true
       },
       {
@@ -323,12 +323,11 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/home/amisi/Documents/Dev/Amisi-Hospital-Management-System/packages/db/prisma/control.prisma",
+    "sourceFilePath": "/home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/packages/db/prisma/control.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null,
-    "schemaEnvPath": "../../.env"
+    "rootEnvPath": null
   },
   "relativePath": "../../prisma",
   "clientVersion": "5.22.0",

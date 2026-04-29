@@ -64,11 +64,15 @@ export default function PricingPage() {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-bold h-14 px-8">
-              Start Free Trial
+            <Button asChild size="lg" className="rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-bold h-14 px-8">
+              <Link href="/checkout?plan=ESSENTIAL&period=yearly">
+                Start Free Trial
+              </Link>
             </Button>
-            <Button size="lg" variant="outline" className="rounded-2xl border-white/10 bg-white/5 hover:bg-white/10 text-white font-bold h-14 px-8">
-              Book Demo
+            <Button asChild size="lg" variant="outline" className="rounded-2xl border-white/10 bg-white/5 hover:bg-white/10 text-white font-bold h-14 px-8">
+              <Link href="/request">
+                Book Demo
+              </Link>
             </Button>
           </div>
         </div>
@@ -247,11 +251,15 @@ export default function PricingPage() {
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">Your Hospital?</span>
           </h2>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-bold h-16 px-10 text-lg shadow-xl shadow-blue-600/20">
-              🚀 Start Free Trial
+            <Button asChild size="lg" className="rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-bold h-16 px-10 text-lg shadow-xl shadow-blue-600/20">
+              <Link href="/checkout?plan=ESSENTIAL&period=yearly">
+                🚀 Start Free Trial
+              </Link>
             </Button>
-            <Button size="lg" variant="outline" className="rounded-2xl border-white/10 bg-white/5 hover:bg-white/10 text-white font-bold h-16 px-10 text-lg">
-              📞 Book a Demo
+            <Button asChild size="lg" variant="outline" className="rounded-2xl border-white/10 bg-white/5 hover:bg-white/10 text-white font-bold h-16 px-10 text-lg">
+              <Link href="/request">
+                📞 Book a Demo
+              </Link>
             </Button>
           </div>
         </div>
@@ -300,11 +308,11 @@ function PricingCard({ title, tag, originalPrice, price, period, description, fe
         ))}
       </div>
 
-      <Link href={href}>
-        <Button className={`w-full h-14 rounded-2xl font-black uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-[0.98] ${highlight ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-600/30' : 'bg-white/10 hover:bg-white/20 text-white'}`}>
+      <Button asChild className={`w-full h-14 rounded-2xl font-black uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-[0.98] ${highlight ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-600/30' : 'bg-white/10 hover:bg-white/20 text-white'}`}>
+        <Link href={href}>
             👉 {cta}
-        </Button>
-      </Link>
+        </Link>
+      </Button>
     </div>
   );
 }

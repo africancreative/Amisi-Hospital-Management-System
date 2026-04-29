@@ -9,7 +9,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: ${DB_PASSWORD:-amisi2026}
-      POSTGRES_DB: amisimedos
+      POSTGRES_DB: amisi_medos_tenant
     ports:
       - "5432:5432"
     volumes:
@@ -46,10 +46,27 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - DATABASE_URL=postgresql://postgres:${DB_PASSWORD:-amisi2026}@db:5432/amisimedos
+      - DATABASE_URL=postgresql://postgres:${DB_PASSWORD:-amisi2026}@db:5432/amisi_medos_tenant
       - VAULT_TOKEN=${VAULT_TOKEN:-amisi-root-token}
       - VAULT_ADDR=http://vault:8200
       - NODE_ENV=production
+    networks:
+      - amisi-network
+
+  # 4. Edge Sync Agent
+  sync-agent:
+    build:
+      context: .
+      dockerfile: packages/sync/Dockerfile
+    container_name: amisi-sync-agent
+    restart: always
+    depends_on:
+      - db
+      - app
+    environment:
+      - DATABASE_URL=postgresql://postgres:${DB_PASSWORD:-amisi2026}@db:5432/amisi_medos_tenant
+      - CLOUD_SYNC_URL=${CLOUD_SYNC_URL:-https://api.amisigenuine.com/api/sync}
+      - SYNC_SHARED_SECRET=${SYNC_SHARED_SECRET:-change-this-in-production}
     networks:
       - amisi-network
 
