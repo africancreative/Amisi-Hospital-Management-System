@@ -47,7 +47,7 @@ export const withJournaling = (options: JournalOptions) => {
               
               const signature = crypto
                 .createHmac('sha256', options.sharedSecret)
-                .update(`${model}:${entityId}:${action}:${JSON.stringify(result, (_, v) => typeof v === 'bigint' ? v.toString() : v)}`)
+                .update(`${model}:${entityId}:${action}:${JSON.stringify(result)}`)
                 .digest('hex');
 
               // 5a. Selected-Field Encryption (E2EE)
@@ -96,7 +96,7 @@ export const withJournaling = (options: JournalOptions) => {
               }
 
               const cipher = crypto.createCipheriv('aes-256-gcm', encryptionKey, iv);
-              const encrypted = Buffer.concat([cipher.update(JSON.stringify(sensitivePayload, (_, v) => typeof v === 'bigint' ? v.toString() : v), 'utf8'), cipher.final()]);
+              const encrypted = Buffer.concat([cipher.update(JSON.stringify(sensitivePayload), 'utf8'), cipher.final()]);
               const tag = cipher.getAuthTag();
               const encryptedPayload = `${iv.toString('hex')}:${tag.toString('hex')}:${encrypted.toString('hex')}`;
 
