@@ -1,12 +1,4 @@
-import { ControlClient } from '@amisimedos/db/client';
-
-let controlDbInstance: ControlClient | null = null;
-export function getControlDb() {
-    if (!controlDbInstance) {
-        controlDbInstance = new ControlClient();
-    }
-    return controlDbInstance;
-}
+import { getControlDb } from './db';
 
 export type ModuleCode = 'LAB' | 'PHARMACY' | 'INVENTORY' | 'HR' | 'ACCOUNTING' | 'EHR' | 'BILLING';
 

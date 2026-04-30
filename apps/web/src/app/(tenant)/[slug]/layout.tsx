@@ -1,7 +1,7 @@
 import { OnDutyProvider } from '@/context/OnDutyContext';
 import OnDutyWrapper from '@/components/clinical/OnDutyWrapper';
 import { getServerRole, getServerUser } from '@/lib/auth-utils';
-import { getControlDb } from '@/lib/modules';
+import { getControlDb } from '@/lib/db';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { 

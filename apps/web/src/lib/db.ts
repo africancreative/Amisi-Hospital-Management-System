@@ -13,6 +13,17 @@ export async function getTenantDb(providedTenantId?: string): Promise<TenantClie
 
     const headerList = await headers();
     let tenantId = headerList.get('x-resolved-tenant-id');
+    const tenantSlug = headerList.get('x-tenant-slug');
+
+    if (!tenantId && tenantSlug) {
+        // Resolve ID from slug if header is present
+        const controlDb = getControlDb();
+        const tenant = await controlDb.tenant.findUnique({
+            where: { slug: tenantSlug },
+            select: { id: true }
+        });
+        if (tenant) tenantId = tenant.id;
+    }
 
     // Development Fallback: If on localhost and no tenant context, use the first hospital
     if (!tenantId && process.env.NODE_ENV === 'development') {
