@@ -11,6 +11,7 @@ import PWARegistration from '@/components/PWARegistration';
 import { getTenantLicense } from './actions/system-actions';
 import { TenantLockout } from '@/components/TenantLockout';
 import Navbar from '@/components/Navbar';
+import ConnectionStatus from '@/components/ConnectionStatus';
 
 
 
@@ -101,6 +102,7 @@ export default async function RootLayout({
             )}
             {isLoggedIn && <RoleSwitcher />}
             {isLoggedIn && <InternalChatSidebar />}
+            <ConnectionStatus />
           </TrpcProvider>
         </body>
       </html>

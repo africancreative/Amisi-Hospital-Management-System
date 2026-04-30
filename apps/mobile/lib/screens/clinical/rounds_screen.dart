@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons/lucide_icons.dart';
 import '../../services/patient_service.dart';
 import '../../services/sync_service.dart';
 
@@ -110,14 +109,14 @@ class _RoundsScreenState extends State<RoundsScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 16),
           decoration: BoxDecoration(
-            color: isSelected ? color.withOpacity(0.1) : Colors.white.withOpacity(0.05),
+            color: isSelected ? color.withValues(alpha: 0.1) : Colors.white.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: isSelected ? color : Colors.white.withOpacity(0.1)),
+            border: Border.all(color: isSelected ? color : Colors.white.withValues(alpha: 0.1)),
           ),
           child: Center(
             child: Text(
               label,
-              style: TextStyle(color: isSelected ? color : Colors.white.withOpacity(0.5), fontWeight: FontWeight.bold, fontSize: 11),
+              style: TextStyle(color: isSelected ? color : Colors.white.withValues(alpha: 0.5), fontWeight: FontWeight.bold, fontSize: 11),
             ),
           ),
         ),
@@ -133,9 +132,9 @@ class _RoundsScreenState extends State<RoundsScreen> {
         const SizedBox(height: 16),
         Container(
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.05),
+            color: Colors.white.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.white.withOpacity(0.1)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
           ),
           child: TextField(
             controller: controller,
@@ -143,7 +142,7 @@ class _RoundsScreenState extends State<RoundsScreen> {
             style: const TextStyle(color: Colors.white),
             decoration: InputDecoration(
               hintText: hint,
-              hintStyle: TextStyle(color: Colors.white.withOpacity(0.2)),
+              hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.2)),
               border: InputBorder.none,
               contentPadding: const EdgeInsets.all(20),
             ),

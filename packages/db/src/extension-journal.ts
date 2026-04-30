@@ -1,6 +1,7 @@
 import { Prisma } from '../generated/tenant-client';
 import crypto from 'crypto';
 import { kms } from './lib/kms';
+import { mapToFHIRPatient, mapToFHIREncounter, mapToFHIRObservations } from './fhir';
 
 interface JournalOptions {
   sharedSecret: string;
@@ -63,6 +64,20 @@ export const withJournaling = (options: JournalOptions) => {
                 }
               });
 
+              // 5b. FHIR R4 Semantic Enrichment
+              // If the model is a clinical entity, add the FHIR representation to the non-sensitive payload
+              try {
+                if (model === 'Patient') {
+                  filteredPayload.fhir = mapToFHIRPatient(result as any);
+                } else if (model === 'Encounter') {
+                  filteredPayload.fhir = mapToFHIREncounter(result as any);
+                } else if (model === 'VitalsLog' || model === 'Vitals') {
+                  filteredPayload.fhir = mapToFHIRObservations(result as any);
+                }
+              } catch (fhirErr) {
+                console.warn(`[Journaling] FHIR Mapping failed for ${model}:`, fhirErr);
+              }
+
               // Authenticated Encryption (AES-GCM)
               const iv = crypto.randomBytes(12);
               
@@ -95,8 +110,8 @@ export const withJournaling = (options: JournalOptions) => {
                 sequenceNumber = (lastEvent?.sequenceNumber || BigInt(0)) + BigInt(1);
               }
 
-              // Persist to EventJournal
-              await (client as any).eventJournal.create({
+              // 6. Persist to EventJournal (The Change Log)
+              const journalEntry = await (client as any).eventJournal.create({
                 data: {
                   entityType: model,
                   entityId: entityId || 'BATCH',
@@ -110,6 +125,19 @@ export const withJournaling = (options: JournalOptions) => {
                   timestamp: new Date()
                 }
               });
+
+              // 7. If on Edge, also record in SyncQueue for replication
+              if (options.nodeType === 'EDGE') {
+                await (client as any).syncQueue.create({
+                  data: {
+                    eventId: journalEntry.id,
+                    payload: filteredPayload,
+                    direction: 'OUTGOING',
+                    status: 'PENDING',
+                    nextAttemptAt: new Date()
+                  }
+                });
+              }
 
             } catch (err) {
               console.error(`[Journaling Extension Error] Failed to log ${operation} on ${model}:`, err);

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../services/billing_service.dart';
-import 'package:lucide_icons/lucide_icons.dart';
 
 class BillingListScreen extends StatefulWidget {
   const BillingListScreen({super.key});
@@ -42,7 +41,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator(color: Color(0xFF2563EB)))
           : _invoices.isEmpty
-              ? Center(child: Text('NO OPEN INVOICES', style: TextStyle(color: Colors.white.withOpacity(0.5), letterSpacing: 1)))
+              ? Center(child: Text('NO OPEN INVOICES', style: TextStyle(color: Colors.white.withValues(alpha: 0.5), letterSpacing: 1)))
               : ListView.builder(
                   padding: const EdgeInsets.all(24),
                   itemCount: _invoices.length,
@@ -59,9 +58,9 @@ class _BillingListScreenState extends State<BillingListScreen> {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.white.withOpacity(0.05)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
       ),
       child: Column(
         children: [
@@ -78,14 +77,14 @@ class _BillingListScreenState extends State<BillingListScreen> {
                   const SizedBox(height: 4),
                   Text(
                     'INV: ${inv.id.substring(0, 8)}',
-                    style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1),
+                    style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1),
                   ),
                 ],
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: inv.status == 'PARTIAL' ? Colors.amber.withOpacity(0.1) : const Color(0xFFE11D48).withOpacity(0.1),
+                  color: inv.status == 'PARTIAL' ? Colors.amber.withValues(alpha: 0.1) : const Color(0xFFE11D48).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -118,7 +117,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
       children: [
         Text(
           label.toUpperCase(),
-          style: TextStyle(color: Colors.white.withOpacity(0.3), fontSize: 9, fontWeight: FontWeight.bold, letterSpacing: 1),
+          style: TextStyle(color: Colors.white.withValues(alpha: 0.3), fontSize: 9, fontWeight: FontWeight.bold, letterSpacing: 1),
         ),
         const SizedBox(height: 4),
         Text(

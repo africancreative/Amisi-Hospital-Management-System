@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'connectivity.dart';
+import 'package:flutter/foundation.dart';
 
 class Patient {
   final String id;
@@ -51,7 +52,7 @@ class PatientService {
       }
       return [];
     } catch (e) {
-      print('[PatientService] Search failed: $e');
+      debugPrint('[PatientService] Search failed: $e');
       return [];
     }
   }
@@ -70,7 +71,7 @@ class PatientService {
       }
       return null;
     } catch (e) {
-      print('[PatientService] Fetch failed: $e');
+      debugPrint('[PatientService] Fetch failed: $e');
       return null;
     }
   }

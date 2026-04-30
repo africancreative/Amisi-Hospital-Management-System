@@ -1,34 +1,67 @@
 import { TRPCLink, httpBatchLink } from '@trpc/client';
+import { observable } from '@trpc/server/observable';
 import { sentinel } from '@amisimedos/sync/connectivity/status';
 
 /**
- * Hybrid tRPC Link
+ * Hybrid tRPC Link with Automatic Failover Retry
  * 
- * An intelligent proxy link that routes requests between the Edge and Cloud
- * based on real-time connectivity state and procedure metadata.
+ * Routes requests based on real-time connectivity. If a request fails due to 
+ * a network transition, it forces a heartbeat check and retries on the new endpoint.
  */
 export const hybridLink: TRPCLink<any> = (opts) => {
   return ({ op, next }) => {
-    // 1. Identify if this procedure is Cloud-Only
-    const isCloudOnly = (op.context as any)?.cloudOnly === true;
+    return observable((observer) => {
+      const isCloudOnly = (op.context as any)?.cloudOnly === true;
+      
+      const execute = (targetUrl: string) => {
+        const url = targetUrl.endsWith('/api/trpc') ? targetUrl : `${targetUrl}/api/trpc`;
+        
+        return httpBatchLink({
+          url,
+          fetch(url, options) {
+            return fetch(url, { ...options, credentials: 'include' });
+          },
+          headers() {
+             const slug = typeof window !== 'undefined' ? window.location.pathname.split('/')[1] : '';
+             return {
+                'x-tenant-slug': slug,
+             };
+          },
+        })(opts)({ op, next });
+      };
 
-    // 2. Resolve the current target URL from the Sentinel
-    const baseUrl = sentinel.getResolvedUrl(isCloudOnly);
-    const url = baseUrl.endsWith('/api/trpc') ? baseUrl : `${baseUrl}/api/trpc`;
+      const initialUrl = sentinel.getResolvedUrl(isCloudOnly);
+      
+      const subscription = execute(initialUrl).subscribe({
+        next(value) {
+          observer.next(value);
+        },
+        error(err) {
+          // If it's a network error and we aren't already locked to cloud
+          const isNetworkError = err.name === 'TypeError' || err.message?.includes('fetch');
+          
+          if (isNetworkError && !isCloudOnly) {
+            console.warn('[HybridLink] Network error detected. Forcing failover probe...');
+            
+            sentinel.forceCheck().then(() => {
+                const nextUrl = sentinel.getResolvedUrl(isCloudOnly);
+                if (nextUrl !== initialUrl) {
+                    console.info(`[HybridLink] Failing over to ${nextUrl}. Retrying operation...`);
+                    execute(nextUrl).subscribe(observer);
+                } else {
+                    observer.error(err);
+                }
+            });
+          } else {
+            observer.error(err);
+          }
+        },
+        complete() {
+          observer.complete();
+        },
+      });
 
-    // 3. Delegate to the standard httpBatchLink logic with the resolved URL
-    // We create a one-off link with the dynamic URL and apply it to the current operation
-    return httpBatchLink({
-      url,
-      fetch(url, options) {
-        return fetch(url, { ...options, credentials: 'include' });
-      },
-      headers() {
-         const slug = typeof window !== 'undefined' ? window.location.pathname.split('/')[1] : '';
-         return {
-            'x-tenant-slug': slug,
-         };
-      },
-    })(opts)({ op, next });
+      return () => subscription.unsubscribe();
+    });
   };
 };

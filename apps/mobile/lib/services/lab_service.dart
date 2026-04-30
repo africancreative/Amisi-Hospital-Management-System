@@ -1,4 +1,5 @@
 import 'connectivity.dart';
+import 'package:flutter/foundation.dart';
 
 class LabOrder {
   final String id;
@@ -40,7 +41,7 @@ class LabService {
       }
       return [];
     } catch (e) {
-      print('[LabService] Order fetch failed: $e');
+      debugPrint('[LabService] Order fetch failed: $e');
       return [];
     }
   }
@@ -64,7 +65,7 @@ class LabService {
         },
       );
     } catch (e) {
-      print('[LabService] Sample collection failed: $e');
+      debugPrint('[LabService] Sample collection failed: $e');
       rethrow;
     }
   }
@@ -81,7 +82,7 @@ class LabService {
         },
       );
     } catch (e) {
-      print('[LabService] Result recording failed: $e');
+      debugPrint('[LabService] Result recording failed: $e');
       rethrow;
     }
   }

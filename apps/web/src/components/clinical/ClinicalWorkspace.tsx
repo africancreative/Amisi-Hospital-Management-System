@@ -11,7 +11,7 @@ import {
   Hospital,
   AlertCircle
 } from 'lucide-react';
-import { ClinicalChat } from './ClinicalChat';
+import ClinicalChat from './ClinicalChat';
 import { ClinicalNotesPanel } from './ClinicalNotesPanel';
 
 interface ClinicalWorkspaceProps {

@@ -279,6 +279,20 @@ model Encounter {
   triageNotes    String?   @map("triage_notes") @db.Text
   triageStartedAt DateTime @default(now()) @map("triage_started_at")
   
+  // Vitals
+  temperature    Float?
+  systolicBP     Int?      @map("systolic_bp")
+  diastolicBP    Int?      @map("diastolic_bp")
+  pulse          Int?
+  spo2           Int?
+  respRate       Int?      @map("resp_rate")
+  weight         Float?
+  height         Float?
+  
+  // Symptoms & Risk Flags (stored as comma-separated or JSON)
+  symptoms       String?   @db.Text
+  riskFlags      String?   @map("risk_flags") @db.Text
+  
   // EMTALA Compliance
   mseCompletedAt DateTime? @map("mse_completed_at") // Medical Screening Exam
   isStabilized   Boolean   @default(false) @map("is_stabilized")
@@ -287,10 +301,15 @@ model Encounter {
   dischargeSummary String? @map("discharge_summary") @db.Text
   dischargedAt     DateTime? @map("discharged_at")
   
-  // Workflow Tracking
-  status          String   @default("IN_PROGRESS") @map("status") // 'CHECKED_IN', 'TRIAGED', 'IN_PROGRESS', 'COMPLETED', 'DISCHARGED'
+  // Workflow Tracking (Aligned with Technical Whitepaper Section 7)
+  // States: REGISTERED, INTAKE_COMPLETE, TRIAGE_ASSIGNED, IN_CONSULTATION, DIAGNOSTICS_PENDING, TREATMENT_COMPLETE, BILLING_COMPLETE
+  status          String   @default("REGISTERED") @map("status") 
   department      String?  @map("department")
   roomBed         String?  @map("room_bed")
+  
+  // Queue Management
+  queueNumber     String?  @map("queue_number")
+  priority        String   @default("NORMAL") @map("priority") // 'NORMAL', 'EMERGENCY', 'URGENT'
   
   // Timestamps for workflow
   checkedInAt    DateTime? @map("checked_in_at")
@@ -543,6 +562,7 @@ model InventoryItem {
   sku          String?  @unique
   quantity     Int      @default(0)
   unit         String   // 'tablet', 'vial', 'box'
+  price        Float    @default(0.0)
 
   // Reorder / Alert thresholds
   minLevel     Int      @default(10) @map("min_level")     // Triggers low-stock alert
@@ -550,6 +570,7 @@ model InventoryItem {
   reorderQty   Int      @default(50) @map("reorder_qty")   // Suggested reorder quantity
 
   expiryDate   DateTime? @map("expiry_date")
+  location     String?   // 'Main Store', 'Pharmacy A'
   
   // Asset Management
   isAsset      Boolean  @default(false) @map("is_asset")
@@ -558,19 +579,16 @@ model InventoryItem {
   // Batch/Lot Control
   batchEnabled Boolean  @default(false) @map("batch_enabled") // For drugs
 
-  price        Decimal  @db.Decimal(10, 2)
-  
-  version   Int      @default(1)
-  isSynced  Boolean  @default(false) @map("is_synced")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  isSynced    Boolean  @default(false) @map("is_synced")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
 
+  billItems         BillItem[]
   dispensingRecords DispensingRecord[]
   poItems           PurchaseOrderItem[]
   batches           InventoryBatch[]
   maintenanceLogs   AssetMaintenance[]
   vendorCatalogItems VendorCatalogItem[]
-  billItems         BillItem[]
   stockMovements    StockMovement[]
   stockAlerts       StockAlert[]
 
@@ -964,7 +982,8 @@ model Diagnosis {
   encounterId String    @map("encounter_id")
   encounter   Encounter @relation(fields: [encounterId], references: [id])
 
-  code        String    // e.g., ICD-10 Code
+  code        String    // e.g., 'A00.0'
+  system      String    @default("ICD-10") // 'ICD-10', 'ICD-11', 'SNOMED-CT'
   description String
   category    String?   // e.g., 'Primary', 'Secondary'
 
@@ -1384,7 +1403,7 @@ model EventJournal {
   id               String   @id @default(uuid())
   entityType       String   @map("entity_type")
   entityId         String   @map("entity_id")
-  action           String   // 'CREATE', 'UPDATE', 'DELETE'
+  action           String   @map("operation_type") // 'CREATE', 'UPDATE', 'DELETE'
   payload          Json?
   encryptedPayload String?  @map("encrypted_payload") @db.Text
   timestamp        DateTime @default(now())
@@ -2412,3 +2431,38 @@ model SyncQueue {
   @@map("sync_queue")
 }
 
+
+/// Local Node Offline Sync Queue
+model LocalSyncQueue {
+  id            String   @id @default(uuid())
+  entityType    String
+  entityId      String
+  action        String   // CREATE, UPDATE, DELETE
+  payload       Json
+  status        String   @default("PENDING") // PENDING, SYNCING, FAILED, COMPLETED
+  retryCount    Int      @default(0)
+  lastError     String?
+  timestamp     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@index([status, timestamp])
+}
+
+/// Cloud Outbox CDC Journal
+model CloudSyncJournal {
+  sequenceId    BigInt   @id @default(autoincrement())
+  entityType    String
+  entityId      String
+  action        String   // CREATE, UPDATE, DELETE
+  payload       Json
+  timestamp     DateTime @default(now())
+
+  @@index([timestamp])
+}
+
+/// Local Node Sync Metadata (Cursor Tracking)
+model SyncMetadata {
+  id        String   @id
+  cursor    String
+  updatedAt DateTime @updatedAt
+}

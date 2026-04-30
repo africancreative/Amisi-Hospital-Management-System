@@ -1,5 +1,6 @@
 import 'connectivity.dart';
 import 'sync_service.dart';
+import 'package:flutter/foundation.dart';
 
 class Invoice {
   final String id;
@@ -45,7 +46,7 @@ class BillingService {
       }
       return [];
     } catch (e) {
-      print('[BillingService] Fetch failed: $e');
+      debugPrint('[BillingService] Fetch failed: $e');
       return [];
     }
   }
@@ -93,7 +94,7 @@ class BillingService {
         },
       );
     } catch (e) {
-      print('[BillingService] Payment recording failed: $e');
+      debugPrint('[BillingService] Payment recording failed: $e');
       rethrow;
     }
   }

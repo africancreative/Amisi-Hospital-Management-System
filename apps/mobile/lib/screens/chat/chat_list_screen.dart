@@ -42,7 +42,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator(color: Color(0xFF2563EB)))
           : _conversations.isEmpty
-              ? Center(child: Text('NO ACTIVE CHATS', style: TextStyle(color: Colors.white.withOpacity(0.3), letterSpacing: 1)))
+              ? Center(child: Text('NO ACTIVE CHATS', style: TextStyle(color: Colors.white.withValues(alpha: 0.3), letterSpacing: 1)))
               : ListView.builder(
                   padding: const EdgeInsets.all(24),
                   itemCount: _conversations.length,
@@ -69,9 +69,9 @@ class _ChatListScreenState extends State<ChatListScreen> {
         margin: const EdgeInsets.only(bottom: 16),
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.05),
+          color: Colors.white.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: Colors.white.withOpacity(0.05)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
         ),
         child: Row(
           children: [
@@ -79,7 +79,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
               width: 54,
               height: 54,
               decoration: BoxDecoration(
-                color: const Color(0xFF2563EB).withOpacity(0.1),
+                color: const Color(0xFF2563EB).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(18),
               ),
               child: const Icon(LucideIcons.messageSquare, color: Color(0xFF2563EB), size: 24),
@@ -98,7 +98,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                   const SizedBox(height: 4),
                   Text(
                     chat.lastMessage,
-                    style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 12),
+                    style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 12),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),

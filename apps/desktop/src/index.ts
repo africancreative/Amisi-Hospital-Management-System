@@ -7,6 +7,7 @@ import dotenv from 'dotenv';
 import os from 'os';
 import { getTenantDb } from '@amisimedos/db';
 import { runSyncLoop } from '@amisimedos/sync';
+import { mapToFHIRPatient, mapToFHIREncounter } from '@amisimedos/db/src/fhir';
 import { startLanDiscovery } from './lan-discovery';
 
 dotenv.config();
@@ -592,6 +593,44 @@ app.get('/api/chat/messages/:groupId', async (req: Request, res: Response) => {
         res.json(messages);
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch messages' });
+    }
+});
+
+// ---------------------------------------------------------------------------
+// FHIR R4 API (Interoperability Standards)
+// ---------------------------------------------------------------------------
+
+app.get('/api/fhir/Patient/:id', async (req: Request, res: Response) => {
+    try {
+        const tenantId = process.env.HOSPITAL_TENANT_ID!;
+        const db = await getTenantDb(tenantId);
+        const patient = await db.patient.findUnique({
+            where: { id: req.params.id }
+        });
+        if (!patient) return res.status(404).json({ resourceType: 'OperationOutcome', issue: [{ severity: 'error', code: 'not-found', diagnostics: 'Patient not found' }] });
+        
+        const fhirPatient = mapToFHIRPatient(patient as any);
+        res.setHeader('Content-Type', 'application/fhir+json');
+        res.json(fhirPatient);
+    } catch (error) {
+        res.status(500).json({ resourceType: 'OperationOutcome', issue: [{ severity: 'error', code: 'exception', diagnostics: String(error) }] });
+    }
+});
+
+app.get('/api/fhir/Encounter/:id', async (req: Request, res: Response) => {
+    try {
+        const tenantId = process.env.HOSPITAL_TENANT_ID!;
+        const db = await getTenantDb(tenantId);
+        const encounter = await db.encounter.findUnique({
+            where: { id: req.params.id }
+        });
+        if (!encounter) return res.status(404).json({ resourceType: 'OperationOutcome', issue: [{ severity: 'error', code: 'not-found', diagnostics: 'Encounter not found' }] });
+        
+        const fhirEncounter = mapToFHIREncounter(encounter as any);
+        res.setHeader('Content-Type', 'application/fhir+json');
+        res.json(fhirEncounter);
+    } catch (error) {
+        res.status(500).json({ resourceType: 'OperationOutcome', issue: [{ severity: 'error', code: 'exception', diagnostics: String(error) }] });
     }
 });
 

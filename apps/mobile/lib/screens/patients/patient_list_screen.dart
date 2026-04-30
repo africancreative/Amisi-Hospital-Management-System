@@ -47,9 +47,9 @@ class _PatientListScreenState extends State<PatientListScreen> {
             padding: const EdgeInsets.all(24.0),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.05),
+                color: Colors.white.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.white.withOpacity(0.1)),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
               ),
               child: TextField(
                 controller: _searchController,
@@ -57,7 +57,7 @@ class _PatientListScreenState extends State<PatientListScreen> {
                 onChanged: (val) => _loadPatients(val),
                 decoration: InputDecoration(
                   hintText: 'Search by Name or MRN...',
-                  hintStyle: TextStyle(color: Colors.white.withOpacity(0.3)),
+                  hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
                   prefixIcon: const Icon(LucideIcons.search, color: Color(0xFF2563EB), size: 20),
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.all(20),
@@ -69,7 +69,7 @@ class _PatientListScreenState extends State<PatientListScreen> {
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator(color: Color(0xFF2563EB)))
                 : _patients.isEmpty
-                    ? Center(child: Text('NO PATIENTS FOUND', style: TextStyle(color: Colors.white.withOpacity(0.5), letterSpacing: 1)))
+                    ? Center(child: Text('NO PATIENTS FOUND', style: TextStyle(color: Colors.white.withValues(alpha: 0.5), letterSpacing: 1)))
                     : ListView.builder(
                         padding: const EdgeInsets.symmetric(horizontal: 24),
                         itemCount: _patients.length,
@@ -99,9 +99,9 @@ class _PatientListScreenState extends State<PatientListScreen> {
         margin: const EdgeInsets.only(bottom: 16),
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.05),
+          color: Colors.white.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: Colors.white.withOpacity(0.05)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
         ),
         child: Row(
           children: [
@@ -109,7 +109,7 @@ class _PatientListScreenState extends State<PatientListScreen> {
               width: 50,
               height: 50,
               decoration: BoxDecoration(
-                color: const Color(0xFF2563EB).withOpacity(0.1),
+                color: const Color(0xFF2563EB).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: const Icon(LucideIcons.user, color: Color(0xFF2563EB)),
@@ -126,7 +126,7 @@ class _PatientListScreenState extends State<PatientListScreen> {
                   const SizedBox(height: 4),
                   Text(
                     'MRN: ${patient.mrn}',
-                    style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1),
+                    style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1),
                   ),
                 ],
               ),

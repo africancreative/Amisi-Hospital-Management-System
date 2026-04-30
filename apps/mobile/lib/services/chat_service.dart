@@ -1,4 +1,5 @@
 import 'connectivity.dart';
+import 'package:flutter/foundation.dart';
 
 class ChatConversation {
   final String id;
@@ -64,7 +65,7 @@ class ChatService {
       }
       return [];
     } catch (e) {
-      print('[ChatService] Error: $e');
+      debugPrint('[ChatService] Error: $e');
       return [];
     }
   }
@@ -80,7 +81,7 @@ class ChatService {
       }
       return [];
     } catch (e) {
-      print('[ChatService] Error: $e');
+      debugPrint('[ChatService] Error: $e');
       return [];
     }
   }
@@ -97,7 +98,7 @@ class ChatService {
         },
       );
     } catch (e) {
-      print('[ChatService] Error: $e');
+      debugPrint('[ChatService] Error: $e');
     }
   }
 }

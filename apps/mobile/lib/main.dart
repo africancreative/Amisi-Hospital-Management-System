@@ -88,7 +88,7 @@ class AmisiApp extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               'IMPLEMENTATION IN PROGRESS',
-              style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 10, fontWeight: FontWeight.bold),
+              style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 10, fontWeight: FontWeight.bold),
             ),
           ],
         ),

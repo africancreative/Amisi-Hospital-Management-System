@@ -16,6 +16,7 @@ import {
   LayoutGrid,
   ChevronRight
 } from 'lucide-react';
+import NurseTriage from '@/components/clinical/NurseTriage';
 
 export default function WardModule() {
   const { data: wards, isLoading, refetch } = api.ward.getWardsWithBeds.useQuery();
@@ -93,11 +94,26 @@ export default function WardModule() {
                        <div className="flex justify-between items-start mb-6"><div className="p-4 bg-white/5 rounded-2xl border border-white/10"><Bed className={selectedBed.status === 'OCCUPIED' ? 'text-blue-500' : 'text-emerald-500'} size={32} /></div><div className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${selectedBed.status === 'OCCUPIED' ? 'bg-blue-500/20 text-blue-500' : 'bg-emerald-500/20 text-emerald-500'}`}>{selectedBed.status}</div></div>
                        <h3 className="text-3xl font-black">Bed {selectedBed.number}</h3>
                     </div>
-                    <div className="flex-1 p-8 overflow-y-auto space-y-8">
-                       {selectedBed.status === 'OCCUPIED' && selectedBed.admissions?.[0] ? (
-                          <div className="bg-white/5 p-5 rounded-3xl border border-white/10"><p className="text-xs text-slate-500 font-bold uppercase mb-1">Patient Name</p><p className="text-xl font-black">{selectedBed.admissions[0].encounter.patient?.firstName} {selectedBed.admissions[0].encounter.patient?.lastName}</p></div>
-                       ) : (<div className="flex flex-col items-center justify-center h-full text-center space-y-4 opacity-40"><UserPlus size={48} strokeWidth={1} /><p className="text-xs font-black uppercase tracking-widest leading-relaxed">System Ready for<br />New Admission</p></div>)}
-                    </div>
+                     <div className="flex-1 p-8 overflow-y-auto space-y-8">
+                        {selectedBed.status === 'OCCUPIED' && selectedBed.admissions?.[0] ? (
+                           <div className="space-y-6">
+                              <div className="bg-white/5 p-5 rounded-3xl border border-white/10">
+                                 <p className="text-xs text-slate-500 font-bold uppercase mb-1">Patient Name</p>
+                                 <p className="text-xl font-black">{selectedBed.admissions[0].encounter.patient?.firstName} {selectedBed.admissions[0].encounter.patient?.lastName}</p>
+                              </div>
+                              
+                              <div className="pt-4">
+                                 <NurseTriage 
+                                    patient={{
+                                       name: `${selectedBed.admissions[0].encounter.patient?.firstName} ${selectedBed.admissions[0].encounter.patient?.lastName}`,
+                                       mrn: selectedBed.admissions[0].encounter.patient?.mrn
+                                    }} 
+                                    onSave={() => setSelectedBed(null)} 
+                                 />
+                              </div>
+                           </div>
+                        ) : (<div className="flex flex-col items-center justify-center h-full text-center space-y-4 opacity-40"><UserPlus size={48} strokeWidth={1} /><p className="text-xs font-black uppercase tracking-widest leading-relaxed">System Ready for<br />New Admission</p></div>)}
+                     </div>
                  </>
               ) : (<div className="flex flex-col items-center justify-center h-full text-slate-700"><Hotel size={64} strokeWidth={1} className="mb-4 opacity-20" /><p className="font-black text-lg">Select a bed unit</p></div>)}
            </div>

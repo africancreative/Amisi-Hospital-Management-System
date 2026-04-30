@@ -59,6 +59,7 @@ export type RealtimeEventType =
   | 'ONCOLOGY_EMERGENCY'
   | 'CRITICAL_RESULT_ALERT'
   | 'CREDENTIAL_EXPIRY_ALERT'
+  | 'QUEUE_UPDATED'
   | 'CHAT_MESSAGE_RECEIVED';
 
 export interface RealtimeEvent {

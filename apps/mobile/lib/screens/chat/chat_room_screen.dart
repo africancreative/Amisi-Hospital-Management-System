@@ -53,7 +53,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
         title: Column(
           children: [
             Text(widget.conversation.name?.toUpperCase() ?? 'CONVERSATION', style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w900, letterSpacing: 1)),
-            Text('${widget.conversation.memberNames.length} MEMBERS', style: TextStyle(color: Colors.white.withOpacity(0.3), fontSize: 9, fontWeight: FontWeight.bold)),
+            Text('${widget.conversation.memberNames.length} MEMBERS', style: TextStyle(color: Colors.white.withValues(alpha: 0.3), fontSize: 9, fontWeight: FontWeight.bold)),
           ],
         ),
       ),
@@ -87,7 +87,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
         padding: const EdgeInsets.all(16),
         constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.75),
         decoration: BoxDecoration(
-          color: isMe ? const Color(0xFF2563EB) : Colors.white.withOpacity(0.05),
+          color: isMe ? const Color(0xFF2563EB) : Colors.white.withValues(alpha: 0.05),
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(20),
             topRight: const Radius.circular(20),
@@ -114,8 +114,8 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     return Container(
       padding: EdgeInsets.fromLTRB(20, 10, 20, MediaQuery.of(context).padding.bottom + 20),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.2),
-        border: Border(top: BorderSide(color: Colors.white.withOpacity(0.05))),
+        color: Colors.black.withValues(alpha: 0.2),
+        border: Border(top: BorderSide(color: Colors.white.withValues(alpha: 0.05))),
       ),
       child: Row(
         children: [
@@ -123,7 +123,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.05),
+                color: Colors.white.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(24),
               ),
               child: TextField(
@@ -131,7 +131,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                 style: const TextStyle(color: Colors.white, fontSize: 14),
                 decoration: InputDecoration(
                   hintText: 'Type a message...',
-                  hintStyle: TextStyle(color: Colors.white.withOpacity(0.2)),
+                  hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.2)),
                   border: InputBorder.none,
                 ),
               ),

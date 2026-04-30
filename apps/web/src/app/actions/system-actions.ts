@@ -1,11 +1,12 @@
 'use server';
 
 import { getControlDb, DeploymentTier } from '@amisimedos/db/client';
+import type { Module, Tenant } from '@amisimedos/db/types';
 import { revalidatePath } from 'next/cache';
 import { ensureSuperAdmin } from '@/lib/auth-utils';
 import { Client, Environment, LogLevel } from "@paypal/paypal-server-sdk";
 
-export async function fetchModules() {
+export async function fetchModules(): Promise<Module[]> {
     await ensureSuperAdmin();
     const db = getControlDb();
     return db.module.findMany({
@@ -104,7 +105,7 @@ export async function updateGlobalSettings(data: any) {
     revalidatePath('/');
 }
 
-export async function getSystemAccountingData() {
+export async function getSystemAccountingData(): Promise<any> {
     await ensureSuperAdmin();
     const db = getControlDb();
 
@@ -265,7 +266,7 @@ export async function revokeApiKey(tenantId: string, keyToRevoke: string) {
     revalidatePath('/system/dashboard');
 }
 
-export async function getTenantLicense(tenantId: string) {
+export async function getTenantLicense(tenantId: string): Promise<any> {
     const db = getControlDb();
     const tenant = await db.tenant.findUnique({
         where: { id: tenantId },

@@ -92,16 +92,6 @@ export function ThermalReceipt({ invoice, hospitalName, location }: ThermalRecei
       </div>
 
       {/* Print styles isolation */}
-      <style jsx global>{`
-        @media screen {
-          .print-only { display: none; }
-        }
-        @media print {
-          body * { visibility: hidden; }
-          .print-only, .print-only * { visibility: visible; }
-          .print-only { position: absolute; left: 0; top: 0; }
-        }
-      `}</style>
     </div>
   );
 }

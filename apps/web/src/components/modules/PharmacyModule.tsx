@@ -14,6 +14,7 @@ import {
   PlusCircle,
   Activity
 } from 'lucide-react';
+import PharmacistDispensing from '@/components/clinical/PharmacistDispensing';
 
 export default function PharmacyModule() {
   const { data: inventory, isLoading: invLoading } = api.pharmacy.getInventory.useQuery();
@@ -112,77 +113,19 @@ export default function PharmacyModule() {
                    </button>
                  ))}
                </div>
-
-               <div className="flex-1 bg-white/5 border border-white/10 rounded-3xl overflow-hidden flex flex-col">
-                 {activeRx ? (
-                   <>
-                     <div className="p-8 border-b border-white/10">
-                        <div className="flex justify-between items-center">
-                           <div>
-                              <h2 className="text-2xl font-black">Dispensing Workflow</h2>
-                              <p className="text-slate-500 text-sm">Patient: {activeRx.patient?.firstName} {activeRx.patient?.lastName}</p>
-                           </div>
-                           <div className="flex items-center gap-3">
-                              <span className="text-xs font-bold text-slate-400 px-3 py-1 bg-white/5 rounded-lg border border-white/5 italic">ordered {new Date(activeRx.createdAt).toLocaleDateString()}</span>
-                              <div className="p-3 bg-emerald-500/10 rounded-xl text-emerald-500"><Pill size={24} /></div>
-                           </div>
-                        </div>
-                     </div>
-                     <div className="flex-1 p-8 overflow-y-auto space-y-8">
-                        <section className="space-y-4">
-                           <h3 className="text-sm font-bold text-slate-500 uppercase tracking-widest pl-3 border-l-2 border-emerald-500">Ordered Items</h3>
-                           <div className="grid grid-cols-1 gap-4">
-                              {activeRx.items.map((item: any) => (
-                                <div key={item.id} className="bg-white/[0.02] border border-white/5 p-4 rounded-2xl flex justify-between items-center group hover:border-white/20 transition-all">
-                                   <div className="flex items-center gap-4">
-                                      <div className="w-10 h-10 bg-emerald-500/10 rounded-xl flex items-center justify-center text-emerald-500"><Pill size={20} /></div>
-                                      <div>
-                                         <p className="font-black text-white">{item.drugName}</p>
-                                         <p className="text-xs text-slate-500">{item.dosage} • {item.frequency} for {item.duration}</p>
-                                      </div>
-                                   </div>
-                                   <div className="flex items-center gap-6">
-                                      <div className="text-center">
-                                         <p className="text-[10px] text-slate-600 font-black uppercase">Quantity</p>
-                                         <p className="text-xl font-black text-emerald-500">{item.quantity}</p>
-                                      </div>
-                                      <button className="p-2 bg-emerald-600 rounded-lg hover:bg-emerald-500 transition-all active:scale-95">
-                                         <ArrowRight size={20} className="text-white" />
-                                      </button>
-                                   </div>
-                                </div>
-                              ))}
-                           </div>
-                        </section>
-                        <div className="bg-amber-500/5 border border-amber-500/10 p-4 rounded-2xl flex gap-3">
-                           <AlertTriangle className="text-amber-500 shrink-0" size={20} />
-                           <div>
-                              <p className="text-sm font-bold text-amber-500">Pharmacy Conflict Check</p>
-                              <p className="text-xs text-slate-500">No contraindications detected for this patient profile and selected medication batch.</p>
-                           </div>
-                        </div>
-                     </div>
-                     <div className="p-6 bg-white/[0.02] border-t border-white/10 flex justify-between items-center">
-                        <div className="flex items-center gap-2">
-                           <User className="text-slate-500" size={16} />
-                           <span className="text-xs text-slate-500">Logged in as: <b>Lead Pharmacist</b></span>
-                        </div>
-                        <div className="flex gap-4">
-                           <button className="px-6 py-2 bg-white/5 hover:bg-white/10 text-slate-300 font-black rounded-xl text-sm transition-all">Report Issue</button>
-                           <button className="px-10 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl text-sm shadow-xl shadow-emerald-600/20 transition-all active:scale-95">Complete Dispense</button>
-                        </div>
-                     </div>
-                   </>
-                 ) : (
-                   <div className="flex flex-col items-center justify-center flex-1 text-slate-700">
-                      <div className="p-6 bg-white/5 rounded-full mb-4">
-                        <Package size={64} strokeWidth={1} />
-                      </div>
-                      <p className="text-lg font-black">Select an Rx from the queue</p>
-                      <p className="text-sm">Patient prescription details will populate here</p>
-                   </div>
-                 )}
-               </div>
+                <div className="flex-1 bg-white/5 border border-white/10 rounded-3xl overflow-hidden flex flex-col p-8">
+                  {activeRx ? (
+                    <PharmacistDispensing prescription={activeRx} />
+                  ) : (
+                    <div className="flex flex-col items-center justify-center flex-1 text-slate-700">
+                       <div className="p-6 bg-white/5 rounded-full mb-4">
+                         <Package size={64} strokeWidth={1} />
+                       </div>
+                       <p className="text-lg font-black">Select an Rx from the queue</p>
+                       <p className="text-sm">Patient prescription details will populate here</p>
+                    </div>
+                  )}
+                </div>
              </>
            ) : (
              <div className="flex-1 bg-white/5 border border-white/10 rounded-3xl overflow-hidden flex flex-col">

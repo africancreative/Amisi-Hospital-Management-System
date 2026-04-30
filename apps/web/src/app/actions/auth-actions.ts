@@ -40,7 +40,7 @@ export async function loginHospitalUser(prevState: AuthActionState, formData: Fo
             return { error: 'Invalid email or password' };
         }
 
-        if (user.status !== 'active') {
+        if (user.status?.toUpperCase() !== 'ACTIVE') {
             return { error: 'Account is not active' };
         }
 
@@ -60,8 +60,9 @@ export async function loginHospitalUser(prevState: AuthActionState, formData: Fo
             details: { email, tenant: tenantSlug }
         });
     } catch (e) {
-        console.error('Login error:', e);
-        return { error: 'An unexpected system error occurred' };
+        console.error(' [AUTH LOGIN FATAL] ', e);
+        const errorMsg = e instanceof Error ? e.message : 'Unknown';
+        return { error: `System Error: ${errorMsg}` };
     }
 
     redirect(`/${tenantSlug}`);

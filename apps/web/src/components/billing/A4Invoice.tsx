@@ -162,25 +162,6 @@ export function A4Invoice({ invoice, hospitalDetails }: A4InvoiceProps) {
       </footer>
 
       {/* Print styles isolation */}
-      <style jsx global>{`
-        @media screen {
-          .print-only-a4 { display: none; }
-        }
-        @media print {
-          @page { size: A4; margin: 0; }
-          body * { visibility: hidden; }
-          .print-only-a4, .print-only-a4 * { visibility: visible; }
-          .print-only-a4 { 
-            position: absolute; 
-            left: 0; 
-            top: 0; 
-            width: 210mm;
-            height: 297mm;
-            margin: 0;
-            padding: 20mm;
-          }
-        }
-      `}</style>
     </div>
   );
 }

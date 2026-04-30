@@ -34,7 +34,7 @@ class PatientDetailScreen extends StatelessWidget {
                 ),
                 borderRadius: BorderRadius.circular(32),
                 boxShadow: [
-                  BoxShadow(color: const Color(0xFF2563EB).withOpacity(0.3), blurRadius: 20, offset: const Offset(0, 10))
+                  BoxShadow(color: const Color(0xFF2563EB).withValues(alpha: 0.3), blurRadius: 20, offset: const Offset(0, 10))
                 ],
               ),
               child: Column(
@@ -45,7 +45,7 @@ class PatientDetailScreen extends StatelessWidget {
                         width: 64,
                         height: 64,
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
+                          color: Colors.white.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: const Icon(LucideIcons.user, color: Colors.white, size: 32),
@@ -61,7 +61,7 @@ class PatientDetailScreen extends StatelessWidget {
                             ),
                             Text(
                               'MRN: ${patient.mrn}',
-                              style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1),
+                              style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1),
                             ),
                           ],
                         ),
@@ -132,10 +132,10 @@ class PatientDetailScreen extends StatelessWidget {
   Widget _buildInfoBadge(String label, String value, IconData icon) {
     return Column(
       children: [
-        Icon(icon, color: Colors.white.withOpacity(0.5), size: 16),
+        Icon(icon, color: Colors.white.withValues(alpha: 0.5), size: 16),
         const SizedBox(height: 4),
         Text(value, style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)),
-        Text(label, style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 8, fontWeight: FontWeight.bold)),
+        Text(label, style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 8, fontWeight: FontWeight.bold)),
       ],
     );
   }
@@ -146,16 +146,16 @@ class PatientDetailScreen extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.05),
+          color: Colors.white.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: Colors.white.withOpacity(0.05)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
         ),
         child: Row(
           children: [
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Icon(icon, color: color, size: 24),
@@ -167,11 +167,11 @@ class PatientDetailScreen extends StatelessWidget {
                 children: [
                   Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 14, letterSpacing: 1)),
                   const SizedBox(height: 4),
-                  Text(subtitle, style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 11)),
+                  Text(subtitle, style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 11)),
                 ],
               ),
             ),
-            Icon(LucideIcons.chevronRight, color: Colors.white.withOpacity(0.2), size: 20),
+            Icon(LucideIcons.chevronRight, color: Colors.white.withValues(alpha: 0.2), size: 20),
           ],
         ),
       ),
@@ -192,7 +192,7 @@ class PatientDetailScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(title, style: const TextStyle(color: Color(0xFF2563EB), fontWeight: FontWeight.w900, fontSize: 10, letterSpacing: 1)),
-              Text(time, style: TextStyle(color: Colors.white.withOpacity(0.3), fontSize: 10)),
+              Text(time, style: TextStyle(color: Colors.white.withValues(alpha: 0.3), fontSize: 10)),
             ],
           ),
           const SizedBox(height: 4),

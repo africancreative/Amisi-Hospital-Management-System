@@ -1,7 +1,7 @@
 import { ControlClient } from '@amisimedos/db/client';
 
 let controlDbInstance: ControlClient | null = null;
-function getControlDb() {
+export function getControlDb() {
     if (!controlDbInstance) {
         controlDbInstance = new ControlClient();
     }

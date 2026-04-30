@@ -58,7 +58,7 @@ class DashboardScreen extends StatelessWidget {
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [primaryColor, primaryColor.withOpacity(0.8)],
+              colors: [primaryColor, primaryColor.withValues(alpha: 0.8)],
             ),
           ),
           child: Stack(
@@ -66,7 +66,7 @@ class DashboardScreen extends StatelessWidget {
               Positioned(
                 right: -50,
                 top: -50,
-                child: Icon(LucideIcons.activity, size: 200, color: Colors.white.withOpacity(0.05)),
+                child: Icon(LucideIcons.activity, size: 200, color: Colors.white.withValues(alpha: 0.05)),
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(24, 60, 24, 24),
@@ -83,7 +83,7 @@ class DashboardScreen extends StatelessWidget {
                               width: 40,
                               decoration: const BoxDecoration(
                                 color: Colors.white,
-                                image: const DecorationImage(
+                                image: DecorationImage(
                                   image: AssetImage('assets/logo.png'),
                                   fit: BoxFit.contain,
                                 ),
@@ -96,7 +96,7 @@ class DashboardScreen extends StatelessWidget {
                                 Text(
                                   'WELCOME BACK,',
                                   style: TextStyle(
-                                    color: Colors.white.withOpacity(0.7),
+                                    color: Colors.white.withValues(alpha: 0.7),
                                     fontSize: 10,
                                     fontWeight: FontWeight.w900,
                                     letterSpacing: 2,
@@ -118,7 +118,7 @@ class DashboardScreen extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
+                            color: Colors.white.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: const Icon(LucideIcons.bell, color: Colors.white, size: 20),
@@ -149,9 +149,9 @@ class DashboardScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -159,7 +159,7 @@ class DashboardScreen extends StatelessWidget {
           Icon(icon, color: color, size: 24),
           const SizedBox(height: 16),
           Text(value, style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w900)),
-          Text(title.toUpperCase(), style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1)),
+          Text(title.toUpperCase(), style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1)),
         ],
       ),
     );
@@ -211,9 +211,9 @@ class DashboardScreen extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.05),
+          color: Colors.white.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: Colors.white.withOpacity(0.05)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -221,7 +221,7 @@ class DashboardScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Icon(icon, color: color, size: 28),
@@ -243,9 +243,9 @@ class DashboardScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: color.withOpacity(0.2)),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
       ),
       child: Row(
         children: [
@@ -276,7 +276,7 @@ class DashboardScreen extends StatelessWidget {
               ),
               Text(
                 connectivity.isOnline ? 'Syncing with Main Cluster' : 'Local Persistence Active',
-                style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 12),
+                style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 12),
               ),
             ],
           ),

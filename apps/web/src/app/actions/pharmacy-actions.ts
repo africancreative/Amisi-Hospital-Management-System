@@ -27,7 +27,7 @@ export async function updateInventoryStock(itemId: string, quantityChange: numbe
 
     const item = await db.inventoryItem.update({
         where: { id: itemId },
-        data: { quantity: { increment: quantityChange }, version: { increment: 1 } }
+        data: { quantity: { increment: quantityChange } }
     });
 
     const tenantId = await getResolvedTenantId();
@@ -119,7 +119,7 @@ export async function dispensePrescription(
             // 2. Decrement main inventory
             const item = await tx.inventoryItem.update({
                 where: { id: disp.itemId },
-                data: { quantity: { decrement: disp.quantity }, version: { increment: 1 } }
+                data: { quantity: { decrement: disp.quantity } }
             });
             totalCOGS += Number(item.price) * disp.quantity;
 

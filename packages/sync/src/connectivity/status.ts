@@ -13,11 +13,17 @@ export class ConnectivitySentinel {
   private state: ConnectivityState = 'CLOUD_ONLINE';
   private listeners: ((state: ConnectivityState) => void)[] = [];
   private checkInterval: NodeJS.Timeout | null = null;
+  private isChecking = false;
 
   private edgeUrl: string = '';
   private cloudUrl: string = '/api/trpc';
 
-  private constructor() {}
+  private constructor() {
+    if (typeof window !== 'undefined') {
+      window.addEventListener('online', () => this.forceCheck());
+      window.addEventListener('offline', () => this.forceCheck());
+    }
+  }
 
   public static getInstance(): ConnectivitySentinel {
     if (!this.instance) {
@@ -51,35 +57,46 @@ export class ConnectivitySentinel {
     }
   }
 
+  public async forceCheck() {
+    if (this.isChecking) return;
+    await this.checkConnectivity();
+  }
+
   /**
    * Optimized Racing Ping
    * Probes both Edge and Cloud. Prioritizes Edge for clinical performance (LAN > WAN).
    */
   public async checkConnectivity() {
-    const edgeProbe = isReachable(`${this.edgeUrl}/api/health`, 1000);
-    const cloudProbe = isReachable(window.location.origin + '/api/health', 3000);
+    if (this.isChecking) return;
+    this.isChecking = true;
 
     try {
-      const edgeAlive = await edgeProbe;
-      if (edgeAlive) {
-        this.setState('EDGE_ONLINE');
-        return;
-      }
+      // 1. Browser Status Hint
+      const isBrowserOffline = typeof navigator !== 'undefined' && !navigator.onLine;
 
-      const cloudAlive = await cloudProbe;
-      if (cloudAlive) {
+      // 2. Racing Probes with slightly tighter timeouts for edge
+      const edgeProbe = isReachable(`${this.edgeUrl}/api/health`, 1200);
+      const cloudProbe = isReachable(window.location.origin + '/api/health', 2500);
+
+      const [edgeAlive, cloudAlive] = await Promise.all([edgeProbe, cloudProbe]);
+
+      if (edgeAlive) {
+        // We favor Edge if it's reachable (LAN speed)
+        this.setState('EDGE_ONLINE');
+      } else if (cloudAlive && !isBrowserOffline) {
         this.setState('CLOUD_ONLINE');
       } else {
         this.setState('OFFLINE');
       }
     } catch (err) {
       this.setState('OFFLINE');
+    } finally {
+      this.isChecking = false;
     }
   }
 
   /**
    * Resolves the target URL for a specific request.
-   * If meta.cloudOnly is true, it always returns the Cloud Hub.
    */
   public getResolvedUrl(isCloudOnly?: boolean): string {
     if (isCloudOnly) return this.cloudUrl;
@@ -87,14 +104,17 @@ export class ConnectivitySentinel {
     switch (this.state) {
       case 'EDGE_ONLINE': return this.edgeUrl;
       case 'CLOUD_ONLINE': return this.cloudUrl;
-      default: return this.cloudUrl; // Default to cloud for safety
+      default: return this.cloudUrl;
     }
   }
 
   private startHeartbeat() {
     if (this.checkInterval) clearInterval(this.checkInterval);
     this.checkConnectivity();
-    this.checkInterval = setInterval(() => this.checkConnectivity(), 5000);
+    
+    // Check every 8 seconds by default, or 4 seconds if we are offline
+    const interval = this.state === 'OFFLINE' ? 4000 : 8000;
+    this.checkInterval = setInterval(() => this.checkConnectivity(), interval);
   }
 
   public stop() {
@@ -107,7 +127,11 @@ export class ConnectivitySentinel {
  */
 export async function isReachable(url: string, timeout: number = 2000): Promise<boolean> {
   try {
-    await axios.get(url, { timeout });
+    // Avoid CORS issues for simple health checks if possible
+    await axios.get(url, { 
+        timeout,
+        headers: { 'Cache-Control': 'no-cache' }
+    });
     return true;
   } catch (err) {
     return false;

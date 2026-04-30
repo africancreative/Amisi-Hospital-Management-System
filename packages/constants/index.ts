@@ -69,3 +69,5 @@ export const TenantStatus = {
 } as const;
 
 export type TenantStatus = typeof TenantStatus[keyof typeof TenantStatus];
+
+export * from './loinc';

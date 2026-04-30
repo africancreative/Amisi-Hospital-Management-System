@@ -12,6 +12,8 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { ClinicalWorkspace } from '@/components/clinical/ClinicalWorkspace';
+import NurseTriage from '@/components/clinical/NurseTriage';
+import DoctorWorkspace from '@/components/clinical/DoctorWorkspace';
 import { api } from '@/trpc/react';
 import { format } from 'date-fns';
 
@@ -128,48 +130,17 @@ export default function OpdModule() {
                 </div>
 
                 {selectedPatient && (
-                    <div className="bg-gray-900/40 border border-blue-500/20 rounded-2xl overflow-hidden shadow-2xl animate-in slide-in-from-bottom-4 duration-500">
-                        <div className="p-6 border-b border-gray-800 flex items-center gap-3 bg-blue-500/5">
-                            <Activity className="h-4 w-4 text-blue-400" />
-                            <h2 className="text-sm font-black text-white uppercase tracking-tight">Rapid Triage & Assessment</h2>
-                        </div>
-                        <div className="p-8 grid grid-cols-3 gap-8">
-                            <div className="col-span-2 space-y-6">
-                                <div className="grid grid-cols-3 gap-4">
-                                    {['Temp (°C)', 'Pulse (bpm)', 'Resp (bpm)'].map(label => (
-                                        <div key={label} className="space-y-2">
-                                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-wider">{label}</label>
-                                            <input type="number" className="w-full bg-gray-950 border border-gray-800 rounded-xl px-4 py-3 text-sm text-white focus:border-blue-500/50 outline-none" />
-                                        </div>
-                                    ))}
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-gray-500 uppercase tracking-wider">Clinical Notes / Chief Complaint</label>
-                                    <textarea rows={4} className="w-full bg-gray-950 border border-gray-800 rounded-xl px-4 py-3 text-sm text-white focus:border-blue-500/50 outline-none resize-none" placeholder="Describe clinical findings..."></textarea>
-                                </div>
-                            </div>
-                            <div className="bg-gray-950/80 p-6 rounded-2xl border border-gray-800 flex flex-col justify-between">
-                                <div className="space-y-4">
-                                    <h4 className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.2em] mb-4">Billing Preview</h4>
-                                    <div className="flex justify-between items-center text-xs">
-                                        <span className="text-gray-400">OPD Triage Fee</span>
-                                        <span className="text-white font-mono">$10.00</span>
-                                    </div>
-                                    <div className="flex justify-between items-center text-xs">
-                                        <span className="text-gray-400">Nursing Service</span>
-                                        <span className="text-white font-mono">$5.00</span>
-                                    </div>
-                                    <div className="h-[1px] bg-gray-800 my-4"></div>
-                                    <div className="flex justify-between items-center">
-                                        <span className="text-xs font-black text-white uppercase">Total to Post</span>
-                                        <span className="text-lg font-black text-emerald-500 font-mono">$15.00</span>
-                                    </div>
-                                </div>
-                                <button className="w-full py-4 bg-white text-gray-950 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-emerald-500 hover:text-white transition-all shadow-lg active:scale-95">
-                                    Confirm Triage & Post Bill
-                                </button>
-                            </div>
-                        </div>
+                    <div className="bg-gray-900/40 border border-blue-500/20 rounded-[40px] overflow-hidden shadow-2xl animate-in slide-in-from-bottom-4 duration-500 p-8">
+                        {selectedPatient.status === 'TRIAGE PENDING' ? (
+                            <NurseTriage 
+                                patient={selectedPatient} 
+                                onSave={(vitals) => {
+                                    setSelectedPatient({...selectedPatient, status: 'IN_CONSULTATION'});
+                                }} 
+                            />
+                        ) : (
+                            <DoctorWorkspace patient={selectedPatient} />
+                        )}
                     </div>
                 )}
             </div>

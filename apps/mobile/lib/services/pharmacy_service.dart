@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'connectivity.dart';
+import 'package:flutter/foundation.dart';
 
 class InventoryItem {
   final String id;
@@ -63,7 +64,7 @@ class PharmacyService {
       }
       return [];
     } catch (e) {
-      print('[PharmacyService] Inventory fetch failed: $e');
+      debugPrint('[PharmacyService] Inventory fetch failed: $e');
       return [];
     }
   }
@@ -80,7 +81,7 @@ class PharmacyService {
       }
       return [];
     } catch (e) {
-      print('[PharmacyService] Prescription fetch failed: $e');
+      debugPrint('[PharmacyService] Prescription fetch failed: $e');
       return [];
     }
   }
@@ -104,7 +105,7 @@ class PharmacyService {
         },
       );
     } catch (e) {
-      print('[PharmacyService] Stock adjustment failed: $e');
+      debugPrint('[PharmacyService] Stock adjustment failed: $e');
       rethrow;
     }
   }

@@ -31,7 +31,7 @@ function DynamicTrpcProvider({ children }: { children: React.ReactNode }) {
   return (
     <api.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
-        {children}
+        {children as any}
       </QueryClientProvider>
     </api.Provider>
   );
@@ -49,7 +49,7 @@ export function TrpcProvider({ children }: { children: React.ReactNode }) {
   return (
     <ConnectivityProvider edgeUrl={edgeUrl}>
       <DynamicTrpcProvider>
-        {children}
+        {children as any}
       </DynamicTrpcProvider>
     </ConnectivityProvider>
   );

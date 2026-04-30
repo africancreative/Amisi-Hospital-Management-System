@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import { connectivityManager, ConnectivityState, ConnectionStatus } from './connectivity-auto';
-import { offlineFallback, OfflineQueueItem } from './offline-fallback';
+import { offlineFallback, SyncQueueRecord } from './offline-fallback';
 import crypto from 'crypto';
 
 export type RouteStrategy = 'online-first' | 'offline-first' | 'smart';
@@ -262,7 +262,9 @@ class SyncRouter extends EventEmitter {
     }
 
     private queueRequest<T>(endpoint: string, method: string, body?: any): RouteResult<T> {
+        const tenantId = process.env.HOSPITAL_TENANT_ID || 'GLOBAL';
         const queueId = offlineFallback.enqueue(
+            tenantId,
             'API',
             crypto.randomUUID(),
             method === 'POST' || method === 'PUT' ? 'CREATE' : 'UPDATE',
@@ -278,7 +280,9 @@ class SyncRouter extends EventEmitter {
     }
 
     private queueForSync(endpoint: string, method: string, body?: any): void {
+        const tenantId = process.env.HOSPITAL_TENANT_ID || 'GLOBAL';
         offlineFallback.enqueue(
+            tenantId,
             'API',
             crypto.randomUUID(),
             method === 'POST' || method === 'PUT' ? 'CREATE' : 'UPDATE',
@@ -290,8 +294,8 @@ class SyncRouter extends EventEmitter {
         return offlineFallback.processQueue();
     }
 
-    public getQueueStatus(): { isOnline: boolean; queueSize: number; pendingCount: number; failedCount: number } {
-        return offlineFallback.getStatus();
+    public async getQueueStatus(): Promise<{ isOnline: boolean; queueSize: number; pendingCount: number; failedCount: number }> {
+        return await offlineFallback.getStatus();
     }
 }
 

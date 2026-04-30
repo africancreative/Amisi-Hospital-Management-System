@@ -1,9 +1,7 @@
 import 'dart:async';
-import 'database_service.dart';
 import 'sync_service.dart';
 
 class MARService {
-  final _db = DatabaseService();
   final _sync = SyncService();
 
   // Mock data for demo (fallback if cache is empty)

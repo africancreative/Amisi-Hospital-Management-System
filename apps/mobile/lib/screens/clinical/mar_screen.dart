@@ -14,7 +14,6 @@ class MARScreen extends StatefulWidget {
 
 class _MARScreenState extends State<MARScreen> {
   final _syncService = SyncService();
-  bool _isSaving = false;
 
   final List<Map<String, dynamic>> _prescriptions = [
     {'name': 'Paracetamol', 'dosage': '1g', 'frequency': 'TID', 'status': 'PENDING'},
@@ -25,8 +24,6 @@ class _MARScreenState extends State<MARScreen> {
   Future<void> _administerMed(int index) async {
     final med = _prescriptions[index];
     if (med['status'] == 'GIVEN') return;
-
-    setState(() => _isSaving = true);
 
     await _syncService.recordMAR(
       patientId: widget.patient.id,
@@ -40,7 +37,6 @@ class _MARScreenState extends State<MARScreen> {
 
     setState(() {
       _prescriptions[index]['status'] = 'GIVEN';
-      _isSaving = false;
     });
 
     if (mounted) {
@@ -73,16 +69,16 @@ class _MARScreenState extends State<MARScreen> {
             margin: const EdgeInsets.only(bottom: 16),
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: isGiven ? const Color(0xFF10B981).withOpacity(0.05) : Colors.white.withOpacity(0.05),
+              color: isGiven ? const Color(0xFF10B981).withValues(alpha: 0.05) : Colors.white.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: isGiven ? const Color(0xFF10B981).withOpacity(0.3) : Colors.white.withOpacity(0.1)),
+              border: Border.all(color: isGiven ? const Color(0xFF10B981).withValues(alpha: 0.3) : Colors.white.withValues(alpha: 0.1)),
             ),
             child: Row(
               children: [
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: isGiven ? const Color(0xFF10B981).withOpacity(0.1) : Colors.blue.withOpacity(0.1),
+                    color: isGiven ? const Color(0xFF10B981).withValues(alpha: 0.1) : Colors.blue.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Icon(LucideIcons.pill, color: isGiven ? const Color(0xFF10B981) : Colors.blue, size: 24),
@@ -94,7 +90,7 @@ class _MARScreenState extends State<MARScreen> {
                     children: [
                       Text(med['name'].toUpperCase(), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 14)),
                       const SizedBox(height: 4),
-                      Text('${med['dosage']} • ${med['frequency']}', style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 11)),
+                      Text('${med['dosage']} • ${med['frequency']}', style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 11)),
                     ],
                   ),
                 ),

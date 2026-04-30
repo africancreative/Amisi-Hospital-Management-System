@@ -4,6 +4,7 @@ export * from './neon';
 export * from './update';
 export * from './lib/kms';
 export * from './lib/crypto';
+export * from './lib/cda';
 
 // Re-export common types for convenience, but exclude the classes (already handled by ./client)
 export { DeploymentTier } from '../generated/control-client';

@@ -12,6 +12,18 @@ export async function getServerRole(): Promise<Role> {
 }
 
 /**
+ * Get current authenticated user details for signatures.
+ */
+export async function getServerUser() {
+    const cookieStore = await cookies();
+    return {
+        name: cookieStore.get('amisi-user-name')?.value || 'Clinical Staff',
+        id: cookieStore.get('amisi-user-id')?.value || 'staff-001',
+        role: (cookieStore.get('amisi-user-role')?.value as Role) || 'DOCTOR'
+    };
+}
+
+/**
  * Verify if the current user has the required permission.
  * Throws an error if not authorized.
  */
