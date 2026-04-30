@@ -1,0 +1,185 @@
+
+> @amisimedos/web@4.0.0 build /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web
+> pnpm --filter @amisimedos/db build && pnpm --filter @amisimedos/auth build && pnpm --filter @amisimedos/billing build && pnpm --filter @amisimedos/ui build && pnpm --filter @amisimedos/sync build && pnpm --filter @amisimedos/chat build && node scripts/vercel-engine-hack.js && next build --webpack
+
+
+> @amisimedos/db@1.0.0 build /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/packages/db
+> pnpm generate && tsc
+
+
+> @amisimedos/db@1.0.0 generate /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/packages/db
+> prisma generate --schema=./prisma/control.prisma && prisma generate --schema=./prisma/tenant.prisma
+
+Prisma schema loaded from prisma/control.prisma
+
+✔ Generated Prisma Client (v5.22.0) to ./generated/control-client in 110ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Want real-time updates to your database without manual polling? Discover how with Pulse: https://pris.ly/tip-0-pulse
+
+Prisma schema loaded from prisma/tenant.prisma
+
+✔ Generated Prisma Client (v5.22.0) to ./generated/tenant-client in 759ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Easily identify and fix slow SQL queries in your app. Optimize helps you enhance your visibility: https://pris.ly/--optimize
+
+
+> @amisimedos/auth@1.0.0 build /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/packages/auth
+> tsc
+
+
+> @amisimedos/billing@1.0.0 build /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/packages/billing
+> tsc
+
+
+> @amisimedos/ui@1.0.0 build /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/packages/ui
+> tsc
+
+
+> @amisimedos/sync@1.0.0 build /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/packages/sync
+> tsc
+
+
+> @amisimedos/chat@1.0.0 build /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/packages/chat
+> tsc
+
+[Vercel Engine Hack] Copied libquery_engine-debian-openssl-3.0.x.so.node -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/control-client/libquery_engine-debian-openssl-3.0.x.so.node
+[Vercel Engine Hack] Copied libquery_engine-rhel-openssl-3.0.x.so.node -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/control-client/libquery_engine-rhel-openssl-3.0.x.so.node
+[Vercel Engine Hack] Copied query_engine-windows.dll.node -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/control-client/query_engine-windows.dll.node
+[Vercel Engine Hack] Copied package.json -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/control-client/package.json
+[Vercel Engine Hack] Copied index.js -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/control-client/index.js
+[Vercel Engine Hack] Copied index.d.ts -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/control-client/index.d.ts
+[Vercel Engine Hack] Copied libquery_engine-debian-openssl-3.0.x.so.node -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/tenant-client/libquery_engine-debian-openssl-3.0.x.so.node
+[Vercel Engine Hack] Copied libquery_engine-rhel-openssl-3.0.x.so.node -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/tenant-client/libquery_engine-rhel-openssl-3.0.x.so.node
+[Vercel Engine Hack] Copied query_engine-windows.dll.node -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/tenant-client/query_engine-windows.dll.node
+[Vercel Engine Hack] Copied package.json -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/tenant-client/package.json
+[Vercel Engine Hack] Copied index.js -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/tenant-client/index.js
+[Vercel Engine Hack] Copied index.d.ts -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/tenant-client/index.d.ts
+[Vercel Engine Hack] Complete.
+▲ Next.js 16.1.6 (webpack)
+- Environments: .env.local
+
+  Creating an optimized production build ...
+Failed to compile.
+
+./src/app/(tenant)/[slug]/[[...module]]/page.tsx
+Error:   x `ssr: false` is not allowed with `next/dynamic` in Server Components. Please move it into a Client Component.
+    ,-[/home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/src/app/(tenant)/[slug]/[[...module]]/page.tsx:17:1]
+ 14 | );
+ 15 | 
+ 16 | // High-Fidelity Clinical Dashboards (Client Components - SSR Disabled to reduce server bundle size)
+ 17 | const DoctorDashboard = dynamicImport(() => import('@/components/clinical/DoctorDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+    :                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 18 | const LabDashboard = dynamicImport(() => import('@/components/clinical/LabDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+ 19 | const TriageDashboard = dynamicImport(() => import('@/components/clinical/TriageDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+ 20 | const PharmacistDashboard = dynamicImport(() => import('@/components/clinical/PharmacistDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+    `----
+  x `ssr: false` is not allowed with `next/dynamic` in Server Components. Please move it into a Client Component.
+    ,-[/home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/src/app/(tenant)/[slug]/[[...module]]/page.tsx:18:1]
+ 15 | 
+ 16 | // High-Fidelity Clinical Dashboards (Client Components - SSR Disabled to reduce server bundle size)
+ 17 | const DoctorDashboard = dynamicImport(() => import('@/components/clinical/DoctorDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+ 18 | const LabDashboard = dynamicImport(() => import('@/components/clinical/LabDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+    :                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 19 | const TriageDashboard = dynamicImport(() => import('@/components/clinical/TriageDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+ 20 | const PharmacistDashboard = dynamicImport(() => import('@/components/clinical/PharmacistDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+ 21 | const WardDashboard = dynamicImport(() => import('@/components/clinical/WardDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+    `----
+  x `ssr: false` is not allowed with `next/dynamic` in Server Components. Please move it into a Client Component.
+    ,-[/home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/src/app/(tenant)/[slug]/[[...module]]/page.tsx:19:1]
+ 16 | // High-Fidelity Clinical Dashboards (Client Components - SSR Disabled to reduce server bundle size)
+ 17 | const DoctorDashboard = dynamicImport(() => import('@/components/clinical/DoctorDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+ 18 | const LabDashboard = dynamicImport(() => import('@/components/clinical/LabDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+ 19 | const TriageDashboard = dynamicImport(() => import('@/components/clinical/TriageDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+    :                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 20 | const PharmacistDashboard = dynamicImport(() => import('@/components/clinical/PharmacistDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+ 21 | const WardDashboard = dynamicImport(() => import('@/components/clinical/WardDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+ 22 | const InventoryDashboard = dynamicImport(() => import('@/components/clinical/InventoryDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+    `----
+  x `ssr: false` is not allowed with `next/dynamic` in Server Components. Please move it into a Client Component.
+    ,-[/home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/src/app/(tenant)/[slug]/[[...module]]/page.tsx:20:1]
+ 17 | const DoctorDashboard = dynamicImport(() => import('@/components/clinical/DoctorDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+ 18 | const LabDashboard = dynamicImport(() => import('@/components/clinical/LabDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+ 19 | const TriageDashboard = dynamicImport(() => import('@/components/clinical/TriageDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+ 20 | const PharmacistDashboard = dynamicImport(() => import('@/components/clinical/PharmacistDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+    :                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 21 | const WardDashboard = dynamicImport(() => import('@/components/clinical/WardDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+ 22 | const InventoryDashboard = dynamicImport(() => import('@/components/clinical/InventoryDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+ 23 | const FinanceDashboard = dynamicImport(() => import('@/components/clinical/FinanceDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+    `----
+  x `ssr: false` is not allowed with `next/dynamic` in Server Components. Please move it into a Client Component.
+    ,-[/home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/src/app/(tenant)/[slug]/[[...module]]/page.tsx:21:1]
+ 18 | const LabDashboard = dynamicImport(() => import('@/components/clinical/LabDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+ 19 | const TriageDashboard = dynamicImport(() => import('@/components/clinical/TriageDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+ 20 | const PharmacistDashboard = dynamicImport(() => import('@/components/clinical/PharmacistDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+ 21 | const WardDashboard = dynamicImport(() => import('@/components/clinical/WardDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+    :                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 22 | const InventoryDashboard = dynamicImport(() => import('@/components/clinical/InventoryDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+ 23 | const FinanceDashboard = dynamicImport(() => import('@/components/clinical/FinanceDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+ 24 | const CashierDashboard = dynamicImport(() => import('@/components/clinical/CashierDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+    `----
+  x `ssr: false` is not allowed with `next/dynamic` in Server Components. Please move it into a Client Component.
+    ,-[/home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/src/app/(tenant)/[slug]/[[...module]]/page.tsx:22:1]
+ 19 | const TriageDashboard = dynamicImport(() => import('@/components/clinical/TriageDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+ 20 | const PharmacistDashboard = dynamicImport(() => import('@/components/clinical/PharmacistDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+ 21 | const WardDashboard = dynamicImport(() => import('@/components/clinical/WardDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+ 22 | const InventoryDashboard = dynamicImport(() => import('@/components/clinical/InventoryDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+    :                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 23 | const FinanceDashboard = dynamicImport(() => import('@/components/clinical/FinanceDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+ 24 | const CashierDashboard = dynamicImport(() => import('@/components/clinical/CashierDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+ 25 | const ClinicalChat = dynamicImport(() => import('@/components/clinical/ClinicalChat'), { ssr: false, loading: () => <LoadingModule /> });
+    `----
+  x `ssr: false` is not allowed with `next/dynamic` in Server Components. Please move it into a Client Component.
+    ,-[/home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/src/app/(tenant)/[slug]/[[...module]]/page.tsx:23:1]
+ 20 | const PharmacistDashboard = dynamicImport(() => import('@/components/clinical/PharmacistDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+ 21 | const WardDashboard = dynamicImport(() => import('@/components/clinical/WardDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+ 22 | const InventoryDashboard = dynamicImport(() => import('@/components/clinical/InventoryDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+ 23 | const FinanceDashboard = dynamicImport(() => import('@/components/clinical/FinanceDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+    :                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 24 | const CashierDashboard = dynamicImport(() => import('@/components/clinical/CashierDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+ 25 | const ClinicalChat = dynamicImport(() => import('@/components/clinical/ClinicalChat'), { ssr: false, loading: () => <LoadingModule /> });
+ 26 | const PatientEMR = dynamicImport(() => import('@/components/clinical/PatientEMR'), { ssr: false, loading: () => <LoadingModule /> });
+    `----
+  x `ssr: false` is not allowed with `next/dynamic` in Server Components. Please move it into a Client Component.
+    ,-[/home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/src/app/(tenant)/[slug]/[[...module]]/page.tsx:24:1]
+ 21 | const WardDashboard = dynamicImport(() => import('@/components/clinical/WardDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+ 22 | const InventoryDashboard = dynamicImport(() => import('@/components/clinical/InventoryDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+ 23 | const FinanceDashboard = dynamicImport(() => import('@/components/clinical/FinanceDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+ 24 | const CashierDashboard = dynamicImport(() => import('@/components/clinical/CashierDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+    :                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 25 | const ClinicalChat = dynamicImport(() => import('@/components/clinical/ClinicalChat'), { ssr: false, loading: () => <LoadingModule /> });
+ 26 | const PatientEMR = dynamicImport(() => import('@/components/clinical/PatientEMR'), { ssr: false, loading: () => <LoadingModule /> });
+    `----
+  x `ssr: false` is not allowed with `next/dynamic` in Server Components. Please move it into a Client Component.
+    ,-[/home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/src/app/(tenant)/[slug]/[[...module]]/page.tsx:25:1]
+ 22 | const InventoryDashboard = dynamicImport(() => import('@/components/clinical/InventoryDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+ 23 | const FinanceDashboard = dynamicImport(() => import('@/components/clinical/FinanceDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+ 24 | const CashierDashboard = dynamicImport(() => import('@/components/clinical/CashierDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+ 25 | const ClinicalChat = dynamicImport(() => import('@/components/clinical/ClinicalChat'), { ssr: false, loading: () => <LoadingModule /> });
+    :                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 26 | const PatientEMR = dynamicImport(() => import('@/components/clinical/PatientEMR'), { ssr: false, loading: () => <LoadingModule /> });
+ 27 | 
+ 28 | // Static Imports for Server Components (next/dynamic does not support Server Components)
+    `----
+  x `ssr: false` is not allowed with `next/dynamic` in Server Components. Please move it into a Client Component.
+    ,-[/home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/src/app/(tenant)/[slug]/[[...module]]/page.tsx:26:1]
+ 23 | const FinanceDashboard = dynamicImport(() => import('@/components/clinical/FinanceDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+ 24 | const CashierDashboard = dynamicImport(() => import('@/components/clinical/CashierDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+ 25 | const ClinicalChat = dynamicImport(() => import('@/components/clinical/ClinicalChat'), { ssr: false, loading: () => <LoadingModule /> });
+ 26 | const PatientEMR = dynamicImport(() => import('@/components/clinical/PatientEMR'), { ssr: false, loading: () => <LoadingModule /> });
+    :                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 27 | 
+ 28 | // Static Imports for Server Components (next/dynamic does not support Server Components)
+ 29 | import OpdModule from '@/components/modules/OpdModule';
+    `----
+
+Import trace for requested module:
+./src/app/(tenant)/[slug]/[[...module]]/page.tsx
+
+
+> Build failed because of webpack errors
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @amisimedos/web@4.0.0 build: `pnpm --filter @amisimedos/db build && pnpm --filter @amisimedos/auth build && pnpm --filter @amisimedos/billing build && pnpm --filter @amisimedos/ui build && pnpm --filter @amisimedos/sync build && pnpm --filter @amisimedos/chat build && node scripts/vercel-engine-hack.js && next build --webpack`
+Exit status 1

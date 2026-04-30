@@ -5,7 +5,10 @@ import { notFound, redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import { getTenantDashboardStats } from '@/app/actions/dashboard-actions';
 
-// Static imports to bundle all modules into a single serverless function
+// Import the Client Dispatcher
+import ModuleClientDispatcher from '@/components/modules/ModuleClientDispatcher';
+
+// Static Imports for Server Components
 import OpdModule from '@/components/modules/OpdModule';
 import PharmacyModule from '@/components/modules/PharmacyModule';
 import LabModule from '@/components/modules/LabModule';
@@ -22,8 +25,6 @@ import UsersModule from '@/components/modules/UsersModule';
 import AccountingModule from '@/components/modules/AccountingModule';
 import RadiologyModule from '@/components/modules/RadiologyModule';
 import SubscriptionModule from '@/components/modules/SubscriptionModule';
-
-// We can also import the home dashboard component here
 import { TenantDashboard } from '@/components/modules/TenantHome';
 
 interface ModulePageProps {
@@ -55,14 +56,29 @@ export default async function ModuleDispatcher({ params: paramsPromise, searchPa
   const mainModule = module[0];
   const subPath = module.slice(1);
 
+  // Check if it's a Client-Side High-Fidelity Dashboard
+  const clientModules = [
+    'doctor', 'lab', 'laboratory', 'triage', 
+    'pharmacy-on-duty', 'ward-on-duty', 'inventory-on-duty', 
+    'finance-on-duty', 'billing-on-duty', 'chat'
+  ];
+
+  if (clientModules.includes(mainModule)) {
+    return <ModuleClientDispatcher mainModule={mainModule} subPath={subPath} slug={slug} />;
+  }
+
+  // Handle specialized Server/Client mix (EMR)
+  if (mainModule === 'emr') {
+    if (subPath.length === 1) return <ModuleClientDispatcher mainModule="emr" subPath={subPath} slug={slug} />;
+    return <PatientsModule params={{ slug }} searchParams={searchParams as any} />;
+  }
+
+  // Legacy / Fallback Server Modules
   switch (mainModule) {
     case 'opd':
       return <OpdModule />;
     case 'pharmacy':
       return <PharmacyModule />;
-    case 'lab':
-    case 'laboratory':
-      return <LabModule params={{ slug }} />;
     case 'billing':
       if (subPath.length === 1) return <BillingDetailsModule id={subPath[0]} />;
       return <BillingModule />;
