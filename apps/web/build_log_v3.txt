@@ -1,0 +1,82 @@
+
+> @amisimedos/web@4.0.0 build /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web
+> pnpm --filter @amisimedos/db build && pnpm --filter @amisimedos/auth build && pnpm --filter @amisimedos/billing build && pnpm --filter @amisimedos/ui build && pnpm --filter @amisimedos/sync build && pnpm --filter @amisimedos/chat build && node scripts/vercel-engine-hack.js && next build --webpack
+
+
+> @amisimedos/db@1.0.0 build /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/packages/db
+> pnpm generate && tsc
+
+
+> @amisimedos/db@1.0.0 generate /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/packages/db
+> prisma generate --schema=./prisma/control.prisma && prisma generate --schema=./prisma/tenant.prisma
+
+Prisma schema loaded from prisma/control.prisma
+
+✔ Generated Prisma Client (v5.22.0) to ./generated/control-client in 105ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Easily identify and fix slow SQL queries in your app. Optimize helps you enhance your visibility: https://pris.ly/--optimize
+
+Prisma schema loaded from prisma/tenant.prisma
+
+✔ Generated Prisma Client (v5.22.0) to ./generated/tenant-client in 761ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Need your database queries to be 1000x faster? Accelerate offers you that and more: https://pris.ly/tip-2-accelerate
+
+
+> @amisimedos/auth@1.0.0 build /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/packages/auth
+> tsc
+
+
+> @amisimedos/billing@1.0.0 build /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/packages/billing
+> tsc
+
+
+> @amisimedos/ui@1.0.0 build /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/packages/ui
+> tsc
+
+
+> @amisimedos/sync@1.0.0 build /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/packages/sync
+> tsc
+
+
+> @amisimedos/chat@1.0.0 build /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/packages/chat
+> tsc
+
+[Vercel Engine Hack] Copied libquery_engine-debian-openssl-3.0.x.so.node -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/control-client/libquery_engine-debian-openssl-3.0.x.so.node
+[Vercel Engine Hack] Copied libquery_engine-rhel-openssl-3.0.x.so.node -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/control-client/libquery_engine-rhel-openssl-3.0.x.so.node
+[Vercel Engine Hack] Copied query_engine-windows.dll.node -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/control-client/query_engine-windows.dll.node
+[Vercel Engine Hack] Copied package.json -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/control-client/package.json
+[Vercel Engine Hack] Copied index.js -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/control-client/index.js
+[Vercel Engine Hack] Copied index.d.ts -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/control-client/index.d.ts
+[Vercel Engine Hack] Copied libquery_engine-debian-openssl-3.0.x.so.node -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/tenant-client/libquery_engine-debian-openssl-3.0.x.so.node
+[Vercel Engine Hack] Copied libquery_engine-rhel-openssl-3.0.x.so.node -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/tenant-client/libquery_engine-rhel-openssl-3.0.x.so.node
+[Vercel Engine Hack] Copied query_engine-windows.dll.node -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/tenant-client/query_engine-windows.dll.node
+[Vercel Engine Hack] Copied package.json -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/tenant-client/package.json
+[Vercel Engine Hack] Copied index.js -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/tenant-client/index.js
+[Vercel Engine Hack] Copied index.d.ts -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/tenant-client/index.d.ts
+[Vercel Engine Hack] Complete.
+▲ Next.js 16.1.6 (webpack)
+- Environments: .env.local
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 9.3s
+  Running TypeScript ...
+Failed to compile.
+
+./src/app/actions/seed-demo.ts:5:22
+Type error: Cannot find module '@amisimedos/generated/tenant-client' or its corresponding type declarations.
+
+[0m [90m 3 |[39m [36mimport[39m { getControlDb } [36mfrom[39m [32m'@/lib/modules'[39m[33m;[39m
+ [90m 4 |[39m [36mimport[39m { getTenantDb } [36mfrom[39m [32m'@/lib/db'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 5 |[39m [36mimport[39m { [33mRole[39m } [36mfrom[39m [32m'@amisimedos/generated/tenant-client'[39m[33m;[39m
+ [90m   |[39m                      [31m[1m^[22m[39m
+ [90m 6 |[39m
+ [90m 7 |[39m [36mexport[39m [36masync[39m [36mfunction[39m seedDemoData(slug[33m:[39m string) {
+ [90m 8 |[39m     [36mconst[39m controlDb [33m=[39m getControlDb()[33m;[39m[0m
+Next.js build worker exited with code: 1 and signal: null
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @amisimedos/web@4.0.0 build: `pnpm --filter @amisimedos/db build && pnpm --filter @amisimedos/auth build && pnpm --filter @amisimedos/billing build && pnpm --filter @amisimedos/ui build && pnpm --filter @amisimedos/sync build && pnpm --filter @amisimedos/chat build && node scripts/vercel-engine-hack.js && next build --webpack`
+Exit status 1

@@ -1,0 +1,95 @@
+
+> @amisimedos/web@4.0.0 build /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web
+> pnpm --filter @amisimedos/db build && pnpm --filter @amisimedos/auth build && pnpm --filter @amisimedos/billing build && pnpm --filter @amisimedos/ui build && pnpm --filter @amisimedos/sync build && pnpm --filter @amisimedos/chat build && node scripts/vercel-engine-hack.js && next build --webpack
+
+
+> @amisimedos/db@1.0.0 build /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/packages/db
+> pnpm generate && tsc
+
+
+> @amisimedos/db@1.0.0 generate /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/packages/db
+> prisma generate --schema=./prisma/control.prisma && prisma generate --schema=./prisma/tenant.prisma
+
+Prisma schema loaded from prisma/control.prisma
+
+✔ Generated Prisma Client (v5.22.0) to ./generated/control-client in 101ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Interested in query caching in just a few lines of code? Try Accelerate today! https://pris.ly/tip-3-accelerate
+
+Prisma schema loaded from prisma/tenant.prisma
+
+✔ Generated Prisma Client (v5.22.0) to ./generated/tenant-client in 768ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Curious about the SQL queries Prisma ORM generates? Optimize helps you enhance your visibility: https://pris.ly/tip-2-optimize
+
+
+> @amisimedos/auth@1.0.0 build /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/packages/auth
+> tsc
+
+
+> @amisimedos/billing@1.0.0 build /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/packages/billing
+> tsc
+
+
+> @amisimedos/ui@1.0.0 build /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/packages/ui
+> tsc
+
+
+> @amisimedos/sync@1.0.0 build /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/packages/sync
+> tsc
+
+
+> @amisimedos/chat@1.0.0 build /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/packages/chat
+> tsc
+
+[Vercel Engine Hack] Copied libquery_engine-debian-openssl-3.0.x.so.node -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/control-client/libquery_engine-debian-openssl-3.0.x.so.node
+[Vercel Engine Hack] Copied libquery_engine-rhel-openssl-3.0.x.so.node -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/control-client/libquery_engine-rhel-openssl-3.0.x.so.node
+[Vercel Engine Hack] Copied query_engine-windows.dll.node -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/control-client/query_engine-windows.dll.node
+[Vercel Engine Hack] Copied package.json -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/control-client/package.json
+[Vercel Engine Hack] Copied index.js -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/control-client/index.js
+[Vercel Engine Hack] Copied index.d.ts -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/control-client/index.d.ts
+[Vercel Engine Hack] Copied libquery_engine-debian-openssl-3.0.x.so.node -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/tenant-client/libquery_engine-debian-openssl-3.0.x.so.node
+[Vercel Engine Hack] Copied libquery_engine-rhel-openssl-3.0.x.so.node -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/tenant-client/libquery_engine-rhel-openssl-3.0.x.so.node
+[Vercel Engine Hack] Copied query_engine-windows.dll.node -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/tenant-client/query_engine-windows.dll.node
+[Vercel Engine Hack] Copied package.json -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/tenant-client/package.json
+[Vercel Engine Hack] Copied index.js -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/tenant-client/index.js
+[Vercel Engine Hack] Copied index.d.ts -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/tenant-client/index.d.ts
+[Vercel Engine Hack] Complete.
+▲ Next.js 16.1.6 (webpack)
+- Environments: .env.local
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 11.2s
+  Running TypeScript ...
+Failed to compile.
+
+./src/components/clinical/CashierDashboard.tsx:258:58
+Type error: Cannot find name 'ShieldCheck'.
+
+[0m [90m 256 |[39m                                 { id[33m:[39m [32m'CASH'[39m[33m,[39m icon[33m:[39m [33mBanknote[39m[33m,[39m label[33m:[39m [32m'Cash'[39m }[33m,[39m
+ [90m 257 |[39m                                 { id[33m:[39m [32m'CARD'[39m[33m,[39m icon[33m:[39m [33mCreditCard[39m[33m,[39m label[33m:[39m [32m'Credit Card'[39m }[33m,[39m
+[31m[1m>[22m[39m[90m 258 |[39m                                 { id[33m:[39m [32m'INSURANCE'[39m[33m,[39m icon[33m:[39m [33mShieldCheck[39m[33m,[39m label[33m:[39m [32m'Insurance'[39m }[33m,[39m
+ [90m     |[39m                                                          [31m[1m^[22m[39m
+ [90m 259 |[39m                             ][33m.[39mmap(m [33m=>[39m (
+ [90m 260 |[39m                                 [33m<[39m[33mbutton[39m 
+ [90m 261 |[39m                                     key[33m=[39m{m[33m.[39mid}[0m
+Next.js build worker exited with code: 1 and signal: null
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @amisimedos/web@4.0.0 build: `pnpm --filter @amisimedos/db build && pnpm --filter @amisimedos/auth build && pnpm --filter @amisimedos/billing build && pnpm --filter @amisimedos/ui build && pnpm --filter @amisimedos/sync build && pnpm --filter @amisimedos/chat build && node scripts/vercel-engine-hack.js && next build --webpack`
+Exit status 1
+Node.js[711626]: ../src/node.cc:776:void node::ResetStdio(): Assertion `!(err != 0) || (err == -1 && (*__errno_location ()) == 1)' failed.
+ 1: 0x9ff550 node::Abort() [/home/daniel/.local/share/pnpm/.tools/@pnpm+exe/9.0.0/bin/pnpm]
+ 2: 0x9ff5cc  [/home/daniel/.local/share/pnpm/.tools/@pnpm+exe/9.0.0/bin/pnpm]
+ 3: 0x9c52e9 node::ResetStdio() [/home/daniel/.local/share/pnpm/.tools/@pnpm+exe/9.0.0/bin/pnpm]
+ 4: 0x7f2d608299e1  [/lib64/libc.so.6]
+ 5: 0x7f2d60829abe  [/lib64/libc.so.6]
+ 6: 0x95be8c node::DefaultProcessExitHandler(node::Environment*, int) [/home/daniel/.local/share/pnpm/.tools/@pnpm+exe/9.0.0/bin/pnpm]
+ 7: 0x997bb4 node::Environment::Exit(int) [/home/daniel/.local/share/pnpm/.tools/@pnpm+exe/9.0.0/bin/pnpm]
+ 8: 0x1238481 v8::internal::FunctionCallbackArguments::Call(v8::internal::CallHandlerInfo) [/home/daniel/.local/share/pnpm/.tools/@pnpm+exe/9.0.0/bin/pnpm]
+ 9: 0x1238df3  [/home/daniel/.local/share/pnpm/.tools/@pnpm+exe/9.0.0/bin/pnpm]
+10: 0x12392d7 v8::internal::Builtin_HandleApiCall(int, unsigned long*, v8::internal::Isolate*) [/home/daniel/.local/share/pnpm/.tools/@pnpm+exe/9.0.0/bin/pnpm]
+11: 0x1bb6339  [/home/daniel/.local/share/pnpm/.tools/@pnpm+exe/9.0.0/bin/pnpm]
+/home/daniel/.local/share/pnpm/pnpm: line 12: 711615 Aborted                    (core dumped) "$basedir/.tools/pnpm-exe/10.33.2/pnpm" "$@"

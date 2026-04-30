@@ -373,21 +373,6 @@ export default function OnboardHospital() {
                 </div>
             </div>
 
-            <style jsx>{`
-                .custom-scrollbar::-webkit-scrollbar {
-                    width: 4px;
-                }
-                .custom-scrollbar::-webkit-scrollbar-track {
-                    background: transparent;
-                }
-                .custom-scrollbar::-webkit-scrollbar-thumb {
-                    background: #1e293b;
-                    border-radius: 10px;
-                }
-                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-                    background: #334155;
-                }
-            `}</style>
 
             {/* Success Modal */}
             {showSuccessModal && (

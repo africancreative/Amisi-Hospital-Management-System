@@ -1,0 +1,92 @@
+
+> @amisimedos/web@4.0.0 build /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web
+> pnpm --filter @amisimedos/db build && pnpm --filter @amisimedos/auth build && pnpm --filter @amisimedos/billing build && pnpm --filter @amisimedos/ui build && pnpm --filter @amisimedos/sync build && pnpm --filter @amisimedos/chat build && node scripts/vercel-engine-hack.js && next build --webpack
+
+
+> @amisimedos/db@1.0.0 build /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/packages/db
+> pnpm generate && tsc
+
+
+> @amisimedos/db@1.0.0 generate /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/packages/db
+> prisma generate --schema=./prisma/control.prisma && prisma generate --schema=./prisma/tenant.prisma
+
+Prisma schema loaded from prisma/control.prisma
+
+✔ Generated Prisma Client (v5.22.0) to ./generated/control-client in 112ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Interested in query caching in just a few lines of code? Try Accelerate today! https://pris.ly/tip-3-accelerate
+
+Prisma schema loaded from prisma/tenant.prisma
+
+✔ Generated Prisma Client (v5.22.0) to ./generated/tenant-client in 759ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Curious about the SQL queries Prisma ORM generates? Optimize helps you enhance your visibility: https://pris.ly/tip-2-optimize
+
+┌─────────────────────────────────────────────────────────┐
+│  Update available 5.22.0 -> 7.8.0                       │
+│                                                         │
+│  This is a major update - please follow the guide at    │
+│  https://pris.ly/d/major-version-upgrade                │
+│                                                         │
+│  Run the following to update                            │
+│    npm i --save-dev prisma@latest                       │
+│    npm i @prisma/client@latest                          │
+└─────────────────────────────────────────────────────────┘
+
+> @amisimedos/auth@1.0.0 build /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/packages/auth
+> tsc
+
+
+> @amisimedos/billing@1.0.0 build /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/packages/billing
+> tsc
+
+
+> @amisimedos/ui@1.0.0 build /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/packages/ui
+> tsc
+
+
+> @amisimedos/sync@1.0.0 build /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/packages/sync
+> tsc
+
+
+> @amisimedos/chat@1.0.0 build /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/packages/chat
+> tsc
+
+[Vercel Engine Hack] Copied libquery_engine-debian-openssl-3.0.x.so.node -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/control-client/libquery_engine-debian-openssl-3.0.x.so.node
+[Vercel Engine Hack] Copied libquery_engine-rhel-openssl-3.0.x.so.node -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/control-client/libquery_engine-rhel-openssl-3.0.x.so.node
+[Vercel Engine Hack] Copied query_engine-windows.dll.node -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/control-client/query_engine-windows.dll.node
+[Vercel Engine Hack] Copied package.json -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/control-client/package.json
+[Vercel Engine Hack] Copied index.js -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/control-client/index.js
+[Vercel Engine Hack] Copied index.d.ts -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/control-client/index.d.ts
+[Vercel Engine Hack] Copied libquery_engine-debian-openssl-3.0.x.so.node -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/tenant-client/libquery_engine-debian-openssl-3.0.x.so.node
+[Vercel Engine Hack] Copied libquery_engine-rhel-openssl-3.0.x.so.node -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/tenant-client/libquery_engine-rhel-openssl-3.0.x.so.node
+[Vercel Engine Hack] Copied query_engine-windows.dll.node -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/tenant-client/query_engine-windows.dll.node
+[Vercel Engine Hack] Copied package.json -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/tenant-client/package.json
+[Vercel Engine Hack] Copied index.js -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/tenant-client/index.js
+[Vercel Engine Hack] Copied index.d.ts -> /home/daniel/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/tenant-client/index.d.ts
+[Vercel Engine Hack] Complete.
+▲ Next.js 16.1.6 (webpack)
+- Environments: .env.local
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 9.6s
+  Running TypeScript ...
+Failed to compile.
+
+./src/app/actions/seed-demo.ts:83:17
+Type error: Object literal may only specify known properties, and 'status' does not exist in type '(Without<PatientCreateInput, PatientUncheckedCreateInput> & PatientUncheckedCreateInput) | (Without<...> & PatientCreateInput)'.
+
+[0m [90m 81 |[39m                 gender[33m:[39m p[33m.[39mgender[33m,[39m
+ [90m 82 |[39m                 dob[33m:[39m p[33m.[39mdob[33m,[39m
+[31m[1m>[22m[39m[90m 83 |[39m                 status[33m:[39m [32m'ACTIVE'[39m
+ [90m    |[39m                 [31m[1m^[22m[39m
+ [90m 84 |[39m             }
+ [90m 85 |[39m         })[33m;[39m
+ [90m 86 |[39m     }[0m
+Next.js build worker exited with code: 1 and signal: null
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @amisimedos/web@4.0.0 build: `pnpm --filter @amisimedos/db build && pnpm --filter @amisimedos/auth build && pnpm --filter @amisimedos/billing build && pnpm --filter @amisimedos/ui build && pnpm --filter @amisimedos/sync build && pnpm --filter @amisimedos/chat build && node scripts/vercel-engine-hack.js && next build --webpack`
+Exit status 1

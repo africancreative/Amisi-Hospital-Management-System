@@ -1,0 +1,18 @@
+[package]
+name = "amisimedos-local-node"
+version = "1.0.0"
+description = "AmisiMedOS Local Edge Server"
+authors = ["you"]
+edition = "2021"
+
+[build-dependencies]
+tauri-build = { version = "2.0.0-beta", features = [] }
+
+[dependencies]
+tauri = { version = "2.0.0-beta", features = ["shell-open"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+local-ip-address = "0.6"
+
+[features]
+custom-protocol = ["tauri/custom-protocol"]

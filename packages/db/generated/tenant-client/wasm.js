@@ -276,6 +276,16 @@ exports.Prisma.EncounterScalarFieldEnum = {
   esiLevel: 'esiLevel',
   triageNotes: 'triageNotes',
   triageStartedAt: 'triageStartedAt',
+  temperature: 'temperature',
+  systolicBP: 'systolicBP',
+  diastolicBP: 'diastolicBP',
+  pulse: 'pulse',
+  spo2: 'spo2',
+  respRate: 'respRate',
+  weight: 'weight',
+  height: 'height',
+  symptoms: 'symptoms',
+  riskFlags: 'riskFlags',
   mseCompletedAt: 'mseCompletedAt',
   isStabilized: 'isStabilized',
   dischargeSummary: 'dischargeSummary',
@@ -283,6 +293,8 @@ exports.Prisma.EncounterScalarFieldEnum = {
   status: 'status',
   department: 'department',
   roomBed: 'roomBed',
+  queueNumber: 'queueNumber',
+  priority: 'priority',
   checkedInAt: 'checkedInAt',
   triagedAt: 'triagedAt',
   seenAt: 'seenAt',
@@ -430,15 +442,15 @@ exports.Prisma.InventoryItemScalarFieldEnum = {
   sku: 'sku',
   quantity: 'quantity',
   unit: 'unit',
+  price: 'price',
   minLevel: 'minLevel',
   reorderLevel: 'reorderLevel',
   reorderQty: 'reorderQty',
   expiryDate: 'expiryDate',
+  location: 'location',
   isAsset: 'isAsset',
   serialNumber: 'serialNumber',
   batchEnabled: 'batchEnabled',
-  price: 'price',
-  version: 'version',
   isSynced: 'isSynced',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -678,6 +690,7 @@ exports.Prisma.DiagnosisScalarFieldEnum = {
   id: 'id',
   encounterId: 'encounterId',
   code: 'code',
+  system: 'system',
   description: 'description',
   category: 'category',
   version: 'version',
@@ -1588,6 +1601,34 @@ exports.Prisma.SyncQueueScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.LocalSyncQueueScalarFieldEnum = {
+  id: 'id',
+  entityType: 'entityType',
+  entityId: 'entityId',
+  action: 'action',
+  payload: 'payload',
+  status: 'status',
+  retryCount: 'retryCount',
+  lastError: 'lastError',
+  timestamp: 'timestamp',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CloudSyncJournalScalarFieldEnum = {
+  sequenceId: 'sequenceId',
+  entityType: 'entityType',
+  entityId: 'entityId',
+  action: 'action',
+  payload: 'payload',
+  timestamp: 'timestamp'
+};
+
+exports.Prisma.SyncMetadataScalarFieldEnum = {
+  id: 'id',
+  cursor: 'cursor',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -1746,7 +1787,10 @@ exports.Prisma.ModelName = {
   LabResult: 'LabResult',
   LabReport: 'LabReport',
   ChangeLog: 'ChangeLog',
-  SyncQueue: 'SyncQueue'
+  SyncQueue: 'SyncQueue',
+  LocalSyncQueue: 'LocalSyncQueue',
+  CloudSyncJournal: 'CloudSyncJournal',
+  SyncMetadata: 'SyncMetadata'
 };
 
 /**
