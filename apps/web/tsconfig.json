@@ -27,7 +27,9 @@
       "@amisimedos/db": ["../../packages/db/src/index"],
       "@amisimedos/db/*": ["../../packages/db/src/*"],
       "@amisimedos/ui": ["../../packages/ui/src/index"],
-      "@amisimedos/ui/*": ["../../packages/ui/src/*"]
+      "@amisimedos/ui/*": ["../../packages/ui/src/*"],
+      "@amisimedos/chat": ["../../packages/chat/src/index"],
+      "@amisimedos/chat/*": ["../../packages/chat/src/*"]
     }
   },
   "include": [
