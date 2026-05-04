@@ -43,8 +43,8 @@ function DynamicTrpcProvider({ children }: { children: React.ReactNode }) {
 export function TrpcProvider({ children }: { children: React.ReactNode }) {
   // Edge URL can be resolved from env or window.location for local nodes
   const edgeUrl = typeof window !== 'undefined' && window.location.port === '3000' 
-    ? 'http://localhost:3000' 
-    : 'http://localhost:3000'; // Default to standard Amisi Edge port
+    ? 'http://localhost:5000' 
+    : 'http://localhost:5000'; // Local Node (Desktop/SBC) usually runs on 5000 or 8080
 
   return (
     <ConnectivityProvider edgeUrl={edgeUrl}>

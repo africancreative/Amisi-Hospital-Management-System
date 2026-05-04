@@ -50,8 +50,9 @@ export default async function ModuleDispatcher({ params: paramsPromise, searchPa
 
   // Handle /[slug] (Home)
   if (!module || module.length === 0) {
-    const stats = await getTenantDashboardStats();
-    return <TenantDashboard stats={stats} slug={slug} userRole={userRole} />;
+    const selectedDate = (searchParams?.date as string) || undefined;
+    const stats = await getTenantDashboardStats(selectedDate);
+    return <TenantDashboard stats={stats} slug={slug} userRole={userRole} initialDate={selectedDate} />;
   }
 
   const mainModule = module[0];
@@ -132,6 +133,10 @@ export default async function ModuleDispatcher({ params: paramsPromise, searchPa
     case 'billing-plan':
     case 'license':
       return <SubscriptionModule params={{ slug }} />;
+    case 'queue':
+      return <ModuleClientDispatcher mainModule="queue" subPath={subPath} slug={slug} />;
+    case 'reports':
+      return <ModuleClientDispatcher mainModule="reports" subPath={subPath} slug={slug} />;
     default:
       notFound();
   }

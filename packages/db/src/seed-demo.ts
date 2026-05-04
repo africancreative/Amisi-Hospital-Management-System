@@ -1,4 +1,4 @@
-import { ControlClient, TenantClient, Decimal } from './index';
+import { ControlClient, TenantClient, Decimal, hashPassword } from './index';
 
 async function seed() {
     console.log('Starting demo seed...');
@@ -129,7 +129,7 @@ async function seed() {
             firstName: 'Amisi',
             lastName: 'Amoi',
             email: 'admin@amisi-premier.amisigenuine.com',
-            passwordHash: '@Admin123',
+            passwordHash: await hashPassword('@Admin123'),
             role: 'ADMIN',
             department: 'Administration',
             baseSalary: new Decimal(5000),
@@ -140,6 +140,7 @@ async function seed() {
             firstName: 'Sarah',
             lastName: 'Amisi',
             email: 'doctor@amisi-premier.amisigenuine.com',
+            passwordHash: await hashPassword('@Admin123'),
             role: 'DOCTOR',
             department: 'Clinical',
             baseSalary: new Decimal(4500)
@@ -149,6 +150,7 @@ async function seed() {
             firstName: 'Joy',
             lastName: 'Nurse',
             email: 'nurse@amisi-premier.amisigenuine.com',
+            passwordHash: await hashPassword('@Admin123'),
             role: 'NURSE',
             department: 'Nursing',
             baseSalary: new Decimal(2500)
@@ -158,6 +160,7 @@ async function seed() {
             firstName: 'Alex',
             lastName: 'Accountant',
             email: 'accountant@amisi-premier.amisigenuine.com',
+            passwordHash: await hashPassword('@Admin123'),
             role: 'ACCOUNTANT',
             department: 'Finance',
             baseSalary: new Decimal(3000)

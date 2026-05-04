@@ -1,4 +1,4 @@
-import { ControlClient, TenantClient, Decimal } from './index';
+import { ControlClient, TenantClient, Decimal, hashPassword } from './index';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -31,7 +31,7 @@ async function seedAll() {
                 firstName: 'System',
                 lastName: 'Administrator',
                 email: `admin@${tenant.slug}.amisigenuine.com`,
-                passwordHash: '@Admin123',
+                passwordHash: await hashPassword('@Admin123'),
                 role: 'ADMIN' as const,
                 department: 'Administration',
                 baseSalary: new Decimal(5000),
@@ -42,7 +42,7 @@ async function seedAll() {
                 firstName: 'Senior',
                 lastName: 'Doctor',
                 email: `doctor@${tenant.slug}.amisigenuine.com`,
-                passwordHash: '@Doctor123',
+                passwordHash: await hashPassword('@Doctor123'),
                 role: 'DOCTOR' as const,
                 department: 'Clinical',
                 baseSalary: new Decimal(4500),
@@ -53,7 +53,7 @@ async function seedAll() {
                 firstName: 'Head',
                 lastName: 'Nurse',
                 email: `nurse@${tenant.slug}.amisigenuine.com`,
-                passwordHash: '@Nurse123',
+                passwordHash: await hashPassword('@Nurse123'),
                 role: 'NURSE' as const,
                 department: 'Nursing',
                 baseSalary: new Decimal(2500),
@@ -64,7 +64,7 @@ async function seedAll() {
                 firstName: 'Finance',
                 lastName: 'Manager',
                 email: `accountant@${tenant.slug}.amisigenuine.com`,
-                passwordHash: '@Finance123',
+                passwordHash: await hashPassword('@Finance123'),
                 role: 'ACCOUNTANT' as const,
                 department: 'Finance',
                 baseSalary: new Decimal(3000),
@@ -75,7 +75,7 @@ async function seedAll() {
                 firstName: 'Chief',
                 lastName: 'Pharmacist',
                 email: `pharmacist@${tenant.slug}.amisigenuine.com`,
-                passwordHash: '@Pharm123',
+                passwordHash: await hashPassword('@Pharm123'),
                 role: 'PHARMACIST' as const,
                 department: 'Pharmacy',
                 baseSalary: new Decimal(3200),
@@ -86,7 +86,7 @@ async function seedAll() {
                 firstName: 'Lab',
                 lastName: 'Technician',
                 email: `lab@${tenant.slug}.amisigenuine.com`,
-                passwordHash: '@Lab123',
+                passwordHash: await hashPassword('@Lab123'),
                 role: 'LAB_TECH' as const,
                 department: 'Laboratory',
                 baseSalary: new Decimal(2800),
@@ -97,7 +97,7 @@ async function seedAll() {
                 firstName: 'HR',
                 lastName: 'Director',
                 email: `hr@${tenant.slug}.amisigenuine.com`,
-                passwordHash: '@HR123',
+                passwordHash: await hashPassword('@HR123'),
                 role: 'HR' as const,
                 department: 'Human Resources',
                 baseSalary: new Decimal(3000),

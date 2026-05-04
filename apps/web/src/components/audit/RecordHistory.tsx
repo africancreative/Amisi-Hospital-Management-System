@@ -213,7 +213,7 @@ export default function RecordHistory({ entityType, entityId, compact }: RecordH
                                   return (
                                     <div key={key} className={`text-[10px] flex gap-2 ${wasChanged ? 'text-red-300' : 'text-gray-600'}`}>
                                       <span className="text-gray-500">{key}:</span>
-                                      {wasChanged && <RotateCcw className="w-2.5 h-2.5 text-red-500 flex-shrink-0" />}
+                                      {wasChanged && <RotateCcw className="w-2.5 h-2.5 text-red-500 shrink-0" />}
                                       <span className="truncate">{formatValue(value)}</span>
                                     </div>
                                   );

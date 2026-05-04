@@ -60,7 +60,7 @@ export default async function LandingPage() {
                 <h1 className="text-6xl xl:text-7xl font-black tracking-tighter mb-8 leading-[0.9]">
                   {settings.heroTitle || (
                     <>Enterprise Hospital<br />
-                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-amber-400">
+                      <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-amber-400">
                         Management
                       </span>{' '}
                       for Africa.
@@ -74,7 +74,7 @@ export default async function LandingPage() {
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Link
                     href="/request"
-                    className="px-8 py-4 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-black text-lg hover:from-blue-500 hover:to-indigo-500 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-2xl shadow-blue-600/40 flex items-center justify-center gap-3"
+                    className="px-8 py-4 rounded-2xl bg-linear-to-r from-blue-600 to-indigo-600 text-white font-black text-lg hover:from-blue-500 hover:to-indigo-500 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-2xl shadow-blue-600/40 flex items-center justify-center gap-3"
                   >
                     {settings.heroCTA || 'Request Enterprise Access'}
                     <span className="flex items-center justify-center h-6 w-6 rounded-full bg-white/20">
@@ -93,7 +93,7 @@ export default async function LandingPage() {
               {/* Logo Hero Graphic */}
               <div className="hidden lg:flex items-center justify-center">
                 <div className="relative">
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-600/20 to-amber-500/20 blur-3xl scale-150" />
+                  <div className="absolute inset-0 rounded-full bg-linear-to-br from-blue-600/20 to-amber-500/20 blur-3xl scale-150" />
                   <img
                     src="/logo.png"
                     alt="Amisi MedOS"
@@ -112,7 +112,7 @@ export default async function LandingPage() {
                   { label: 'Avg. Uptime', value: '99.9%' },
                   { label: 'Offline Resilient', value: '100%' },
                 ].map((s: any) => (
-                  <div key={s.label} className="rounded-2xl border border-white/5 bg-white/[0.02] p-6 text-center backdrop-blur-sm">
+                  <div key={s.label} className="rounded-2xl border border-white/5 bg-white/2 p-6 text-center backdrop-blur-sm">
                     <p className="text-4xl font-black text-white mb-1">{s.value}</p>
                     <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">{s.label}</p>
                   </div>
@@ -123,7 +123,7 @@ export default async function LandingPage() {
         )}
 
         {/* ── Platform Architecture ── */}
-        <section className="py-24 border-t border-white/5 bg-white/[0.01]">
+        <section className="py-24 border-t border-white/5 bg-white/1">
           <div className="max-w-7xl mx-auto px-6">
             <div className="text-center mb-16">
               <p className="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-3">Architecture</p>
@@ -156,7 +156,7 @@ export default async function LandingPage() {
                   tags: ['Hono', 'CRDTs', 'Real-time'],
                 },
               ].map((c: any) => (
-                <div key={c.title} className="rounded-3xl border border-white/5 bg-white/[0.02] p-8 group hover:border-white/10 transition-all hover:bg-white/[0.04]">
+                <div key={c.title} className="rounded-3xl border border-white/5 bg-white/2 p-8 group hover:border-white/10 transition-all hover:bg-white/4">
                   <div className={`h-14 w-14 rounded-2xl flex items-center justify-center mb-6 ${c.color === 'blue' ? 'bg-blue-500/10 text-blue-400' : c.color === 'amber' ? 'bg-amber-500/10 text-amber-400' : 'bg-emerald-500/10 text-emerald-400'} group-hover:scale-110 transition-transform`}>
                     <c.icon className="h-7 w-7" />
                   </div>
@@ -227,7 +227,7 @@ export default async function LandingPage() {
         )}
 
         {/* ── Clinical Modules Grid ── */}
-        <section className="py-24 border-t border-white/5 bg-white/[0.01]">
+        <section className="py-24 border-t border-white/5 bg-white/1">
           <div className="max-w-7xl mx-auto px-6">
             <div className="max-w-3xl mb-16">
               <p className="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-3">Clinical Modules</p>
@@ -299,7 +299,7 @@ export default async function LandingPage() {
               ].map((p: any) => (
                 <div
                   key={p.tier}
-                  className={`rounded-3xl p-8 relative overflow-hidden border transition-all ${p.featured ? 'bg-gradient-to-b from-blue-600/20 to-blue-900/10 border-blue-500/40 shadow-2xl shadow-blue-600/10 scale-[1.02]' : 'bg-white/[0.02] border-white/5 hover:border-white/10'}`}
+                  className={`rounded-3xl p-8 relative overflow-hidden border transition-all ${p.featured ? 'bg-linear-to-b from-blue-600/20 to-blue-900/10 border-blue-500/40 shadow-2xl shadow-blue-600/10 scale-[1.02]' : 'bg-white/2 border-white/5 hover:border-white/10'}`}
                 >
                   {p.featured && (
                     <div className="absolute top-0 right-0 px-4 py-2 bg-blue-600 text-[9px] font-black uppercase tracking-widest rounded-bl-2xl">Most Popular</div>
@@ -328,7 +328,7 @@ export default async function LandingPage() {
         </section>
 
         {/* ── Security & Compliance ── */}
-        <section className="py-24 border-t border-white/5 bg-white/[0.01]">
+        <section className="py-24 border-t border-white/5 bg-white/1">
           <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
             <div>
               <p className="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-3">Security</p>
@@ -377,14 +377,14 @@ export default async function LandingPage() {
             </div>
             <h2 className="text-6xl font-black tracking-tighter italic uppercase mb-8 leading-[0.9]">
               Transform Your<br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-amber-400">Hospital Today.</span>
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-amber-400">Hospital Today.</span>
             </h2>
             <p className="text-neutral-500 text-xl mb-12 max-w-2xl mx-auto">
               Join leading African hospitals already running on {settings.platformName}. Request access and our team will provision your instance within 24 hours.
             </p>
             <Link
               href="/request"
-              className="inline-flex items-center gap-3 px-10 py-5 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-black text-xl hover:from-blue-500 hover:to-indigo-500 transition-all hover:scale-[1.03] active:scale-[0.98] shadow-2xl shadow-blue-600/40"
+              className="inline-flex items-center gap-3 px-10 py-5 rounded-2xl bg-linear-to-r from-blue-600 to-indigo-600 text-white font-black text-xl hover:from-blue-500 hover:to-indigo-500 transition-all hover:scale-[1.03] active:scale-[0.98] shadow-2xl shadow-blue-600/40"
             >
               Request Enterprise Access
               <span className="flex items-center justify-center h-7 w-7 rounded-full bg-white/20"><ArrowRight className="h-5 w-5" /></span>
@@ -462,7 +462,7 @@ function FeatureCard({ icon: Icon, title, description, color = 'blue' }: {
     rose: 'bg-rose-500/10 text-rose-400 border-rose-500/10',
   };
   return (
-    <div className="group p-8 rounded-3xl border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] hover:border-white/10 transition-all">
+    <div className="group p-8 rounded-3xl border border-white/5 bg-white/1 hover:bg-white/3 hover:border-white/10 transition-all">
       <div className={`h-14 w-14 rounded-2xl flex items-center justify-center mb-6 border ${colorMap[color] || colorMap.blue} group-hover:scale-110 transition-transform`}>
         <Icon className="h-7 w-7" />
       </div>
@@ -477,7 +477,7 @@ function ModuleCard({ icon: Icon, name, fullName, desc, tier }: {
 }) {
   const tierColor = tier === 'Starter' ? 'text-emerald-400 bg-emerald-500/10' : tier === 'Professional' ? 'text-blue-400 bg-blue-500/10' : 'text-amber-400 bg-amber-500/10';
   return (
-    <div className="group rounded-2xl border border-white/5 bg-white/[0.02] p-5 hover:border-white/10 hover:bg-white/[0.04] transition-all hover:translate-y-[-2px]">
+    <div className="group rounded-2xl border border-white/5 bg-white/2 p-5 hover:border-white/10 hover:bg-white/4 transition-all hover:translate-y-[-2px]">
       <div className="flex items-start justify-between mb-4">
         <div className="h-10 w-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform">
           <Icon className="h-5 w-5" />

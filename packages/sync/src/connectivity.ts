@@ -6,9 +6,19 @@ import axios from 'axios';
  */
 export async function isOffline(): Promise<boolean> {
     try {
-        await axios.get('https://amisigenuine.com/api/health', { timeout: 2000 });
+        // In local development, the Cloud API might be on localhost:4000
+        const cloudUrl = process.env.CLOUD_SYNC_URL || 'http://localhost:4000/api/sync';
+        const healthUrl = cloudUrl.replace('/sync', '/health');
+        
+        await axios.get(healthUrl, { timeout: 2000 });
         return false;
     } catch {
-        return true;
+        try {
+            // Fallback to public health check if configured
+            await axios.get('https://amisigenuine.com/api/health', { timeout: 2000 });
+            return false;
+        } catch {
+            return true;
+        }
     }
 }

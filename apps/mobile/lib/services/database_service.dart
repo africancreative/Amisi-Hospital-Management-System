@@ -1,6 +1,8 @@
 import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:path/path.dart';
 import 'dart:convert';
+import 'dart:io';
 
 class DatabaseService {
   static final DatabaseService _instance = DatabaseService._internal();
@@ -16,6 +18,10 @@ class DatabaseService {
   }
 
   Future<void> initialize() async {
+    if (Platform.isLinux || Platform.isWindows) {
+      sqfliteFfiInit();
+      databaseFactory = databaseFactoryFfi;
+    }
     await database;
   }
 
