@@ -33,7 +33,7 @@ export async function createTenantWithModules(data: {
         data: {
             name: data.name,
             slug: data.slug,
-            dbUrl: dbUrl || undefined,
+            dbUrl: dbUrl || `postgresql://placeholder-${data.slug}`,
             encryptionKeyReference: data.slug,
             region: data.region,
             tier: data.tier as DeploymentTier,
