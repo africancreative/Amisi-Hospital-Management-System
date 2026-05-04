@@ -21,9 +21,9 @@ export default async function AccountingModule({ params }: { params: { slug: str
     const entries = await getRecentJournalEntries();
     const trialBalance = await getTrialBalance();
 
-    const assetBalance = trialBalance.filter((a: any) => a.type === 'ASSET').reduce((acc: number, a: any) => acc + a.balance, 0);
-    const revenueBalance = trialBalance.filter((a: any) => a.type === 'REVENUE').reduce((acc: number, a: any) => acc + a.balance, 0);
-    const expenseBalance = trialBalance.filter((a: any) => a.type === 'EXPENSE').reduce((acc: number, a: any) => acc + a.balance, 0);
+    const assetBalance = trialBalance.filter((a: any) => a.type === 'ASSET').reduce((acc: any, a: any) => acc + a.balance, 0);
+    const revenueBalance = trialBalance.filter((a: any) => a.type === 'REVENUE').reduce((acc: any, a: any) => acc + a.balance, 0);
+    const expenseBalance = trialBalance.filter((a: any) => a.type === 'EXPENSE').reduce((acc: any, a: any) => acc + a.balance, 0);
     const netProfit = revenueBalance - expenseBalance;
 
     return (

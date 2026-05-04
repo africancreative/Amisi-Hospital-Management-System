@@ -20,7 +20,7 @@ export async function requestSurgery(data: {
     priority?: string;
     medicalClearanceUrl?: string;
     requestedDate?: string;
-}) {
+}): Promise<any> {
     await ensureRole(['DOCTOR', 'SURGEON', 'ADMIN']);
     const db = await getTenantDb();
 
@@ -63,7 +63,7 @@ export async function scheduleSurgery(data: {
     anesthesiologistId: string;
     scrubNurseId?: string;
     circulatingNurseId?: string;
-}) {
+}): Promise<any> {
     await ensureRole(['SURGEON', 'OT_MANAGER', 'ADMIN']);
     const db = await getTenantDb();
 
@@ -138,7 +138,7 @@ export async function submitPreOpChecklist(otScheduleId: string, nurseId: string
     bloodReservedUnits?: number;
     crossmatchStatus?: string;
     consentDocumentUrl?: string;
-}) {
+}): Promise<any> {
     await ensureRole(['NURSE', 'ANESTHESIOLOGIST', 'SURGEON', 'ADMIN']);
     const db = await getTenantDb();
 
@@ -185,7 +185,7 @@ export async function submitIntraOpRecord(otScheduleId: string, data: {
     // PharmOS Hook data:
     drugsUsed?: { inventoryId: string; quantity: number }[];
     implantsUsed?: { serialNumber: string; manufacturer: string }[];
-}) {
+}): Promise<any> {
     await ensureRole(['SURGEON', 'ANESTHESIOLOGIST', 'NURSE', 'ADMIN']);
     const db = await getTenantDb();
 
@@ -285,7 +285,7 @@ export async function logPostOpPACU(otScheduleId: string, data: {
     dischargeDestination?: string;
     dischargedByMD?: string;
     isDischarging?: boolean;
-}) {
+}): Promise<any> {
     await ensureRole(['NURSE', 'ANESTHESIOLOGIST', 'SURGEON', 'ADMIN']);
     const db = await getTenantDb();
 

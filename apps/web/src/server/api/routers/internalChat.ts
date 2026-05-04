@@ -8,13 +8,13 @@ import { realtimeHub } from '@amisimedos/chat';
  * Handles staff-to-staff messaging, group clinical collaboration,
  * multimedia attachments, and ephemeral message lifecycle.
  */
-export const internalChatRouter = router({
+export const internalChatRouter: any = router({
   /**
    * getConversations
    * Fetches active groups and DMs for the current employee.
    */
   getConversations: tenantProcedure
-    .query(async ({ ctx }) => {
+    .query(async ({ ctx }: any) => {
       const userId = ctx.session?.userId;
       if (!userId) throw new Error('Unauthorized');
 
@@ -47,7 +47,7 @@ export const internalChatRouter = router({
       limit: z.number().min(1).max(100).default(50),
       cursor: z.string().nullish(),
     }))
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }: any) => {
       const messages = await ctx.db!.userChatMessage.findMany({
         where: { 
             groupId: input.groupId,
@@ -90,7 +90,7 @@ export const internalChatRouter = router({
         fileSize: z.number().optional(),
       })).optional(),
     }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }: any) => {
       const userId = ctx.session?.userId;
       if (!userId) throw new Error('Unauthorized');
 
@@ -146,7 +146,7 @@ export const internalChatRouter = router({
       type: z.enum(['DIRECT', 'GROUP', 'SYSTEM']).default('GROUP'),
       participantIds: z.array(z.string()), // For 1:1, pass the other user's ID
     }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }: any) => {
       const myId = ctx.session?.userId;
       if (!myId) throw new Error('Unauthorized');
 
@@ -168,7 +168,7 @@ export const internalChatRouter = router({
           name: input.name,
           type: input.type,
           members: {
-            create: allParticipants.map(userId => ({
+            create: allParticipants.map((userId: any) => ({
               userId,
               role: userId === myId ? 'ADMIN' : 'MEMBER'
             }))

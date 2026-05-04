@@ -72,8 +72,8 @@ export async function postInventoryJournalEntry(req: JournalRequest): Promise<vo
     if (!lines || lines.length === 0) return;
 
     // Verify balance (Debits === Credits) before posting
-    const totalDebits  = lines.reduce((s, l) => s + (l.debit  ?? 0), 0);
-    const totalCredits = lines.reduce((s, l) => s + (l.credit ?? 0), 0);
+    const totalDebits  = lines.reduce((s: any, l: any) => s + (l.debit  ?? 0), 0);
+    const totalCredits = lines.reduce((s: any, l: any) => s + (l.credit ?? 0), 0);
     if (Math.abs(totalDebits - totalCredits) > 0.001) {
         console.error(`[Accounting Bridge] Unbalanced entry for ${req.type}: D=${totalDebits}, C=${totalCredits}`);
         return;

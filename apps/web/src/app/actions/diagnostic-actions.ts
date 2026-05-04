@@ -8,7 +8,7 @@ import { realtimeHub } from '@amisimedos/chat';
 import { getResolvedTenantId, getTenantSyncSecret } from '@/lib/tenant';
 import { recordEvent } from '@amisimedos/sync';
 
-export async function orderDiagnostic(formData: FormData) {
+export async function orderDiagnostic(formData: FormData): Promise<any> {
     await ensureRole(['DOCTOR', 'ADMIN']);
     const patientId = formData.get('patientId') as string;
     const encounterId = formData.get('encounterId') as string || undefined;
@@ -50,7 +50,7 @@ export async function orderDiagnostic(formData: FormData) {
     return order;
 }
 
-export async function collectSpecimen(orderId: string, specimenId: string) {
+export async function collectSpecimen(orderId: string, specimenId: string): Promise<any> {
     await ensureRole(['NURSE', 'LAB_TECH', 'ADMIN']);
     const db = await getTenantDb();
     
@@ -74,7 +74,7 @@ export async function collectSpecimen(orderId: string, specimenId: string) {
     return order;
 }
 
-export async function validateDiagnostic(orderId: string) {
+export async function validateDiagnostic(orderId: string): Promise<any> {
     await ensureRole(['DOCTOR', 'ADMIN']); // Usually a Pathologist or Radiologist
     const db = await getTenantDb();
     
@@ -89,7 +89,7 @@ export async function validateDiagnostic(orderId: string) {
     });
 
     // Handle Critical Result Real-time Alarm
-    const isCritical = order.isCritical || order.results.some(r => r.flag === 'Critical');
+    const isCritical = order.isCritical || order.results.some((r: any) => r.flag === 'Critical');
     if (isCritical) {
         const tenantId = await getResolvedTenantId();
         if (tenantId) {

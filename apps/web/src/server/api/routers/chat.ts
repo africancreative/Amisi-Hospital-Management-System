@@ -7,7 +7,7 @@ import { TRPCError } from '@trpc/server';
  * A. Patient Chat   — timeline view, multimedia, thread replies, read receipts
  * B. Clinical Notes — structured SOAP records, doctor-authored and lock-signed
  */
-export const chatRouter = router({
+export const chatRouter: any = router({
 
   // ─────────────────────────────────────────────────────────
   // A. PATIENT CHAT
@@ -20,7 +20,7 @@ export const chatRouter = router({
       limit: z.number().min(1).max(200).default(50),
       cursor: z.string().optional(), // Last message ID for pagination
     }))
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }: any) => {
       if (!ctx.db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
       const messages = await ctx.db.chatMessage.findMany({
         where: { patientId: input.patientId, isDeleted: false, replyToId: null }, // Only top-level
@@ -64,7 +64,7 @@ export const chatRouter = router({
         duration: z.number().optional(),
       }).optional(),
     }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }: any) => {
       if (!ctx.db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
       const { attachment, ...msgData } = input;
 
@@ -96,7 +96,7 @@ export const chatRouter = router({
   /** Mark a patient message as read */
   markMessageRead: protectedProcedure
     .input(z.string())
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }: any) => {
       if (!ctx.db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
       return ctx.db.chatMessage.update({
         where: { id: input },
@@ -107,7 +107,7 @@ export const chatRouter = router({
   /** Soft-delete a message */
   deletePatientMessage: protectedProcedure
     .input(z.string())
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }: any) => {
       if (!ctx.db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
       return ctx.db.chatMessage.update({
         where: { id: input },
@@ -126,7 +126,7 @@ export const chatRouter = router({
       limit: z.number().default(100),
       eventTypes: z.array(z.string()).optional(),
     }))
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }: any) => {
       if (!ctx.db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
       return ctx.db.patientTimelineEvent.findMany({
         where: {
@@ -148,7 +148,7 @@ export const chatRouter = router({
       patientId: z.string(),
       type: z.enum(['SOAP', 'NURSING', 'PROGRESS', 'CONSULT', 'DISCHARGE']).optional(),
     }))
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }: any) => {
       if (!ctx.db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
       return ctx.db.clinicalNote.findMany({
         where: { patientId: input.patientId, ...(input.type ? { type: input.type } : {}) },
@@ -170,7 +170,7 @@ export const chatRouter = router({
       plan: z.string().optional(),
       content: z.string().optional(),
     }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }: any) => {
       if (!ctx.db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
       if (!ctx.session.userId) throw new TRPCError({ code: 'UNAUTHORIZED' });
 
@@ -211,7 +211,7 @@ export const chatRouter = router({
       plan: z.string().optional(),
       content: z.string().optional(),
     }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }: any) => {
       if (!ctx.db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
       const { noteId, ...data } = input;
 
@@ -232,7 +232,7 @@ export const chatRouter = router({
       noteId: z.string(),
       signedByName: z.string(),
     }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }: any) => {
       if (!ctx.db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
 
       const existing = await ctx.db.clinicalNote.findUnique({ where: { id: input.noteId } });
@@ -250,7 +250,7 @@ export const chatRouter = router({
   // INTERNAL STAFF CHAT (unchanged, preserved)
   // ─────────────────────────────────────────────────────────
   getUserConversations: protectedProcedure
-    .query(async ({ ctx }) => {
+    .query(async ({ ctx }: any) => {
       const userId = ctx.session.userId;
       const sent = await ctx.db!.userChatMessage.findMany({
         where: { senderId: userId },
@@ -270,7 +270,7 @@ export const chatRouter = router({
       receiverId: z.string(),
       content: z.string(),
     }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }: any) => {
       return ctx.db!.userChatMessage.create({
         data: { ...input, senderId: ctx.session.userId! }
       });

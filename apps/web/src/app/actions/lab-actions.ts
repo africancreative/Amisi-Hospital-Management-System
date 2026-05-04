@@ -4,7 +4,7 @@ import { getTenantDb } from '@/lib/db';
 import { revalidatePath } from 'next/cache';
 import { ensureRole } from '@/lib/auth-utils';
 
-export async function createLabOrder(patientId: string, encounterId: string | null, testName: string, priority: string, orderedBy: string) {
+export async function createLabOrder(patientId: string, encounterId: string | null, testName: string, priority: string, orderedBy: string): Promise<any> {
     await ensureRole(['DOCTOR', 'NURSE', 'ADMIN']);
     const db = await getTenantDb();
 
@@ -24,7 +24,7 @@ export async function createLabOrder(patientId: string, encounterId: string | nu
     return order;
 }
 
-export async function getLabOrderWithResults(orderId: string) {
+export async function getLabOrderWithResults(orderId: string): Promise<any> {
     const db = await getTenantDb();
     return db.labOrder.findUnique({
         where: { id: orderId },
@@ -35,7 +35,7 @@ export async function getLabOrderWithResults(orderId: string) {
     });
 }
 
-export async function getPendingLabOrders() {
+export async function getPendingLabOrders(): Promise<any> {
     const db = await getTenantDb();
     return db.labOrder.findMany({
         where: {
@@ -49,7 +49,7 @@ export async function getPendingLabOrders() {
     });
 }
 
-export async function updateLabOrderStatus(orderId: string, status: string) {
+export async function updateLabOrderStatus(orderId: string, status: string): Promise<any> {
     await ensureRole(['LAB_TECH', 'ADMIN']);
     const db = await getTenantDb();
     const order = await db.labOrder.update({
@@ -61,13 +61,13 @@ export async function updateLabOrderStatus(orderId: string, status: string) {
     return order;
 }
 
-export async function recordLabResult(orderId: string, results: { parameter: string, value: string, unit?: string, range?: string, flag?: string }[], technicianName: string) {
+export async function recordLabResult(orderId: string, results: { parameter: string, value: string, unit?: string, range?: string, flag?: string }[], technicianName: string): Promise<any> {
     await ensureRole(['LAB_TECH', 'ADMIN']);
     const db = await getTenantDb();
 
     // Create results
     await db.labResult.createMany({
-        data: results.map(r => ({
+        data: results.map((r: any) => ({
             labOrderId: orderId,
             biomarkerName: r.parameter,
             valueResult: r.value,

@@ -33,9 +33,9 @@ export default function DashboardModule() {
   const { data: stockAlerts } = api.pharmacy.getStockAlerts.useQuery();
   const { data: employees } = api.hr.getEmployees.useQuery();
 
-  const totalRevenue = invoices?.reduce((acc: number, inv: any) => acc + Number(inv.balanceDue), 0) || 0;
-  const activePatients = occupancy?.reduce((acc: number, w: any) => acc + w.occupied, 0) || 0;
-  const totalBeds = occupancy?.reduce((acc: number, w: any) => acc + w.totalBeds, 0) || 0;
+  const totalRevenue = invoices?.reduce((acc: any, inv: any) => acc + Number(inv.balanceDue), 0) || 0;
+  const activePatients = occupancy?.reduce((acc: any, w: any) => acc + w.occupied, 0) || 0;
+  const totalBeds = occupancy?.reduce((acc: any, w: any) => acc + w.totalBeds, 0) || 0;
   const criticalAlerts = stockAlerts?.length || 0;
 
   const revenueData = [

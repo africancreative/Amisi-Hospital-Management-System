@@ -2,13 +2,13 @@ import { tenantProcedure, router } from '@/server/trpc/trpc';
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 
-export const wardRouter = router({
+export const wardRouter: any = router({
   /**
    * getWardsWithBeds
    * Fetches all wards and their constituent beds with real-time occupancy.
    */
   getWardsWithBeds: tenantProcedure
-    .query(async ({ ctx }) => {
+    .query(async ({ ctx }: any) => {
       return ctx.db!.ward.findMany({
         include: {
           beds: {
@@ -39,8 +39,8 @@ export const wardRouter = router({
       attendingPhysicianId: z.string().optional(),
       admissionReason: z.string().optional()
     }))
-    .mutation(async ({ ctx, input }) => {
-      return ctx.db!.$transaction(async (tx) => {
+    .mutation(async ({ ctx, input }: any) => {
+      return ctx.db!.$transaction(async (tx: any) => {
         // 1. Check bed availability
         const bed = await tx.bed.findUnique({
           where: { id: input.bedId }
@@ -106,8 +106,8 @@ export const wardRouter = router({
       toBedId: z.string(),
       reason: z.string().optional()
     }))
-    .mutation(async ({ ctx, input }) => {
-      return ctx.db!.$transaction(async (tx) => {
+    .mutation(async ({ ctx, input }: any) => {
+      return ctx.db!.$transaction(async (tx: any) => {
         // 1. Check target bed
         const toBed = await tx.bed.findUnique({ where: { id: input.toBedId } });
         if (!toBed || toBed.status !== 'AVAILABLE') {
@@ -168,8 +168,8 @@ export const wardRouter = router({
       admissionId: z.string(),
       bedId: z.string()
     }))
-    .mutation(async ({ ctx, input }) => {
-      return ctx.db!.$transaction(async (tx) => {
+    .mutation(async ({ ctx, input }: any) => {
+      return ctx.db!.$transaction(async (tx: any) => {
         // 1. Update Admission status
         await tx.admission.update({
           where: { id: input.admissionId },
@@ -218,7 +218,7 @@ export const wardRouter = router({
     .input(z.object({
       bedId: z.string()
     }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }: any) => {
       return ctx.db!.bed.update({
         where: { id: input.bedId },
         data: { status: 'AVAILABLE' }
@@ -230,7 +230,7 @@ export const wardRouter = router({
    * High-level stats for ward management dashboard.
    */
   getWardOccupancy: tenantProcedure
-    .query(async ({ ctx }) => {
+    .query(async ({ ctx }: any) => {
       const wards = await ctx.db!.ward.findMany({
         include: {
           beds: {
@@ -239,13 +239,13 @@ export const wardRouter = router({
         }
       });
 
-      return wards.map(w => ({
+      return wards.map((w: any) => ({
         id: w.id,
         name: w.name,
         totalBeds: w.beds.length,
-        occupied: w.beds.filter(b => b.status === 'OCCUPIED').length,
-        cleaning: w.beds.filter(b => b.status === 'CLEANING').length,
-        available: w.beds.filter(b => b.status === 'AVAILABLE').length,
+        occupied: w.beds.filter((b: any) => b.status === 'OCCUPIED').length,
+        cleaning: w.beds.filter((b: any) => b.status === 'CLEANING').length,
+        available: w.beds.filter((b: any) => b.status === 'AVAILABLE').length,
       }));
     })
 });

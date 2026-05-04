@@ -61,7 +61,7 @@ export default function OnboardHospital() {
         setFormData(prev => ({
             ...prev,
             selectedModuleIds: prev.selectedModuleIds.includes(id) 
-                ? prev.selectedModuleIds.filter(mid => mid !== id)
+                ? prev.selectedModuleIds.filter((mid: any) => mid !== id)
                 : [...prev.selectedModuleIds, id]
         }));
     };
@@ -76,7 +76,7 @@ export default function OnboardHospital() {
             <div className="w-full max-w-4xl">
                 {/* Progress Bar */}
                 <div className="mb-12 flex items-center justify-center gap-4">
-                    {[1, 2, 3, 4].map((i) => (
+                    {[1, 2, 3, 4].map((i: any) => (
                         <div key={i} className="flex items-center gap-4">
                             <div className={`h-10 w-10 rounded-full flex items-center justify-center font-bold transition-all ${
                                 step >= i ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'bg-slate-900 text-slate-600 border border-slate-800'

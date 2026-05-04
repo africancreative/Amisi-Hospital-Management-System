@@ -33,7 +33,7 @@ export function ApiKeyManager({ tenants, allKeys: initialKeys }: ApiKeyManagerPr
     const [error, setError] = useState<string | null>(null);
 
     const currentTenantKeys: ApiKey[] = allKeys[selectedTenant] || [];
-    const currentTenant = tenants.find(t => t.id === selectedTenant);
+    const currentTenant = tenants.find((t: any) => t.id === selectedTenant);
 
     const handleGenerate = () => {
         if (!selectedTenant || !newLabel.trim()) {
@@ -64,7 +64,7 @@ export function ApiKeyManager({ tenants, allKeys: initialKeys }: ApiKeyManagerPr
             await revokeApiKey(selectedTenant, key);
             setAllKeys(prev => ({
                 ...prev,
-                [selectedTenant]: (prev[selectedTenant] || []).filter(k => k.key !== key)
+                [selectedTenant]: (prev[selectedTenant] || []).filter((k: any) => k.key !== key)
             }));
             if (newKeyResult?.key === key) setNewKeyResult(null);
         });
@@ -115,7 +115,7 @@ export function ApiKeyManager({ tenants, allKeys: initialKeys }: ApiKeyManagerPr
                             onChange={e => { setSelectedTenant(e.target.value); setNewKeyResult(null); }}
                             className="w-full h-12 px-4 rounded-xl bg-white/5 border border-white/10 text-sm text-white focus:outline-none focus:border-amber-500/50 font-bold"
                         >
-                            {tenants.map(t => (
+                            {tenants.map((t: any) => (
                                 <option key={t.id} value={t.id} className="bg-neutral-900">{t.name} ({t.slug})</option>
                             ))}
                         </select>
@@ -251,7 +251,7 @@ export function ApiKeyManager({ tenants, allKeys: initialKeys }: ApiKeyManagerPr
 
             {/* Summary across all tenants */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {tenants.map(t => {
+                {tenants.map((t: any) => {
                     const count = (allKeys[t.id] || []).length;
                     return (
                         <button

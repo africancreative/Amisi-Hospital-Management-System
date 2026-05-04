@@ -124,7 +124,7 @@ export default function NewHospitalPage() {
     const toggleModule = (moduleId: string) => {
         setSelectedModules(prev =>
             prev.includes(moduleId)
-                ? prev.filter(m => m !== moduleId)
+                ? prev.filter((m: any) => m !== moduleId)
                 : [...prev, moduleId]
         );
     };
@@ -252,7 +252,7 @@ export default function NewHospitalPage() {
                                     { id: 'CLINIC', name: 'Tier 1: Clinic', desc: 'Essential Clinical Care', color: 'bg-blue-500' },
                                     { id: 'GENERAL', name: 'Tier 2: Hospital', desc: 'Full Diagnostics & IPD', color: 'bg-emerald-500' },
                                     { id: 'RESEARCH', name: 'Tier 3: Research', desc: 'Critical Care & Academic', color: 'bg-purple-500' }
-                                ].map(t => (
+                                ].map((t: any) => (
                                     <button
                                         key={t.id}
                                         type="button"
@@ -283,7 +283,7 @@ export default function NewHospitalPage() {
                             <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Granular Control Enabled</span>
                         </div>
                         <div className="p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10">
-                            {DOMAINS.map(domain => {
+                            {DOMAINS.map((domain: any) => {
                                 const Icon = domain.icon;
                                 return (
                                     <div key={domain.id} className="space-y-4">
@@ -294,7 +294,7 @@ export default function NewHospitalPage() {
                                             <h4 className="text-xs font-black uppercase tracking-widest text-gray-400">{domain.name}</h4>
                                         </div>
                                         <div className="space-y-3">
-                                            {domain.modules.map(mod => (
+                                            {domain.modules.map((mod: any) => (
                                                 <label key={mod.id} className="flex items-start gap-3 group cursor-pointer">
                                                     <div className="relative flex items-center pt-1">
                                                         <input

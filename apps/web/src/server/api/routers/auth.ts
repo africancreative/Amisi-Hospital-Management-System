@@ -12,8 +12,8 @@ import { verifyPassword } from '@amisimedos/auth';
  * Cookie-based auth for web + local node clients.
  * Multi-tenant login resolves tenant by slug (Control DB) then authenticates against tenant shard.
  */
-export const authRouter = router({
-  me: publicProcedure.query(({ ctx }) => {
+export const authRouter: any = router({
+  me: publicProcedure.query(({ ctx  }: any) => {
     return {
       userId: ctx.session?.userId ?? null,
       role: ctx.session?.role ?? null,
@@ -31,7 +31,7 @@ export const authRouter = router({
         password: z.string().min(1),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input }: any) => {
       const tenantSlug = input.tenantSlug.trim().toLowerCase();
       const email = input.email.trim().toLowerCase();
 

@@ -9,7 +9,7 @@ import { type NextRequest } from 'next/server';
  * 2. Resolve the isolated database client for that specific hospital node
  * 3. Extract auth session metadata (JWT or Session Cookie)
  */
-export const createTRPCContext = async (opts: { req: NextRequest }) => {
+export const createTRPCContext = async (opts: { req: NextRequest }): Promise<any> => {
   const { req } = opts;
   
   // 1. Multi-Tenant Routing (The Core of AmisiMedOS)

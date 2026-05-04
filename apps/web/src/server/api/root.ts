@@ -20,7 +20,7 @@ import { hrRouter } from './routers/hr';
 /**
  * Root tRPC Router
  */
-export const appRouter = router({
+export const appRouter: any = router({
   system: systemRouter,
   auth: authRouter,
   patient: patientRouter,

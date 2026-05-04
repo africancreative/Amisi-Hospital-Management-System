@@ -109,7 +109,7 @@ export default function ClinicalChat({ patientId, visitId }: ClinicalChatProps) 
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
-                    {channels.map(channel => (
+                    {channels.map((channel: any) => (
                         <button 
                             key={channel.id}
                             onClick={() => setActiveChannel(channel)}
@@ -175,7 +175,7 @@ export default function ClinicalChat({ patientId, visitId }: ClinicalChatProps) 
                     className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar"
                 >
                     <AnimatePresence>
-                        {messages.map((msg, idx) => (
+                        {messages.map((msg: any, idx: any) => (
                             <motion.div 
                                 key={msg.id}
                                 initial={{ opacity: 0, y: 10 }}

@@ -1,6 +1,6 @@
 import { isOffline } from '@amisimedos/sync';
 
-export async function fetchWithFallback(endpoint: string, options: RequestInit = {}) {
+export async function fetchWithFallback(endpoint: string, options: RequestInit = {}): Promise<any> {
   const cloudUrl = process.env.NEXT_PUBLIC_CLOUD_URL || 'https://cloud.amisimedos.com';
   // Attempt to get the local node IP from localStorage (configured during setup)
   const localNodeIp = typeof window !== 'undefined' ? localStorage.getItem('localNodeIp') : null;

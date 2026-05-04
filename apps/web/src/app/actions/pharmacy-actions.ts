@@ -13,7 +13,7 @@ import { postInventoryJournalEntry } from './accounting-bridge';
 // INVENTORY ACTIONS
 // ---------------------------------------------------------------------------
 
-export async function getInventoryItems(category?: string) {
+export async function getInventoryItems(category?: string): Promise<any> {
     const db = await getTenantDb();
     return db.inventoryItem.findMany({
         where: category ? { category } : undefined,
@@ -21,7 +21,7 @@ export async function getInventoryItems(category?: string) {
     });
 }
 
-export async function updateInventoryStock(itemId: string, quantityChange: number) {
+export async function updateInventoryStock(itemId: string, quantityChange: number): Promise<any> {
     await ensureRole(['PHARMACIST', 'ADMIN']);
     const db = await getTenantDb();
 
@@ -50,20 +50,20 @@ export async function createPrescription(
     encounterId: string | null,
     orderedBy: string,
     items: { drugName: string; dosage: string; frequency: string; duration: string; quantity: number }[]
-) {
+): Promise<any> {
     await ensureRole(['DOCTOR', 'ADMIN']);
     const db = await getTenantDb();
 
     // Joint Commission Safety: Check patient allergies before prescribing
     const allergies = await db.allergy.findMany({ where: { patientId } });
-    const allergySubstances = allergies.map(a => a.substance.toLowerCase());
+    const allergySubstances = allergies.map((a: any) => a.substance.toLowerCase());
 
-    const conflicts = items.filter(i =>
-        allergySubstances.some(a => i.drugName.toLowerCase().includes(a))
+    const conflicts = items.filter((i: any) =>
+        allergySubstances.some((a: any) => i.drugName.toLowerCase().includes(a))
     );
 
     if (conflicts.length > 0) {
-        const names = conflicts.map(c => c.drugName).join(', ');
+        const names = conflicts.map((c: any) => c.drugName).join(', ');
         throw new Error(`ALLERGY_CONFLICT: Patient has known allergy to: ${names}. Override requires attending physician approval.`);
     }
 
@@ -81,7 +81,7 @@ export async function createPrescription(
     return prescription;
 }
 
-export async function getPendingPrescriptions() {
+export async function getPendingPrescriptions(): Promise<any> {
     const db = await getTenantDb();
     return db.prescription.findMany({
         where: { status: 'pending' },
@@ -98,7 +98,7 @@ export async function dispensePrescription(
     prescriptionId: string,
     dispensedBy: string,
     itemDispensations: { itemId: string; quantity: number; batchId?: string }[]
-) {
+): Promise<any> {
     await ensureRole(['PHARMACIST', 'ADMIN']);
     const db = await getTenantDb();
 

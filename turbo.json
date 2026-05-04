@@ -18,7 +18,9 @@
             ],
             "env": [
                 "NEON_DATABASE_URL",
+                "NEON_DIRECT_URL",
                 "LOCAL_EDGE_DATABASE_URL",
+                "LOCAL_EDGE_DIRECT_URL",
                 "JWT_SECRET",
                 "CLOUD_SYNC_URL",
                 "NODE_ENV",

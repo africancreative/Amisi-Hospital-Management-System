@@ -6,10 +6,10 @@ import { BillingService } from '@/server/services/billing_service';
  * Billing Router
  * Implementation of Granular Billing, Partial Payments, and Auto-Invoicing
  */
-export const billingRouter = router({
+export const billingRouter: any = router({
   getInvoice: tenantProcedure
     .input(z.string())
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }: any) => {
       if (!ctx.db) throw new Error('Database not initialized');
       return ctx.db!.invoice.findUnique({
         where: { id: input },
@@ -17,7 +17,7 @@ export const billingRouter = router({
       });
     }),
   getOpenInvoices: tenantProcedure
-    .query(async ({ ctx }) => {
+    .query(async ({ ctx }: any) => {
       if (!ctx.db) throw new Error('Database not initialized');
       return ctx.db!.invoice.findMany({
         where: { status: { in: ['OPEN', 'PARTIAL'] } },
@@ -28,7 +28,7 @@ export const billingRouter = router({
 
   getVisitBill: tenantProcedure
     .input(z.string())
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }: any) => {
       if (!ctx.db) throw new Error('Database not initialized');
       return ctx.db!.visit.findUnique({
         where: { id: input },
@@ -51,7 +51,7 @@ export const billingRouter = router({
       exemptionReason: z.string().optional(),
       currency: z.string().default('USD')
     }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }: any) => {
       if (!ctx.db) throw new Error('Database not initialized');
       const { visitId, patientId, taxRate, discountAmount, isExempt, ...rest } = input;
       const billing = new BillingService(ctx.db);
@@ -87,7 +87,7 @@ export const billingRouter = router({
       insurancePolicyNumber: z.string().optional(),
       preAuthCode: z.string().optional(),
     }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }: any) => {
       if (!ctx.db) throw new Error('Database not initialized');
       const { invoiceId, ...data } = input;
       return ctx.db!.invoice.update({ where: { id: invoiceId }, data: { ...data, version: { increment: 1 }, isSynced: false } });
@@ -103,13 +103,13 @@ export const billingRouter = router({
       autoAllocate: z.boolean().default(true),
       allocations: z.array(z.object({ billItemId: z.string(), amount: z.number() })).optional()
     }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }: any) => {
       if (!ctx.db) throw new Error('Database not initialized');
       const { allocations, invoiceId, autoAllocate, ...paymentData } = input;
       const billing = new BillingService(ctx.db);
       const payment = await ctx.db!.payment.create({ data: { ...paymentData, invoiceId, version: 1, isSynced: false } });
       if (allocations && allocations.length > 0) {
-        await ctx.db!.$transaction(allocations.map(alloc => ctx.db!.paymentAllocation.create({ data: { paymentId: payment.id, billItemId: alloc.billItemId, amount: alloc.amount } })));
+        await ctx.db!.$transaction(allocations.map((alloc: any) => ctx.db!.paymentAllocation.create({ data: { paymentId: payment.id, billItemId: alloc.billItemId, amount: alloc.amount } })));
         await billing.calculateInvoiceTotals(invoiceId);
       } else if (autoAllocate) {
         await billing.autoAllocatePayment(payment.id, invoiceId);
@@ -129,7 +129,7 @@ export const billingRouter = router({
       format: z.enum(['THERMAL', 'A4']),
       type: z.enum(['RECEIPT', 'INVOICE'])
     }))
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }: any) => {
       const { PrintService } = await import('@amisimedos/billing');
       const printer = new PrintService(ctx.db!);
       

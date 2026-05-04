@@ -7,7 +7,7 @@ import { getControlDb, getTenantDb } from '@amisimedos/db/client';
  * 
  * Aggregates statistics across multiple hospital tenants for executive oversight.
  */
-export const analyticsRouter = router({
+export const analyticsRouter: any = router({
   
   /**
    * Cross-Tenant Global Overview

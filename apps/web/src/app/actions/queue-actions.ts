@@ -16,7 +16,7 @@ export async function registerAndCheckIn(data: {
     phone?: string;
     department: string;
     priority: 'NORMAL' | 'URGENT' | 'EMERGENCY';
-}) {
+}): Promise<any> {
     await ensureRole(['RECEPTIONIST', 'ADMIN', 'ADMISSIONS']);
     const db = await getTenantDb();
 
@@ -119,7 +119,7 @@ export async function getDynamicQueue(department?: string): Promise<any[]> {
     });
 
     // Weighted Queue Algorithm
-    const scoredQueue = encounters.map(e => {
+    const scoredQueue = encounters.map((e: any) => {
         const now = Date.now();
         const waitMinutes = Math.floor((now - new Date(e.createdAt).getTime()) / 60000);
         
@@ -163,7 +163,7 @@ export async function saveTriageIntake(encounterId: string, data: {
     risks: string[];
     esiLevel?: number;
     route: 'OPD' | 'EMERGENCY' | 'FAST_TRACK';
-}) {
+}): Promise<any> {
     await ensureRole(['NURSE', 'ADMIN']);
     const db = await getTenantDb();
 

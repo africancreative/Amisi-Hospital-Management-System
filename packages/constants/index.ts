@@ -14,11 +14,24 @@ export const DeploymentTier = {
     HOSPITAL: 'HOSPITAL',
     NETWORK: 'NETWORK',
     GENERAL: 'GENERAL',
-    RESEARCH: 'RESEARCH'
+    RESEARCH: 'RESEARCH',
+    PHARMACY: 'PHARMACY',
+    LAB: 'LAB',
+    SPECIALIST: 'SPECIALIST'
 } as const;
 
 export type DeploymentTier = typeof DeploymentTier[keyof typeof DeploymentTier];
 export type DeploymentTierType = DeploymentTier;
+
+export const FacilityType = {
+    CLINIC: 'CLINIC',
+    PHARMACY: 'PHARMACY',
+    LAB: 'LAB',
+    SPECIALIST: 'SPECIALIST',
+    HOSPITAL: 'HOSPITAL',
+} as const;
+
+export type FacilityType = typeof FacilityType[keyof typeof FacilityType];
 
 /**
  * Platform Roles
@@ -71,3 +84,5 @@ export const TenantStatus = {
 export type TenantStatus = typeof TenantStatus[keyof typeof TenantStatus];
 
 export * from './loinc';
+export * from './fhir';
+export * from './tenant';

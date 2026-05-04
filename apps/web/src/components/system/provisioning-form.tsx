@@ -14,7 +14,7 @@ export function ProvisioningForm() {
 
     const toggleModule = (code: string) => {
         setSelectedModules(prev => 
-            prev.includes(code) ? prev.filter(m => m !== code) : [...prev, code]
+            prev.includes(code) ? prev.filter((m: any) => m !== code) : [...prev, code]
         );
     };
 
@@ -85,7 +85,7 @@ export function ProvisioningForm() {
                     <p className="text-neutral-500">Infrastructure orchestration in progress.</p>
                 </div>
                 <div className="w-full max-w-md bg-neutral-900/50 border border-white/5 rounded-2xl p-6 font-mono text-sm shadow-2xl">
-                    {status.map((line, i) => (
+                    {status.map((line: any, i: any) => (
                         <div key={i} className="flex items-center gap-3 text-emerald-400 mb-2 animate-in slide-in-from-left duration-300">
                             <span className="text-neutral-600">[{i+1}]</span>
                             <span>{line}</span>
@@ -118,7 +118,7 @@ export function ProvisioningForm() {
             )}
 
             {/* Hidden inputs for selected modules */}
-            {selectedModules.map(m => (
+            {selectedModules.map((m: any) => (
                 <input key={m} type="hidden" name={`module_${m}`} value="on" />
             ))}
 
@@ -246,7 +246,7 @@ export function ProvisioningForm() {
                 </CardHeader>
                 <CardContent className="p-8">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {availableModules.map((m) => {
+                        {availableModules.map((m: any) => {
                             const isSelected = selectedModules.includes(m.code);
                             return (
                                 <div 

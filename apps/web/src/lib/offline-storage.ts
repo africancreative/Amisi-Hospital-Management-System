@@ -39,7 +39,7 @@ export async function getOfflineDb(): Promise<IDBDatabase> {
 /**
  * Save a clinical action to the local buffer.
  */
-export async function bufferOfflineAction(type: 'VITALS' | 'MEDICATION', data: any) {
+export async function bufferOfflineAction(type: 'VITALS' | 'MEDICATION', data: any): Promise<any> {
   const db = await getOfflineDb();
   const tx = db.transaction(STORE_NAME, 'readwrite');
   const store = tx.objectStore(STORE_NAME);
@@ -79,7 +79,7 @@ export async function getPendingActions(): Promise<PendingAction[]> {
 /**
  * Clear actions once successfully synced to the server.
  */
-export async function clearSyncedActions(ids: string[]) {
+export async function clearSyncedActions(ids: string[]): Promise<any> {
   const db = await getOfflineDb();
   const tx = db.transaction(STORE_NAME, 'readwrite');
   const store = tx.objectStore(STORE_NAME);

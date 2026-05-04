@@ -3,13 +3,13 @@ import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { logAudit } from '@/lib/audit';
 
-export const labRouter = router({
+export const labRouter: any = router({
   /**
    * getActiveOrders
    * Fetches all pending and in-progress lab orders for the facility.
    */
   getActiveOrders: tenantProcedure
-    .query(async ({ ctx }) => {
+    .query(async ({ ctx }: any) => {
       return ctx.db!.labOrder.findMany({
         where: {
           status: { in: ['PENDING', 'SAMPLE_COLLECTED', 'IN_ANALYSIS'] }
@@ -34,8 +34,8 @@ export const labRouter = router({
       barcode: z.string(),
       collectedById: z.string()
     }))
-    .mutation(async ({ ctx, input }) => {
-      const result = await ctx.db!.$transaction(async (tx) => {
+    .mutation(async ({ ctx, input }: any) => {
+      const result = await ctx.db!.$transaction(async (tx: any) => {
         // 1. Create Sample Record
         const sample = await tx.labSample.create({
           data: {
@@ -129,11 +129,11 @@ export const labRouter = router({
         flag: z.string().default('NORMAL')
       }))
     }))
-    .mutation(async ({ ctx, input }) => {
-      const result = await ctx.db!.$transaction(async (tx) => {
+    .mutation(async ({ ctx, input }: any) => {
+      const result = await ctx.db!.$transaction(async (tx: any) => {
         // 1. Create Result Entries
         await tx.labResult.createMany({
-          data: input.results.map(r => ({
+          data: input.results.map((r: any) => ({
             labOrderId: input.orderId,
             ...r
           }))
@@ -188,7 +188,7 @@ export const labRouter = router({
       clinicalNotes: z.string().optional(),
       billedAmount: z.number().optional()
     }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }: any) => {
       const order = await ctx.db!.labOrder.create({
         data: {
           ...input,
@@ -225,8 +225,8 @@ export const labRouter = router({
       isCritical: z.boolean().default(false),
       pdfUrl: z.string().optional()
     }))
-    .mutation(async ({ ctx, input }) => {
-      const result = await ctx.db!.$transaction(async (tx) => {
+    .mutation(async ({ ctx, input }: any) => {
+      const result = await ctx.db!.$transaction(async (tx: any) => {
         const report = await tx.labReport.create({
           data: {
             labOrderId: input.orderId,

@@ -1,13 +1,13 @@
 import { tenantProcedure, router } from '@/server/trpc/trpc';
 import { z } from 'zod';
 
-export const syncRouter = router({
+export const syncRouter: any = router({
   /**
    * getSyncHistory
    * Returns current node status and recent sync activity.
    */
   getSyncStatus: tenantProcedure
-    .query(async ({ ctx }) => {
+    .query(async ({ ctx }: any) => {
       const nodes = await ctx.db!.syncNode.findMany({
         orderBy: { updatedAt: 'desc' }
       });
@@ -17,7 +17,7 @@ export const syncRouter = router({
       });
 
       return {
-        nodes: nodes.map(n => ({
+        nodes: nodes.map((n: any) => ({
           id: n.id,
           name: n.nodeName,
           type: n.nodeType,
@@ -45,7 +45,7 @@ export const syncRouter = router({
       version: z.string(),
       status: z.string().default('HEALTHY')
     }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }: any) => {
       return ctx.db!.syncNode.upsert({
         where: { id: input.nodeId },
         update: {

@@ -23,13 +23,13 @@ export async function createPurchaseOrder(data: {
         quantity: number;
         unitPrice: number;
     }[];
-}) {
+}): Promise<any> {
     await ensureRole(['PROCUREMENT_MANAGER', 'ADMIN'] as Role[]);
     const db = await getTenantDb();
 
     // Sum the PO total first natively
     let totalAmount = 0.0;
-    const poItemsRaw = data.items.map(i => {
+    const poItemsRaw = data.items.map((i: any) => {
         const subtotal = i.quantity * i.unitPrice;
         totalAmount += subtotal;
         return {
@@ -75,7 +75,7 @@ export async function createPurchaseOrder(data: {
 // 2. PURCHASE ORDERS (Multi-Tier Approval -> Sent)
 // ---------------------------------------------------------------------------
 
-export async function approveAndSendPO(purchaseOrderId: string, approvedById: string, overrideRole: string) {
+export async function approveAndSendPO(purchaseOrderId: string, approvedById: string, overrideRole: string): Promise<any> {
     const db = await getTenantDb();
     const po = await db.purchaseOrder.findUnique({ where: { id: purchaseOrderId } });
 
@@ -117,7 +117,7 @@ export async function processGoodsReceipt(purchaseOrderId: string, receivedBy: s
     unitPrice: number;
     batchNumber?: string;
     expiryDate?: string;
-}[]) {
+}[]): Promise<any> {
     await ensureRole(['INVENTORY_CLERK', 'PROCUREMENT_MANAGER', 'ADMIN']);
     const db = await getTenantDb();
 
@@ -136,7 +136,7 @@ export async function processGoodsReceipt(purchaseOrderId: string, receivedBy: s
                 deliveryNote,
                 receivedDate: new Date(),
                 items: {
-                    create: receivedItems.map(i => ({
+                    create: receivedItems.map((i: any) => ({
                         itemId: i.itemId,
                         quantity: i.quantityReceived,
                         unitPrice: i.unitPrice,
@@ -184,7 +184,7 @@ export async function processGoodsReceipt(purchaseOrderId: string, receivedBy: s
 // 4. AUTO-REPLENISHMENT ENGINE
 // ---------------------------------------------------------------------------
 
-export async function triggerAutoReplenishment(orderedByUserId: string) {
+export async function triggerAutoReplenishment(orderedByUserId: string): Promise<any> {
     // Usually triggered by a cron-job / background scheduler nightly
     // Drops draft POs for Vendor mapping automatically
     const db = await getTenantDb();
@@ -225,7 +225,7 @@ export async function triggerAutoReplenishment(orderedByUserId: string) {
     // 3. Generate DRAFT POs per vendor
     let draftCount = 0;
     for (const [vendorId, items] of vendorDrafts.entries()) {
-        const totalAmount = items.reduce((acc, curr) => acc + curr.subtotal, 0);
+        const totalAmount = items.reduce((acc: any, curr: any) => acc + curr.subtotal, 0);
         
         await db.purchaseOrder.create({
             data: {
@@ -234,7 +234,7 @@ export async function triggerAutoReplenishment(orderedByUserId: string) {
                 orderedBy: orderedByUserId,
                 totalAmount,
                 items: {
-                    create: items.map(i => ({
+                    create: items.map((i: any) => ({
                         itemId: i.itemId,
                         quantity: i.quantity,
                         unitPrice: i.unitPrice,

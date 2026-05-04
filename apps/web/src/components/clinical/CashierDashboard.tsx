@@ -19,11 +19,15 @@ import {
     ShieldCheck
 } from 'lucide-react';
 import Image from 'next/image';
+import { PatientBillPanel } from '@/components/billing/PatientBillPanel';
+import { PaymentCaptureDialog } from '@/components/billing/PaymentCaptureDialog';
 
 interface PendingBill {
     id: string;
     patientName: string;
     mrn: string;
+    patientId: string;
+    encounterId: string;
     waitTime: string;
     items: {
         id: string;
@@ -35,7 +39,7 @@ interface PendingBill {
 export default function CashierDashboard() {
     const [queue, setQueue] = useState<PendingBill[]>([
         { 
-            id: 'INV-4021', patientName: 'Robert Johnson', mrn: 'AM-4521', waitTime: '4m',
+            id: 'INV-4021', patientName: 'Robert Johnson', mrn: 'AM-4521', patientId: 'patient-1', encounterId: 'enc-1', waitTime: '4m',
             items: [
                 { id: '1', service: 'OPD Consultation', amount: 1500 },
                 { id: '2', service: 'Full Blood Count', amount: 850 },
@@ -43,7 +47,7 @@ export default function CashierDashboard() {
             ]
         },
         { 
-            id: 'INV-4022', patientName: 'Emily White', mrn: 'AM-4522', waitTime: '12m',
+            id: 'INV-4022', patientName: 'Emily White', mrn: 'AM-4522', patientId: 'patient-2', encounterId: 'enc-2', waitTime: '12m',
             items: [
                 { id: '4', service: 'Dental Extraction', amount: 4500 },
                 { id: '5', service: 'Antibiotics Batch', amount: 1200 },
@@ -54,12 +58,14 @@ export default function CashierDashboard() {
     const [activeBill, setActiveBill] = useState<PendingBill | null>(queue[0]);
     const [paymentMethod, setPaymentMethod] = useState<'MPESA' | 'CASH' | 'CARD' | 'INSURANCE' | null>(null);
     const [insuranceDetails, setInsuranceDetails] = useState({ provider: '', policy: '' });
-    const [isProcessing, setIsProcessing] = useState(false);
     const [paymentError, setPaymentError] = useState<string | null>(null);
     const [showReceipt, setShowReceipt] = useState(false);
+    const [showBillPanel, setShowBillPanel] = useState(false);
+    const [showPaymentDialog, setShowPaymentDialog] = useState(false);
+    const [paymentResult, setPaymentResult] = useState<{ success: boolean; invoiceId?: string } | null>(null);
 
     const calculateTotal = (bill: PendingBill) => {
-        return bill.items.reduce((acc, item) => acc + item.amount, 0);
+        return bill.items.reduce((acc: any, item: any) => acc + item.amount, 0);
     };
 
     const handleAddItem = (service: string, amount: number) => {
@@ -70,32 +76,16 @@ export default function CashierDashboard() {
 
     const handleRemoveItem = (id: string) => {
         if (!activeBill) return;
-        setActiveBill({ ...activeBill, items: activeBill.items.filter(i => i.id !== id) });
+        setActiveBill({ ...activeBill, items: activeBill.items.filter((i: any) => i.id !== id) });
     };
 
-    const processPayment = async () => {
-        if (!activeBill || !paymentMethod) return;
-        
-        setIsProcessing(true);
-        setPaymentError(null);
-
-        // Simulate M-Pesa Latency or Failure
-        if (paymentMethod === 'MPESA') {
-            await new Promise(r => setTimeout(r, 2000));
-            if (Math.random() > 0.8) {
-                setPaymentError('STK Push Timeout: Please check patient phone.');
-                setIsProcessing(false);
-                return;
-            }
-        }
-
-        // Mock success
+    const handlePaymentComplete = async (data: { invoiceId: string; amount: number; method: 'CASH' | 'MPESA' | 'CARD' | 'INSURANCE'; reference?: string }) => {
+        setPaymentResult({ success: true, invoiceId: data.invoiceId });
         setShowReceipt(true);
-        setIsProcessing(false);
     };
 
     const finalizePayment = () => {
-        setQueue(prev => prev.filter(b => b.id !== activeBill?.id));
+        setQueue(prev => prev.filter((b: any) => b.id !== activeBill?.id));
         setActiveBill(null);
         setPaymentMethod(null);
         setShowReceipt(false);
@@ -128,10 +118,10 @@ export default function CashierDashboard() {
                     </div>
                     
                     <div className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar">
-                        {queue.map(bill => (
+                        {queue.map((bill: any) => (
                             <button 
                                 key={bill.id}
-                                onClick={() => setActiveBill(bill)}
+                                onClick={() => { setActiveBill(bill); setPaymentError(null); setPaymentMethod(null); }}
                                 className={`w-full p-6 rounded-[32px] border transition-all text-left relative overflow-hidden group ${
                                     activeBill?.id === bill.id 
                                     ? 'bg-emerald-600/10 border-emerald-500/50 ring-2 ring-emerald-500/20' 
@@ -146,7 +136,11 @@ export default function CashierDashboard() {
                                     <span className="uppercase">{bill.mrn}</span>
                                     <span className="font-black text-white">KES {calculateTotal(bill).toLocaleString()}</span>
                                 </div>
-                                <div className="absolute bottom-0 left-0 h-1 bg-emerald-500 transition-all duration-500" style={{ width: activeBill?.id === bill.id ? '100%' : '0%' }}></div>
+                                 <div 
+                                     className="absolute bottom-0 left-0 h-1 bg-emerald-500 transition-all duration-500 bill-progress-bar" 
+                                     style={{ '--progress-width': activeBill?.id === bill.id ? '100%' : '0%' } as any}
+                                 ></div>
+
                             </button>
                         ))}
                     </div>
@@ -167,13 +161,20 @@ export default function CashierDashboard() {
                                     </div>
                                 </div>
                                 <div className="flex gap-2">
+                                    <button 
+                                        onClick={() => setShowBillPanel(true)}
+                                        className="bg-white/5 hover:bg-white/10 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border border-white/5 flex items-center gap-2"
+                                    >
+                                        <Receipt className="h-3 w-3" />
+                                        Full Bill
+                                    </button>
                                     <button onClick={() => handleAddItem('Nursing Fee', 500)} className="bg-white/5 hover:bg-white/10 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border border-white/5">+ Nursing</button>
                                     <button onClick={() => handleAddItem('Dressing', 1200)} className="bg-white/5 hover:bg-white/10 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border border-white/5">+ Dressing</button>
                                 </div>
                             </div>
 
                             <div className="flex-1 p-10 overflow-y-auto space-y-4 custom-scrollbar">
-                                {activeBill.items.map(item => (
+                                {activeBill.items.map((item: any) => (
                                     <div key={item.id} className="bg-gray-900/40 border border-white/5 p-6 rounded-3xl flex justify-between items-center group transition-all hover:bg-gray-900/60">
                                         <div className="flex items-center gap-4">
                                             <div className="h-10 w-10 bg-white/5 rounded-xl flex items-center justify-center text-gray-500 group-hover:text-emerald-500 transition-colors"><Tag className="h-5 w-5" /></div>
@@ -257,7 +258,7 @@ export default function CashierDashboard() {
                                 { id: 'CASH', icon: Banknote, label: 'Cash' },
                                 { id: 'CARD', icon: CreditCard, label: 'Credit Card' },
                                 { id: 'INSURANCE', icon: ShieldCheck, label: 'Insurance' },
-                            ].map(m => (
+                            ].map((m: any) => (
                                 <button 
                                     key={m.id}
                                     onClick={() => { setPaymentMethod(m.id as any); setPaymentError(null); }}
@@ -315,28 +316,75 @@ export default function CashierDashboard() {
 
                         <div className="mt-auto pt-8">
                             <button 
-                                onClick={processPayment}
-                                disabled={!activeBill || !paymentMethod || isProcessing}
+                                onClick={() => setShowPaymentDialog(true)}
+                                disabled={!activeBill}
                                 className={`w-full py-6 rounded-3xl font-black text-xs uppercase tracking-[0.2em] transition-all flex flex-col items-center gap-2 shadow-2xl ${
-                                    activeBill && paymentMethod && !isProcessing
+                                    activeBill
                                     ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-900/40' 
                                     : 'bg-gray-800 text-gray-600 cursor-not-allowed opacity-50'
                                 }`}
                             >
-                                {isProcessing ? (
-                                    <div className="h-6 w-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                                ) : (
-                                    <>
-                                        <Printer className="h-6 w-6" />
-                                        Complete & Receipt
-                                    </>
-                                )}
+                                <Printer className="h-6 w-6" />
+                                Process Payment
                             </button>
                         </div>
                     </div>
                 </aside>
             </div>
 
+            {/* Full Bill Panel (modal overlay) */}
+            {showBillPanel && activeBill && (
+                <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-8">
+                    <div className="w-full max-w-3xl bg-gray-900 border border-gray-800 rounded-[40px] p-8 relative max-h-[90vh] overflow-y-auto">
+                        <button
+                            onClick={() => setShowBillPanel(false)}
+                            className="absolute top-6 right-6 text-gray-500 hover:text-white transition-colors"
+                        >
+                            ✕
+                        </button>
+                        <h3 className="text-sm font-black text-white uppercase tracking-widest mb-6">Patient Bill</h3>
+                        <PatientBillPanel
+                            patientId={activeBill.patientId}
+                            encounterId={activeBill.encounterId}
+                        />
+                    </div>
+                </div>
+            )}
+
+            {/* Payment Capture Dialog */}
+            {showPaymentDialog && activeBill && (
+                <PaymentCaptureDialog
+                    invoice={{
+                        id: activeBill.id,
+                        patientId: activeBill.patientId,
+                        encounterId: activeBill.encounterId,
+                        totalAmount: calculateTotal(activeBill),
+                        totalPaid: 0,
+                        balanceDue: calculateTotal(activeBill),
+                        items: activeBill.items.map((item: any) => ({
+                            id: item.id,
+                            description: item.service,
+                            category: 'PROCEDURE' as const,
+                            quantity: 1,
+                            unitPrice: item.amount,
+                            taxAmount: 0,
+                            discountAmount: 0,
+                            totalPrice: item.amount,
+                            status: 'PENDING',
+                            isPaid: false,
+                        })),
+                        payments: [],
+                        status: 'UNPAID',
+                        currency: 'KES',
+                        payerType: 'PATIENT',
+                        itemCount: activeBill.items.length,
+                        createdAt: new Date(),
+                        updatedAt: new Date(),
+                    }}
+                    onPaymentComplete={handlePaymentComplete}
+                    onClose={() => setShowPaymentDialog(false)}
+                />
+            )}
         </div>
     );
 }

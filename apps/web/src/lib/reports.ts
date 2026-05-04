@@ -3,21 +3,21 @@ import 'jspdf-autotable';
 import { format } from 'date-fns';
 
 /**
- * Centered branding utility for all Amisi Cloud reports.
- * Enforces the "System designed by amisigenuine.com" + Logo requirement.
+ * Centered branding utility for all Amisi MedOS reports.
+ * Enforces the Amisi MedOS Logo in the center of the footer.
  */
 
-const BRANDING_TEXT = 'System designed by amisigenuine.com';
-const LOGO_PATH = '/media__1775407355702.png'; 
+const BRANDING_TEXT = 'Amisi MedOS — Designed by amisigenuine.com';
+const LOGO_PATH = '/logo.png'; 
 
-export async function createReport(title: string, hospitalSettings: any) {
+export async function createReport(title: string, hospitalSettings: any): Promise<any> {
     const doc = new jsPDF() as any;
     const pageWidth = doc.internal.pageSize.getWidth();
 
     // Header Layout (Customizable)
     // Left side: Hospital info
     doc.setFontSize(20);
-    doc.setTextColor(16, 185, 129); // emerald-500
+    doc.setTextColor(30, 96, 213); // Brand Blue
     doc.text(hospitalSettings.hospitalName, 14, 20);
 
     doc.setFontSize(8);
@@ -61,8 +61,7 @@ export function applyBranding(doc: any) {
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
     const footerHeightLimit = pageHeight * 0.08;
-    const footerY = pageHeight - footerHeightLimit + 5;
-
+    
     for (let i = 1; i <= pageCount; i++) {
         doc.setPage(i);
 
@@ -71,25 +70,28 @@ export function applyBranding(doc: any) {
         doc.setLineWidth(0.1);
         doc.line(14, pageHeight - footerHeightLimit, pageWidth - 14, pageHeight - footerHeightLimit);
 
-        // Branding Text
-        doc.setFontSize(8);
-        doc.setTextColor(150);
-        doc.text(BRANDING_TEXT, pageWidth - 70, pageHeight - 10);
-
-        // Logo (Bottom Right)
-        // logo dimensions roughly 15x15mm
+        // Logo (Centered in Footer)
+        const logoSize = 12;
+        const logoX = (pageWidth - logoSize) / 2;
+        const logoY = pageHeight - 18;
         try {
-            doc.addImage(LOGO_PATH, 'PNG', pageWidth - 25, pageHeight - 18, 12, 12);
+            doc.addImage(LOGO_PATH, 'PNG', logoX, logoY, logoSize, logoSize);
         } catch (e) {
-            console.warn('Branding logo not found at /branding/logo.png');
+            console.warn('Branding logo not found at /logo.png');
         }
+
+        // Branding Text
+        doc.setFontSize(7);
+        doc.setTextColor(150);
+        const textWidth = doc.getTextWidth(BRANDING_TEXT);
+        doc.text(BRANDING_TEXT, (pageWidth - textWidth) / 2, pageHeight - 5);
 
         // Page Numbering
         doc.text(`Page ${i} of ${pageCount}`, 14, pageHeight - 10);
     }
 }
 
-export async function generatePatientMedicalRecord(patient: any, events: any[], hospitalSettings: any = { hospitalName: "Amisi General Hospital" }) {
+export async function generatePatientMedicalRecord(patient: any, events: any[], hospitalSettings: any = { hospitalName: "Amisi General Hospital" }): Promise<any> {
     const doc = await createReport(`Clinical Timeline: ${patient.lastName}, ${patient.firstName}`, hospitalSettings);
     const pageWidth = doc.internal.pageSize.getWidth();
     const startY = 65; // Adjusted for dynamic header
@@ -100,7 +102,7 @@ export async function generatePatientMedicalRecord(patient: any, events: any[], 
     doc.text(`DOB: ${new Date(patient.dob).toLocaleDateString()}`, 14, startY - 15);
 
     // Clinical Timeline Table
-    const tableData = events.map(event => [
+    const tableData = events.map((event: any) => [
         format(new Date(event.createdAt || event.timestamp), 'dd MMM yyyy'),
         event.eventType === 'CHAT' ? 'COMMUNICATION' : (event.type || 'ENCOUNTER'),
         event.eventType === 'CHAT' ? event.authorName : `Dr. ${event.doctorName || 'Unknown'}`,
@@ -112,7 +114,7 @@ export async function generatePatientMedicalRecord(patient: any, events: any[], 
         head: [['Date', 'Type', 'Provider', 'Clinical Notes']],
         body: tableData,
         theme: 'striped',
-        headStyles: { fillColor: [16, 185, 129] },
+        headStyles: { fillColor: [30, 96, 213] }, // Brand Blue
         styles: { fontSize: 8 },
         columnStyles: { 3: { cellWidth: 80 } }
     });
@@ -121,7 +123,7 @@ export async function generatePatientMedicalRecord(patient: any, events: any[], 
     doc.save(`Medical_Record_${patient.lastName}.pdf`);
 }
 
-export async function generateInvoice(invoice: any, hospitalSettings: any = { hospitalName: "Amisi General Hospital" }) {
+export async function generateInvoice(invoice: any, hospitalSettings: any = { hospitalName: "Amisi General Hospital" }): Promise<any> {
     const doc = await createReport(`INVOICE: #${invoice.id.slice(0, 8)}`, hospitalSettings);
     const startY = 65;
 
@@ -141,7 +143,7 @@ export async function generateInvoice(invoice: any, hospitalSettings: any = { ho
             `$${Number(item.subtotal).toLocaleString()}`
         ]) : [['Clinical Consultation / Service', '1', `$${Number(invoice.totalAmount).toLocaleString()}`, `$${Number(invoice.totalAmount).toLocaleString()}`]],
         theme: 'striped',
-        headStyles: { fillColor: [16, 185, 129] },
+        headStyles: { fillColor: [30, 96, 213] }, // Brand Blue
         styles: { fontSize: 10 },
         foot: [['Total', '', '', `$${Number(invoice.totalAmount).toLocaleString()}`]],
         footStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold' }

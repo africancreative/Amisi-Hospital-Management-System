@@ -25,7 +25,7 @@ export type ChatMessage = {
     attachments: Attachment[];
 };
 
-export async function sendClinicalMessage(patientId: string, content: string, authorName: string, authorRole: string) {
+export async function sendClinicalMessage(patientId: string, content: string, authorName: string, authorRole: string): Promise<any> {
     const headerList = await headers();
     const tenantId = headerList.get('x-resolved-tenant-id');
 
@@ -49,7 +49,7 @@ export async function sendClinicalMessage(patientId: string, content: string, au
     return message;
 }
 
-export async function sendClinicalMedia(patientId: string, authorName: string, authorRole: string, formData: FormData) {
+export async function sendClinicalMedia(patientId: string, authorName: string, authorRole: string, formData: FormData): Promise<any> {
     const headerList = await headers();
     const tenantId = headerList.get('x-resolved-tenant-id');
 
@@ -96,7 +96,7 @@ export async function sendClinicalMedia(patientId: string, authorName: string, a
     return message;
 }
 
-export async function getClinicalMessages(patientId: string) {
+export async function getClinicalMessages(patientId: string): Promise<any> {
     const headerList = await headers();
     const tenantId = headerList.get('x-resolved-tenant-id');
 

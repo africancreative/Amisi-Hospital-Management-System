@@ -12,6 +12,8 @@ import { getTenantLicense } from './actions/system-actions';
 import { TenantLockout } from '@/components/TenantLockout';
 import Navbar from '@/components/Navbar';
 import ConnectionStatus from '@/components/ConnectionStatus';
+import { EventSystemInitializer } from '@/components/events/EventSystemInitializer';
+import { RealtimeProvider } from '@/lib/realtime-provider';
 
 
 
@@ -20,9 +22,9 @@ export const metadata: Metadata = {
   title: 'AmisiMedOS | Hospital Management System',
   description: 'Enterprise Hybrid-Cloud Hospital Management System',
   icons: {
-    icon: [{ url: '/favicon.png', type: 'image/png' }],
-    shortcut: [{ url: '/favicon.png', type: 'image/png' }],
-    apple: [{ url: '/favicon.png', type: 'image/png' }],
+    icon: [{ url: '/logo.png', type: 'image/png' }],
+    shortcut: [{ url: '/logo.png', type: 'image/png' }],
+    apple: [{ url: '/logo.png', type: 'image/png' }],
   },
 };
 
@@ -81,17 +83,19 @@ export default async function RootLayout({
           <TrpcProvider>
             <PWARegistration />
             {isLoggedIn ? (
-              <>
-                <Sidebar
-                  enabledModules={enabledModules}
-                  userRole={userRole}
-                  userName={userName}
-                  isSystemAdmin={isSystemAdmin}
-                />
-                <main className="flex-1 flex flex-col h-screen overflow-hidden">
-                  {children}
-                </main>
-              </>
+              <RealtimeProvider tenantId={tenantId ?? 'default'} userId={userName} roles={[userRole]} department="">
+                <>
+                  <Sidebar
+                    enabledModules={enabledModules}
+                    userRole={userRole}
+                    userName={userName}
+                    isSystemAdmin={isSystemAdmin}
+                  />
+                  <main className="flex-1 flex flex-col h-screen overflow-hidden">
+                    {children}
+                  </main>
+                </>
+              </RealtimeProvider>
             ) : (
               <div className="flex-1 flex flex-col h-screen overflow-hidden w-full">
                 <Navbar />
@@ -100,8 +104,9 @@ export default async function RootLayout({
                 </main>
               </div>
             )}
-            {isLoggedIn && <RoleSwitcher />}
+            {isLoggedIn && process.env.NODE_ENV === 'development' && <RoleSwitcher />}
             {isLoggedIn && <InternalChatSidebar />}
+            {tenantId && isLoggedIn && <EventSystemInitializer tenantId={tenantId} />}
             <ConnectionStatus />
           </TrpcProvider>
         </body>

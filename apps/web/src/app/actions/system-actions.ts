@@ -20,7 +20,7 @@ export async function createTenantWithModules(data: {
     region: string;
     tier: DeploymentTier;
     selectedModuleIds: string[];
-}) {
+}): Promise<any> {
     await ensureSuperAdmin();
     
     // 1. Automate Database Creation via Neon
@@ -60,7 +60,7 @@ export async function createTenantWithModules(data: {
     revalidatePath('/system/dashboard');
 }
 
-export async function getGlobalSettings() {
+export async function getGlobalSettings(): Promise<any> {
     try {
         const db = getControlDb();
         
@@ -88,7 +88,7 @@ export async function getGlobalSettings() {
     }
 }
 
-export async function updateGlobalSettings(data: any) {
+export async function updateGlobalSettings(data: any): Promise<any> {
     await ensureSuperAdmin();
     const db = getControlDb();
 
@@ -161,7 +161,7 @@ export async function getSystemAccountingData(): Promise<any> {
     };
 }
 
-export async function testPayPalConnection(credentials: { clientId: string; clientSecret: string; env: string }) {
+export async function testPayPalConnection(credentials: { clientId: string; clientSecret: string; env: string }): Promise<any> {
     await ensureSuperAdmin();
     
     try {
@@ -183,7 +183,7 @@ export async function testPayPalConnection(credentials: { clientId: string; clie
     }
 }
 
-export async function testMpesaConnection(credentials: { key: string; secret: string }) {
+export async function testMpesaConnection(credentials: { key: string; secret: string }): Promise<any> {
     await ensureSuperAdmin();
     
     try {
@@ -217,7 +217,7 @@ function generateSecureKey(prefix: string = 'amisi'): string {
     return key;
 }
 
-export async function generateApiKey(tenantId: string, label: string) {
+export async function generateApiKey(tenantId: string, label: string): Promise<any> {
     await ensureSuperAdmin();
     const db = getControlDb();
 
@@ -243,7 +243,7 @@ export async function generateApiKey(tenantId: string, label: string) {
     return { key: apiKey, label };
 }
 
-export async function listApiKeys(tenantId?: string) {
+export async function listApiKeys(tenantId?: string): Promise<any> {
     await ensureSuperAdmin();
     const db = getControlDb();
     const settings = await db.globalSettings.findUnique({ where: { id: 'singleton' } });
@@ -252,7 +252,7 @@ export async function listApiKeys(tenantId?: string) {
     return allKeys;
 }
 
-export async function revokeApiKey(tenantId: string, keyToRevoke: string) {
+export async function revokeApiKey(tenantId: string, keyToRevoke: string): Promise<any> {
     await ensureSuperAdmin();
     const db = getControlDb();
     const settings = await db.globalSettings.findUnique({ where: { id: 'singleton' } });
@@ -291,7 +291,7 @@ export async function getTenantLicense(tenantId: string): Promise<any> {
     };
 }
 
-export async function getPayPalClientId() {
+export async function getPayPalClientId(): Promise<any> {
     try {
         const db = getControlDb();
         const settings = await db.globalSettings.findUnique({
@@ -305,7 +305,7 @@ export async function getPayPalClientId() {
     }
 }
 
-export async function notifyCheckoutAttempt(data: any, plan: any) {
+export async function notifyCheckoutAttempt(data: any, plan: any): Promise<any> {
     const resendApiKey = process.env.RESEND_API_KEY;
     const checkoutUrl = `http://localhost:3000/checkout?plan=${plan.name.split(' ')[0].toUpperCase()}`;
 

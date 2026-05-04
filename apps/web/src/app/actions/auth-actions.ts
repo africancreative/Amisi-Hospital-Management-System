@@ -120,7 +120,7 @@ export async function loginSystemAdmin(formData: FormData): Promise<void> {
     }
 }
 
-export async function logout() {
+export async function logout(): Promise<any> {
     const cookieStore = await cookies();
     cookieStore.delete('amisi-tenant-id');
     cookieStore.delete('amisi-tenant-slug');

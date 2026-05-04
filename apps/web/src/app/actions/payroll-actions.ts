@@ -16,7 +16,7 @@ const OVERTIME_MULTIPLIER = 1.5;
 // ATTENDANCE — CLOCK IN
 // ---------------------------------------------------------------------------
 
-export async function clockIn(employeeId: string, source: string = 'MANUAL', deviceId?: string, offlineMode = false) {
+export async function clockIn(employeeId: string, source: string = 'MANUAL', deviceId?: string, offlineMode = false): Promise<any> {
     const db = await getTenantDb();
 
     const today = new Date();
@@ -63,7 +63,7 @@ export async function clockIn(employeeId: string, source: string = 'MANUAL', dev
 // ATTENDANCE — CLOCK OUT (auto-calculates hours + overtime)
 // ---------------------------------------------------------------------------
 
-export async function clockOut(employeeId: string, source: string = 'MANUAL', notes?: string) {
+export async function clockOut(employeeId: string, source: string = 'MANUAL', notes?: string): Promise<any> {
     const db = await getTenantDb();
 
     const today = new Date();
@@ -102,7 +102,7 @@ export async function clockOut(employeeId: string, source: string = 'MANUAL', no
 // ATTENDANCE — MARK ABSENT (auto-run nightly or manual)
 // ---------------------------------------------------------------------------
 
-export async function markAbsentEmployees(date: Date) {
+export async function markAbsentEmployees(date: Date): Promise<any> {
     await ensureRole(['HR_MANAGER', 'HR', 'ADMIN']);
     const db = await getTenantDb();
 
@@ -157,7 +157,7 @@ function calculateIncomeTax(gross: number): number {
     return 800 + (gross - 6000) * 0.30;
 }
 
-export async function calculatePayroll(input: PayrollInput) {
+export async function calculatePayroll(input: PayrollInput): Promise<any> {
     await ensureRole(['HR_MANAGER', 'ACCOUNTANT', 'ADMIN']);
     const db = await getTenantDb();
 
@@ -172,10 +172,10 @@ export async function calculatePayroll(input: PayrollInput) {
         where: { employeeId: input.employeeId, date: { gte: start, lte: end } }
     });
 
-    const daysAbsent   = attendance.filter(a => a.status === 'ABSENT').length;
-    const daysOnLeave  = attendance.filter(a => a.status === 'ON_LEAVE').length;
-    const totalHours   = attendance.reduce((s, a) => s + Number(a.hoursWorked ?? 0), 0);
-    const overtimeHrs  = attendance.reduce((s, a) => s + Number(a.overtimeHrs ?? 0), 0);
+    const daysAbsent   = attendance.filter((a: any) => a.status === 'ABSENT').length;
+    const daysOnLeave  = attendance.filter((a: any) => a.status === 'ON_LEAVE').length;
+    const totalHours   = attendance.reduce((s: any, a: any) => s + Number(a.hoursWorked ?? 0), 0);
+    const overtimeHrs  = attendance.reduce((s: any, a: any) => s + Number(a.overtimeHrs ?? 0), 0);
 
     const baseSalary      = Number(employee.baseSalary);
     const hourlyRate      = Number(employee.hourlyRate ?? baseSalary / 160); // 160 hrs/month
@@ -218,7 +218,7 @@ export async function calculatePayroll(input: PayrollInput) {
 // PROCESS PAYROLL — Create PayrollRecord + Payslip + GL Entry
 // ---------------------------------------------------------------------------
 
-export async function processPayroll(input: PayrollInput) {
+export async function processPayroll(input: PayrollInput): Promise<any> {
     await ensureRole(['HR_MANAGER', 'ACCOUNTANT', 'ADMIN']);
     const db = await getTenantDb();
 
@@ -301,7 +301,7 @@ export async function processPayroll(input: PayrollInput) {
 // BATCH PAYROLL — Process all active employees for a period
 // ---------------------------------------------------------------------------
 
-export async function runMonthlyPayroll(periodMonth: number, periodYear: number) {
+export async function runMonthlyPayroll(periodMonth: number, periodYear: number): Promise<any> {
     await ensureRole(['HR_MANAGER', 'ACCOUNTANT', 'ADMIN']);
     const db = await getTenantDb();
 
@@ -333,7 +333,7 @@ export async function runMonthlyPayroll(periodMonth: number, periodYear: number)
 // HR DASHBOARD SUMMARY
 // ---------------------------------------------------------------------------
 
-export async function getHRDashboard() {
+export async function getHRDashboard(): Promise<any> {
     await ensureRole(['HR_MANAGER', 'HR', 'ADMIN']);
     const db = await getTenantDb();
 

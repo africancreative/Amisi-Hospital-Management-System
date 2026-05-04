@@ -150,7 +150,7 @@ export default async function HospitalDetailPage(
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                {DOMAINS.map(domain => {
+                                {DOMAINS.map((domain: any) => {
                                     const Icon = domain.icon;
                                     return (
                                         <div key={domain.id} className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 overflow-hidden shadow-sm">
@@ -161,7 +161,7 @@ export default async function HospitalDetailPage(
                                                 <h3 className="text-xs font-black uppercase tracking-widest">{domain.name}</h3>
                                             </div>
                                             <div className="p-4 grid grid-cols-1 gap-3">
-                                                {domain.modules.map(mod => (
+                                                {domain.modules.map((mod: any) => (
                                                     <ModuleCard
                                                         key={mod.id}
                                                         tenantId={tenant.id}

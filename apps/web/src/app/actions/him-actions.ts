@@ -12,7 +12,7 @@ import { createHash } from 'crypto';
 // RECORD ACCESS & AUDIT LOGGING
 // ---------------------------------------------------------------------------
 
-export async function fetchPatientRecord(patientId: string, employeeId: string, reasonForAccess: string) {
+export async function fetchPatientRecord(patientId: string, employeeId: string, reasonForAccess: string): Promise<any> {
     await ensureRole(['HIM_OFFICER', 'DOCTOR', 'NURSE', 'ADMIN', 'AUDITOR']);
     const db = await getTenantDb();
 
@@ -58,7 +58,7 @@ export async function fetchPatientRecord(patientId: string, employeeId: string, 
 // RECORD AMENDMENTS & VERSIONING (HIPAA Compliant Edit)
 // ---------------------------------------------------------------------------
 
-export async function amendPatientRecord(patientId: string, employeeId: string, employeeRole: string, changeReason: string, updatedData: any) {
+export async function amendPatientRecord(patientId: string, employeeId: string, employeeRole: string, changeReason: string, updatedData: any): Promise<any> {
     await ensureRole(['HIM_OFFICER', 'DOCTOR']);
     const db = await getTenantDb();
 
@@ -115,7 +115,7 @@ export async function submitROIRequest(data: {
     requestedFields: string[];
     urgency?: string;
     consentFormId?: string;
-}) {
+}): Promise<any> {
     await ensureRole(['HIM_OFFICER', 'ADMIN', 'PATIENT_PORTAL']);
     const db = await getTenantDb();
 
@@ -146,7 +146,7 @@ export async function submitROIRequest(data: {
     return request;
 }
 
-export async function reviewROIRequest(requestId: string, reviewerId: string, action: 'APPROVE' | 'DENY', notes?: string) {
+export async function reviewROIRequest(requestId: string, reviewerId: string, action: 'APPROVE' | 'DENY', notes?: string): Promise<any> {
     await ensureRole(['HIM_OFFICER', 'ADMIN']);
     const db = await getTenantDb();
 
@@ -194,7 +194,7 @@ export async function registerConsentForm(data: {
     witnessId?: string;
     documentUrl?: string;
     expiresDays?: number;
-}) {
+}): Promise<any> {
     await ensureRole(['HIM_OFFICER', 'DOCTOR', 'NURSE', 'ADMIN']);
     const db = await getTenantDb();
 
@@ -240,7 +240,7 @@ export async function grantRecordAccess(data: {
     scope: string[];
     reason?: string;
     expiresDays?: number;
-}) {
+}): Promise<any> {
     await ensureRole(['HIM_OFFICER', 'ADMIN', 'DOCTOR']);
     const db = await getTenantDb();
 

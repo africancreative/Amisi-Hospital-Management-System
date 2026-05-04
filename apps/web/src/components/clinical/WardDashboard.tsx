@@ -92,7 +92,7 @@ export default function WardDashboard() {
                     </div>
                     
                     <div className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar">
-                        {patients.map(p => (
+                        {patients.map((p: any) => (
                             <button 
                                 key={p.id}
                                 onClick={() => setActivePatient(p)}
@@ -145,7 +145,7 @@ export default function WardDashboard() {
                                             { l: 'HR', v: activePatient.vitals.hr, c: 'text-blue-400', i: Heart },
                                             { l: 'TEMP', v: activePatient.vitals.temp + '°', c: 'text-amber-400', i: Thermometer },
                                             { l: 'SPO2', v: activePatient.vitals.spo2 + '%', c: 'text-emerald-400', i: Droplets },
-                                        ].map(v => (
+                                        ].map((v: any) => (
                                             <div key={v.l} className="bg-black/40 border border-white/5 rounded-2xl px-6 py-3 flex flex-col items-center min-w-[80px]">
                                                 <v.i className={`h-3 w-3 mb-1 ${v.c}`} />
                                                 <span className={`text-lg font-black ${v.c}`}>{v.v}</span>
@@ -181,7 +181,7 @@ export default function WardDashboard() {
                                             { name: 'Ceftriaxone 1g IV', time: '11:30 AM', status: 'PENDING' },
                                             { name: 'Paracetamol 1g IV', time: '09:00 AM', status: 'GIVEN' },
                                             { name: 'Oxygen Therapy 4L/min', time: 'CONTINUOUS', status: 'ACTIVE' },
-                                        ].map(med => (
+                                        ].map((med: any) => (
                                             <div key={med.name} className="bg-gray-900/60 border border-gray-800 p-6 rounded-3xl flex items-center justify-between">
                                                 <div className="flex items-center gap-4">
                                                     <div className={`p-3 rounded-xl ${med.status === 'GIVEN' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-blue-500/10 text-blue-500'}`}>

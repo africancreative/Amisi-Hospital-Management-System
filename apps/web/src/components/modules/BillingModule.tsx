@@ -32,7 +32,7 @@ export default function BillingModule() {
 
   const handlePostPayment = () => {
     if (!activeInvoiceId || !paymentAmount) return;
-    let allocArray = !autoAllocate ? Object.entries(allocations).map(([id, amt]) => ({ billItemId: id, amount: amt })).filter(a => a.amount > 0) : undefined;
+    let allocArray = !autoAllocate ? Object.entries(allocations).map(([id, amt]) => ({ billItemId: id, amount: amt })).filter((a: any) => a.amount > 0) : undefined;
     recordPayment.mutate({
       invoiceId: activeInvoiceId,
       amount: Number(paymentAmount),
@@ -45,7 +45,7 @@ export default function BillingModule() {
 
   const handleAllocationChange = (itemId: string, amt: number) => {
      setAllocations(prev => ({ ...prev, [itemId]: amt }));
-     setPaymentAmount(Object.values({ ...allocations, [itemId]: amt }).reduce((a, b) => a + b, 0).toString());
+     setPaymentAmount(Object.values({ ...allocations, [itemId]: amt }).reduce((a: any, b: any) => a + b, 0).toString());
   };
 
   return (

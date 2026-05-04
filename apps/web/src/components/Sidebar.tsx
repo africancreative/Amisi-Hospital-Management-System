@@ -63,7 +63,7 @@ export default function Sidebar({
       enabled: !!slug && !isSystemAdmin
     });
 
-    const filteredNavigation = navigation.filter(item => {
+    const filteredNavigation = navigation.filter((item: any) => {
         // 1. Module check
         if (item.module && !enabledModules.includes(item.module)) return false;
 
@@ -122,7 +122,7 @@ export default function Sidebar({
                 )}
 
                 <nav className="flex-1 space-y-1">
-                    {filteredNavigation.map((item) => {
+                    {filteredNavigation.map((item: any) => {
                         // Resolve actual href
                         let targetHref = item.href;
                         if (item.name === 'Dashboard') {

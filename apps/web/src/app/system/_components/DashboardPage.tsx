@@ -104,22 +104,23 @@ export default async function SystemDashboardPage({
                 <div className="grid gap-4">
                   {tenants.map((tenant: any) => (
                     <div key={tenant.id} className="flex items-center gap-6 p-6 rounded-[2rem] bg-white/[0.03] border border-white/5 group hover:border-blue-500/30 transition-all hover:bg-blue-600/[0.03] hover:translate-x-2">
-                      <div 
-                        className="h-14 w-14 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-xl overflow-hidden"
-                        style={{ backgroundColor: `${tenant.primaryColor || '#2563EB'}20` }}
-                      >
-                        {tenant.logoUrl ? (
-                            <img src={tenant.logoUrl} alt={tenant.name} className="h-10 w-10 object-contain" />
-                        ) : (
-                            <Building2 className="h-7 w-7" style={{ color: tenant.primaryColor || '#2563EB' }} />
-                        )}
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-1">
-                            <p className="text-xl font-black text-white tracking-widest uppercase italic">{tenant.name}</p>
-                            <span className="h-1 w-1 rounded-full bg-neutral-800" />
-                            <span className="text-[8px] font-black uppercase tracking-widest" style={{ color: tenant.primaryColor || '#2563EB' }}>{tenant.tier}</span>
-                        </div>
+                       <div 
+                         className="h-14 w-14 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-xl overflow-hidden tenant-brand-bg"
+                         style={{ '--tenant-primary-color-alpha': `${tenant.primaryColor || '#2563EB'}20` } as any}
+                       >
+                         {tenant.logoUrl ? (
+                             <img src={tenant.logoUrl} alt={tenant.name} className="h-10 w-10 object-contain" />
+                         ) : (
+                             <Building2 className="h-7 w-7 tenant-brand-text" style={{ '--tenant-primary-color': tenant.primaryColor || '#2563EB' } as any} />
+                         )}
+                       </div>
+                       <div className="flex-1">
+                         <div className="flex items-center gap-3 mb-1">
+                             <p className="text-xl font-black text-white tracking-widest uppercase italic">{tenant.name}</p>
+                             <span className="h-1 w-1 rounded-full bg-neutral-800" />
+                             <span className="text-[8px] font-black uppercase tracking-widest tenant-brand-text" style={{ '--tenant-primary-color': tenant.primaryColor || '#2563EB' } as any}>{tenant.tier}</span>
+                         </div>
+
                         <div className="flex items-center gap-4">
                             <p className="text-[10px] text-neutral-500 uppercase tracking-[0.2em] font-bold">
                                 amisi.health/{tenant.slug}

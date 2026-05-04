@@ -10,7 +10,7 @@ import { logAudit } from '@/lib/audit';
  * Manages workflows for OPD, ED, IPD, and Diagnostics.
  * Strict Rule: Every clinical step generates a financial BillItem and a ClinicalNote.
  */
-export const clinicalRouter = router({
+export const clinicalRouter: any = router({
   
   /**
    * OPD / ED Registration
@@ -22,7 +22,7 @@ export const clinicalRouter = router({
       type: z.enum(['OUTPATIENT', 'EMERGENCY']),
       reason: z.string().optional()
     }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }: any) => {
       const billing = new BillingService(ctx.db);
 
       const visit = await ctx.db!.visit.create({
@@ -79,7 +79,7 @@ export const clinicalRouter = router({
         spo2: z.number()
       })
     }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }: any) => {
       const billing = new BillingService(ctx.db);
 
       // 1. Find Visit for patient data
@@ -144,7 +144,7 @@ export const clinicalRouter = router({
       reason: z.string(),
       physicianId: z.string()
     }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }: any) => {
       const billing = new BillingService(ctx.db);
 
       // 1. Fetch Encounter
@@ -195,7 +195,7 @@ export const clinicalRouter = router({
       testName: z.string(),
       price: z.number()
     }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }: any) => {
       const billing = new BillingService(ctx.db);
 
       // 1. Fetch Visit
@@ -242,7 +242,7 @@ export const clinicalRouter = router({
    */
   getVisitNotes: tenantProcedure
     .input(z.object({ visitId: z.string() }))
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }: any) => {
       return ctx.db!.clinicalNote.findMany({
         where: { visitId: input.visitId },
         orderBy: { createdAt: 'desc' },
@@ -252,7 +252,7 @@ export const clinicalRouter = router({
 
   getVisitEncounters: tenantProcedure
     .input(z.object({ visitId: z.string() }))
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }: any) => {
       return ctx.db!.encounter.findMany({
         where: { visitId: input.visitId },
         orderBy: { createdAt: 'desc' },
@@ -277,8 +277,8 @@ export const clinicalRouter = router({
         quantity: z.number().int().positive()
       }))
     }))
-    .mutation(async ({ ctx, input }) => {
-      return ctx.db!.$transaction(async (tx) => {
+    .mutation(async ({ ctx, input }: any) => {
+      return ctx.db!.$transaction(async (tx: any) => {
         // 1. Create Prescription
         const prescription = await tx.prescription.create({
           data: {
@@ -300,7 +300,7 @@ export const clinicalRouter = router({
             patientId: input.patientId,
             eventType: 'PRESCRIPTION_CREATED',
             title: 'Prescription created',
-            description: `${input.items.length} items prescribed: ${input.items.map(i => i.drugName).join(', ')}`,
+            description: `${input.items.length} items prescribed: ${input.items.map((i: any) => i.drugName).join(', ')}`,
             actorId: ctx.session.userId,
             actorRole: ctx.session.role,
             encounterId: input.encounterId
@@ -322,7 +322,7 @@ export const clinicalRouter = router({
       noteType: z.enum(['GENERAL', 'NURSING', 'DOCTOR', 'DISCHARGE', 'FOLLOW_UP']).default('GENERAL'),
       isPrivate: z.boolean().default(false)
     }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }: any) => {
       return ctx.db!.encounterNote.create({
         data: {
           ...input,
@@ -342,7 +342,7 @@ export const clinicalRouter = router({
       encounterId: z.string(),
       content: z.string()
     }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }: any) => {
       return ctx.db!.encounterChat.create({
         data: {
           ...input,

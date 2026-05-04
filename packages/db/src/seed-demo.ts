@@ -8,28 +8,59 @@ async function seed() {
 
     // 1. Ensure Tenant Exists
     const tenantId = 'demo-hospital-id';
+    const tenantSlug = 'amisi-premier';
     console.log(`Checking for tenant: ${tenantId}...`);
-    const tenant = await controlDb.tenant.upsert({
-        where: { id: tenantId },
-        update: {},
-        create: {
-            id: tenantId,
-            name: 'Amisi Premier Hospital',
-            slug: 'amisi-premier',
-            dbUrl: process.env.LOCAL_EDGE_DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/amisi_tenant',
-            encryptionKeyReference: 'demo-key-ref',
-            region: 'East Africa',
-            status: 'active',
-            enabledModules: {
-                EHR: true,
-                BILLING: true,
-                LAB: true,
-                PHARMACY: true,
-                ACCOUNTING: true,
-                HR: true
-            }
-        }
+    
+    // Check if tenant exists by slug first to avoid conflicts
+    const existingTenant = await controlDb.tenant.findFirst({
+        where: { OR: [{ id: tenantId }, { slug: tenantSlug }] }
     });
+    
+    let tenant;
+    if (existingTenant) {
+        // Update existing tenant
+        tenant = await controlDb.tenant.update({
+            where: { id: existingTenant.id },
+            data: {
+                id: tenantId,
+                name: 'Amisi Premier Hospital',
+                slug: tenantSlug,
+                dbUrl: process.env.LOCAL_EDGE_DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/amisi_tenant',
+                encryptionKeyReference: 'demo-key-ref',
+                region: 'East Africa',
+                status: 'active',
+                enabledModules: {
+                    EHR: true,
+                    BILLING: true,
+                    LAB: true,
+                    PHARMACY: true,
+                    ACCOUNTING: true,
+                    HR: true
+                }
+            }
+        });
+    } else {
+        // Create new tenant
+        tenant = await controlDb.tenant.create({
+            data: {
+                id: tenantId,
+                name: 'Amisi Premier Hospital',
+                slug: tenantSlug,
+                dbUrl: process.env.LOCAL_EDGE_DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/amisi_tenant',
+                encryptionKeyReference: 'demo-key-ref',
+                region: 'East Africa',
+                status: 'active',
+                enabledModules: {
+                    EHR: true,
+                    BILLING: true,
+                    LAB: true,
+                    PHARMACY: true,
+                    ACCOUNTING: true,
+                    HR: true
+                }
+            }
+        });
+    }
     console.log(`Tenant ${tenant.name} resolved.`);
 
     // 2. Ensure Modules are registered

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getControlDb, getTenantDb } from '@/lib/db';
 import { ControlClient } from '@amisimedos/db/client';
 import { resolveSemanticConflict } from '@amisimedos/sync/resolver';
+import { verifyPassword } from '@amisimedos/auth';
 import crypto from 'crypto';
 import { writeFile } from "fs/promises";
 import path from "path";
@@ -9,9 +10,31 @@ import { v4 as uuidv4 } from "uuid";
 import { getOrdersController } from '@/lib/paypal';
 import { CheckoutPaymentIntent } from '@paypal/paypal-server-sdk';
 
+// ─── JWT helpers (zero-dep, Node crypto) ────────────────────────────────────
+function b64url(buf: Buffer | string): string {
+    const s = typeof buf === 'string' ? buf : buf.toString('base64');
+    return s.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+}
+function signJwt(payload: Record<string, unknown>, secret: string, expiresInSec = 86400 * 7): string {
+    const header  = b64url(Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64'));
+    const body    = b64url(Buffer.from(JSON.stringify({ ...payload, iat: Math.floor(Date.now()/1000), exp: Math.floor(Date.now()/1000) + expiresInSec })).toString('base64'));
+    const sig     = b64url(crypto.createHmac('sha256', secret).update(`${header}.${body}`).digest('base64'));
+    return `${header}.${body}.${sig}`;
+}
+function verifyJwt(token: string, secret: string): Record<string, unknown> | null {
+    try {
+        const [h, b, s] = token.split('.');
+        const expectedSig = b64url(crypto.createHmac('sha256', secret).update(`${h}.${b}`).digest('base64'));
+        if (s !== expectedSig) return null;
+        const payload = JSON.parse(Buffer.from(b, 'base64').toString());
+        if (payload.exp && payload.exp < Math.floor(Date.now()/1000)) return null;
+        return payload;
+    } catch { return null; }
+}
+
 const controlDb = new ControlClient();
 
-export async function GET(req: NextRequest, { params }: { params: Promise<{ path?: string[] }> }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ path?: string[] }> }): Promise<Response | NextResponse> {
     const resolvedParams = await params;
     const pathSegments = resolvedParams.path || [];
     const fullPath = pathSegments.join('/');
@@ -32,7 +55,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ path
                 take: 100
             });
 
-            const serializedDeltas = deltas.map(d => ({
+            const serializedDeltas = deltas.map((d: any) => ({
                 ...d,
                 sequenceNumber: d.sequenceNumber.toString()
             }));
@@ -104,10 +127,31 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ path
         return NextResponse.json({ status: tenant.status, suspensionReason: tenant.suspensionReason });
     }
 
+    // 4. Fetch Encounter Chat Messages
+    if (fullPath === 'chat/encounter/messages') {
+        const tenantId = req.headers.get('x-resolved-tenant-id');
+        if (!tenantId) return NextResponse.json({ error: 'Tenant context missing' }, { status: 400 });
+
+        const { searchParams } = new URL(req.url);
+        const encounterId = searchParams.get('encounterId');
+        if (!encounterId) return NextResponse.json({ error: 'Encounter ID required' }, { status: 400 });
+
+        try {
+            const tenantDb = await getTenantDb(tenantId);
+            const messages = await tenantDb.encounterChat.findMany({
+                where: { encounterId },
+                orderBy: { createdAt: 'asc' }
+            });
+            return NextResponse.json({ messages });
+        } catch (error: any) {
+            return NextResponse.json({ error: error.message }, { status: 500 });
+        }
+    }
+
     return NextResponse.json({ error: 'Not Found' }, { status: 404 });
 }
 
-export async function POST(req: NextRequest, { params }: { params: Promise<{ path?: string[] }> }) {
+export async function POST(req: NextRequest, { params }: { params: Promise<{ path?: string[] }> }): Promise<Response | NextResponse> {
     const resolvedParams = await params;
     const pathSegments = resolvedParams.path || [];
     const fullPath = pathSegments.join('/');
@@ -238,6 +282,100 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ pat
         } catch (error) {
             return NextResponse.json({ error: 'Failed to capture order.' }, { status: 500 });
         }
+    }
+
+    // ── Auth: Login (tenant staff OR system admin) ─────────────────────────
+    if (fullPath === 'auth/login') {
+        try {
+            const { email, password, slug } = await req.json();
+            if (!email || !password) {
+                return NextResponse.json({ error: 'Email and password required' }, { status: 400 });
+            }
+            const JWT_SECRET = process.env.JWT_SECRET || 'demo-secret-key-change-me';
+
+            // System Admin login (no slug)
+            if (!slug) {
+                const admin = await controlDb.systemAdmin.findUnique({ where: { email } });
+                if (!admin) return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+                const valid = await verifyPassword(password, admin.passwordHash);
+                if (!valid) return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+
+                const token = signJwt({ id: admin.id, name: admin.name, role: 'SYSTEM_ADMIN', email: admin.email }, JWT_SECRET);
+                const res = NextResponse.json({ token, user: { id: admin.id, name: admin.name, role: 'SYSTEM_ADMIN', email: admin.email } });
+                res.cookies.set('amisi-user-role',        'SYSTEM_ADMIN', { httpOnly: true, path: '/', maxAge: 86400 * 7 });
+                res.cookies.set('amisi-user-id',           admin.id,       { httpOnly: true, path: '/', maxAge: 86400 * 7 });
+                res.cookies.set('amisi-user-name',         admin.name,     { httpOnly: true, path: '/', maxAge: 86400 * 7 });
+                res.cookies.set('amisi-is-system-admin',  'true',         { httpOnly: true, path: '/', maxAge: 86400 * 7 });
+                return res;
+            }
+
+            // Tenant staff login
+            const tenant = await controlDb.tenant.findUnique({ where: { slug } });
+            if (!tenant || tenant.status !== 'active') {
+                return NextResponse.json({ error: 'Hospital not found or suspended' }, { status: 404 });
+            }
+            const tenantDb = await getTenantDb(tenant.id);
+            const employee = await tenantDb.employee.findUnique({ where: { email } });
+            if (!employee?.passwordHash) return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+
+            const valid = await verifyPassword(password, employee.passwordHash);
+            if (!valid) return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+            if (employee.status !== 'ACTIVE') {
+                return NextResponse.json({ error: `Account ${employee.status.toLowerCase()}. Contact your administrator.` }, { status: 403 });
+            }
+
+            const user = { id: employee.id, name: `${employee.firstName} ${employee.lastName}`, role: employee.role as string, email: employee.email, slug, tenantId: tenant.id };
+            const token = signJwt(user, JWT_SECRET);
+            const res = NextResponse.json({ token, user });
+            const cookieOpts = { httpOnly: true, path: '/', maxAge: 86400 * 7 };
+            res.cookies.set('amisi-user-role',   user.role,   cookieOpts);
+            res.cookies.set('amisi-user-id',      user.id,     cookieOpts);
+            res.cookies.set('amisi-user-name',    user.name,   cookieOpts);
+            res.cookies.set('amisi-tenant-id',    tenant.id,   cookieOpts);
+            res.cookies.set('amisi-tenant-slug',  slug,        cookieOpts);
+            return res;
+
+        } catch (err: any) {
+            console.error('[Auth] Login error:', err.message);
+            return NextResponse.json({ error: 'Authentication failed' }, { status: 500 });
+        }
+    }
+
+    // ── Chat: Post Message ──────────────────────────────────────────────────
+    if (fullPath === 'chat/encounter/message') {
+        const tenantId = req.headers.get('x-resolved-tenant-id');
+        if (!tenantId) return NextResponse.json({ error: 'Tenant context missing' }, { status: 400 });
+
+        try {
+            const { encounterId, senderId, senderName, senderRole, content, messageType, referenceType, referenceId, attachmentUrl } = await req.json();
+            if (!encounterId || !content) return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+
+            const tenantDb = await getTenantDb(tenantId);
+            const message = await tenantDb.encounterChat.create({
+                data: {
+                    encounterId,
+                    senderId,
+                    senderName,
+                    senderRole,
+                    content,
+                    messageType: messageType || 'TEXT',
+                    referenceType,
+                    referenceId,
+                    attachmentUrl
+                }
+            });
+            return NextResponse.json({ message });
+        } catch (error: any) {
+            return NextResponse.json({ error: error.message }, { status: 500 });
+        }
+    }
+
+    // ── Auth: Logout ────────────────────────────────────────────────────────
+    if (fullPath === 'auth/logout') {
+        const res = NextResponse.json({ ok: true });
+        ['amisi-user-role','amisi-user-id','amisi-user-name','amisi-tenant-id','amisi-tenant-slug','amisi-is-system-admin']
+            .forEach(name => res.cookies.set(name, '', { httpOnly: true, path: '/', maxAge: 0 }));
+        return res;
     }
 
     return NextResponse.json({ error: 'Not Found' }, { status: 404 });

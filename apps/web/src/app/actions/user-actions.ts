@@ -5,7 +5,7 @@ import { ensureRole } from '@/lib/auth-utils';
 import { revalidatePath } from 'next/cache';
 import { Decimal, Role } from '@amisimedos/db/client';
 
-export async function getEmployees() {
+export async function getEmployees(): Promise<any> {
     await ensureRole(['ADMIN']);
     const db = await getTenantDb();
     return db.employee.findMany({
@@ -21,7 +21,7 @@ export async function addEmployee(data: {
     role: Role;
     department: string;
     baseSalary: number;
-}) {
+}): Promise<any> {
     await ensureRole(['ADMIN']);
     const db = await getTenantDb();
 
@@ -43,7 +43,7 @@ export async function addEmployee(data: {
     return employee;
 }
 
-export async function removeEmployee(id: string) {
+export async function removeEmployee(id: string): Promise<any> {
     await ensureRole(['ADMIN']);
     const db = await getTenantDb();
 

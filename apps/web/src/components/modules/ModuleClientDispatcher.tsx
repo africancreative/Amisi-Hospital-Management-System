@@ -18,18 +18,23 @@ const WardDashboard = dynamicImport(() => import('@/components/clinical/WardDash
 const InventoryDashboard = dynamicImport(() => import('@/components/clinical/InventoryDashboard'), { ssr: false, loading: () => <LoadingModule /> });
 const FinanceDashboard = dynamicImport(() => import('@/components/clinical/FinanceDashboard'), { ssr: false, loading: () => <LoadingModule /> });
 const CashierDashboard = dynamicImport(() => import('@/components/clinical/CashierDashboard'), { ssr: false, loading: () => <LoadingModule /> });
+const StaffPerformanceDashboard = dynamicImport(() => import('@/components/hr/StaffPerformanceDashboard').then((m) => ({ default: m.StaffPerformanceDashboard })), { ssr: false, loading: () => <LoadingModule /> });
+const StaffActivityFeed = dynamicImport(() => import('@/components/hr/StaffActivityFeed').then((m) => ({ default: m.StaffActivityFeed })), { ssr: false, loading: () => <LoadingModule /> });
 
 // Typed dynamic imports for components with props
 const ClinicalChat = dynamicImport<{ patientId: string }>(() => import('@/components/clinical/ClinicalChat'), { ssr: false, loading: () => <LoadingModule /> });
 const PatientEMR = dynamicImport<{ patientId: string }>(() => import('@/components/clinical/PatientEMR'), { ssr: false, loading: () => <LoadingModule /> });
 
+import { StaffDashboardOverview } from '@/lib/staff-tracking-types';
+
 interface ModuleClientDispatcherProps {
     mainModule: string;
     subPath: string[];
     slug: string;
+    initialOverview?: StaffDashboardOverview;
 }
 
-export default function ModuleClientDispatcher({ mainModule, subPath, slug }: ModuleClientDispatcherProps) {
+export default function ModuleClientDispatcher({ mainModule, subPath, slug, initialOverview }: ModuleClientDispatcherProps) {
     switch (mainModule) {
         case 'doctor':
             return <DoctorDashboard />;
@@ -48,6 +53,10 @@ export default function ModuleClientDispatcher({ mainModule, subPath, slug }: Mo
             return <FinanceDashboard />;
         case 'billing-on-duty':
             return <CashierDashboard />;
+        case 'hr-performance':
+            return <StaffPerformanceDashboard initialOverview={initialOverview} />;
+        case 'hr-activity':
+            return <StaffActivityFeed />;
         case 'chat':
             return <ClinicalChat patientId="" />;
         case 'emr':

@@ -12,7 +12,7 @@ import { recordEvent } from '@amisimedos/sync';
  * Admits a patient to a specific bed.
  * Atomically updates bed status and creates admission record.
  */
-export async function admitPatient(encounterId: string, bedId: string) {
+export async function admitPatient(encounterId: string, bedId: string): Promise<any> {
     await ensureRole(['DOCTOR', 'NURSE', 'ADMIN']);
     const db = await getTenantDb();
     
@@ -67,7 +67,7 @@ export async function recordMedication(data: {
     route: string;
     status: string;
     reasonForSkip?: string;
-}) {
+}): Promise<any> {
     await ensureRole(['NURSE', 'ADMIN']);
     const db = await getTenantDb();
     
@@ -97,7 +97,7 @@ export async function recordMedication(data: {
 /**
  * Discharges a patient and frees the bed.
  */
-export async function dischargePatient(encounterId: string, dischargeSummary: string) {
+export async function dischargePatient(encounterId: string, dischargeSummary: string): Promise<any> {
     await ensureRole(['DOCTOR', 'ADMIN']);
     const db = await getTenantDb();
     

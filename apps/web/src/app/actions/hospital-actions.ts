@@ -3,7 +3,7 @@
 import { getTenantDb } from '@/lib/db';
 import { revalidatePath } from 'next/cache';
 
-export async function getHospitalSettings() {
+export async function getHospitalSettings(): Promise<any> {
     const db = await getTenantDb();
     let settings = await db.hospitalSettings.findFirst();
 
@@ -19,7 +19,7 @@ export async function getHospitalSettings() {
     return settings;
 }
 
-export async function updateHospitalBranding(formData: FormData) {
+export async function updateHospitalBranding(formData: FormData): Promise<any> {
     const db = await getTenantDb();
     const settings = await getHospitalSettings();
 

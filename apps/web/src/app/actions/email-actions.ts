@@ -12,7 +12,7 @@ export async function submitHospitalInquiry(data: {
     phone: string;
     bedCapacity: string;
     notes: string;
-}) {
+}): Promise<any> {
     if (!process.env.RESEND_API_KEY) {
         console.warn('RESEND_API_KEY is not defined. Email dispatch bypassed in DEV mode.');
         // We simulate success if no key mapped to unblock dev flow

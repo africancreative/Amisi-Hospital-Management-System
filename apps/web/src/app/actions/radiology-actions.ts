@@ -33,7 +33,7 @@ export async function createRadiologyOrder(data: {
     clinicalIndication: string;
     priority?: string;
     billedAmount?: number;
-}) {
+}): Promise<any> {
     await ensureRole(['DOCTOR', 'NURSE', 'ADMIN']);
     const db = await getTenantDb();
 
@@ -105,7 +105,7 @@ export interface DicomWebhookPayload {
     }[];
 }
 
-export async function ingestDicomMetadata(orderId: string | null, patientId: string, payload: DicomWebhookPayload) {
+export async function ingestDicomMetadata(orderId: string | null, patientId: string, payload: DicomWebhookPayload): Promise<any> {
     // Usually called by the Edge node's background PACS listener service automatically
     const db = await getTenantDb();
 
@@ -127,14 +127,14 @@ export async function ingestDicomMetadata(orderId: string | null, patientId: str
             studyDate: new Date(payload.studyDate),
             status: 'ACQUIRED',
             series: {
-                create: payload.series.map(s => ({
+                create: payload.series.map((s: any) => ({
                     dicomSeriesUID: s.dicomSeriesUID,
                     seriesNumber: s.seriesNumber,
                     modality: s.modality,
                     bodyPartExamined: s.bodyPartExamined,
                     numberOfInstances: s.instances.length,
                     instances: {
-                        create: s.instances.map(inst => ({
+                        create: s.instances.map((inst: any) => ({
                             dicomSOPInstanceUID: inst.dicomSOPInstanceUID,
                             instanceNumber: inst.instanceNumber,
                             storageUrl: inst.storageUrl,
@@ -170,7 +170,7 @@ export async function submitRadiologistReport(studyId: string, data: {
     findings: string;
     impression: string;
     isCriticalResult: boolean;
-}) {
+}): Promise<any> {
     await ensureRole(['RADIOLOGIST', 'DOCTOR', 'ADMIN']);
     const db = await getTenantDb();
 
@@ -215,7 +215,7 @@ export async function submitRadiologistReport(studyId: string, data: {
 // FETCH DICOM STORAGE REFS (For OHIF Viewer binding)
 // ---------------------------------------------------------------------------
 
-export async function getStudyDicomRefs(studyId: string) {
+export async function getStudyDicomRefs(studyId: string): Promise<any> {
     await ensureRole(['DOCTOR', 'RADIOLOGIST', 'ADMIN']);
     const db = await getTenantDb();
 

@@ -13,7 +13,7 @@ export default function OnboardingForm({ availableModules }: { availableModules:
 
     const toggleModule = (id: string) => {
         if (selectedModules.includes(id)) {
-            setSelectedModules(v => v.filter(val => val !== id));
+            setSelectedModules(v => v.filter((val: any) => val !== id));
         } else {
             setSelectedModules(v => [...v, id]);
         }
@@ -108,7 +108,7 @@ export default function OnboardingForm({ availableModules }: { availableModules:
                 <p className="text-sm text-neutral-400 mb-6">Select which enterprise modules to mount to this silo's UI and Database engine.</p>
 
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    {availableModules.map((m) => {
+                    {availableModules.map((m: any) => {
                         const isSelected = selectedModules.includes(m.id);
                         return (
                             <div 

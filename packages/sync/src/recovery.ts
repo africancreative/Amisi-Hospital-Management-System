@@ -309,3 +309,41 @@ export async function verifyReplicationHealth(tenantId: string, edgeDb: TenantCl
         pendingCount
     };
 }
+
+/**
+ * PERIODIC SNAPSHOT RECONCILIATION (Section 4.3)
+ * Compares record counts and checksums to detect missed CDC events.
+ */
+export async function performReconciliation(tenantId: string, edgeDb: TenantClient): Promise<{ recoveredCount: number }> {
+    console.log(`[Recovery] Starting Periodic Reconciliation for ${tenantId}...`);
+    let recoveredCount = 0;
+
+    try {
+        const response = await axios.get<{ checksums: Record<string, { count: number, hash: string }> }>(
+            `${CLOUD_SYNC_URL}/reconcile`,
+            { headers: { 'x-tenant-id': tenantId } }
+        );
+
+        const { checksums } = response.data;
+
+        for (const [entityType, cloudStats] of Object.entries(checksums)) {
+            const modelName = entityType.charAt(0).toLowerCase() + entityType.slice(1);
+            const model = (edgeDb as any)[modelName];
+            if (!model) continue;
+
+            const localCount = await model.count();
+
+            if (localCount !== cloudStats.count) {
+                console.warn(`[Recovery] Drift detected in ${entityType}: Local ${localCount} vs Cloud ${cloudStats.count}`);
+                // Trigger selective sync for this entity type
+                await performSelectiveSync(tenantId, edgeDb, [entityType]);
+                recoveredCount += Math.abs(cloudStats.count - localCount);
+            }
+        }
+
+        return { recoveredCount };
+    } catch (error: any) {
+        console.error('[Recovery] Reconciliation failed:', error.message);
+        return { recoveredCount: 0 };
+    }
+}

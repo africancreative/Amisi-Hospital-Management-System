@@ -27,7 +27,7 @@ async function getPayPalConfig() {
     };
 }
 
-export async function getOrdersController() {
+export async function getOrdersController(): Promise<any> {
     const config = await getPayPalConfig();
     
     const client = new Client({

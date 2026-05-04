@@ -10,3 +10,4 @@ export * from './lib/cda';
 export { DeploymentTier } from '../generated/control-client';
 export { Role } from '../generated/tenant-client';
 export { Decimal } from '../generated/tenant-client/runtime/library';
+export * from './fhir';

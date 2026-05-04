@@ -98,7 +98,7 @@ export default function ClinicalChat({ patientId, authorName, authorRole }: { pa
     }
 
     const removeFile = (index: number) => {
-        setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+        setSelectedFiles(prev => prev.filter((_: any, i: any) => i !== index));
     };
 
     return (
@@ -131,7 +131,7 @@ export default function ClinicalChat({ patientId, authorName, authorRole }: { pa
                                 <p className="text-sm">No messages yet. Start the conversation.</p>
                             </div>
                         ) : (
-                            messages.map((msg) => (
+                            messages.map((msg: any) => (
                                 <div key={msg.id} className="flex flex-col space-y-1">
                                     <div className="flex items-baseline gap-2">
                                         <span className="text-xs font-bold text-emerald-400">{msg.authorName}</span>
@@ -182,7 +182,7 @@ export default function ClinicalChat({ patientId, authorName, authorRole }: { pa
                     {/* Previews */}
                     {(selectedFiles.length > 0 || audioBlob) && (
                         <div className="p-2 px-4 bg-gray-900 border-t border-gray-800 flex flex-wrap gap-2">
-                            {selectedFiles.map((file, i) => (
+                            {selectedFiles.map((file: any, i: any) => (
                                 <div key={i} className="relative h-12 w-12 rounded bg-gray-800 border border-gray-700 group">
                                     {file.type.startsWith('image/') ? (
                                         <img src={URL.createObjectURL(file)} className="h-full w-full object-cover rounded" />

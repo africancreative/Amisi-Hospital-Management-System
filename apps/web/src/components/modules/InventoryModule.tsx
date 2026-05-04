@@ -15,8 +15,8 @@ import { getInventoryItems } from '@/app/actions/pharmacy-actions';
 
 export default async function InventoryModule() {
     const items = await getInventoryItems();
-    const lowStockItems = items.filter(item => item.quantity <= item.minLevel);
-    const totalValue = items.reduce((acc, item) => acc + (Number(item.price) * item.quantity), 0);
+    const lowStockItems = items.filter((item: any) => item.quantity <= item.minLevel);
+    const totalValue = items.reduce((acc: any, item: any) => acc + (Number(item.price) * item.quantity), 0);
 
     return (
         <div className="flex-1 overflow-y-auto p-8 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white font-sans">

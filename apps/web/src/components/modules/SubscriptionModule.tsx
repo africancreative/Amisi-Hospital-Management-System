@@ -54,7 +54,7 @@ export default function SubscriptionModule({ params }: { params: { slug: string 
 
                     {/* Upgrade/Change Plan */}
                     <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {plans.map(p => (
+                        {plans.map((p: any) => (
                             <div key={p.name} className="bg-neutral-900/50 border border-white/5 p-8 rounded-[40px] hover:border-blue-500/30 transition-all group">
                                 <div className="flex justify-between items-start mb-6">
                                     <div>
@@ -64,7 +64,7 @@ export default function SubscriptionModule({ params }: { params: { slug: string 
                                     <CheckCircle2 className="h-6 w-6 text-neutral-700 group-hover:text-blue-500 transition-colors" />
                                 </div>
                                 <ul className="space-y-3 mb-8">
-                                    {p.features.map(f => (
+                                    {p.features.map((f: any) => (
                                         <li key={f} className="text-xs text-neutral-400 flex items-center gap-2">
                                             <div className="h-1 w-1 rounded-full bg-blue-500" /> {f}
                                         </li>

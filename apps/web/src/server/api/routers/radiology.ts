@@ -2,13 +2,13 @@ import { tenantProcedure, router } from '@/server/trpc/trpc';
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 
-export const radiologyRouter = router({
+export const radiologyRouter: any = router({
   /**
    * getActiveOrders
    * Fetches pending and in-progress radiology orders.
    */
   getActiveOrders: tenantProcedure
-    .query(async ({ ctx }) => {
+    .query(async ({ ctx }: any) => {
       return ctx.db!.radiologyOrder.findMany({
         where: {
           status: { in: ['PENDING', 'SCHEDULED', 'IN_PROGRESS'] }
@@ -29,7 +29,7 @@ export const radiologyRouter = router({
     .input(z.object({
       studyId: z.string()
     }))
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }: any) => {
       const study = await ctx.db!.imagingStudy.findUnique({
         where: { id: input.studyId },
         include: {
@@ -65,8 +65,8 @@ export const radiologyRouter = router({
       isCritical: z.boolean().default(false),
       radiologistId: z.string()
     }))
-    .mutation(async ({ ctx, input }) => {
-      return ctx.db!.$transaction(async (tx) => {
+    .mutation(async ({ ctx, input }: any) => {
+      return ctx.db!.$transaction(async (tx: any) => {
         // 1. Create Report
         const report = await tx.radiologyReport.create({
           data: {
@@ -126,7 +126,7 @@ export const radiologyRouter = router({
       priority: z.enum(['ROUTINE', 'URGENT', 'STAT']).default('ROUTINE'),
       billedAmount: z.number().optional()
     }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }: any) => {
       const order = await ctx.db!.radiologyOrder.create({
         data: {
           ...input,

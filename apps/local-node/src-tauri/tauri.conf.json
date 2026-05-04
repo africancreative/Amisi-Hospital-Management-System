@@ -1,47 +1,45 @@
+// Tauri Configuration for Cross-Platform Installables
+// src-tauri/tauri.conf.json
+
 {
   "build": {
-    "beforeDevCommand": "pnpm run dev",
-    "beforeBuildCommand": "pnpm run build",
+    "beforeBuildCommand": "npm run build",
+    "beforeDevCommand": "npm run dev",
     "devPath": "http://localhost:3000",
     "distDir": "../out"
   },
   "package": {
-    "productName": "AmisiMedOS Local Node",
+    "productName": "AmisiMedOS Node",
     "version": "1.0.0"
   },
   "tauri": {
     "allowlist": {
-      "all": false,
+      "all": true,
+      "http": {
+        "all": true,
+        "request": true,
+        "scope": ["https://api.amisimedos.ai/*"]
+      },
       "shell": {
         "all": false,
-        "open": true
+        "execute": true,
+        "scope": [{ "name": "postgres", "cmd": "postgres" }]
+      },
+      "fs": {
+        "all": true,
+        "scope": ["$APPCONFIG/*", "$APPDATA/*"]
       }
     },
     "bundle": {
       "active": true,
-      "identifier": "com.amisimedos.localnode",
-      "icon": [
-        "icons/32x32.png",
-        "icons/128x128.png",
-        "icons/128x128@2x.png",
-        "icons/icon.icns",
-        "icons/icon.ico"
-      ],
-      "externalBin": [
-        "postgres"
-      ]
+      "targets": "all", 
+      "identifier": "com.amisimedos.node",
+      "icon": ["icons/32x32.png", "icons/128x128.png", "icons/256x256.png"]
     },
-    "security": {
-      "csp": null
-    },
-    "windows": [
-      {
-        "fullscreen": false,
-        "height": 800,
-        "resizable": true,
-        "title": "AmisiMedOS Local Node",
-        "width": 1200
-      }
-    ]
+    "window": {
+      "title": "AmisiMedOS Local Node",
+      "width": 1280,
+      "height": 800
+    }
   }
 }

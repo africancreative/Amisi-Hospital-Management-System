@@ -39,7 +39,7 @@ export default async function LabModule({ params }: { params: { slug: string } }
 
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
                     <div className="lg:col-span-3 space-y-6">
-                        {orders.map((order) => (
+                        {orders.map((order: any) => (
                             <div key={order.id} className="bg-white dark:bg-gray-950 rounded-3xl border border-gray-200 dark:border-gray-800 p-8 shadow-sm hover:border-blue-500/30 transition-all group">
                                 <div className="flex flex-col md:flex-row justify-between gap-6">
                                     <div className="flex gap-6">

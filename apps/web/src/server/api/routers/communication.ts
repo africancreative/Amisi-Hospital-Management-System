@@ -7,7 +7,7 @@ import { tenantProcedure, protectedProcedure, router } from '@/server/trpc/trpc'
  * Handles staff-to-patient chat, clinical documentation (SOAP),
  * and the unified chronological medical timeline.
  */
-export const communicationRouter = router({
+export const communicationRouter: any = router({
   /**
    * getTimeline
    * Aggregates Chats, Notes, Vitals, and Lab results into a unified feed.
@@ -18,7 +18,7 @@ export const communicationRouter = router({
       limit: z.number().min(1).max(100).default(50),
       cursor: z.string().nullish(),
     }))
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }: any) => {
       const { patientId } = input;
 
       // 1. Fetch diverse clinical events in parallel
@@ -49,7 +49,7 @@ export const communicationRouter = router({
 
       // 2. Map into a unified TimelineItem interface
       const timeline = [
-        ...chats.map(c => ({
+        ...chats.map((c: any) => ({
           id: c.id,
           type: 'CHAT' as const,
           date: c.timestamp,
@@ -58,7 +58,7 @@ export const communicationRouter = router({
           authorRole: c.authorRole,
           metadata: { attachments: c.attachments, isClinical: c.isClinical },
         })),
-        ...notes.map(n => ({
+        ...notes.map((n: any) => ({
           id: n.id,
           type: 'NOTE' as const,
           date: n.createdAt,
@@ -69,14 +69,14 @@ export const communicationRouter = router({
             type: n.type 
           },
         })),
-        ...vitals.map(v => ({
+        ...vitals.map((v: any) => ({
           id: v.id,
           type: 'VITALS' as const,
           date: v.createdAt,
           content: `Vitals recorded: BP ${v.bloodPressure}, HR ${v.heartRate}`,
           metadata: { bp: v.bloodPressure, hr: v.heartRate, temp: v.temperature },
         })),
-        ...labs.map(l => ({
+        ...labs.map((l: any) => ({
           id: l.id,
           type: 'LAB' as const,
           date: l.createdAt,
@@ -103,7 +103,7 @@ export const communicationRouter = router({
       plan: z.string().optional(),
       type: z.enum(['SOAP', 'NURSING', 'PROGRESS', 'CONSULT']).default('SOAP'),
     }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }: any) => {
       return ctx.db!.clinicalNote.create({
         data: {
           ...input,
@@ -130,7 +130,7 @@ export const communicationRouter = router({
         fileSize: z.number().optional(),
       })).optional(),
     }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }: any) => {
       const { attachments, ...rest } = input;
       
       const message = await ctx.db!.chatMessage.create({

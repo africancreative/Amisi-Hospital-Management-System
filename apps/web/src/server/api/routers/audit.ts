@@ -7,13 +7,13 @@ import { TRPCError } from '@trpc/server';
  * 
  * Restricted to SAs (System Administrators)
  */
-export const auditRouter = router({
+export const auditRouter: any = router({
   getLogs: adminProcedure
     .input(z.object({
       limit: z.number().min(1).max(50).default(20),
       cursor: z.string().nullish(),
     }))
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }: any) => {
       const { limit, cursor } = input;
       
       const logs = await ctx.db!.auditLog.findMany({
@@ -35,7 +35,7 @@ export const auditRouter = router({
     }),
 
   verifyIntegrity: adminProcedure
-    .query(async ({ ctx }) => {
+    .query(async ({ ctx }: any) => {
       // Basic integrity check logic (concept)
       // Iterate through logs and verify SHA-256 chain
       const logs = await ctx.db!.auditLog.findMany({

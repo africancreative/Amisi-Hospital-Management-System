@@ -129,6 +129,7 @@ exports.Prisma.TenantScalarFieldEnum = {
   dbUrl: 'dbUrl',
   encryptionKeyReference: 'encryptionKeyReference',
   tier: 'tier',
+  facilityType: 'facilityType',
   region: 'region',
   status: 'status',
   suspensionReason: 'suspensionReason',
@@ -139,6 +140,13 @@ exports.Prisma.TenantScalarFieldEnum = {
   secondaryColor: 'secondaryColor',
   trialEndsAt: 'trialEndsAt',
   enabledModules: 'enabledModules',
+  moduleConfig: 'moduleConfig',
+  workflowCustomization: 'workflowCustomization',
+  complianceIsolation: 'complianceIsolation',
+  subscriptionQuotas: 'subscriptionQuotas',
+  billingConfig: 'billingConfig',
+  queueConfig: 'queueConfig',
+  staffRoles: 'staffRoles',
   publicKeySpki: 'publicKeySpki',
   sharedSecret: 'sharedSecret',
   createdAt: 'createdAt',
@@ -152,7 +160,10 @@ exports.Prisma.ModuleScalarFieldEnum = {
   description: 'description',
   basePrice: 'basePrice',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  dependencies: 'dependencies',
+  events: 'events',
+  permissions: 'permissions'
 };
 
 exports.Prisma.TenantModuleScalarFieldEnum = {
@@ -271,12 +282,72 @@ exports.Prisma.TenantUsageScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.SyncNodeScalarFieldEnum = {
+  id: 'id',
+  nodeName: 'nodeName',
+  nodeType: 'nodeType',
+  lastHeartbeat: 'lastHeartbeat',
+  version: 'version',
+  status: 'status',
+  config: 'config',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.FeatureFlagScalarFieldEnum = {
+  id: 'id',
+  flagId: 'flagId',
+  scope: 'scope',
+  moduleId: 'moduleId',
+  defaultValue: 'defaultValue',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.FeatureFlagOverrideScalarFieldEnum = {
+  id: 'id',
+  flagId: 'flagId',
+  tenantId: 'tenantId',
+  enabled: 'enabled',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.TenantConfigAuditLogScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  actorId: 'actorId',
+  actorName: 'actorName',
+  actorRole: 'actorRole',
+  action: 'action',
+  field: 'field',
+  oldValue: 'oldValue',
+  newValue: 'newValue',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent',
+  timestamp: 'timestamp'
+};
+
+exports.Prisma.TenantFeatureFlagScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  flagId: 'flagId',
+  enabled: 'enabled',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
 };
 
 exports.Prisma.JsonNullValueInput = {
+  JsonNull: Prisma.JsonNull
+};
+
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
   JsonNull: Prisma.JsonNull
 };
 
@@ -297,10 +368,21 @@ exports.Prisma.NullsOrder = {
 };
 exports.DeploymentTier = exports.$Enums.DeploymentTier = {
   CLINIC: 'CLINIC',
+  PHARMACY: 'PHARMACY',
+  LAB: 'LAB',
+  SPECIALIST: 'SPECIALIST',
   HOSPITAL: 'HOSPITAL',
-  NETWORK: 'NETWORK',
   GENERAL: 'GENERAL',
-  RESEARCH: 'RESEARCH'
+  RESEARCH: 'RESEARCH',
+  NETWORK: 'NETWORK'
+};
+
+exports.FacilityType = exports.$Enums.FacilityType = {
+  CLINIC: 'CLINIC',
+  PHARMACY: 'PHARMACY',
+  LAB: 'LAB',
+  SPECIALIST: 'SPECIALIST',
+  HOSPITAL: 'HOSPITAL'
 };
 
 exports.TenantStatus = exports.$Enums.TenantStatus = {
@@ -324,7 +406,12 @@ exports.Prisma.ModelName = {
   Plan: 'Plan',
   Subscription: 'Subscription',
   PatientIndex: 'PatientIndex',
-  TenantUsage: 'TenantUsage'
+  TenantUsage: 'TenantUsage',
+  SyncNode: 'SyncNode',
+  FeatureFlag: 'FeatureFlag',
+  FeatureFlagOverride: 'FeatureFlagOverride',
+  TenantConfigAuditLog: 'TenantConfigAuditLog',
+  TenantFeatureFlag: 'TenantFeatureFlag'
 };
 
 /**

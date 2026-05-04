@@ -25,7 +25,7 @@ export async function createLabOrder(data: {
     isStandalone?: boolean;
     externalPatientSource?: string;
     externalPatientData?: any;
-}) {
+}): Promise<any> {
     await ensureRole(['DOCTOR', 'NURSE', 'LAB_TECH', 'ADMIN']);
     const db = await getTenantDb();
 
@@ -92,7 +92,7 @@ export async function collectSpecimen(data: {
     specimenType: string;
     containerType?: string;
     collectedById: string;
-}) {
+}): Promise<any> {
     await ensureRole(['NURSE', 'LAB_TECH', 'ADMIN']);
     const db = await getTenantDb();
 
@@ -149,7 +149,7 @@ export interface MachineResultPayload {
     }[];
 }
 
-export async function ingestAnalyzerResults(labOrderId: string, payload: MachineResultPayload) {
+export async function ingestAnalyzerResults(labOrderId: string, payload: MachineResultPayload): Promise<any> {
     // This is typically called programmatically by the proxy, but could be manual entry by LAB_TECH
     const db = await getTenantDb();
 
@@ -213,7 +213,7 @@ export async function ingestAnalyzerResults(labOrderId: string, payload: Machine
 // 4. PATHOLOGIST VALIDATION & REPORT GENERATION
 // ---------------------------------------------------------------------------
 
-export async function validateLabReport(labOrderId: string, pathologistId: string, clinicalInterpretation?: string, isCritical: boolean = false) {
+export async function validateLabReport(labOrderId: string, pathologistId: string, clinicalInterpretation?: string, isCritical: boolean = false): Promise<any> {
     await ensureRole(['PATHOLOGIST', 'DOCTOR', 'ADMIN']);
     const db = await getTenantDb();
 
@@ -221,7 +221,7 @@ export async function validateLabReport(labOrderId: string, pathologistId: strin
     if (!order) throw new Error('Order not found');
 
     // Auto-escalate isCritical if the machine found critical values
-    const hasCriticalFlags = order.results.some(r => r.flag === 'CRITICAL_HIGH' || r.flag === 'CRITICAL_LOW');
+    const hasCriticalFlags = order.results.some((r: any) => r.flag === 'CRITICAL_HIGH' || r.flag === 'CRITICAL_LOW');
     const finalCriticalStatus = isCritical || hasCriticalFlags;
 
     const report = await db.labReport.create({

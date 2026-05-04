@@ -77,14 +77,14 @@ export async function getGlobalAuditLogs(): Promise<GlobalAuditEntry[]> {
 /**
  * Returns security summary for the platform dashboard.
  */
-export async function getSecuritySummary() {
+export async function getSecuritySummary(): Promise<any> {
     await ensureSuperAdmin();
     const logs = await getGlobalAuditLogs();
     
     return {
         totalEvents: logs.length,
-        highRiskEvents: logs.filter(l => ['EXPORT', 'DELETE'].includes(l.action)).length,
-        unverifiedCount: logs.filter(l => !l.isVerified).length,
+        highRiskEvents: logs.filter((l: any) => ['EXPORT', 'DELETE'].includes(l.action)).length,
+        unverifiedCount: logs.filter((l: any) => !l.isVerified).length,
         latestEvent: logs[0]
     };
 }

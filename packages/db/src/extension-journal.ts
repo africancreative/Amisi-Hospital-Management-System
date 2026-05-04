@@ -2,10 +2,12 @@ import { Prisma } from '../generated/tenant-client';
 import crypto from 'crypto';
 import { kms } from './lib/kms';
 import { mapToFHIRPatient, mapToFHIREncounter, mapToFHIRObservations } from './fhir';
+import { eventBus, AmisiEvents } from './events/bus';
 
 interface JournalOptions {
   sharedSecret: string;
   nodeType: 'EDGE' | 'CLOUD';
+  tenantId: string;
 }
 
 /**
@@ -141,6 +143,40 @@ export const withJournaling = (options: JournalOptions) => {
 
             } catch (err) {
               console.error(`[Journaling Extension Error] Failed to log ${operation} on ${model}:`, err);
+            }
+
+            // 8. Fire Local Reactive Events
+            try {
+              if (model === 'Encounter') {
+                eventBus.emit(action === 'CREATE' ? AmisiEvents.ENCOUNTER_CREATED : AmisiEvents.ENCOUNTER_UPDATED, {
+                  tenantId: options.tenantId,
+                  encounterId: entityId,
+                  patientId: (result as any).patientId,
+                  type: (result as any).encounterType || 'OPD',
+                  department: (result as any).department,
+                  status: (result as any).status
+                });
+              } else if (model === 'DiagnosticOrder' && action === 'CREATE' && (result as any).category === 'LAB') {
+                eventBus.emit(AmisiEvents.LAB_ORDER_PLACED, {
+                  tenantId: options.tenantId,
+                  orderId: entityId,
+                  encounterId: (result as any).encounterId,
+                  patientId: (result as any).patientId,
+                  testName: (result as any).testName,
+                  orderedBy: (result as any).orderedBy
+                });
+              } else if (model === 'DispensingRecord' && action === 'CREATE') {
+                eventBus.emit(AmisiEvents.PRESCRIPTION_DISPENSED, {
+                  tenantId: options.tenantId,
+                  recordId: entityId,
+                  prescriptionId: (result as any).prescriptionId,
+                  itemId: (result as any).itemId,
+                  quantityDispensed: (result as any).quantityDispensed,
+                  dispensedBy: (result as any).dispensedBy
+                });
+              }
+            } catch (emitErr) {
+               console.error(`[EventBus] Failed to emit event for ${model}:`, emitErr);
             }
 
             return result;

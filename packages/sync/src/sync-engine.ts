@@ -4,7 +4,7 @@ import { isOffline } from './connectivity';
 import { resolveSemanticConflict } from './resolver';
 import crypto from 'crypto';
 import { SyncBackoff } from './backoff';
-import { performIncrementalSync, verifyReplicationHealth, initiateBootstrap } from './recovery';
+import { performIncrementalSync, verifyReplicationHealth, initiateBootstrap, performReconciliation } from './recovery';
 import { decryptPayload } from './crypto';
 
 const CLOUD_SYNC_URL = process.env.CLOUD_SYNC_URL || 'https://api.amisigenuine.com/api/sync';
@@ -33,6 +33,11 @@ export async function runSyncLoop(tenantId: string, edgeDb: TenantClient) {
             if (journalCount === 0) {
               console.log('[Sync Engine] Empty local journal detected. Initiating Bootstrap...');
               await initiateBootstrap(tenantId, edgeDb);
+            }
+
+            // 0b. Periodic Reconciliation (every 1 hour or 360 cycles)
+            if (backoff.count % 360 === 0) {
+              await performReconciliation(tenantId, edgeDb);
             }
 
             // 1. Heartbeat

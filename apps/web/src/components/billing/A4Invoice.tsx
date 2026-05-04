@@ -25,9 +25,9 @@ export function A4Invoice({ invoice, hospitalDetails }: A4InvoiceProps) {
   return (
     <div className="print-only-a4 w-[210mm] min-h-[297mm] p-12 bg-white text-gray-900 font-sans shadow-2xl">
       {/* 1. Header (Letterhead) */}
-      <header className="flex justify-between items-start border-b-2 border-emerald-600 pb-8 mb-8">
+      <header className="flex justify-between items-start border-b-2 border-[#1E60D5] pb-8 mb-8">
         <div className="flex items-center gap-4">
-          <div className="h-16 w-16 bg-emerald-600 rounded-2xl flex items-center justify-center text-white shadow-lg">
+          <div className="h-16 w-16 bg-[#1E60D5] rounded-2xl flex items-center justify-center text-white shadow-lg">
             <Hospital className="h-10 w-10" />
           </div>
           <div>
@@ -49,8 +49,8 @@ export function A4Invoice({ invoice, hospitalDetails }: A4InvoiceProps) {
       <div className="grid grid-cols-2 gap-12 mb-12">
         <div className="space-y-4">
           <div className="flex items-center gap-2 border-b border-gray-100 pb-2">
-            <User className="h-4 w-4 text-emerald-600" />
-            <h3 className="text-xs font-black text-emerald-600 uppercase tracking-widest">Billing To</h3>
+            <User className="h-4 w-4 text-[#1E60D5]" />
+            <h3 className="text-xs font-black text-[#1E60D5] uppercase tracking-widest">Billing To</h3>
           </div>
           <div className="bg-gray-50/50 p-4 rounded-xl border border-gray-100">
             <p className="text-lg font-black text-gray-900">{invoice.patient.firstName} {invoice.patient.lastName}</p>
@@ -62,8 +62,8 @@ export function A4Invoice({ invoice, hospitalDetails }: A4InvoiceProps) {
         </div>
         <div className="space-y-4">
           <div className="flex items-center gap-2 border-b border-gray-100 pb-2">
-            <FileText className="h-4 w-4 text-emerald-600" />
-            <h3 className="text-xs font-black text-emerald-600 uppercase tracking-widest">Statement Info</h3>
+            <FileText className="h-4 w-4 text-[#1E60D5]" />
+            <h3 className="text-xs font-black text-[#1E60D5] uppercase tracking-widest">Statement Info</h3>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -77,7 +77,7 @@ export function A4Invoice({ invoice, hospitalDetails }: A4InvoiceProps) {
             <div className="col-span-2">
               <p className="text-[10px] text-gray-400 font-black uppercase">Invoice Status</p>
               <span className={`inline-block px-3 py-1 rounded-full text-[10px] font-black uppercase border ${
-                invoice.status === 'PAID' ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : 'bg-amber-50 border-amber-200 text-amber-600'
+                invoice.status === 'PAID' ? 'bg-blue-50 border-blue-200 text-[#1E60D5]' : 'bg-amber-50 border-amber-200 text-amber-600'
               }`}>
                 {invoice.status}
               </span>
@@ -90,7 +90,7 @@ export function A4Invoice({ invoice, hospitalDetails }: A4InvoiceProps) {
       <div className="mb-12">
         <table className="w-full">
           <thead>
-            <tr className="bg-emerald-600 text-white text-[10px] font-black uppercase tracking-widest text-left">
+            <tr className="bg-[#1E60D5] text-white text-[10px] font-black uppercase tracking-widest text-left">
               <th className="px-6 py-4 rounded-tl-xl">Service Description</th>
               <th className="px-6 py-4">Category</th>
               <th className="px-6 py-4 text-center">Unit Price</th>
@@ -123,7 +123,7 @@ export function A4Invoice({ invoice, hospitalDetails }: A4InvoiceProps) {
             <span>Taxes (0%)</span>
             <span>$ 0.00</span>
           </div>
-          <div className="flex justify-between text-lg font-black text-gray-900 border-t-2 border-emerald-600 pt-3">
+          <div className="flex justify-between text-lg font-black text-gray-900 border-t-2 border-[#1E60D5] pt-3">
             <span>TOTAL DUE</span>
             <span>$ {invoice.totalAmount.toFixed(2)}</span>
           </div>
@@ -132,11 +132,11 @@ export function A4Invoice({ invoice, hospitalDetails }: A4InvoiceProps) {
 
       {/* 5. Validation & Signature */}
       <div className="grid grid-cols-2 gap-12 mt-auto">
-        <div className="p-6 bg-emerald-50 rounded-2xl border border-emerald-100 flex items-start gap-4">
-          <ShieldCheck className="h-6 w-6 text-emerald-600 shrink-0" />
+        <div className="p-6 bg-blue-50 rounded-2xl border border-blue-100 flex items-start gap-4">
+          <ShieldCheck className="h-6 w-6 text-[#1E60D5] shrink-0" />
           <div>
-            <h4 className="text-xs font-black text-emerald-900 uppercase mb-1">Financial Integrity Verified</h4>
-            <p className="text-[10px] text-emerald-700 leading-relaxed font-medium">
+            <h4 className="text-xs font-black text-blue-900 uppercase mb-1">Financial Integrity Verified</h4>
+            <p className="text-[10px] text-blue-700 leading-relaxed font-medium">
                 This invoice is an official document of {hospitalDetails.name} and has been validated against the central cloud ledger. 
                 Reference: {invoice.id}
             </p>
@@ -154,14 +154,13 @@ export function A4Invoice({ invoice, hospitalDetails }: A4InvoiceProps) {
             Payment is due upon receipt unless otherwise agreed. For inquiries, please contact our billing department during business hours. 
             Late payments subject to administrative fees.
         </p>
-        <div className="flex flex-col items-center gap-1 opacity-60">
+        <div className="flex flex-col items-center gap-2">
+            <img src="/logo.png" alt="AmisiMedOS" className="h-10 object-contain" />
             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-900">
-                ©AmisiMedOs by amisigenuine.com
+                AmisiMedOS by amisigenuine.com
             </p>
         </div>
       </footer>
-
-      {/* Print styles isolation */}
     </div>
   );
 }

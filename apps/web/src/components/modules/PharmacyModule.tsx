@@ -64,7 +64,7 @@ export default function PharmacyModule() {
 
       <main className="flex-1 overflow-hidden p-6 flex flex-col gap-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-           {stats.map((s, i) => (
+           {stats.map((s: any, i: any) => (
              <div key={i} className="bg-white/5 border border-white/10 p-4 rounded-2xl flex items-center gap-4">
                 <div className={`p-3 rounded-xl bg-white/5 ${s.color}`}>
                   <s.icon size={24} />

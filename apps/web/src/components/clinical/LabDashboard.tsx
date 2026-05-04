@@ -75,7 +75,7 @@ export default function LabDashboard() {
     const submitResults = () => {
         if (!activeTest) return;
         console.log('[Lab] Submitting Results:', results);
-        setQueue(prev => prev.filter(t => t.id !== activeTest.id));
+        setQueue(prev => prev.filter((t: any) => t.id !== activeTest.id));
         setActiveTest(null);
     };
 
@@ -108,7 +108,7 @@ export default function LabDashboard() {
                     </div>
                     
                     <div className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar">
-                        {queue.map(test => (
+                        {queue.map((test: any) => (
                             <button 
                                 key={test.id}
                                 onClick={() => setActiveTest(test)}

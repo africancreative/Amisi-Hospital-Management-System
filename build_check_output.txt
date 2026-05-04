@@ -1,0 +1,104 @@
+
+> amisimedos-monorepo@ build /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System
+> turbo run build
+
+• turbo 2.8.12
+• Packages in scope: @amisimedos/api, @amisimedos/auth, @amisimedos/billing, @amisimedos/chat, @amisimedos/config, @amisimedos/constants, @amisimedos/db, @amisimedos/desktop, @amisimedos/local-node, @amisimedos/mobile, @amisimedos/sync, @amisimedos/ui, @amisimedos/web
+• Running build in 13 packages
+• Remote caching disabled
+@amisimedos/local-node:build: cache miss, executing fc5baae743fc68c0
+@amisimedos/mobile:build: cache miss, executing b3ec8bc20633eaec
+@amisimedos/chat:build: cache hit, replaying logs dac19c30f83c04a5
+@amisimedos/chat:build: 
+@amisimedos/chat:build: 
+@amisimedos/chat:build: > @amisimedos/chat@1.0.0 build /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/packages/chat
+@amisimedos/chat:build: > tsc
+@amisimedos/chat:build: 
+@amisimedos/ui:build: cache hit, replaying logs 874ed5be6c4d1b8a
+@amisimedos/ui:build: 
+@amisimedos/ui:build: 
+@amisimedos/ui:build: > @amisimedos/ui@1.0.0 build /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/packages/ui
+@amisimedos/ui:build: > tsc
+@amisimedos/ui:build: 
+@amisimedos/db:build: cache hit, replaying logs 6aa238d34146dd9b
+@amisimedos/db:build: 
+@amisimedos/db:build: 
+@amisimedos/db:build: > @amisimedos/db@1.0.0 build /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/packages/db
+@amisimedos/db:build: > pnpm generate && tsc
+@amisimedos/db:build: 
+@amisimedos/db:build: 
+@amisimedos/db:build: > @amisimedos/db@1.0.0 generate /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/packages/db
+@amisimedos/db:build: > prisma generate --schema=./prisma/control.prisma && prisma generate --schema=./prisma/tenant.prisma
+@amisimedos/db:build: 
+@amisimedos/db:build: Prisma schema loaded from prisma/control.prisma
+@amisimedos/db:build: 
+@amisimedos/db:build: ✔ Generated Prisma Client (v5.22.0) to ./generated/control-client in 139ms
+@amisimedos/db:build: 
+@amisimedos/db:build: Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+@amisimedos/db:build: 
+@amisimedos/db:build: Tip: Easily identify and fix slow SQL queries in your app. Optimize helps you enhance your visibility: https://pris.ly/--optimize
+@amisimedos/db:build: 
+@amisimedos/db:build: Prisma schema loaded from prisma/tenant.prisma
+@amisimedos/db:build: 
+@amisimedos/db:build: ✔ Generated Prisma Client (v5.22.0) to ./generated/tenant-client in 1.03s
+@amisimedos/db:build: 
+@amisimedos/db:build: Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+@amisimedos/db:build: 
+@amisimedos/db:build: Tip: Want real-time updates to your database without manual polling? Discover how with Pulse: https://pris.ly/tip-0-pulse
+@amisimedos/db:build: 
+@amisimedos/auth:build: cache hit, replaying logs ca603f83af863a5f
+@amisimedos/auth:build: 
+@amisimedos/auth:build: 
+@amisimedos/auth:build: > @amisimedos/auth@1.0.0 build /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/packages/auth
+@amisimedos/auth:build: > tsc
+@amisimedos/auth:build: 
+@amisimedos/billing:build: cache hit, replaying logs 8c1fc885edba3dc3
+@amisimedos/billing:build: 
+@amisimedos/billing:build: 
+@amisimedos/billing:build: > @amisimedos/billing@1.0.0 build /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/packages/billing
+@amisimedos/billing:build: > tsc
+@amisimedos/billing:build: 
+@amisimedos/sync:build: cache hit, replaying logs a41dab68d003f533
+@amisimedos/sync:build: 
+@amisimedos/sync:build: 
+@amisimedos/sync:build: > @amisimedos/sync@1.0.0 build /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/packages/sync
+@amisimedos/sync:build: > tsc
+@amisimedos/sync:build: 
+@amisimedos/web:build: cache miss, executing d8e5de570f7e117d
+@amisimedos/api:build: cache hit, replaying logs 8517df205c337da0
+@amisimedos/api:build: 
+@amisimedos/api:build: 
+@amisimedos/api:build: > @amisimedos/api@1.0.0 build /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/apps/api
+@amisimedos/api:build: > tsc
+@amisimedos/api:build: 
+@amisimedos/desktop:build: cache hit, replaying logs b26466abe0fd3329
+@amisimedos/desktop:build: 
+@amisimedos/desktop:build: 
+@amisimedos/desktop:build: > @amisimedos/desktop@1.0.0 build /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/apps/desktop
+@amisimedos/desktop:build: > tsc
+@amisimedos/desktop:build: 
+@amisimedos/mobile:build: 
+@amisimedos/mobile:build: > @amisimedos/mobile@0.1.0 build /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/apps/mobile
+@amisimedos/mobile:build: > flutter build web
+@amisimedos/mobile:build: 
+@amisimedos/local-node:build: 
+@amisimedos/local-node:build: > @amisimedos/local-node@1.0.0 build /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/apps/local-node
+@amisimedos/local-node:build: > next build
+@amisimedos/local-node:build: 
+@amisimedos/mobile:build: sh: line 1: flutter: command not found
+@amisimedos/mobile:build:  ELIFECYCLE  Command failed.
+@amisimedos/mobile:build:  WARN   Local package.json exists, but node_modules missing, did you mean to install?
+@amisimedos/web:build: 
+@amisimedos/web:build: > @amisimedos/web@4.0.0 build /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/apps/web
+@amisimedos/web:build: > pnpm --filter @amisimedos/db build && pnpm --filter @amisimedos/auth build && pnpm --filter @amisimedos/billing build && pnpm --filter @amisimedos/ui build && pnpm --filter @amisimedos/sync build && pnpm --filter @amisimedos/chat build && node scripts/vercel-engine-hack.js && next build --webpack
+@amisimedos/web:build: 
+@amisimedos/mobile:build: ERROR: command finished with error: command (/home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/apps/mobile) /home/amisi/.local/share/pnpm/pnpm run build exited (1)
+@amisimedos/mobile#build: command (/home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/apps/mobile) /home/amisi/.local/share/pnpm/pnpm run build exited (1)
+
+ Tasks:    8 successful, 11 total
+Cached:    8 cached, 11 total
+  Time:    270ms 
+Failed:    @amisimedos/mobile#build
+
+ ERROR  run failed: command  exited (1)
+ ELIFECYCLE  Command failed with exit code 1.

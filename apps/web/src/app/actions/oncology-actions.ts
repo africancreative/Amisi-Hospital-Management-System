@@ -21,7 +21,7 @@ export async function createOncologyTreatment(data: {
     totalCycles: number;
     cycleIntervalDays?: number;
     startDate?: string; // ISO date
-}) {
+}): Promise<any> {
     await ensureRole(['DOCTOR', 'ADMIN']);
     const db = await getTenantDb();
 
@@ -80,7 +80,7 @@ export async function submitPreChemoAssessment(sessionId: string, data: {
     platelets: number; // Platelet count
     weightKg: number;
     bsa: number;       // Body Surface Area m²
-}) {
+}): Promise<any> {
     await ensureRole(['NURSE', 'DOCTOR', 'ADMIN']);
     const db = await getTenantDb();
 
@@ -129,7 +129,7 @@ export async function startChemoSession(sessionId: string, nurseId: string, drug
     calculated_dose: number;
     rate: string;
     duration_hr: number;
-}[]) {
+}[]): Promise<any> {
     await ensureRole(['NURSE', 'ADMIN']);
     const db = await getTenantDb();
 
@@ -170,7 +170,7 @@ export async function completeChemoSession(sessionId: string, data: {
     adverseEvent?: boolean;
     doseReduced?: boolean;
     doseReductionReason?: string;
-}) {
+}): Promise<any> {
     await ensureRole(['NURSE', 'DOCTOR', 'ADMIN']);
     const db = await getTenantDb();
 
@@ -195,13 +195,13 @@ export async function completeChemoSession(sessionId: string, data: {
     });
 
     // Alert for Grade 4/5 toxicity (CTCAE)
-    const criticalToxicities = (data.toxicities ?? []).filter(t => t.ctcae_grade >= 4);
+    const criticalToxicities = (data.toxicities ?? []).filter((t: any) => t.ctcae_grade >= 4);
     if (criticalToxicities.length > 0) {
         const tenantId = await getResolvedTenantId();
         if (tenantId) {
             realtimeHub.broadcast(tenantId, 'ONCOLOGY_EMERGENCY', 'ChemoSession', sessionId, {
                 reason: 'SEVERE_TOXICITY',
-                grades: criticalToxicities.map(t => `${t.drug}: Grade ${t.ctcae_grade}`)
+                grades: criticalToxicities.map((t: any) => `${t.drug}: Grade ${t.ctcae_grade}`)
             });
         }
     }
@@ -223,7 +223,7 @@ export async function completeChemoSession(sessionId: string, data: {
 // RECORD TREATMENT RESPONSE (after N cycles)
 // ---------------------------------------------------------------------------
 
-export async function recordTreatmentResponse(treatmentId: string, response: 'CR' | 'PR' | 'SD' | 'PD', notes?: string) {
+export async function recordTreatmentResponse(treatmentId: string, response: 'CR' | 'PR' | 'SD' | 'PD', notes?: string): Promise<any> {
     await ensureRole(['DOCTOR', 'ADMIN']);
     const db = await getTenantDb();
 
@@ -249,7 +249,7 @@ export async function recordTreatmentResponse(treatmentId: string, response: 'CR
 // GET ONCOLOGY DASHBOARD DATA
 // ---------------------------------------------------------------------------
 
-export async function getOncologySchedule() {
+export async function getOncologySchedule(): Promise<any> {
     await ensureRole(['DOCTOR', 'NURSE', 'ADMIN']);
     const db = await getTenantDb();
 

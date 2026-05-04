@@ -55,7 +55,7 @@ export default function OpdModule() {
                         { label: 'In Triage', value: '4', icon: Activity, color: 'text-emerald-500' },
                         { label: 'With Doctor', value: '6', icon: Stethoscope, color: 'text-purple-500' },
                         { label: 'High Priority', value: '2', icon: ShieldAlert, color: 'text-amber-500' },
-                    ].map((stat) => (
+                    ].map((stat: any) => (
                         <div key={stat.label} className="bg-gray-900/40 border border-gray-800 p-4 rounded-2xl flex items-center gap-4 hover:border-gray-700 transition-all">
                             <div className={`p-2.5 rounded-xl bg-gray-950/80 border border-white/5 ${stat.color}`}>
                                 <stat.icon className="h-5 w-5" />

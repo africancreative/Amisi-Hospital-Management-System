@@ -15,7 +15,7 @@ export async function register() {
 
     // 2. Start Sync Engine (Local Edge Node Only)
     const isEdgeNode = process.env.IS_EDGE_NODE === 'true' || process.env.NODE_ENV === 'development';
-    const edgeTenantId = process.env.EDGE_TENANT_ID || 'amisi-premier'; // Fallback for MVP
+    const edgeTenantId = process.env.EDGE_TENANT_ID;
 
     if (isEdgeNode && edgeTenantId) {
       console.log(`[Instrumentation] Starting Sync Engine for Edge Node: ${edgeTenantId}`);

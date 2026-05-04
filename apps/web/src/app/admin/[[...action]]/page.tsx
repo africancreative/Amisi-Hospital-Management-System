@@ -4,6 +4,7 @@ import SecurityPage from '../_components/SecurityPage';
 import HospitalsPage from '../_components/HospitalsPage';
 import OnboardHospitalPage from '../_components/OnboardHospitalPage';
 import HospitalModulesPage from '../_components/HospitalModulesPage';
+import AdminEventsPage from '../events/page';
 
 export default async function AdminRouter(props: { params: Promise<{ action?: string[] }>, searchParams: Promise<any> }) {
   const params = await props.params;
@@ -31,6 +32,10 @@ export default async function AdminRouter(props: { params: Promise<{ action?: st
 
   if (action.length === 3 && action[0] === 'hospitals' && action[2] === 'modules') {
     return <HospitalModulesPage />;
+  }
+
+  if (action.length === 1 && action[0] === 'events') {
+    return <AdminEventsPage searchParams={props.searchParams} />;
   }
 
   notFound();

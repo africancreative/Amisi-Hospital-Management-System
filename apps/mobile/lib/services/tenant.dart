@@ -1,7 +1,4 @@
-import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/foundation.dart';
-import 'auth.dart';
 import 'connectivity.dart';
 
 class TenantBranding {
@@ -22,13 +19,13 @@ class TenantBranding {
   });
 
   factory TenantBranding.fromJson(Map<String, dynamic> json) => TenantBranding(
-    name: json['name'] as String,
-    logoUrl: json['logoUrl'] as String?,
-    primaryColor: json['primaryColor'] as String? ?? '#2563EB',
-    secondaryColor: json['secondaryColor'] as String? ?? '#0F172A',
-    trialEndsAt: json['trialEndsAt'] as String?,
-    status: json['status'] as String? ?? 'active',
-  );
+        name: json['name'] as String,
+        logoUrl: json['logoUrl'] as String?,
+        primaryColor: json['primaryColor'] as String? ?? '#2563EB',
+        secondaryColor: json['secondaryColor'] as String? ?? '#0F172A',
+        trialEndsAt: json['trialEndsAt'] as String?,
+        status: json['status'] as String? ?? 'active',
+      );
 }
 
 class TenantService extends ChangeNotifier {

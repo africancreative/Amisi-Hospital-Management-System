@@ -8,7 +8,8 @@
         ".": "./dist/index.js",
         "./client": "./dist/client.js",
         "./management": "./dist/provision.js",
-        "./types": "./dist/types.js"
+        "./types": "./dist/types.js",
+        "./fhir": "./dist/fhir.js"
     },
     "scripts": {
         "build": "pnpm generate && tsc",
@@ -21,8 +22,10 @@
         "db:studio:control": "prisma studio --schema=./prisma/control.prisma",
         "db:studio:tenant": "prisma studio --schema=./prisma/tenant.prisma",
         "db:seed:demo": "npx tsx src/seed-demo.ts",
+        "db:seed:cloud": "npx tsx src/seed-cloud.ts",
         "db:seed:comprehensive": "npx tsx src/seed-comprehensive.ts",
-        "db:seed:all": "npx tsx src/seed-all-tenants.ts"
+        "db:seed:all": "npx tsx src/seed-all-tenants.ts",
+        "db:seed:system": "npx tsx src/seed-system.ts"
     },
     "dependencies": {
         "@amisimedos/constants": "workspace:*",

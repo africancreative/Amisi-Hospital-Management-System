@@ -327,6 +327,10 @@ exports.Prisma.EncounterChatScalarFieldEnum = {
   senderName: 'senderName',
   senderRole: 'senderRole',
   content: 'content',
+  messageType: 'messageType',
+  referenceType: 'referenceType',
+  referenceId: 'referenceId',
+  attachmentUrl: 'attachmentUrl',
   createdAt: 'createdAt'
 };
 
@@ -463,6 +467,9 @@ exports.Prisma.PrescriptionScalarFieldEnum = {
   orderedBy: 'orderedBy',
   status: 'status',
   notes: 'notes',
+  billedAmount: 'billedAmount',
+  isBilled: 'isBilled',
+  isPaid: 'isPaid',
   version: 'version',
   isSynced: 'isSynced',
   createdAt: 'createdAt',
@@ -476,7 +483,11 @@ exports.Prisma.PrescriptionItemScalarFieldEnum = {
   dosage: 'dosage',
   frequency: 'frequency',
   duration: 'duration',
-  quantity: 'quantity'
+  quantity: 'quantity',
+  inventoryItemId: 'inventoryItemId',
+  stockCheckedAt: 'stockCheckedAt',
+  stockAvailable: 'stockAvailable',
+  reservedBatchId: 'reservedBatchId'
 };
 
 exports.Prisma.DispensingRecordScalarFieldEnum = {
@@ -976,14 +987,65 @@ exports.Prisma.AuditLogScalarFieldEnum = {
   actorId: 'actorId',
   actorName: 'actorName',
   actorRole: 'actorRole',
+  sessionId: 'sessionId',
   action: 'action',
   resource: 'resource',
   resourceId: 'resourceId',
   details: 'details',
   ipAddress: 'ipAddress',
   userAgent: 'userAgent',
+  department: 'department',
   timestamp: 'timestamp',
-  hash: 'hash'
+  prevHash: 'prevHash',
+  hash: 'hash',
+  chainPosition: 'chainPosition',
+  category: 'category',
+  severity: 'severity',
+  isRetained: 'isRetained',
+  retainUntil: 'retainUntil'
+};
+
+exports.Prisma.AuditRecordChangeScalarFieldEnum = {
+  id: 'id',
+  auditLogId: 'auditLogId',
+  entityType: 'entityType',
+  entityId: 'entityId',
+  changeType: 'changeType',
+  beforeState: 'beforeState',
+  afterState: 'afterState',
+  changedFields: 'changedFields',
+  actorId: 'actorId',
+  actorName: 'actorName',
+  timestamp: 'timestamp'
+};
+
+exports.Prisma.AuditChatActionScalarFieldEnum = {
+  id: 'id',
+  auditLogId: 'auditLogId',
+  messageId: 'messageId',
+  groupId: 'groupId',
+  patientId: 'patientId',
+  action: 'action',
+  originalContent: 'originalContent',
+  newContent: 'newContent',
+  actorId: 'actorId',
+  actorName: 'actorName',
+  timestamp: 'timestamp'
+};
+
+exports.Prisma.AuditAccessLogScalarFieldEnum = {
+  id: 'id',
+  auditLogId: 'auditLogId',
+  resourceType: 'resourceType',
+  resourceId: 'resourceId',
+  patientId: 'patientId',
+  accessReason: 'accessReason',
+  accessDuration: 'accessDuration',
+  actorId: 'actorId',
+  actorName: 'actorName',
+  actorRole: 'actorRole',
+  ipAddress: 'ipAddress',
+  timestamp: 'timestamp'
 };
 
 exports.Prisma.SyncNodeScalarFieldEnum = {
@@ -1518,6 +1580,7 @@ exports.Prisma.LabOrderScalarFieldEnum = {
   orderedAt: 'orderedAt',
   billedAmount: 'billedAmount',
   isBilled: 'isBilled',
+  isPaid: 'isPaid',
   version: 'version',
   isSynced: 'isSynced',
   createdAt: 'createdAt',
@@ -1756,6 +1819,9 @@ exports.Prisma.ModelName = {
   AssetMaintenance: 'AssetMaintenance',
   EventJournal: 'EventJournal',
   AuditLog: 'AuditLog',
+  AuditRecordChange: 'AuditRecordChange',
+  AuditChatAction: 'AuditChatAction',
+  AuditAccessLog: 'AuditAccessLog',
   SyncNode: 'SyncNode',
   ICUMonitoring: 'ICUMonitoring',
   VitalsLog: 'VitalsLog',

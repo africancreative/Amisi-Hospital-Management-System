@@ -25,7 +25,7 @@ export default async function HospitalsPage() {
                 </header>
 
                 <div className="grid gap-6">
-                    {tenants.map((tenant) => (
+                    {tenants.map((tenant: any) => (
                         <div
                             key={tenant.id}
                             className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 p-6 shadow-sm hover:border-emerald-500/50 transition-all duration-300 group"

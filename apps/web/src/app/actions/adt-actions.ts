@@ -16,7 +16,7 @@ export async function admitPatient(data: {
     bedId: string;
     attendingPhysicianId?: string;
     admissionReason?: string;
-}) {
+}): Promise<any> {
     await ensureRole(['DOCTOR', 'NURSE', 'ADMIN', 'ADMISSIONS']);
     const db = await getTenantDb();
 
@@ -66,7 +66,7 @@ export async function admitPatient(data: {
 // ADT^A02: TRANSFER PATIENT
 // ---------------------------------------------------------------------------
 
-export async function transferPatient(admissionId: string, toBedId: string, transferredByRole: string, reasonForTransfer?: string) {
+export async function transferPatient(admissionId: string, toBedId: string, transferredByRole: string, reasonForTransfer?: string): Promise<any> {
     await ensureRole(['DOCTOR', 'NURSE_MANAGER', 'ADMIN', 'ADMISSIONS']);
     const db = await getTenantDb();
 
@@ -133,7 +133,7 @@ export async function transferPatient(admissionId: string, toBedId: string, tran
 // ADT^A03: DISCHARGE PATIENT
 // ---------------------------------------------------------------------------
 
-export async function dischargePatient(admissionId: string) {
+export async function dischargePatient(admissionId: string): Promise<any> {
     await ensureRole(['DOCTOR', 'ADMIN', 'ADMISSIONS']);
     const db = await getTenantDb();
 

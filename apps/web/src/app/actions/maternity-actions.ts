@@ -21,7 +21,7 @@ export async function registerMaternityPatient(data: {
     rhesus?: string;
     hivStatus?: string;
     riskFactors?: string[];
-}) {
+}): Promise<any> {
     await ensureRole(['NURSE', 'MIDWIFE', 'ADMIN']);
     const db = await getTenantDb();
 
@@ -97,7 +97,7 @@ export async function recordANCVisit(maternityRecordId: string, data: {
     urineGlucose?: string;
     notes?: string;
     nextVisitDays?: number;
-}) {
+}): Promise<any> {
     await ensureRole(['NURSE', 'MIDWIFE', 'ADMIN']);
     const db = await getTenantDb();
 
@@ -144,7 +144,7 @@ export async function startLabour(maternityRecordId: string, data: {
     obstetricianId?: string;
     membraneStatus?: string;
     liquorColor?: string;
-}) {
+}): Promise<any> {
     await ensureRole(['NURSE', 'MIDWIFE', 'ADMIN']);
     const db = await getTenantDb();
 
@@ -193,7 +193,7 @@ export interface PartogramPoint {
     maternalBP?: string;
 }
 
-export async function pushPartogramPoint(deliveryLogId: string, point: PartogramPoint) {
+export async function pushPartogramPoint(deliveryLogId: string, point: PartogramPoint): Promise<any> {
     await ensureRole(['NURSE', 'MIDWIFE', 'ADMIN']);
     const db = await getTenantDb();
 
@@ -256,7 +256,7 @@ export async function recordDelivery(deliveryLogId: string, data: {
     resuscitationRequired?: boolean;
     oxytocinGiven?: boolean;
     vitaminKGiven?: boolean;
-}) {
+}): Promise<any> {
     await ensureRole(['NURSE', 'MIDWIFE', 'DOCTOR', 'ADMIN']);
     const db = await getTenantDb();
 
@@ -348,7 +348,7 @@ export async function recordDelivery(deliveryLogId: string, data: {
 // ACTIVE LABOUR BOARD (dashboard)
 // ---------------------------------------------------------------------------
 
-export async function getActiveLaborPatients() {
+export async function getActiveLaborPatients(): Promise<any> {
     await ensureRole(['NURSE', 'MIDWIFE', 'ADMIN']);
     const db = await getTenantDb();
 

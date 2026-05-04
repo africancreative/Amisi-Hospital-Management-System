@@ -22,7 +22,7 @@ const MODULE_REGISTRY: any = {
     'EHR': { name: 'Patients & EMR', href: '/emr', icon: Stethoscope, roles: ['DOCTOR', 'NURSE', 'ADMIN'] },
     'PHARMACY': { name: 'Pharmacy', href: '/pharmacy', icon: Pill, roles: ['PHARMACIST', 'DOCTOR', 'ADMIN'] },
     'LAB': { name: 'Laboratory', href: '/lab', icon: Beaker, roles: ['LAB_TECH', 'DOCTOR', 'ADMIN'] },
-    'BILLING': { name: 'Billing', href: '/billing', icon: Wallet, roles: ['CASHIER', 'RECEPTIONIST', 'ADMIN'] },
+    'BILLING': { name: 'Billing', href: '/billing', icon: Wallet, roles: ['ACCOUNTANT', 'RECEPTIONIST', 'ADMIN'] },
     'INVENTORY': { name: 'Inventory', href: '/inventory', icon: Package, roles: ['ADMIN', 'PHARMACIST'] },
     'WARD': { name: 'Wards', href: '/wards', icon: Bed, roles: ['NURSE', 'DOCTOR', 'ADMIN'] },
 };
@@ -52,9 +52,9 @@ export default async function TenantLayout({
 
     // Filter by BOTH Tenant Entitlements AND User Role
     const navLinks = activeModCodes
-        .filter(code => MODULE_REGISTRY[code])
-        .filter(code => MODULE_REGISTRY[code].roles.includes(role))
-        .map(code => MODULE_REGISTRY[code]);
+        .filter((code: any) => MODULE_REGISTRY[code])
+        .filter((code: any) => MODULE_REGISTRY[code].roles.includes(role))
+        .map((code: any) => MODULE_REGISTRY[code]);
 
     const Sidebar = (
         <aside className="w-64 border-r border-white/5 bg-black/40 flex flex-col shrink-0">
@@ -82,7 +82,7 @@ export default async function TenantLayout({
                 {navLinks.length === 0 ? (
                     <div className="px-4 py-3 text-xs text-neutral-500 italic">No modules assigned to your role.</div>
                 ) : (
-                    navLinks.map((link, idx) => {
+                    navLinks.map((link: any, idx: any) => {
                         const Icon = link.icon;
                         return (
                             <Link key={idx} href={`/${slug}${link.href}`} className="flex items-center gap-3 px-4 py-3 rounded-xl text-neutral-300 hover:text-white hover:bg-white/5 transition-all text-sm font-semibold group">

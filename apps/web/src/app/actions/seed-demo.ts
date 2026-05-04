@@ -21,7 +21,7 @@ import { hashPassword } from '@amisimedos/db';
 
 const DEMO_PASSWORD = 'Demo@1234';
 
-export async function seedDemoData(slug: string) {
+export async function seedDemoData(slug: string): Promise<any> {
     const controlDb = getControlDb();
 
     // 1. Create or Update Tenant in Control DB

@@ -23,13 +23,13 @@ export async function postJournalEntry(data: {
     sourceType?: string;
     sourceId?: string;
     lines: JournalLineInput[];
-}) {
+}): Promise<any> {
     await ensureRole(['ACCOUNTANT', 'ADMIN']);
     const db = await getTenantDb();
 
     // 1. Validate Debit/Credit balance
-    const totalDebits = data.lines.reduce((acc, line) => acc + line.debit, 0);
-    const totalCredits = data.lines.reduce((acc, line) => acc + line.credit, 0);
+    const totalDebits = data.lines.reduce((acc: any, line: any) => acc + line.debit, 0);
+    const totalCredits = data.lines.reduce((acc: any, line: any) => acc + line.credit, 0);
 
     const difference = Math.abs(totalDebits - totalCredits);
     if (difference > 0.001) { // Floating point tolerance
@@ -47,7 +47,7 @@ export async function postJournalEntry(data: {
                 sourceId: data.sourceId,
                 status: 'POSTED',
                 lines: {
-                    create: data.lines.map(line => ({
+                    create: data.lines.map((line: any) => ({
                         accountId: line.accountId,
                         description: line.description,
                         debit: new Decimal(line.debit),
@@ -73,14 +73,14 @@ export async function postJournalEntry(data: {
     return entry;
 }
 
-export async function getAccounts() {
+export async function getAccounts(): Promise<any> {
     const db = await getTenantDb();
     return db.account.findMany({
         orderBy: { code: 'asc' }
     });
 }
 
-export async function createAccount(data: { code: string, name: string, type: string, description?: string }) {
+export async function createAccount(data: { code: string, name: string, type: string, description?: string }): Promise<any> {
     await ensureRole(['ACCOUNTANT', 'ADMIN']);
     const db = await getTenantDb();
     const account = await db.account.create({
@@ -90,7 +90,7 @@ export async function createAccount(data: { code: string, name: string, type: st
     return account;
 }
 
-export async function getTrialBalance() {
+export async function getTrialBalance(): Promise<any> {
     await ensureRole(['ACCOUNTANT', 'ADMIN']);
     const db = await getTenantDb();
     const accounts = await db.account.findMany({
@@ -99,9 +99,9 @@ export async function getTrialBalance() {
         }
     });
 
-    return accounts.map(acc => {
-        const totalDebit = acc.journalLines.reduce((sum: number, l) => sum + Number(l.debit), 0);
-        const totalCredit = acc.journalLines.reduce((sum: number, l) => sum + Number(l.credit), 0);
+    return accounts.map((acc: any) => {
+        const totalDebit = acc.journalLines.reduce((sum: any, l: any) => sum + Number(l.debit), 0);
+        const totalCredit = acc.journalLines.reduce((sum: any, l: any) => sum + Number(l.credit), 0);
 
         // Net balance calculation based on account type
         let balance = 0;
@@ -120,7 +120,7 @@ export async function getTrialBalance() {
     });
 }
 
-export async function getRecentJournalEntries() {
+export async function getRecentJournalEntries(): Promise<any> {
     await ensureRole(['ACCOUNTANT', 'ADMIN']);
     const db = await getTenantDb();
     return db.journalEntry.findMany({
@@ -137,7 +137,7 @@ export async function getRecentJournalEntries() {
 /**
  * Helper to resolve standard account codes for automation
  */
-export async function getStandardAccount(code: string, name: string, type: string) {
+export async function getStandardAccount(code: string, name: string, type: string): Promise<any> {
     const db = await getTenantDb();
     let account = await db.account.findUnique({ where: { code } });
     if (!account) {

@@ -31,7 +31,7 @@ export async function openICUEpisode(data: {
     isolationStatus?: string;
     ventilatorMode?: string;
     apacheScore?: number;
-}) {
+}): Promise<any> {
     await ensureRole(['DOCTOR', 'NURSE', 'ADMIN']);
     const db = await getTenantDb();
 
@@ -79,7 +79,7 @@ export async function recordICUVitals(data: {
     painScore?: number;
     infusionData?: object[];
     source?: string;
-}) {
+}): Promise<any> {
     await ensureRole(['NURSE', 'ADMIN']);
     const db = await getTenantDb();
 
@@ -153,7 +153,7 @@ export async function updateVentilatorSettings(icuMonitoringId: string, settings
     fio2?: number;
     tidalVolume?: number;
     peep?: number;
-}) {
+}): Promise<any> {
     await ensureRole(['DOCTOR', 'ADMIN']);
     const db = await getTenantDb();
 
@@ -177,7 +177,7 @@ export async function updateVentilatorSettings(icuMonitoringId: string, settings
 // UPDATE SOFA SCORE (daily)
 // ---------------------------------------------------------------------------
 
-export async function updateSOFAScore(icuMonitoringId: string, sofaScore: number, apacheScore?: number) {
+export async function updateSOFAScore(icuMonitoringId: string, sofaScore: number, apacheScore?: number): Promise<any> {
     await ensureRole(['DOCTOR', 'ADMIN']);
     const db = await getTenantDb();
 
@@ -198,7 +198,7 @@ export async function updateSOFAScore(icuMonitoringId: string, sofaScore: number
 // GET ACTIVE ICU PATIENTS (dashboard feed)
 // ---------------------------------------------------------------------------
 
-export async function getActiveICUPatients() {
+export async function getActiveICUPatients(): Promise<any> {
     await ensureRole(['DOCTOR', 'NURSE', 'ADMIN']);
     const db = await getTenantDb();
 
@@ -217,7 +217,7 @@ export async function getActiveICUPatients() {
 // DISCHARGE FROM ICU
 // ---------------------------------------------------------------------------
 
-export async function dischargeFromICU(icuMonitoringId: string) {
+export async function dischargeFromICU(icuMonitoringId: string): Promise<any> {
     await ensureRole(['DOCTOR', 'ADMIN']);
     const db = await getTenantDb();
 

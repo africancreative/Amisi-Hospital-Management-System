@@ -70,7 +70,7 @@ export default function TriageDashboard() {
     }, [selectedPatient]);
 
     const toggleItem = (list: string[], setList: (l: string[]) => void, item: string) => {
-        if (list.includes(item)) setList(list.filter(i => i !== item));
+        if (list.includes(item)) setList(list.filter((i: any) => i !== item));
         else setList([...list, item]);
     };
 
@@ -92,7 +92,7 @@ export default function TriageDashboard() {
         });
 
         // Remove from local queue for immediate feedback
-        setQueue(prev => prev.filter(p => p.id !== selectedPatient.id));
+        setQueue(prev => prev.filter((p: any) => p.id !== selectedPatient.id));
         setSelectedPatient(null);
     };
 
@@ -150,7 +150,7 @@ export default function TriageDashboard() {
                     </div>
                     
                     <div className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar">
-                        {queue.map(p => (
+                        {queue.map((p: any) => (
                             <button 
                                 key={p.id}
                                 onClick={() => setSelectedPatient(p)}
@@ -216,7 +216,7 @@ export default function TriageDashboard() {
                                     { id: 'Cough', icon: Wind },
                                     { id: 'Injury', icon: AlertTriangle },
                                     { id: 'Other', icon: Plus },
-                                ].map(s => (
+                                ].map((s: any) => (
                                     <button 
                                         key={s.id}
                                         onClick={() => toggleItem(symptoms, setSymptoms, s.id)}
@@ -244,7 +244,7 @@ export default function TriageDashboard() {
                                     { id: 'hr', label: 'Pulse Rate', unit: 'bpm', val: vitals.hr, step: 2, icon: Heart },
                                     { id: 'temp', label: 'Temperature', unit: '°C', val: vitals.temp, step: 0.1, icon: Thermometer },
                                     { id: 'spo2', label: 'Oxygen Level', unit: '%', val: vitals.spo2, step: 1, icon: Droplets },
-                                ].map(v => (
+                                ].map((v: any) => (
                                     <div key={v.id} className={`p-8 rounded-[40px] border transition-all flex flex-col gap-6 relative overflow-hidden ${isCritical(v.id, v.val) ? 'bg-rose-500/10 border-rose-500/40' : 'bg-gray-900/60 border-gray-800'}`}>
                                         <div className="flex justify-between items-center">
                                             <span className={`text-[10px] font-black uppercase tracking-widest ${isCritical(v.id, v.val) ? 'text-rose-500' : 'text-gray-500'}`}>{v.label}</span>
@@ -274,7 +274,7 @@ export default function TriageDashboard() {
                                     { id: 'Severe Pain', label: 'Severe Pain', icon: AlertCircle },
                                     { id: 'Bleeding', label: 'Active Bleeding', icon: Droplets },
                                     { id: 'Unconscious', label: 'Unconscious', icon: Skull },
-                                ].map(r => (
+                                ].map((r: any) => (
                                     <button 
                                         key={r.id}
                                         onClick={() => toggleItem(risks, setRisks, r.id)}
@@ -318,7 +318,7 @@ export default function TriageDashboard() {
                         <div className="space-y-3">
                             <h4 className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-2 px-2">Assign Department</h4>
                             <div className="grid grid-cols-2 gap-2">
-                                {['General', 'Pediatrics', 'Gynae', 'Dental'].map(dept => (
+                                {['General', 'Pediatrics', 'Gynae', 'Dental'].map((dept: any) => (
                                     <button key={dept} className="py-3 bg-white/5 border border-white/5 rounded-xl text-[9px] font-black uppercase hover:bg-white/10 transition-all">
                                         {dept}
                                     </button>

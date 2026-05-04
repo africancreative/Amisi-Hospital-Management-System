@@ -29,7 +29,7 @@ export async function onboardEmployee(data: {
     probationDays?: number;
     emergencyName?: string;
     emergencyPhone?: string;
-}) {
+}): Promise<any> {
     await ensureRole(['HR_MANAGER', 'HR', 'ADMIN']);
     const db = await getTenantDb();
 
@@ -85,7 +85,7 @@ export async function updateCredentials(employeeId: string, docs: {
     name: string;
     url: string;
     expiry?: string;
-}[]) {
+}[]): Promise<any> {
     await ensureRole(['HR_MANAGER', 'HR', 'ADMIN']);
     const db = await getTenantDb();
 
@@ -95,7 +95,7 @@ export async function updateCredentials(employeeId: string, docs: {
     });
 
     // Alert for expiring credentials (< 30 days)
-    const expiring = docs.filter(d => {
+    const expiring = docs.filter((d: any) => {
         if (!d.expiry) return false;
         return new Date(d.expiry).getTime() - Date.now() < 30 * 86400000;
     });
@@ -104,7 +104,7 @@ export async function updateCredentials(employeeId: string, docs: {
         const tenantId = await getResolvedTenantId();
         if (tenantId) {
             realtimeHub.broadcast(tenantId, 'CREDENTIAL_EXPIRY_ALERT', 'Employee', employeeId, {
-                expiring: expiring.map(d => d.name)
+                expiring: expiring.map((d: any) => d.name)
             });
         }
     }
@@ -130,7 +130,7 @@ export async function assignShift(data: {
     department: string;
     ward?: string;
     notes?: string;
-}) {
+}): Promise<any> {
     await ensureRole(['HR_MANAGER', 'HR', 'ADMIN']);
     const db = await getTenantDb();
 
@@ -160,7 +160,7 @@ export async function assignShift(data: {
     return shift;
 }
 
-export async function getWeeklySchedule(weekStart: string) {
+export async function getWeeklySchedule(weekStart: string): Promise<any> {
     await ensureRole(['HR_MANAGER', 'HR', 'ADMIN', 'DOCTOR', 'NURSE']);
     const db = await getTenantDb();
 
@@ -186,7 +186,7 @@ export async function requestLeave(data: {
     endDate: string;
     reason?: string;
     medicalCertUrl?: string;
-}) {
+}): Promise<any> {
     const db = await getTenantDb();
 
     const start = new Date(data.startDate);
@@ -215,7 +215,7 @@ export async function requestLeave(data: {
     return leave;
 }
 
-export async function approveLeave(leaveId: string, approvedBy: string, approved: boolean, rejectionReason?: string) {
+export async function approveLeave(leaveId: string, approvedBy: string, approved: boolean, rejectionReason?: string): Promise<any> {
     await ensureRole(['HR_MANAGER', 'HR', 'ADMIN']);
     const db = await getTenantDb();
 
@@ -249,14 +249,14 @@ export async function approveLeave(leaveId: string, approvedBy: string, approved
     return leave;
 }
 
-export async function getEmployees() {
+export async function getEmployees(): Promise<any> {
     const db = await getTenantDb();
     return db.employee.findMany({
         orderBy: { lastName: 'asc' }
     });
 }
 
-export async function getPayrollHistory() {
+export async function getPayrollHistory(): Promise<any> {
     const db = await getTenantDb();
     return db.payrollRecord.findMany({
         include: { employee: true },

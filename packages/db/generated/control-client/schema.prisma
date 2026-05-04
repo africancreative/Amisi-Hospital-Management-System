@@ -1,6 +1,7 @@
 datasource db {
-  provider = "postgresql"
-  url      = env("NEON_DATABASE_URL") // System of record
+  provider  = "postgresql"
+  url       = env("NEON_DATABASE_URL") // Pooled (PgBouncer) — runtime queries
+  directUrl = env("NEON_DIRECT_URL") // Direct — Prisma migrations / db push only
 }
 
 generator client {
@@ -17,10 +18,21 @@ enum TenantStatus {
 
 enum DeploymentTier {
   CLINIC
+  PHARMACY
+  LAB
+  SPECIALIST
   HOSPITAL
-  NETWORK
   GENERAL
   RESEARCH
+  NETWORK
+}
+
+enum FacilityType {
+  CLINIC
+  PHARMACY
+  LAB
+  SPECIALIST
+  HOSPITAL
 }
 
 model Tenant {
@@ -30,6 +42,7 @@ model Tenant {
   dbUrl                  String         @map("db_url")
   encryptionKeyReference String         @map("encryption_key_reference")
   tier                   DeploymentTier @default(CLINIC)
+  facilityType           FacilityType   @default(CLINIC) @map("facility_type")
   region                 String
   status                 TenantStatus   @default(active)
   suspensionReason       String?        @map("suspension_reason")
@@ -44,16 +57,30 @@ model Tenant {
   // Lifecycle
   trialEndsAt DateTime? @map("trial_ends_at")
 
-  enabledModules Json     @default("{}") @map("enabled_modules")
-  publicKeySpki  String?  @map("public_key_spki") @db.Text
-  sharedSecret   String?  @map("shared_secret") @db.Text
-  createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime @updatedAt @map("updated_at")
+  // Full Tenant Config (JSON schema per our design)
+  enabledModules        Json @default("{}") @map("enabled_modules")
+  moduleConfig          Json @default("{}") @map("module_config")
+  workflowCustomization Json @default("{\"queue_logic\": {\"triage_levels\": [\"Critical\", \"Urgent\", \"Routine\"], \"routing_rules\": []}, \"billing_rules\": {\"currency\": \"USD\", \"tax_rate\": 0, \"payment_methods\": [\"CASH\", \"CARD\", \"MPESA\"]}, \"staff_roles\": {}}") @map("workflow_customization")
+  complianceIsolation   Json @default("{\"isolation_policy\": \"logical\", \"data_residency\": \"\", \"byok_enabled\": false}") @map("compliance_isolation")
+  subscriptionQuotas    Json @default("{\"seat_limit\": 5, \"storage_mb\": 5000}") @map("subscription_quotas")
 
-  entitlements  TenantModule[]
-  payments      SystemPayment[]
-  subscriptions Subscription[]
-  usages        TenantUsage[]
+  // Retained legacy config columns
+  billingConfig Json? @map("billing_config")
+  queueConfig   Json? @map("queue_config")
+  staffRoles    Json? @map("staff_roles")
+
+  publicKeySpki String?  @map("public_key_spki") @db.Text
+  sharedSecret  String?  @map("shared_secret") @db.Text
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  entitlements         TenantModule[]
+  payments             SystemPayment[]
+  subscriptions        Subscription[]
+  usages               TenantUsage[]
+  configAuditLogs      TenantConfigAuditLog[]
+  featureFlagOverrides FeatureFlagOverride[]
+  tenantFeatureFlags   TenantFeatureFlag[]
 
   @@map("tenants")
 }
@@ -61,13 +88,19 @@ model Tenant {
 model Module {
   id          String   @id @default(uuid())
   name        String
-  code        String   @unique // e.g., 'LAB', 'PHARMACY', 'HR', 'ACCOUNTING'
+  code        String   @unique // e.g., 'MOD-PM', 'MOD-TQ', etc.
   description String?
   basePrice   Decimal  @default(0) @map("base_price") @db.Decimal(10, 2)
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  tenants TenantModule[]
+  // Module metadata for dependencies, events, permissions
+  dependencies Json @default("[]") @map("dependencies") // e.g., ["MOD-PM"]
+  events       Json @default("[]") @map("events") // e.g., ["patient.registered", "triage.completed"]
+  permissions  Json @default("[]") @map("permissions") // e.g., ["PATIENT_READ", "TRIAGE_WRITE"]
+
+  tenants      TenantModule[]
+  featureFlags FeatureFlag[]
 
   @@map("modules")
 }
@@ -249,4 +282,86 @@ model TenantUsage {
   @@unique([tenantId, date])
   @@index([subscriptionId])
   @@map("tenant_usage")
+}
+
+model SyncNode {
+  id            String   @id @default(uuid())
+  nodeName      String   @map("node_name")
+  nodeType      String   @default("EDGE") // 'EDGE', 'CLOUD'
+  lastHeartbeat DateTime @default(now()) @map("last_heartbeat")
+  version       String
+  status        String   @default("HEALTHY") // 'HEALTHY', 'DEGRADED', 'OFFLINE'
+
+  config Json?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("sync_nodes")
+}
+
+// Feature Flags System (global/tenant/module-scoped)
+model FeatureFlag {
+  id           String   @id @default(uuid())
+  flagId       String   @unique @map("flag_id") // kebab-case, e.g., 'beta-ai-triage'
+  scope        String   @default("global") @map("scope") // 'global', 'tenant', 'module'
+  moduleId     String?  @map("module_id") // Required if scope = 'module'
+  module       Module?  @relation(fields: [moduleId], references: [id])
+  defaultValue Boolean  @default(false) @map("default_value")
+  description  String?
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  overrides   FeatureFlagOverride[]
+  tenantFlags TenantFeatureFlag[]
+
+  @@map("feature_flags")
+}
+
+model FeatureFlagOverride {
+  id        String      @id @default(uuid())
+  flagId    String      @map("flag_id")
+  flag      FeatureFlag @relation(fields: [flagId], references: [id])
+  tenantId  String?     @map("tenant_id")
+  tenant    Tenant?     @relation(fields: [tenantId], references: [id])
+  enabled   Boolean     @default(true)
+  createdAt DateTime    @default(now()) @map("created_at")
+
+  @@unique([flagId, tenantId])
+  @@map("feature_flag_overrides")
+}
+
+// Audit Log for all tenant config changes
+model TenantConfigAuditLog {
+  id        String   @id @default(uuid())
+  tenantId  String   @map("tenant_id")
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  actorId   String   @map("actor_id")
+  actorName String   @map("actor_name")
+  actorRole String   @map("actor_role")
+  action    String // 'MODULE_TOGGLE', 'CONFIG_UPDATE', 'WORKFLOW_CHANGE', 'FEATURE_FLAG_CHANGE'
+  field     String? // which field changed
+  oldValue  Json?    @map("old_value")
+  newValue  Json?    @map("new_value")
+  ipAddress String?  @map("ip_address")
+  userAgent String?  @map("user_agent")
+  timestamp DateTime @default(now()) @map("timestamp")
+
+  @@index([tenantId, timestamp])
+  @@map("tenant_config_audit_logs")
+}
+
+// Tenant-specific feature flag values
+model TenantFeatureFlag {
+  id        String      @id @default(uuid())
+  tenantId  String      @map("tenant_id")
+  tenant    Tenant      @relation(fields: [tenantId], references: [id])
+  flagId    String      @map("flag_id")
+  flag      FeatureFlag @relation(fields: [flagId], references: [id])
+  enabled   Boolean     @default(false)
+  createdAt DateTime    @default(now()) @map("created_at")
+  updatedAt DateTime    @updatedAt @map("updated_at")
+
+  @@unique([tenantId, flagId])
+  @@map("tenant_feature_flags")
 }

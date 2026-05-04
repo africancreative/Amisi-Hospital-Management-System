@@ -142,7 +142,7 @@ export default function CheckoutPage() {
           <div className="space-y-4">
             <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest px-2">Plan Includes</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {plan.features.map(f => (
+              {plan.features.map((f: any) => (
                 <div key={f} className="flex items-center gap-3 px-4 py-3 bg-white/[0.01] border border-white/5 rounded-xl">
                   <Check className="h-4 w-4 text-emerald-500 shrink-0" />
                   <span className="text-xs text-neutral-300 font-bold">{f}</span>

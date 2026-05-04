@@ -35,7 +35,7 @@ export const publicProcedure = t.procedure;
  * Rejects requests that do not specify a valid AmisiMedOS Clinical Node slug,
  * or if the node is in a hard clinical lockout.
  */
-const enforceTenant = t.middleware(async ({ ctx, next, type }) => {
+const enforceTenant = t.middleware(async ({ ctx, next, type }: any) => {
   if (!ctx.db || !ctx.tenantSlug) {
     throw new TRPCError({
       code: 'BAD_REQUEST',
@@ -85,7 +85,7 @@ const enforceTenant = t.middleware(async ({ ctx, next, type }) => {
 /**
  * Middleware: Enforce Authentication
  */
-const isAuthed = t.middleware(({ ctx, next }) => {
+const isAuthed = t.middleware(({ ctx, next }: any) => {
   if (!ctx.session || !ctx.session.userId) {
     throw new TRPCError({
       code: 'UNAUTHORIZED',
@@ -102,7 +102,7 @@ const isAuthed = t.middleware(({ ctx, next }) => {
 /**
  * Middleware: Enforce Platform SuperAdmin (SAs)
  */
-const isSuperAdmin = t.middleware(({ ctx, next }) => {
+const isSuperAdmin = t.middleware(({ ctx, next }: any) => {
   if (!ctx.session || !ctx.session.isSystemAdmin) {
     throw new TRPCError({
       code: 'FORBIDDEN',
@@ -127,7 +127,7 @@ export const superAdminProcedure = publicProcedure.use(isAuthed).use(isSuperAdmi
  * Middleware: Enforce Specific Capability (RBAC)
  */
 export const requirePermission = (permission: Permission) => 
-  t.middleware(({ ctx, next }) => {
+  t.middleware(({ ctx, next }: any) => {
     if (!ctx.session || !ctx.session.userId) {
       throw new TRPCError({ code: 'UNAUTHORIZED' });
     }

@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -H 0.0.0.0 -p 3000",
+    "dev": "next dev -H 0.0.0.0 -p 3005",
     "build": "next build",
-    "start": "next start -H 0.0.0.0 -p 3000",
+    "start": "next start -H 0.0.0.0 -p 3005",
     "tauri": "tauri"
   },
   "dependencies": {
@@ -13,7 +13,9 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "@tauri-apps/api": "^2.0.0",
-    "axios": "^1.6.0"
+    "axios": "^1.6.0",
+    "@amisi/core": "workspace:*",
+    "@amisimedos/db": "workspace:*"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.0.0",

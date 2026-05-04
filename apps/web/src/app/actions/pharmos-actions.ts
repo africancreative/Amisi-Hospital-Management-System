@@ -68,7 +68,7 @@ export async function receivePrescription(data: {
         daysSupply?: number;
         substitutionOk?: boolean;
     }[];
-}) {
+}): Promise<any> {
     await ensureRole(['DOCTOR', 'ADMIN']);
     const db = await getTenantDb();
 
@@ -83,7 +83,7 @@ export async function receivePrescription(data: {
             status: 'pending',
             notes: data.notes,
             items: {
-                create: data.items.map(i => ({
+                create: data.items.map((i: any) => ({
                     drugName: i.drugName,
                     dosage: i.dosage,
                     quantity: i.quantity,
@@ -128,11 +128,11 @@ export async function validatePrescription(prescriptionId: string): Promise<Vali
     const flags: ValidationFlag[] = [];
     const interactionAlerts: InteractionAlert[] = [];
     const item = prescription.items;
-    const allergies = prescription.patient?.allergies.map(a => a.substance.toLowerCase()) ?? [];
+    const allergies = prescription.patient?.allergies.map((a: any) => a.substance.toLowerCase()) ?? [];
 
     // --- Check 1: Allergy Conflicts ---
     for (const rx of item) {
-        const allergyHit = allergies.some(a =>
+        const allergyHit = allergies.some((a: any) =>
             rx.drugName.toLowerCase().includes(a) || a.includes(rx.drugName.toLowerCase())
         );
         if (allergyHit) {
@@ -148,11 +148,11 @@ export async function validatePrescription(prescriptionId: string): Promise<Vali
 
     // --- Check 2: Duplicate Detection (same drug dispensed < 28 days ago) ---
     for (const rx of item) {
-        const recentPrescriptions = prescription.patient?.prescriptions.filter(p =>
+        const recentPrescriptions = prescription.patient?.prescriptions.filter((p: any) =>
             p.id !== prescriptionId && p.status === 'dispensed'
         ) ?? [];
 
-        const isDuplicate = recentPrescriptions.some(p =>
+        const isDuplicate = recentPrescriptions.some((p: any) =>
             p.items?.some((i: any) =>
                 i.drugName.toLowerCase() === rx.drugName.toLowerCase() &&
                 p.createdAt > new Date(Date.now() - 28 * 24 * 60 * 60 * 1000)
@@ -171,7 +171,7 @@ export async function validatePrescription(prescriptionId: string): Promise<Vali
     }
 
     // --- Check 3: Drug Interactions (all pairwise combinations) ---
-    const allDrugNames = item.map(i => i.drugName);
+    const allDrugNames = item.map((i: any) => i.drugName);
     for (let i = 0; i < allDrugNames.length; i++) {
         for (let j = i + 1; j < allDrugNames.length; j++) {
             // Attempt to find interactions from the database using medication names
@@ -206,9 +206,9 @@ export async function validatePrescription(prescriptionId: string): Promise<Vali
         }
     }
 
-    const blockedItems = [...new Set(flags.filter(f => f.severity === 'BLOCK').map(f => f.itemId))];
-    const approvedItems = item.filter(i => !blockedItems.includes(i.id)).map(i => i.id);
-    const valid = flags.filter(f => f.severity === 'BLOCK').length === 0;
+    const blockedItems = [...new Set(flags.filter((f: any) => f.severity === 'BLOCK').map((f: any) => f.itemId))];
+    const approvedItems = item.filter((i: any) => !blockedItems.includes(i.id)).map((i: any) => i.id);
+    const valid = flags.filter((f: any) => f.severity === 'BLOCK').length === 0;
 
     await logAudit({
         action: 'UPDATE', resource: 'Prescription', resourceId: prescriptionId,
@@ -272,7 +272,7 @@ export async function dispensePrescriptionPharmOS(data: {
     deaSchedule?: string;
     witnessId?: string;    // Required for Schedule II
     runningBalance?: number;
-}) {
+}): Promise<any> {
     await ensureRole(['PHARMACIST', 'ADMIN']);
 
     // DEA Schedule II guard: requires witnessed dual sign-off
@@ -386,7 +386,7 @@ export async function dispensePrescriptionPharmOS(data: {
 // DEA PERPETUAL INVENTORY — Reporting
 // ---------------------------------------------------------------------------
 
-export async function getControlledSubstancesRegister(schedule?: string) {
+export async function getControlledSubstancesRegister(schedule?: string): Promise<any> {
     await ensureRole(['PHARMACIST', 'ADMIN']);
     const db = await getTenantDb();
 
@@ -401,7 +401,7 @@ export async function getControlledSubstancesRegister(schedule?: string) {
 // PHARMACY QUEUE — Triage view
 // ---------------------------------------------------------------------------
 
-export async function getPharmacyQueue() {
+export async function getPharmacyQueue(): Promise<any> {
     await ensureRole(['PHARMACIST', 'ADMIN']);
     const db = await getTenantDb();
 
@@ -453,7 +453,7 @@ export async function checkDrugInteractions(medicationIds: string[]): Promise<In
 // EXPIRY MONITORING — Pharmacy shelf check (30-day warning)
 // ---------------------------------------------------------------------------
 
-export async function getExpiringPharmacyBatches(daysAhead = 30) {
+export async function getExpiringPharmacyBatches(daysAhead = 30): Promise<any> {
     await ensureRole(['PHARMACIST', 'ADMIN']);
     const db = await getTenantDb();
 

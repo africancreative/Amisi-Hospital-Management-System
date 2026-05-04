@@ -23,7 +23,7 @@ export async function logAudit({
     details?: any;
     db?: TenantClient;
     actor?: { id?: string | null; name?: string | null; role?: string | null };
-}) {
+}): Promise<any> {
     try {
         const db = providedDb ?? await getTenantDb();
         const cookieStore = await cookies();

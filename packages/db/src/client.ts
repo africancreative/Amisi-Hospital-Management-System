@@ -2,7 +2,10 @@ import { PrismaClient as ControlClientRaw } from '../generated/control-client';
 import { PrismaClient as TenantClientRaw } from '../generated/tenant-client';
 import { config } from './config';
 import { withJournaling } from './extension-journal';
+import { initializeEventHandlers } from './events/handlers';
 
+// Initialize reactive hub-and-spoke integration architecture
+initializeEventHandlers();
 
 export { ControlClientRaw as ControlClient, TenantClientRaw as TenantClient };
 
@@ -62,7 +65,8 @@ export const getTenantDb = async (tenantId: string, customUrl?: string): Promise
     if (sharedSecret) {
         const journaledClient = baseClient.$extends(withJournaling({
             sharedSecret,
-            nodeType: nodeType as any
+            nodeType: nodeType as any,
+            tenantId: tenantId
         }));
 
         if (!process.env.NODE_ENV || process.env.NODE_ENV !== 'production') {

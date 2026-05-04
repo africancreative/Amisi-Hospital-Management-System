@@ -7,7 +7,7 @@ import { revalidatePath } from 'next/cache';
 import { ensureSuperAdmin } from '@/lib/auth-utils';
 import { hashPassword } from '@amisimedos/auth';
 
-export async function createTenant(formData: FormData) {
+export async function createTenant(formData: FormData): Promise<any> {
     await ensureSuperAdmin();
     const name = formData.get('name') as string;
     const slug = formData.get('slug') as string;
@@ -80,7 +80,7 @@ export async function createTenant(formData: FormData) {
     revalidatePath('/hospitals');
 }
 
-export async function updateTenantStatus(id: string, status: 'active' | 'suspended' | 'terminated') {
+export async function updateTenantStatus(id: string, status: 'active' | 'suspended' | 'terminated'): Promise<any> {
     await ensureSuperAdmin();
     const db = getControlDb();
     await db.tenant.update({
@@ -92,7 +92,7 @@ export async function updateTenantStatus(id: string, status: 'active' | 'suspend
     revalidatePath(`/hospitals/${id}`);
 }
 
-export async function updateEnabledModules(id: string, modules: any) {
+export async function updateEnabledModules(id: string, modules: any): Promise<any> {
     await ensureSuperAdmin();
     const db = getControlDb();
     await db.tenant.update({
@@ -103,7 +103,7 @@ export async function updateEnabledModules(id: string, modules: any) {
     revalidatePath(`/hospitals/${id}`);
 }
 
-export async function getTenants() {
+export async function getTenants(): Promise<any> {
     await ensureSuperAdmin();
     const db = getControlDb();
     return db.tenant.findMany({
@@ -111,7 +111,7 @@ export async function getTenants() {
     });
 }
 
-export async function getTenantById(id: string) {
+export async function getTenantById(id: string): Promise<any> {
     await ensureSuperAdmin();
     const db = getControlDb();
     return db.tenant.findUnique({
@@ -119,7 +119,7 @@ export async function getTenantById(id: string) {
     });
 }
 
-export async function updateTenantFull(id: string, data: any) {
+export async function updateTenantFull(id: string, data: any): Promise<any> {
     await ensureSuperAdmin();
     const db = getControlDb();
 
@@ -150,7 +150,7 @@ export async function updateTenantFull(id: string, data: any) {
     revalidatePath(`/system/hospitals/${id}/edit`);
 }
 
-export async function cloneTenant(sourceId: string, newConfig: any) {
+export async function cloneTenant(sourceId: string, newConfig: any): Promise<any> {
     await ensureSuperAdmin();
     const db = getControlDb();
 
@@ -186,7 +186,7 @@ export async function cloneTenant(sourceId: string, newConfig: any) {
     revalidatePath('/system/dashboard');
 }
 
-export async function deleteTenant(id: string) {
+export async function deleteTenant(id: string): Promise<any> {
     await ensureSuperAdmin();
     const db = getControlDb();
     

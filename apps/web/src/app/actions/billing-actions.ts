@@ -13,7 +13,7 @@ export async function processPayment(invoiceId: string, data: {
         policyNumber: string;
         preAuthCode?: string;
     };
-}) {
+}): Promise<any> {
     const db = await getTenantDb();
     const user = await getServerUser();
 
@@ -55,7 +55,7 @@ export async function addBillItem(invoiceId: string, data: {
     unitPrice: number;
     category: string;
     visitId: string;
-}) {
+}): Promise<any> {
     const db = await getTenantDb();
     
     const item = await db.billItem.create({
@@ -75,7 +75,7 @@ export async function addBillItem(invoiceId: string, data: {
     // Update invoice total
     const invoice = await db.invoice.findUnique({ where: { id: invoiceId }, include: { billItems: true } });
     if (invoice) {
-        const newTotal = invoice.billItems.reduce((acc, i) => acc + Number(i.totalPrice), 0);
+        const newTotal = invoice.billItems.reduce((acc: any, i: any) => acc + Number(i.totalPrice), 0);
         await db.invoice.update({
             where: { id: invoiceId },
             data: { totalAmount: newTotal, balanceDue: newTotal }
@@ -85,7 +85,7 @@ export async function addBillItem(invoiceId: string, data: {
     return item;
 }
 
-export async function getInvoiceById(id: string) {
+export async function getInvoiceById(id: string): Promise<any> {
     const db = await getTenantDb();
     const invoice = await db.invoice.findUnique({
         where: { id },
@@ -100,7 +100,7 @@ export async function getInvoiceById(id: string) {
 
     return {
         ...invoice,
-        items: invoice.billItems.map(i => ({
+        items: invoice.billItems.map((i: any) => ({
             id: i.id,
             description: i.description,
             subtotal: i.totalPrice,
@@ -110,7 +110,7 @@ export async function getInvoiceById(id: string) {
     };
 }
 
-export async function recordServiceLevelPayment(itemId: string, amount: number, method: string) {
+export async function recordServiceLevelPayment(itemId: string, amount: number, method: string): Promise<any> {
     const db = await getTenantDb();
     const user = await getServerUser();
 
@@ -139,10 +139,10 @@ export async function recordServiceLevelPayment(itemId: string, amount: number, 
     return { success: true, paymentId: payment.id };
 }
 
-export async function createInvoice(patientId: string, visitId: string | null, items: any[]) {
+export async function createInvoice(patientId: string, visitId: string | null, items: any[]): Promise<any> {
     const db = await getTenantDb();
     
-    const totalAmount = items.reduce((acc, item) => acc + (item.quantity * item.unitPrice), 0);
+    const totalAmount = items.reduce((acc: any, item: any) => acc + (item.quantity * item.unitPrice), 0);
 
     const invoice = await db.invoice.create({
         data: {
@@ -153,7 +153,7 @@ export async function createInvoice(patientId: string, visitId: string | null, i
             status: 'UNPAID',
             currency: 'KES',
             billItems: {
-                create: items.map(item => ({
+                create: items.map((item: any) => ({
                     visitId: visitId || '',
                     description: item.description,
                     quantity: item.quantity,

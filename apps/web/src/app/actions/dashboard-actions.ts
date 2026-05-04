@@ -4,7 +4,7 @@ import { getControlDb, getTenantDb } from '@/lib/db';
 import { ensureRole, ensureSuperAdmin } from '@/lib/auth-utils';
 import { cookies } from 'next/headers';
 
-export async function getPlatformDashboardStats() {
+export async function getPlatformDashboardStats(): Promise<any> {
     await ensureSuperAdmin();
     const controlDb = getControlDb();
 
@@ -24,7 +24,7 @@ export async function getPlatformDashboardStats() {
     };
 }
 
-export async function getTenantDashboardStats() {
+export async function getTenantDashboardStats(): Promise<any> {
     await ensureRole(['ADMIN', 'DOCTOR', 'NURSE', 'ACCOUNTANT', 'PHARMACIST', 'LAB_TECH', 'HR']);
     const db = await getTenantDb();
 
@@ -45,7 +45,7 @@ export async function getTenantDashboardStats() {
         select: { totalAmount: true }
     });
 
-    const totalRevenue = revenue.reduce((acc, curr) => acc + Number(curr.totalAmount), 0);
+    const totalRevenue = revenue.reduce((acc: any, curr: any) => acc + Number(curr.totalAmount), 0);
 
     return {
         patientCount: patientCount.toString(),
@@ -55,7 +55,7 @@ export async function getTenantDashboardStats() {
     };
 }
 
-export async function getTenantSubscription() {
+export async function getTenantSubscription(): Promise<any> {
     const controlDb = getControlDb();
     const cookieStore = await cookies();
     const tenantId = cookieStore.get('amisi-tenant-id')?.value;

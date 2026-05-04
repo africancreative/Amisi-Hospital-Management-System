@@ -101,7 +101,7 @@ export function PricingSection() {
 
       {/* 2. Pricing Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto px-6">
-        {plans.map((p) => (
+        {plans.map((p: any) => (
           <div 
             key={p.name}
             className={`rounded-[40px] p-8 border transition-all relative ${p.featured ? 'bg-gradient-to-b from-blue-600/20 to-blue-950/10 border-blue-500/40 shadow-2xl shadow-blue-500/10 scale-105 z-10' : 'bg-white/[0.02] border-white/5 hover:border-white/10'}`}
@@ -134,7 +134,7 @@ export function PricingSection() {
 
             <div className="space-y-4">
               <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest mb-4">Key Features</p>
-              {p.features.map((f) => (
+              {p.features.map((f: any) => (
                 <div key={f} className="flex items-start gap-3">
                   <CheckCircle2 className={`h-5 w-5 shrink-0 ${p.featured ? 'text-blue-500' : 'text-neutral-600'}`} />
                   <span className="text-sm text-neutral-300 font-medium leading-tight">{f}</span>
@@ -168,7 +168,7 @@ export function PricingSection() {
                 { name: 'Offline Mode', essential: '✔', professional: '✔', enterprise: '✔' },
                 { name: 'Analytics', essential: 'Basic', professional: 'Advanced', enterprise: 'Executive' },
                 { name: 'API Integrations', essential: '—', professional: 'Limited', enterprise: 'Full' },
-              ].map((row) => (
+              ].map((row: any) => (
                 <tr key={row.name} className="hover:bg-white/[0.02] transition-colors">
                   <td className="py-5 px-4 text-sm font-bold text-white">{row.name}</td>
                   <td className="py-5 px-4 text-sm text-neutral-400">{row.essential}</td>
@@ -194,7 +194,7 @@ export function PricingSection() {
             { icon: Phone, title: 'Telemedicine Module' },
             { icon: Cpu, title: 'HR & Payroll' },
             { icon: Zap, title: 'Data Migration Support' },
-          ].map((addon) => (
+          ].map((addon: any) => (
             <div key={addon.title} className="p-6 rounded-3xl bg-neutral-900 border border-white/5 flex flex-col items-center text-center group hover:border-blue-500/50 transition-all">
               <div className="h-12 w-12 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500 mb-4 group-hover:scale-110 transition-transform">
                 <addon.icon className="h-6 w-6" />
@@ -219,7 +219,7 @@ export function PricingSection() {
                    'Runs on local servers + cloud sync',
                    'Designed for African healthcare environments',
                    'Secure & compliant data handling'
-                 ].map(point => (
+                 ].map((point: any) => (
                    <div key={point} className="flex items-center gap-3">
                       <ShieldCheck className="h-6 w-6 text-emerald-500 shrink-0" />
                       <span className="text-sm font-bold text-neutral-300">{point}</span>
@@ -243,7 +243,7 @@ export function PricingSection() {
             { q: 'Can I switch plans later?', a: 'Yes, you can upgrade or downgrade your plan at any time through your dashboard.' },
             { q: 'Does it work offline?', a: 'Yes! Our local node technology ensures core clinical modules work without internet, syncing back once online.' },
             { q: 'Is there onboarding support?', a: 'Absolutely. All Professional and Enterprise plans include dedicated onboarding and training.' },
-          ].map(faq => (
+          ].map((faq: any) => (
             <div key={faq.q} className="p-6 rounded-2xl bg-white/[0.02] border border-white/5">
               <h4 className="text-lg font-bold text-white mb-2">{faq.q}</h4>
               <p className="text-neutral-500 text-sm">{faq.a}</p>

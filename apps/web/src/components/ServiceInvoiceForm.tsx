@@ -14,7 +14,7 @@ export default function ServiceInvoiceForm({ patients }: ServiceInvoiceFormProps
     const [isSaving, setIsSaving] = useState(false);
 
     const addItem = () => setItems([...items, { description: '', quantity: 1, unitPrice: 0, paymentMode: 'POSTPAID', isTaxable: false, taxRate: 16 }]);
-    const removeItem = (index: number) => setItems(items.filter((_, i) => i !== index));
+    const removeItem = (index: number) => setItems(items.filter((_: any, i: any) => i !== index));
 
     const updateItem = (index: number, field: string, value: any) => {
         const newItems = [...items];
@@ -22,8 +22,8 @@ export default function ServiceInvoiceForm({ patients }: ServiceInvoiceFormProps
         setItems(newItems);
     };
 
-    const calculateSubtotal = () => items.reduce((acc, item) => acc + (item.quantity * item.unitPrice), 0);
-    const calculateTax = () => items.reduce((acc, item) => {
+    const calculateSubtotal = () => items.reduce((acc: any, item: any) => acc + (item.quantity * item.unitPrice), 0);
+    const calculateTax = () => items.reduce((acc: any, item: any) => {
         if (!item.isTaxable) return acc;
         return acc + (item.quantity * item.unitPrice * (item.taxRate / 100));
     }, 0);
@@ -68,7 +68,7 @@ export default function ServiceInvoiceForm({ patients }: ServiceInvoiceFormProps
                         className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
                     >
                         <option value="">Select a patient...</option>
-                        {patients.map(p => (
+                        {patients.map((p: any) => (
                             <option key={p.id} value={p.id}>{p.lastName}, {p.firstName} (#{p.id.slice(0, 8)})</option>
                         ))}
                     </select>
@@ -84,7 +84,7 @@ export default function ServiceInvoiceForm({ patients }: ServiceInvoiceFormProps
                     </div>
 
                     <div className="space-y-4">
-                        {items.map((item, idx) => (
+                        {items.map((item: any, idx: any) => (
                             <div key={idx} className="p-6 rounded-2xl border border-gray-100 dark:border-gray-900 bg-gray-50/30 dark:bg-gray-900/30 grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
                                 <div className="md:col-span-2">
                                     <label className="text-[10px] font-black uppercase mb-1 block opacity-50">Description</label>

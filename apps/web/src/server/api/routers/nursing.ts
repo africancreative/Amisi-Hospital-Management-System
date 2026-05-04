@@ -4,13 +4,13 @@ import { TRPCError } from '@trpc/server';
 import { calculateNEWS2, getRiskLevel } from '@amisimedos/sync/news2';
 import { logAudit } from '@/lib/audit';
 
-export const nursingRouter = router({
+export const nursingRouter: any = router({
   /**
    * getAdmittedPatients
    * Fetches all patients currently in an 'ADMITTED' state for the nursing station.
    */
   getAdmittedPatients: tenantProcedure
-    .query(async ({ ctx }) => {
+    .query(async ({ ctx }: any) => {
       return ctx.db!.admission.findMany({
         where: { status: 'ADMITTED' },
         include: {
@@ -32,7 +32,7 @@ export const nursingRouter = router({
    * Resilience Check: Get Local Subscription Status
    */
   getBillingStatus: tenantProcedure
-    .query(async ({ ctx }) => {
+    .query(async ({ ctx }: any) => {
       // The context already contains resolved billing info from the middleware
       return ctx.billing;
     }),
@@ -55,7 +55,7 @@ export const nursingRouter = router({
       painScore: z.number().optional(),
       recordedBy: z.string()
     }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }: any) => {
       // 1. Fetch patient to determine NEWS2 Scale (COPD toggle)
       const patient = await ctx.db!.patient.findUnique({
         where: { id: input.patientId },
@@ -116,7 +116,7 @@ export const nursingRouter = router({
       patientId: z.string(),
       limit: z.number().default(20)
     }))
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }: any) => {
       return ctx.db!.vitalsLog.findMany({
         where: { patientId: input.patientId },
         orderBy: { recordedAt: 'desc' },
@@ -138,7 +138,7 @@ export const nursingRouter = router({
       status: z.string().default('GIVEN'),
       notes: z.string().optional()
     }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }: any) => {
       const admin = await ctx.db!.medicationAdministration.create({
         data: {
           ...input,

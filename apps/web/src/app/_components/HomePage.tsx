@@ -6,6 +6,7 @@ import {
   Baby, Bone, Layers3
 } from "lucide-react";
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import { getGlobalSettings } from "../actions/system-actions";
 import { cookies } from "next/headers";
 import { getControlDb } from "@/lib/db";
@@ -40,12 +41,14 @@ export default async function LandingPage() {
             <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[900px] h-[600px] bg-blue-600/10 rounded-full blur-[140px] pointer-events-none" />
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-amber-500/5 rounded-full blur-[120px] pointer-events-none" />
 
-            {settings.heroImageUrl && (
-              <div
-                className="absolute inset-0 opacity-5 bg-cover bg-center grayscale"
-                style={{ backgroundImage: `url(${settings.heroImageUrl})` }}
-              />
-            )}
+               {settings.heroImageUrl && (
+                <img
+                  src={settings.heroImageUrl}
+                  alt=""
+                  className="absolute inset-0 opacity-5 object-cover grayscale"
+                />
+              )}
+
 
             <div className="max-w-7xl mx-auto px-6 relative grid lg:grid-cols-2 gap-16 items-center">
               {/* Text */}
@@ -108,7 +111,7 @@ export default async function LandingPage() {
                   { label: 'Supported Regions', value: '3' },
                   { label: 'Avg. Uptime', value: '99.9%' },
                   { label: 'Offline Resilient', value: '100%' },
-                ].map(s => (
+                ].map((s: any) => (
                   <div key={s.label} className="rounded-2xl border border-white/5 bg-white/[0.02] p-6 text-center backdrop-blur-sm">
                     <p className="text-4xl font-black text-white mb-1">{s.value}</p>
                     <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">{s.label}</p>
@@ -152,7 +155,7 @@ export default async function LandingPage() {
                   desc: 'CRDT-based delta synchronization between cloud and local nodes. Conflict-free, auditable, and HIPAA-compliant.',
                   tags: ['Hono', 'CRDTs', 'Real-time'],
                 },
-              ].map(c => (
+              ].map((c: any) => (
                 <div key={c.title} className="rounded-3xl border border-white/5 bg-white/[0.02] p-8 group hover:border-white/10 transition-all hover:bg-white/[0.04]">
                   <div className={`h-14 w-14 rounded-2xl flex items-center justify-center mb-6 ${c.color === 'blue' ? 'bg-blue-500/10 text-blue-400' : c.color === 'amber' ? 'bg-amber-500/10 text-amber-400' : 'bg-emerald-500/10 text-emerald-400'} group-hover:scale-110 transition-transform`}>
                     <c.icon className="h-7 w-7" />
@@ -160,7 +163,7 @@ export default async function LandingPage() {
                   <h3 className="text-xl font-black mb-3">{c.title}</h3>
                   <p className="text-neutral-500 text-sm leading-relaxed mb-5">{c.desc}</p>
                   <div className="flex flex-wrap gap-2">
-                    {c.tags.map(t => (
+                    {c.tags.map((t: any) => (
                       <span key={t} className="px-2 py-1 rounded-lg bg-white/5 text-[9px] font-black text-neutral-400 uppercase tracking-widest border border-white/5">{t}</span>
                     ))}
                   </div>
@@ -253,7 +256,7 @@ export default async function LandingPage() {
                 { icon: Stethoscope, name: 'ICU / HDU', fullName: 'Critical Care', desc: 'Continuous vitals, ventilator charts, NEWS2 scoring', tier: 'Enterprise' },
                 { icon: Bone, name: 'OT', fullName: 'Surgical Theatre', desc: 'Scheduling, consent, intraop notes, anaesthesia', tier: 'Enterprise' },
                 { icon: Building2, name: 'Multi-Facility', fullName: 'Network View', desc: 'Manage chains, shared formularies, consolidated reports', tier: 'Enterprise' },
-              ].map(m => (
+              ].map((m: any) => (
                 <ModuleCard key={m.name} {...m} />
               ))}
             </div>
@@ -293,7 +296,7 @@ export default async function LandingPage() {
                   color: 'amber',
                   featured: false,
                 },
-              ].map(p => (
+              ].map((p: any) => (
                 <div
                   key={p.tier}
                   className={`rounded-3xl p-8 relative overflow-hidden border transition-all ${p.featured ? 'bg-gradient-to-b from-blue-600/20 to-blue-900/10 border-blue-500/40 shadow-2xl shadow-blue-600/10 scale-[1.02]' : 'bg-white/[0.02] border-white/5 hover:border-white/10'}`}
@@ -305,7 +308,7 @@ export default async function LandingPage() {
                   <p className="text-3xl font-black text-white mb-2">{p.price}</p>
                   <p className="text-neutral-500 text-sm mb-8">{p.desc}</p>
                   <ul className="space-y-3 mb-10">
-                    {p.modules.map(m => (
+                    {p.modules.map((m: any) => (
                       <li key={m} className="flex items-center gap-2 text-sm text-neutral-300">
                         <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
                         {m}
@@ -337,7 +340,7 @@ export default async function LandingPage() {
                 {[
                   'JWT + TOTP MFA', 'HIPAA Audit Trails', 'Per-Tenant Isolation', 'AES-256 Encryption',
                   'RBAC Access Controls', 'GDPR Compliant', 'Automatic Backups', 'Intrusion Detection',
-                ].map(item => (
+                ].map((item: any) => (
                   <div key={item} className="flex items-center gap-2 text-sm text-neutral-400">
                     <ShieldCheck className="h-4 w-4 text-blue-500 shrink-0" />
                     {item}
@@ -350,12 +353,12 @@ export default async function LandingPage() {
               <div className="relative rounded-3xl border border-white/5 bg-neutral-950 p-10 space-y-4 shadow-2xl font-mono text-xs">
                 {[
                   { color: 'text-emerald-400', text: '[AUTH] System Admin login verified — session established' },
-                  { color: 'text-blue-400', text: '[TENANT] Isolated DB cluster provisioned: amisi-premier' },
+                  { color: 'text-blue-400', text: '[TENANT] Isolated DB cluster provisioned: active-hospital-node' },
                   { color: 'text-amber-400', text: '[SYNC] Delta sync completed — 142 records reconciled' },
                   { color: 'text-neutral-400', text: '[AUDIT] User DR_JAMES accessed Patient #P-00432 — logged' },
                   { color: 'text-emerald-400', text: '[BILLING] Invoice #INV-9281 submitted to NHIF — accepted' },
                   { color: 'text-blue-400', text: '[LIS] Critical result flagged → Potassium 6.8 mEq/L → Alert sent' },
-                ].map((line, i) => (
+                ].map((line: any, i: any) => (
                   <div key={i} className="flex gap-3">
                     <span className="text-neutral-700 shrink-0">{String(i + 1).padStart(2, '0')}</span>
                     <span className={line.color}>{line.text}</span>

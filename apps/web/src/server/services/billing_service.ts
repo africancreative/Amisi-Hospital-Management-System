@@ -73,8 +73,8 @@ export class BillingService {
 
     if (!invoice) throw new Error('Invoice not found');
 
-    const totalBilled = invoice.billItems.reduce((acc, item) => acc + Number(item.totalPrice), 0);
-    const totalPaid = invoice.payments.reduce((acc, p) => acc + Number(p.amount), 0);
+    const totalBilled = invoice.billItems.reduce((acc: any, item: any) => acc + Number(item.totalPrice), 0);
+    const totalPaid = invoice.payments.reduce((acc: any, p: any) => acc + Number(p.amount), 0);
     const balanceDue = totalBilled - totalPaid;
 
     // Update the invoice summary fields (caching the results)
@@ -115,7 +115,7 @@ export class BillingService {
       const allocations = await this.db.paymentAllocation.findMany({
         where: { billItemId: item.id }
       });
-      const allocatedAmount = allocations.reduce((sum, a) => sum + Number(a.amount), 0);
+      const allocatedAmount = allocations.reduce((sum: any, a: any) => sum + Number(a.amount), 0);
       const itemBalance = Number(item.totalPrice) - allocatedAmount;
 
       const amountToAllocate = Math.min(remainingPayment, itemBalance);

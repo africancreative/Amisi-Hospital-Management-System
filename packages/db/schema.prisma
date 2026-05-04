@@ -1,0 +1,154 @@
+// Expanded Prisma schema for Integrated AmisiMedOS
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Tenant {
+  id            String   @id @default(uuid())
+  name          String
+  domain        String   @unique
+  enabledModules Module[]
+  patients      Patient[]
+  staff         Staff[]
+  createdAt     DateTime @default(now())
+}
+
+model Module {
+  id       String @id @default(uuid())
+  name     String @unique
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id])
+  enabled  Boolean @default(true)
+}
+
+model Patient {
+  id        String   @id @default(uuid())
+  tenantId  String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+  externalId String
+  firstName String
+  lastName  String
+  dob       DateTime
+  gender    String
+  phone     String?
+  email     String?
+  records   MedicalRecord[]
+  triage    TriageEntry[]
+  chats     ChatThread[]
+  visits    Visit[]
+  createdAt DateTime @default(now())
+}
+
+model Staff {
+  id       String @id @default(uuid())
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id])
+  name     String
+  role     String // DOCTOR, NURSE, ADMIN
+  specialty String?
+  createdAt DateTime @default(now())
+}
+
+model Visit {
+  id        String   @id @default(uuid())
+  patientId String
+  patient   Patient  @relation(fields: [patientId], references: [id])
+  staffId   String
+  startTime DateTime @default(now())
+  endTime   DateTime?
+  status    String   // ACTIVE, COMPLETED
+  records   MedicalRecord[]
+  billing   Invoice[]
+  chats     ChatThread[]
+}
+
+model TriageEntry {
+  id        String   @id @default(uuid())
+  patientId String
+  patient   Patient  @relation(fields: [patientId], references: [id])
+  severity  Int
+  status    String
+  vitals    Json
+  createdAt DateTime @default(now())
+}
+
+model MedicalRecord {
+  id        String   @id @default(uuid())
+  patientId String
+  patient   Patient  @relation(fields: [patientId], references: [id])
+  visitId   String?
+  visit     Visit?   @relation(fields: [visitId], references: [id])
+  doctorId  String
+  content   String   @db.Text
+  type      String   // CONSULTATION, LAB_RESULT, PRESCRIPTION, CHAT_LOG
+  createdAt DateTime @default(now())
+}
+
+model ChatThread {
+  id        String   @id @default(uuid())
+  patientId String
+  patient   Patient  @relation(fields: [patientId], references: [id])
+  visitId   String?
+  visit     Visit?   @relation(fields: [visitId], references: [id])
+  messages  ChatMessage[]
+  createdAt DateTime @default(now())
+}
+
+model ChatMessage {
+  id        String   @id @default(uuid())
+  threadId  String
+  thread    ChatThread @relation(fields: [threadId], references: [id])
+  senderId  String
+  text      String   @db.Text
+  attachment String?
+  createdAt DateTime @default(now())
+}
+
+model InventoryItem {
+  id        String   @id @default(uuid())
+  tenantId  String
+  name      String
+  sku       String
+  stockQty  Int
+  minQty    Int
+  unitPrice Float
+  updatedAt DateTime @updatedAt
+}
+
+model Invoice {
+  id        String   @id @default(uuid())
+  visitId   String
+  visit     Visit    @relation(fields: [visitId], references: [id])
+  tenantId  String
+  amount    Float
+  status    String   // UNPAID, PAID, PARTIAL
+  payment   Payment?
+  createdAt DateTime @default(now())
+}
+
+model Payment {
+  id        String   @id @default(uuid())
+  invoiceId String   @unique
+  invoice   Invoice  @relation(fields: [invoiceId], references: [id])
+  method    String   // CASH, MPESA, CARD
+  refNumber String
+  amount    Float
+  createdAt DateTime @default(now())
+}
+
+model EventLog {
+  id        String   @id @default(uuid())
+  tenantId  String
+  entity    String
+  entityId  String
+  action    String
+  payload   Json
+  synced    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}

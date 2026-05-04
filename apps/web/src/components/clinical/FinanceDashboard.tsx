@@ -60,7 +60,7 @@ export default function FinanceDashboard() {
                 </div>
 
                 <div className="flex items-center gap-4 bg-gray-900/40 p-2 rounded-[24px] border border-gray-800">
-                    {['daily', 'weekly', 'monthly'].map((p) => (
+                    {['daily', 'weekly', 'monthly'].map((p: any) => (
                         <button 
                             key={p}
                             onClick={() => setPeriod(p as any)}
@@ -87,7 +87,7 @@ export default function FinanceDashboard() {
                         { label: 'Total Revenue', value: 'KES 2,450,000', change: '+12.5%', isUp: true, icon: TrendingUp, color: 'text-emerald-500' },
                         { label: 'Total Expenses', value: 'KES 1,120,000', change: '+2.1%', isUp: false, icon: TrendingDown, color: 'text-rose-500' },
                         { label: 'Net Profit', value: 'KES 1,330,000', change: '+18.2%', isUp: true, icon: Wallet, color: 'text-blue-500' },
-                    ].map((stat, idx) => (
+                    ].map((stat: any, idx: any) => (
                         <motion.div 
                             key={idx}
                             initial={{ opacity: 0, y: 20 }}
@@ -154,21 +154,22 @@ export default function FinanceDashboard() {
                     <div className="bg-gray-900/40 border border-gray-800 rounded-[40px] p-8 flex flex-col">
                         <h3 className="text-xs font-black uppercase tracking-widest text-gray-500 mb-8">Revenue Distribution</h3>
                         <div className="flex-1 flex flex-col justify-center gap-6">
-                            {CATEGORY_DATA.map((cat) => (
+                            {CATEGORY_DATA.map((cat: any) => (
                                 <div key={cat.name} className="space-y-2">
                                     <div className="flex justify-between items-center text-[10px] font-black uppercase">
                                         <span className="text-gray-500">{cat.name}</span>
                                         <span>{cat.value}%</span>
                                     </div>
-                                    <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
-                                        <motion.div 
-                                            initial={{ width: 0 }}
-                                            animate={{ width: `${cat.value}%` }}
-                                            transition={{ duration: 1, ease: 'easeOut' }}
-                                            className="h-full rounded-full" 
-                                            style={{ backgroundColor: cat.color }}
-                                        ></motion.div>
-                                    </div>
+                                     <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+                                         <motion.div 
+                                             initial={{ width: 0 }}
+                                             animate={{ width: `${cat.value}%` }}
+                                             transition={{ duration: 1, ease: 'easeOut' }}
+                                             className="h-full rounded-full category-bar" 
+                                             style={{ '--category-color': cat.color } as any}
+                                         ></motion.div>
+                                     </div>
+
                                 </div>
                             ))}
                         </div>
@@ -187,7 +188,7 @@ export default function FinanceDashboard() {
                                 { id: 'T-9812', name: 'NHIF Payment - Ward C', date: '2 mins ago', amount: '+ KES 45,000', type: 'IN' },
                                 { id: 'T-9811', name: 'Medical Supplies Restock', date: '45 mins ago', amount: '- KES 12,400', type: 'OUT' },
                                 { id: 'T-9810', name: 'Consultation Fee - RJ', date: '1 hour ago', amount: '+ KES 3,500', type: 'IN' },
-                            ].map((tx) => (
+                            ].map((tx: any) => (
                                 <div key={tx.id} className="flex items-center justify-between p-4 bg-black/20 rounded-2xl border border-white/5 group hover:border-blue-500/20 transition-all">
                                     <div className="flex items-center gap-4">
                                         <div className={`h-10 w-10 rounded-xl flex items-center justify-center ${tx.type === 'IN' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>

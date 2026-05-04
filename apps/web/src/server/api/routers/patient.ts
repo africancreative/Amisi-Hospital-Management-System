@@ -7,14 +7,14 @@ import { logAudit } from '@/lib/audit';
  * 
  * Secure procedures with built-in HIPAA auditing.
  */
-export const patientRouter = router({
+export const patientRouter: any = router({
   list: clinicalProcedure
     .input(z.object({
       limit: z.number().min(1).max(100).nullish(),
       cursor: z.string().nullish(),
       search: z.string().nullish(),
     }))
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }: any) => {
       const { limit, cursor, search } = input;
       const take = limit ?? 50;
 
@@ -53,7 +53,7 @@ export const patientRouter = router({
 
   getById: clinicalProcedure
     .input(z.string())
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }: any) => {
       if (!ctx.db) throw new Error('Database not initialized');
 
       const patient = await ctx.db!.patient.findUnique({
@@ -85,7 +85,7 @@ export const patientRouter = router({
       email: z.string().email().optional(),
       mrn: z.string(),
     }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }: any) => {
       if (!ctx.db) throw new Error('Database not initialized');
 
       const patient = await ctx.db!.patient.create({
@@ -114,7 +114,7 @@ export const patientRouter = router({
       phone: z.string().optional(),
       email: z.string().email().optional(),
     }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }: any) => {
       if (!ctx.db) throw new Error('Database not initialized');
 
       const { id, ...data } = input;
@@ -137,7 +137,7 @@ export const patientRouter = router({
 
   delete: clinicalProcedure
     .input(z.object({ id: z.string() }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }: any) => {
       if (!ctx.db) throw new Error('Database not initialized');
 
       await ctx.db!.patient.delete({ where: { id: input.id } });

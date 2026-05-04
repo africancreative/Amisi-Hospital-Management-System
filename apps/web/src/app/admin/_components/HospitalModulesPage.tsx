@@ -35,14 +35,14 @@ export default function HospitalModules() {
     useEffect(() => {
         if (hospital?.entitlements) {
             const entitlements = hospital.entitlements as Array<{ moduleId: string }>;
-            setSelectedIds(entitlements.map(e => e.moduleId));
+            setSelectedIds(entitlements.map((e: any) => e.moduleId));
         }
     }, [hospital]);
 
     const toggleModule = (moduleId: string) => {
         setSelectedIds(prev => 
             prev.includes(moduleId)
-                ? prev.filter(mid => mid !== moduleId)
+                ? prev.filter((mid: any) => mid !== moduleId)
                 : [...prev, moduleId]
         );
     };

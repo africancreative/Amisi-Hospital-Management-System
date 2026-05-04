@@ -31,7 +31,7 @@ export function AuditMonitoring() {
         return () => clearInterval(interval);
     }, []);
 
-    const filteredLogs = logs.filter(log => 
+    const filteredLogs = logs.filter((log: any) => 
         log.tenantName.toLowerCase().includes(filter.toLowerCase()) ||
         log.actorName.toLowerCase().includes(filter.toLowerCase()) ||
         log.action.toLowerCase().includes(filter.toLowerCase())
@@ -50,14 +50,14 @@ export function AuditMonitoring() {
                 />
                 <SecurityStatCard 
                     title="High-Risk Actions" 
-                    value={logs.filter(l => ['EXPORT', 'DELETE'].includes(l.action)).length.toString()} 
+                    value={logs.filter((l: any) => ['EXPORT', 'DELETE'].includes(l.action)).length.toString()} 
                     icon={AlertTriangle} 
                     status="WARNING"
                     desc="Actions requiring manual review"
                 />
                 <SecurityStatCard 
                     title="PHI Intakes" 
-                    value={logs.filter(l => l.action === 'CREATE').length.toString()} 
+                    value={logs.filter((l: any) => l.action === 'CREATE').length.toString()} 
                     icon={CheckCircle2} 
                     status="INFO"
                     desc="Total clinical records today"
@@ -105,7 +105,7 @@ export function AuditMonitoring() {
                                 <tr>
                                     <td colSpan={6} className="px-6 py-20 text-center text-neutral-500">Initializing secure global audit link...</td>
                                 </tr>
-                            ) : filteredLogs.map((log) => (
+                            ) : filteredLogs.map((log: any) => (
                                 <tr key={log.id} className="hover:bg-white/5 transition-colors group">
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-3">

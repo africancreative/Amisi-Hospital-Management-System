@@ -48,7 +48,7 @@ export default function QueueDashboard() {
 
     const handleCallNext = async (doctorId: string, doctorName: string) => {
         // Find highest priority patient who is TRIAGED
-        const next = queue.find(q => q.status === 'TRIAGED');
+        const next = queue.find((q: any) => q.status === 'TRIAGED');
         if (next) {
             await updateEncounterStatus(next.id, 'IN_PROGRESS', doctorId, doctorName);
             fetchQueue();
@@ -96,7 +96,7 @@ export default function QueueDashboard() {
                         <div className="w-[1px] h-8 bg-gray-800"></div>
                         <div className="flex flex-col items-end">
                             <span className="text-[10px] font-black text-rose-500 uppercase tracking-widest">Emergencies</span>
-                            <span className="text-xl font-black text-rose-500">{queue.filter(q => q.priority === 'EMERGENCY').length}</span>
+                            <span className="text-xl font-black text-rose-500">{queue.filter((q: any) => q.priority === 'EMERGENCY').length}</span>
                         </div>
                     </div>
                 </div>
@@ -108,7 +108,7 @@ export default function QueueDashboard() {
                 <section className="col-span-8 flex flex-col gap-6 overflow-y-auto pr-4 custom-scrollbar">
                     <div className="grid grid-cols-2 gap-6">
                         <AnimatePresence mode="popLayout">
-                            {queue.map((item) => {
+                            {queue.map((item: any) => {
                                 const config = getStatusConfig(item.status, item.priority);
                                 return (
                                     <motion.div
@@ -191,7 +191,7 @@ export default function QueueDashboard() {
                         </div>
                         
                         <div className="flex-1 space-y-6 overflow-y-auto">
-                            {queue.filter(q => q.status === 'IN_PROGRESS').map(item => (
+                            {queue.filter((q: any) => q.status === 'IN_PROGRESS').map((item: any) => (
                                 <motion.div 
                                     initial={{ x: 20, opacity: 0 }}
                                     animate={{ x: 0, opacity: 1 }}
@@ -209,7 +209,7 @@ export default function QueueDashboard() {
                                 </motion.div>
                             ))}
 
-                            {queue.filter(q => q.status === 'IN_PROGRESS').length === 0 && (
+                            {queue.filter((q: any) => q.status === 'IN_PROGRESS').length === 0 && (
                                 <div className="h-full flex flex-col items-center justify-center text-center opacity-30 grayscale py-20">
                                     <Users className="h-12 w-12 mb-4" />
                                     <p className="text-sm font-bold uppercase tracking-widest">No Active Consultations</p>

@@ -11,7 +11,7 @@ import { recordEvent } from '@amisimedos/sync';
 import { generateMRN } from '@/lib/mrn';
 
 // Patient Actions
-export async function getPatients(query?: string) {
+export async function getPatients(query?: string): Promise<any> {
     await ensureRole(['DOCTOR', 'NURSE', 'ADMIN']);
     const db = await getTenantDb();
     return await db.patient.findMany({
@@ -28,7 +28,7 @@ export async function getPatients(query?: string) {
 
 // ... existing getPatientById ...
 
-export async function createPatient(formData: FormData) {
+export async function createPatient(formData: FormData): Promise<any> {
     await ensureRole(['DOCTOR', 'NURSE', 'ADMIN']);
     
     // 1. Capture Demographics
@@ -102,7 +102,7 @@ export async function createPatient(formData: FormData) {
 }
 
 // Encounter Actions
-export async function createEncounter(patientId: string, formData: FormData) {
+export async function createEncounter(patientId: string, formData: FormData): Promise<any> {
     await ensureRole(['DOCTOR', 'NURSE', 'ADMIN']);
     const doctorName = formData.get('doctorName') as string;
     const type = formData.get('type') as string;
@@ -160,7 +160,7 @@ export async function createEncounter(patientId: string, formData: FormData) {
 }
 
 // Triage & ED Actions
-export async function triagePatient(encounterId: string, formData: FormData) {
+export async function triagePatient(encounterId: string, formData: FormData): Promise<any> {
     await ensureRole(['DOCTOR', 'NURSE', 'ADMIN']);
     const esiLevel = parseInt(formData.get('esiLevel') as string);
     const triageNotes = formData.get('triageNotes') as string;
@@ -201,7 +201,7 @@ export async function triagePatient(encounterId: string, formData: FormData) {
     return encounter;
 }
 
-export async function completeMSE(encounterId: string) {
+export async function completeMSE(encounterId: string): Promise<any> {
     await ensureRole(['DOCTOR', 'ADMIN']); // MSC usually requires a physician
     const db = await getTenantDb();
     
@@ -224,7 +224,7 @@ export async function completeMSE(encounterId: string) {
     return encounter;
 }
 
-export async function getPatientById(id: string) {
+export async function getPatientById(id: string): Promise<any> {
     const db = await getTenantDb();
     return db.patient.findUnique({
         where: { id },

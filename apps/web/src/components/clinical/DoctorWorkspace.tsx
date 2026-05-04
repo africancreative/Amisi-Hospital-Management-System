@@ -11,11 +11,17 @@ import {
     Beaker, 
     Image as ImageIcon,
     Plus,
-    ArrowRight
+    ArrowRight,
+    Receipt
 } from 'lucide-react';
+import { PatientBillPanel } from '@/components/billing/PatientBillPanel';
+import { InventoryFlowPanel } from '@/components/inventory/InventoryFlowPanel';
 
-export default function DoctorWorkspace({ patient }: { patient: any }) {
+export default function DoctorWorkspace({ patient, encounter }: { patient: any; encounter?: { id: string; status: string } }) {
     const [activeTab, setActiveTab] = useState<'history' | 'treatment'>('treatment');
+    const [showBillPanel, setShowBillPanel] = useState(false);
+    const [showInventoryFlow, setShowInventoryFlow] = useState(false);
+    const [prescription, setPrescription] = useState<any>(null);
 
     const orderSets = [
         { name: 'Acute Pain Set', meds: ['Paracetamol 1g', 'Ibuprofen 400mg'], color: 'from-orange-500/20 to-rose-500/20' },
@@ -23,6 +29,29 @@ export default function DoctorWorkspace({ patient }: { patient: any }) {
         { name: 'Infection (Mild)', meds: ['Amoxicillin 500mg', 'Vitamin C'], color: 'from-blue-500/20 to-indigo-500/20' },
         { name: 'GI Upset Set', meds: ['Omeprazole 20mg', 'Metoclopramide'], color: 'from-purple-500/20 to-pink-500/20' },
     ];
+
+    const handleOrderSet = (set: typeof orderSets[0]) => {
+        const rx = {
+            id: `RX-${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
+            encounterId: encounter?.id,
+            patientId: patient.id,
+            patientName: patient.name,
+            orderedBy: 'Dr. Current User',
+            status: 'pending',
+            isBilled: false,
+            isPaid: false,
+            items: set.meds.map((med: any, idx: any) => ({
+                id: `item-${idx}`,
+                drugName: med,
+                dosage: '1 Tab TID',
+                quantity: 1,
+                stockAvailable: true,
+                inventoryItem: { name: med, quantity: 100, minLevel: 20, price: 500, unit: 'tabs' }
+            }))
+        };
+        setPrescription(rx);
+        setShowInventoryFlow(true);
+    };
 
     return (
         <div className="flex flex-col h-full gap-6">
@@ -46,6 +75,13 @@ export default function DoctorWorkspace({ patient }: { patient: any }) {
                         <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest">Vitals Status</span>
                         <span className="text-xs font-bold text-emerald-500 uppercase">Stable (98%)</span>
                     </div>
+                    <button
+                        onClick={() => setShowBillPanel(true)}
+                        className="bg-emerald-600/10 border border-emerald-500/30 rounded-2xl px-5 py-2 flex flex-col items-end hover:bg-emerald-600/20 transition-all"
+                    >
+                        <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">View Bill</span>
+                        <Receipt className="h-4 w-4 text-emerald-500" />
+                    </button>
                 </div>
             </div>
 
@@ -61,7 +97,7 @@ export default function DoctorWorkspace({ patient }: { patient: any }) {
                         <button className="text-[10px] font-black text-gray-500 hover:text-white uppercase transition-all">View All</button>
                     </div>
                     <div className="flex-1 overflow-y-auto p-6 space-y-6">
-                        {[1, 2, 3].map((i) => (
+                        {[1, 2, 3].map((i: any) => (
                             <div key={i} className="relative pl-8 border-l border-gray-800">
                                 <div className="absolute left-[-5px] top-0 h-2 w-2 rounded-full bg-blue-500 ring-4 ring-blue-500/20"></div>
                                 <div className="mb-1">
@@ -85,14 +121,15 @@ export default function DoctorWorkspace({ patient }: { patient: any }) {
                             <h3 className="text-xs font-black text-white uppercase tracking-widest">Quick Order Sets</h3>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
-                            {orderSets.map((set) => (
+                            {orderSets.map((set: any) => (
                                 <button 
                                     key={set.name}
+                                    onClick={() => handleOrderSet(set)}
                                     className={`relative p-5 rounded-3xl bg-gradient-to-br ${set.color} border border-white/5 text-left group hover:border-blue-500/30 transition-all`}
                                 >
                                     <span className="block text-xs font-black text-white uppercase mb-2">{set.name}</span>
                                     <div className="flex gap-2 flex-wrap">
-                                        {set.meds.map(m => (
+                                        {set.meds.map((m: any) => (
                                             <span key={m} className="text-[8px] font-bold text-white/40 bg-black/40 px-2 py-0.5 rounded-md">{m}</span>
                                         ))}
                                     </div>
@@ -125,6 +162,41 @@ export default function DoctorWorkspace({ patient }: { patient: any }) {
                     </div>
                 </div>
             </div>
+
+            {/* Inventory Flow Panel (modal overlay) */}
+            {showInventoryFlow && prescription && (
+                <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-8">
+                    <div className="w-full max-w-2xl bg-gray-900 border border-gray-800 rounded-[40px] p-8 relative">
+                        <button
+                            onClick={() => setShowInventoryFlow(false)}
+                            className="absolute top-6 right-6 text-gray-500 hover:text-white transition-colors"
+                        >
+                            ✕
+                        </button>
+                        <h3 className="text-sm font-black text-white uppercase tracking-widest mb-6">Prescription → Billing Flow</h3>
+                        <InventoryFlowPanel prescription={prescription} compact />
+                    </div>
+                </div>
+            )}
+
+            {/* Patient Bill Panel (modal overlay) */}
+            {showBillPanel && (
+                <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-8">
+                    <div className="w-full max-w-3xl bg-gray-900 border border-gray-800 rounded-[40px] p-8 relative">
+                        <button
+                            onClick={() => setShowBillPanel(false)}
+                            className="absolute top-6 right-6 text-gray-500 hover:text-white transition-colors"
+                        >
+                            ✕
+                        </button>
+                        <h3 className="text-sm font-black text-white uppercase tracking-widest mb-6">Patient Bill</h3>
+                        <PatientBillPanel
+                            patientId={patient.id}
+                            encounterId={encounter?.id || ''}
+                        />
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

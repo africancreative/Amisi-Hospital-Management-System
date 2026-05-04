@@ -1,8 +1,9 @@
 // By default this needs a placeholder URL to pass validation during generation.
 // In practice, this is injected dynamically per-tenant at runtime.
 datasource db {
-  provider = "postgresql"
-  url      = env("LOCAL_EDGE_DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("LOCAL_EDGE_DATABASE_URL") // Pooled — runtime queries
+  directUrl = env("LOCAL_EDGE_DIRECT_URL") // Direct — Prisma migrations / db push only
 }
 
 generator client {
@@ -367,11 +368,20 @@ model EncounterChat {
   id          String    @id @default(uuid())
   encounterId String    @map("encounter_id")
   encounter   Encounter @relation(fields: [encounterId], references: [id], onDelete: Cascade)
-  senderId    String    @map("sender_id")
-  senderName  String    @map("sender_name")
-  senderRole  String    @map("sender_role")
-  content     String    @db.Text
-  createdAt   DateTime  @default(now()) @map("created_at")
+
+  senderId   String @map("sender_id") // 'SYSTEM' for bot messages
+  senderName String @map("sender_name")
+  senderRole String @map("sender_role")
+
+  content     String @db.Text
+  messageType String @default("TEXT") @map("message_type") // 'TEXT', 'IMAGE', 'LAB_RESULT', 'CLINICAL_NOTE', 'SYSTEM'
+
+  // EMR Integration
+  referenceType String? @map("reference_type") // 'LAB_ORDER', 'PRESCRIPTION', 'CLINICAL_NOTE'
+  referenceId   String? @map("reference_id")
+  attachmentUrl String? @map("attachment_url") @db.Text
+
+  createdAt DateTime @default(now()) @map("created_at")
 
   @@index([encounterId])
   @@map("encounter_chats")
@@ -590,6 +600,7 @@ model InventoryItem {
   vendorCatalogItems VendorCatalogItem[]
   stockMovements     StockMovement[]
   stockAlerts        StockAlert[]
+  prescriptionItems  PrescriptionItem[]
 
   @@index([category])
   @@index([quantity])
@@ -606,6 +617,11 @@ model Prescription {
   orderedBy String  @map("ordered_by")
   status    String  @default("pending") // 'pending', 'dispensed', 'cancelled'
   notes     String? @db.Text
+
+  // Billing
+  billedAmount Decimal? @map("billed_amount") @db.Decimal(10, 2)
+  isBilled     Boolean  @default(false) @map("is_billed")
+  isPaid       Boolean  @default(false) @map("is_paid")
 
   version   Int      @default(1)
   isSynced  Boolean  @default(false) @map("is_synced")
@@ -629,6 +645,15 @@ model PrescriptionItem {
   frequency String // e.g., 'TID'
   duration  String // e.g., '5 days'
   quantity  Int
+
+  // Inventory linkage
+  inventoryItemId String?        @map("inventory_item_id")
+  inventoryItem   InventoryItem? @relation(fields: [inventoryItemId], references: [id])
+
+  // Stock tracking
+  stockCheckedAt  DateTime? @map("stock_checked_at")
+  stockAvailable  Boolean?  @default(false) @map("stock_available")
+  reservedBatchId String?   @map("reserved_batch_id")
 
   @@map("prescription_items")
 }
@@ -1420,24 +1445,159 @@ model EventJournal {
 }
 
 model AuditLog {
-  id         String   @id @default(uuid())
-  actorId    String   @map("actor_id")
-  actorName  String   @map("actor_name")
-  actorRole  String   @map("actor_role")
-  action     String // 'CREATE', 'UPDATE', 'DELETE', 'ACCESS', 'LOGIN', 'EXPORT'
-  resource   String // e.g., 'Patient', 'LabOrder'
-  resourceId String?  @map("resource_id")
-  details    Json?
-  ipAddress  String?  @map("ip_address")
-  userAgent  String?  @map("user_agent")
-  timestamp  DateTime @default(now())
+  id String @id @default(uuid())
 
-  // Cryptographic integrity
-  hash String? // SHA-256 hash of (previous_hash + current_entry)
+  // Actor context
+  actorId   String  @map("actor_id")
+  actorName String  @map("actor_name")
+  actorRole String  @map("actor_role")
+  sessionId String? @map("session_id")
+
+  // Action details
+  action     String // 'CREATE', 'UPDATE', 'DELETE', 'ACCESS', 'LOGIN', 'LOGOUT', 'EXPORT', 'PRINT', 'SHARE'
+  resource   String // e.g., 'Patient', 'LabOrder', 'Invoice', 'ChatMessage'
+  resourceId String? @map("resource_id")
+  details    Json? // lightweight metadata (no large payloads)
+
+  // Request context
+  ipAddress  String? @map("ip_address")
+  userAgent  String? @map("user_agent")
+  department String? // actor's department at time of action
+
+  // Timing
+  timestamp DateTime @default(now())
+
+  // Hash chain for immutability
+  prevHash      String? @map("prev_hash") // SHA-256 of previous entry
+  hash          String? // SHA-256(prevHash + id + action + resource + resourceId + timestamp + actorId)
+  chainPosition BigInt  @default(0) @map("chain_position") // monotonically increasing
+
+  // Audit category for filtering & retention
+  category String @default("ACTIVITY") // 'ACTIVITY', 'AUTH', 'DATA_CHANGE', 'ACCESS', 'CHAT', 'ADMIN', 'BILLING'
+  severity String @default("INFO") // 'INFO', 'WARNING', 'CRITICAL'
+
+  // Compliance
+  isRetained  Boolean   @default(true) @map("is_retained") // set false when retention policy expires
+  retainUntil DateTime? @map("retain_until")
+
+  // Relations to child audit tables
+  recordChanges AuditRecordChange[]
+  chatActions   AuditChatAction[]
+  accessLogs    AuditAccessLog[]
 
   @@index([actorId])
   @@index([timestamp])
+  @@index([category, timestamp])
+  @@index([resource, resourceId])
+  @@index([chainPosition])
+  @@index([severity])
   @@map("audit_logs")
+}
+
+/// Records before/after snapshots for every CREATE, UPDATE, DELETE on audited entities.
+model AuditRecordChange {
+  id String @id @default(uuid())
+
+  // Link to parent audit log entry
+  auditLogId String   @map("audit_log_id")
+  auditLog   AuditLog @relation(fields: [auditLogId], references: [id])
+
+  // Entity being changed
+  entityType String @map("entity_type") // 'Patient', 'LabOrder', 'Prescription', etc.
+  entityId   String @map("entity_id")
+
+  // Change type
+  changeType String @map("change_type") // 'CREATE', 'UPDATE', 'DELETE'
+
+  // Snapshots (JSON)
+  beforeState   Json?    @map("before_state") // null for CREATE
+  afterState    Json?    @map("after_state") // null for DELETE
+  changedFields String[] @map("changed_fields") // ['firstName', 'phone', 'insuranceId']
+
+  // Who made the change (redundant for query convenience)
+  actorId   String @map("actor_id")
+  actorName String @map("actor_name")
+
+  // When
+  timestamp DateTime @default(now())
+
+  @@index([entityType, entityId])
+  @@index([actorId, timestamp])
+  @@index([changeType, timestamp])
+  @@index([timestamp])
+  @@map("audit_record_changes")
+}
+
+/// Tracks every modification to chat messages: edits, deletes, forwards, screenshots, exports.
+model AuditChatAction {
+  id String @id @default(uuid())
+
+  // Link to parent audit log
+  auditLogId String   @map("audit_log_id")
+  auditLog   AuditLog @relation(fields: [auditLogId], references: [id])
+
+  // Chat context
+  messageId String? @map("message_id")
+  groupId   String? @map("group_id")
+  patientId String? @map("patient_id") // if clinical chat
+
+  // Action type
+  action String // 'EDIT', 'DELETE', 'FORWARD', 'SCREENSHOT', 'EXPORT', 'PIN', 'UNPIN', 'REACT'
+
+  // Content audit
+  originalContent String? @map("original_content") @db.Text // what was changed FROM
+  newContent      String? @map("new_content") @db.Text // what was changed TO (for EDIT)
+
+  // Who
+  actorId   String @map("actor_id")
+  actorName String @map("actor_name")
+
+  // When
+  timestamp DateTime @default(now())
+
+  @@index([messageId])
+  @@index([patientId])
+  @@index([actorId, timestamp])
+  @@index([groupId, timestamp])
+  @@index([timestamp])
+  @@map("audit_chat_actions")
+}
+
+/// Tracks record access (view) events for compliance (HIPAA/GDPR).
+model AuditAccessLog {
+  id String @id @default(uuid())
+
+  // Link to parent audit log
+  auditLogId String   @map("audit_log_id")
+  auditLog   AuditLog @relation(fields: [auditLogId], references: [id])
+
+  // What was accessed
+  resourceType String @map("resource_type") // 'Patient', 'LabOrder', 'Invoice', 'Prescription'
+  resourceId   String @map("resource_id")
+
+  // Patient context (if accessing patient-related data)
+  patientId String? @map("patient_id")
+
+  // Access context
+  accessReason   String? @map("access_reason") // 'TREATMENT', 'BILLING', 'ADMIN', 'AUDIT', 'RESEARCH'
+  accessDuration Int?    @map("access_duration_ms") // how long the record was viewed
+
+  // Who
+  actorId   String @map("actor_id")
+  actorName String @map("actor_name")
+  actorRole String @map("actor_role")
+
+  // Where
+  ipAddress String? @map("ip_address")
+
+  // When
+  timestamp DateTime @default(now())
+
+  @@index([actorId, timestamp])
+  @@index([resourceType, resourceId])
+  @@index([patientId, timestamp])
+  @@index([timestamp])
+  @@map("audit_access_logs")
 }
 
 model SyncNode {
@@ -2298,6 +2458,7 @@ model LabOrder {
   // Billing (applicable to both standalone and hospital)
   billedAmount Decimal? @map("billed_amount") @db.Decimal(10, 2)
   isBilled     Boolean  @default(false) @map("is_billed")
+  isPaid       Boolean  @default(false) @map("is_paid")
 
   version   Int      @default(1)
   isSynced  Boolean  @default(false) @map("is_synced")

@@ -18,7 +18,8 @@ import {
     ArrowRightCircle,
     UserCircle2,
     FileText,
-    History
+    History,
+    MessageCircle
 } from 'lucide-react';
 import Image from 'next/image';
 import { getDynamicQueue, updateEncounterStatus } from '@/app/actions/queue-actions';
@@ -78,7 +79,7 @@ export default function DoctorDashboard() {
             const next = queue[0];
             await updateEncounterStatus(next.id, 'IN_PROGRESS');
             setActivePatient(next);
-            setQueue(prev => prev.filter(p => p.id !== next.id));
+            setQueue(prev => prev.filter((p: any) => p.id !== next.id));
         }
     };
 
@@ -129,7 +130,7 @@ export default function DoctorDashboard() {
                     </div>
                     
                     <div className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar">
-                        {queue.map((p, i) => (
+                        {queue.map((p: any, i: any) => (
                             <div 
                                 key={p.id}
                                 className={`w-full p-6 rounded-[32px] border transition-all relative overflow-hidden bg-gray-900/40 border-gray-800 ${i === 0 ? 'ring-2 ring-blue-500/30 bg-blue-500/5' : ''}`}
@@ -139,7 +140,18 @@ export default function DoctorDashboard() {
                                 )}
                                 <div className="flex justify-between items-start mb-2">
                                     <h3 className="font-black text-base truncate pr-4">{p.patient.firstName} {p.patient.lastName}</h3>
-                                    <div className={`h-2 w-2 rounded-full mt-1 ${p.esiLevel <= 2 ? 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.6)]' : 'bg-emerald-500'}`}></div>
+                                    <div className="flex items-center gap-3">
+                                        <button 
+                                            className="text-gray-500 hover:text-blue-400 transition-colors p-1 rounded-full hover:bg-blue-500/10 relative"
+                                            title="Active Chat Thread"
+                                            onClick={(e) => { e.stopPropagation(); /* Open Chat Popover */ }}
+                                        >
+                                            <MessageCircle className="h-4 w-4" />
+                                            {/* Badge indicator */}
+                                            <span className="absolute top-0 right-0 h-1.5 w-1.5 bg-rose-500 rounded-full shadow-[0_0_8px_rgba(244,63,94,0.8)]"></span>
+                                        </button>
+                                        <div className={`h-2 w-2 rounded-full mt-1 ${p.esiLevel <= 2 ? 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.6)]' : 'bg-emerald-500'}`}></div>
+                                    </div>
                                 </div>
                                 <div className="flex items-center justify-between text-[10px] font-bold text-gray-500">
                                     <span className="uppercase">{p.patient.gender} • {p.waitMinutes}m wait</span>
@@ -172,7 +184,7 @@ export default function DoctorDashboard() {
                                             { l: 'HR', v: activePatient.pulse || '--', c: 'text-blue-400' },
                                             { l: 'TEMP', v: (activePatient.temperature || '--') + '°C', c: 'text-amber-400' },
                                             { l: 'SPO2', v: (activePatient.spo2 || '--') + '%', c: 'text-emerald-400' },
-                                        ].map(v => (
+                                        ].map((v: any) => (
                                             <div key={v.l} className="bg-black/40 border border-white/5 rounded-2xl px-6 py-3 flex flex-col items-center">
                                                 <span className="text-[9px] font-black text-gray-600 uppercase mb-1 tracking-widest">{v.l}</span>
                                                 <span className={`text-lg font-black ${v.c}`}>{v.v}</span>
@@ -197,7 +209,7 @@ export default function DoctorDashboard() {
                                         { id: 'notes', label: 'Clinical Notes', icon: FileText },
                                         { id: 'labs', label: 'Lab Results', icon: Beaker },
                                         { id: 'prescriptions', label: 'Medications', icon: Pill },
-                                    ].map(tab => (
+                                    ].map((tab: any) => (
                                         <button 
                                             key={tab.id}
                                             onClick={() => setActiveTab(tab.id as any)}

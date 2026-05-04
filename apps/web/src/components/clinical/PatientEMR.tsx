@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
     User, 
-    History, 
+    History,
     FileText, 
     Beaker, 
     Pill, 
@@ -16,9 +16,15 @@ import {
     AlertCircle,
     Save,
     Clock,
-    Lock
+    Lock,
+    Share2,
+    CheckCircle2 as CheckIcon
 } from 'lucide-react';
+import { useAuth } from '@/lib/auth';
 import Image from 'next/image';
+import { EncounterChatSidebar } from '../chat/EncounterChatSidebar';
+import { MedicalTimeline } from './MedicalTimeline';
+import { TimelineEvent } from '@/lib/timeline-types';
 
 interface ClinicalEvent {
     id: string;
@@ -29,16 +35,14 @@ interface ClinicalEvent {
     author: string;
 }
 
-export default function PatientEMR() {
+export default function PatientEMR({ patientId = 'demo-patient-1' }: { patientId?: string }) {
     const [activeTab, setActiveTab] = useState<'history' | 'notes' | 'labs' | 'prescriptions'>('history');
     const [isSaving, setIsSaving] = useState(false);
+    const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(null);
 
-    const [timeline, setTimeline] = useState<ClinicalEvent[]>([
-        { id: '1', type: 'VISIT', date: '2024-04-15', title: 'Outpatient Consultation', description: 'Follow-up for hypertension management.', author: 'Dr. Sarah Wilson' },
-        { id: '2', type: 'LAB', date: '2024-04-16', title: 'Full Blood Count', description: 'HGB: 12.5, WBC: 8.4. Results within normal limits.', author: 'Lab Tech Kamau' },
-        { id: '3', type: 'PRESCRIPTION', date: '2024-04-16', title: 'Amlodipine 5mg', description: 'Once daily for 30 days.', author: 'Dr. Sarah Wilson' },
-        { id: '4', type: 'NOTE', date: '2024-03-10', title: 'Nursing Progress Note', description: 'Patient complained of mild headache. BP: 145/95.', author: 'Nrs. Amina' },
-    ]);
+    // Active Encounter for Chat Context
+    const [activeEncounterId, setActiveEncounterId] = useState<string | null>('demo-encounter-id');
+    const { token, user } = useAuth();
 
     const handleSaveNote = () => {
         setIsSaving(true);
@@ -76,42 +80,12 @@ export default function PatientEMR() {
             </header>
 
             <div className="flex flex-1 overflow-hidden p-6 gap-6">
-                {/* LEFT: VERTICAL TIMELINE */}
+                {/* LEFT: UNIFIED MEDICAL TIMELINE */}
                 <aside className="w-96 flex flex-col bg-gray-900/20 border border-gray-800 rounded-[48px] overflow-hidden">
-                    <div className="p-8 border-b border-gray-800 bg-gray-900/40">
-                        <h2 className="text-xs font-black uppercase tracking-widest text-gray-500 mb-6 flex items-center gap-3">
-                            <History className="h-4 w-4" /> Longitudinal Record
-                        </h2>
-                        <div className="relative group">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-600" />
-                            <input 
-                                type="text" 
-                                placeholder="Search history..."
-                                className="w-full bg-black/40 border border-white/5 rounded-2xl py-3 pl-11 pr-4 text-[10px] font-bold focus:outline-none focus:border-blue-500/50 transition-all"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar relative">
-                        <div className="absolute left-[45px] top-8 bottom-8 w-[1px] bg-gray-800"></div>
-                        {timeline.map((event, idx) => (
-                            <div key={event.id} className="relative pl-12 group cursor-pointer">
-                                <div className={`absolute left-[5px] top-0 h-6 w-6 rounded-lg flex items-center justify-center z-10 transition-all group-hover:scale-125 ${
-                                    event.type === 'VISIT' ? 'bg-blue-600' : 
-                                    event.type === 'LAB' ? 'bg-purple-600' : 
-                                    event.type === 'PRESCRIPTION' ? 'bg-emerald-600' : 'bg-gray-700'
-                                } shadow-lg`}>
-                                    {event.type === 'VISIT' ? <Calendar className="h-3 w-3" /> : 
-                                     event.type === 'LAB' ? <Beaker className="h-3 w-3" /> : 
-                                     event.type === 'PRESCRIPTION' ? <Pill className="h-3 w-3" /> : <FileText className="h-3 w-3" />}
-                                </div>
-                                <span className="text-[9px] font-black text-gray-600 uppercase tracking-widest">{event.date}</span>
-                                <h4 className="text-sm font-black mt-1 group-hover:text-blue-400 transition-colors">{event.title}</h4>
-                                <p className="text-[10px] text-gray-500 mt-2 leading-relaxed italic">{event.description}</p>
-                                <div className="mt-3 text-[8px] font-black text-gray-700 uppercase">{event.author}</div>
-                            </div>
-                        ))}
-                    </div>
+                    <MedicalTimeline
+                        patientId={patientId}
+                        onEventSelect={setSelectedEvent}
+                    />
                 </aside>
 
                 {/* CENTER: TABBED WORKSPACE */}
@@ -123,7 +97,7 @@ export default function PatientEMR() {
                             { id: 'notes', label: 'Consult Notes', icon: FileText },
                             { id: 'labs', label: 'Lab Reports', icon: Beaker },
                             { id: 'prescriptions', label: 'Medications', icon: Pill },
-                        ].map(tab => (
+                        ].map((tab: any) => (
                             <button 
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id as any)}
@@ -151,7 +125,7 @@ export default function PatientEMR() {
                                     <section>
                                         <h3 className="text-xs font-black text-blue-500 uppercase tracking-widest mb-6">Longitudinal Diagnosis</h3>
                                         <div className="grid grid-cols-2 gap-4">
-                                            {['Essential Hypertension (I10)', 'Type 2 Diabetes (E11.9)', 'Hyperlipidemia (E78.5)'].map(dx => (
+                                            {['Essential Hypertension (I10)', 'Type 2 Diabetes (E11.9)', 'Hyperlipidemia (E78.5)'].map((dx: any) => (
                                                 <div key={dx} className="bg-gray-900/60 border border-white/5 p-6 rounded-3xl flex items-center justify-between group">
                                                     <span className="text-sm font-bold text-gray-300">{dx}</span>
                                                     <span className="text-[8px] font-black bg-blue-600/10 text-blue-500 px-3 py-1 rounded-full border border-blue-500/20 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all">Active</span>
@@ -223,6 +197,13 @@ export default function PatientEMR() {
                         </AnimatePresence>
                     </div>
                 </main>
+
+                {/* RIGHT: CONTEXT CHAT SIDEBAR */}
+                {activeEncounterId && (
+                    <aside className="w-80 flex flex-col bg-gray-900/20 border border-gray-800 rounded-[48px] overflow-hidden">
+                        <EncounterChatSidebar encounterId={activeEncounterId} />
+                    </aside>
+                )}
             </div>
 
         </div>

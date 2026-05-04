@@ -3,13 +3,13 @@ import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { logAudit } from '@/lib/audit';
 
-export const hrRouter = router({
+export const hrRouter: any = router({
   /**
    * getEmployees
    * List all employees with basic details.
    */
   getEmployees: tenantProcedure
-    .query(async ({ ctx }) => {
+    .query(async ({ ctx }: any) => {
       return ctx.db!.employee.findMany({
         orderBy: { lastName: 'asc' }
       });
@@ -31,7 +31,7 @@ export const hrRouter = router({
       hourlyRate: z.number().optional(),
       currency: z.string().default('USD')
     }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }: any) => {
       const employee = await ctx.db!.employee.create({
         data: {
           ...input,
@@ -60,8 +60,8 @@ export const hrRouter = router({
       month: z.number().min(1).max(12),
       year: z.number()
     }))
-    .mutation(async ({ ctx, input }) => {
-      const records = await ctx.db!.$transaction(async (tx) => {
+    .mutation(async ({ ctx, input }: any) => {
+      const records = await ctx.db!.$transaction(async (tx: any) => {
         const employees = await tx.employee.findMany({ where: { status: 'ACTIVE' } });
         
         const records = [];
@@ -106,7 +106,7 @@ export const hrRouter = router({
       month: z.number(),
       year: z.number()
     }))
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }: any) => {
       return ctx.db!.payrollRecord.findMany({
         where: { periodMonth: input.month, periodYear: input.year },
         include: { employee: true }
@@ -124,7 +124,7 @@ export const hrRouter = router({
       endDate: z.date(),
       reason: z.string().optional()
     }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }: any) => {
       const days = Math.ceil((input.endDate.getTime() - input.startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
       
       return ctx.db!.leaveRequest.create({
@@ -142,7 +142,7 @@ export const hrRouter = router({
    * HR fetches pending leave requests.
    */
   getLeaveRequests: tenantProcedure
-    .query(async ({ ctx }) => {
+    .query(async ({ ctx }: any) => {
       return ctx.db!.leaveRequest.findMany({
         where: { status: 'PENDING' },
         orderBy: { createdAt: 'desc' }
@@ -159,7 +159,7 @@ export const hrRouter = router({
       approve: z.boolean(),
       reason: z.string().optional()
     }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }: any) => {
       return ctx.db!.leaveRequest.update({
         where: { id: input.requestId },
         data: {
@@ -180,7 +180,7 @@ export const hrRouter = router({
       type: z.enum(['IN', 'OUT']),
       notes: z.string().optional()
     }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }: any) => {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 

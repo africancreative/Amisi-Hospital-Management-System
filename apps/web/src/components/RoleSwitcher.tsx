@@ -43,9 +43,9 @@ export default function RoleSwitcher() {
     return (
         <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 group">
             <div className={`flex items-center gap-3 bg-gray-900 border border-gray-800 rounded-full px-4 py-2 shadow-2xl transition-all duration-300 group-hover:pr-6 cursor-pointer`}>
-                <div className={`h-2.5 w-2.5 rounded-full ${ROLES.find(r => r.id === currentRole)?.color || 'bg-gray-500'} animate-pulse`} />
+                <div className={`h-2.5 w-2.5 rounded-full ${ROLES.find((r: any) => r.id === currentRole)?.color || 'bg-gray-500'} animate-pulse`} />
                 <span className="text-xs font-bold text-gray-300 uppercase tracking-tighter">
-                    Debug: {ROLES.find(r => r.id === currentRole)?.name}
+                    Debug: {ROLES.find((r: any) => r.id === currentRole)?.name}
                 </span>
                 <Shield className="h-3.5 w-3.5 text-gray-500" />
             </div>
@@ -53,7 +53,7 @@ export default function RoleSwitcher() {
             <div className="absolute bottom-full right-0 mb-3 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-all translate-y-2 group-hover:translate-y-0">
                 <div className="bg-gray-900 border border-gray-800 rounded-xl p-2 shadow-2xl w-56 flex flex-col gap-1">
                     <p className="px-3 py-1.5 text-[10px] font-black text-gray-500 uppercase tracking-widest border-b border-gray-800 mb-1">Switch System Role</p>
-                    {ROLES.map((role) => (
+                    {ROLES.map((role: any) => (
                         <button
                             key={role.id}
                             onClick={() => switchRole(role.id)}

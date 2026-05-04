@@ -22,9 +22,9 @@ export default function WardModule() {
   const { data: wards, isLoading, refetch } = api.ward.getWardsWithBeds.useQuery();
   const [selectedBed, setSelectedBed] = useState<any>(null);
 
-  const totalBeds = wards?.reduce((acc: number, w: any) => acc + w.beds.length, 0) || 0;
-  const occupiedBeds = wards?.reduce((acc: number, w: any) => acc + w.beds.filter((b: any) => b.status === 'OCCUPIED').length, 0) || 0;
-  const availableBeds = wards?.reduce((acc: number, w: any) => acc + w.beds.filter((b: any) => b.status === 'AVAILABLE').length, 0) || 0;
+  const totalBeds = wards?.reduce((acc: any, w: any) => acc + w.beds.length, 0) || 0;
+  const occupiedBeds = wards?.reduce((acc: any, w: any) => acc + w.beds.filter((b: any) => b.status === 'OCCUPIED').length, 0) || 0;
+  const availableBeds = wards?.reduce((acc: any, w: any) => acc + w.beds.filter((b: any) => b.status === 'AVAILABLE').length, 0) || 0;
 
   const stats = [
     { label: 'Total Capacity', value: totalBeds, icon: Hotel, color: 'text-blue-500' },
@@ -51,7 +51,7 @@ export default function WardModule() {
 
       <main className="flex-1 overflow-hidden p-6 flex flex-col gap-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-           {stats.map((s, i) => (
+           {stats.map((s: any, i: any) => (
              <div key={i} className="bg-white/5 border border-white/10 p-5 rounded-3xl flex items-center gap-4 transition-transform hover:scale-[1.02]">
                 <div className={`p-4 rounded-2xl bg-white/5 ${s.color}`}><s.icon size={26} /></div>
                 <div><p className="text-2xl font-black text-white">{s.value}</p><p className="text-[10px] text-slate-500 font-black uppercase tracking-widest">{s.label}</p></div>

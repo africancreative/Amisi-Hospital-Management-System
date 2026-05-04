@@ -46,7 +46,7 @@ export default function InventoryDashboard() {
         return { label: 'IN STOCK', color: 'bg-emerald-500', text: 'text-emerald-500' };
     };
 
-    const filteredItems = items.filter(i => 
+    const filteredItems = items.filter((i: any) => 
         i.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
         i.code.toLowerCase().includes(searchQuery.toLowerCase())
     );
@@ -89,7 +89,7 @@ export default function InventoryDashboard() {
                 <main className="flex-1 overflow-y-auto custom-scrollbar pr-2">
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                         <AnimatePresence mode="popLayout">
-                            {filteredItems.map(item => {
+                            {filteredItems.map((item: any) => {
                                 const status = getStockStatus(item);
                                 return (
                                     <motion.div 
@@ -153,7 +153,7 @@ export default function InventoryDashboard() {
                         </div>
                         
                         <div className="space-y-4">
-                            {items.filter(i => i.quantity <= i.minLevel).map(item => (
+                            {items.filter((i: any) => i.quantity <= i.minLevel).map((item: any) => (
                                 <div key={item.id} className="flex items-center justify-between bg-black/40 p-4 rounded-2xl border border-rose-500/10">
                                     <div>
                                         <h4 className="text-xs font-black truncate max-w-[140px]">{item.name}</h4>
@@ -176,7 +176,7 @@ export default function InventoryDashboard() {
                                 { label: 'Total Value', value: 'KES 1.2M', icon: Zap, color: 'text-yellow-500' },
                                 { label: 'Active SKU', value: '412 Items', icon: Layers, color: 'text-purple-500' },
                                 { label: 'Recent Move', value: '12m ago', icon: History, color: 'text-blue-500' },
-                            ].map(stat => (
+                            ].map((stat: any) => (
                                 <div key={stat.label} className="flex items-center gap-5 group">
                                     <div className={`h-12 w-12 rounded-2xl bg-white/5 flex items-center justify-center transition-all group-hover:scale-110`}>
                                         <stat.icon className={`h-5 w-5 ${stat.color}`} />

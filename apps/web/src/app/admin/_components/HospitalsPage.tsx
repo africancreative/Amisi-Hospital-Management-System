@@ -62,10 +62,10 @@ export default function HospitalsDashboard() {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
                 {[
                     { label: 'Total Hospitals', value: hospitals?.length || 0, icon: Building2, color: 'text-blue-400' },
-                    { label: 'Active Nodes', value: (hospitals as any[])?.filter(h => h.status === 'active').length || 0, icon: ShieldCheck, color: 'text-emerald-400' },
-                    { label: 'Suspended', value: (hospitals as any[])?.filter(h => h.status === 'suspended').length || 0, icon: AlertTriangle, color: 'text-amber-400' },
+                    { label: 'Active Nodes', value: (hospitals as any[])?.filter((h: any) => h.status === 'active').length || 0, icon: ShieldCheck, color: 'text-emerald-400' },
+                    { label: 'Suspended', value: (hospitals as any[])?.filter((h: any) => h.status === 'suspended').length || 0, icon: AlertTriangle, color: 'text-amber-400' },
                     { label: 'Total Revenue', value: '$128.4k', icon: CreditCard, color: 'text-indigo-400' },
-                ].map((stat, i) => (
+                ].map((stat: any, i: any) => (
                     <div key={i} className="p-6 rounded-[2rem] bg-slate-900/40 border border-slate-800 backdrop-blur-sm group hover:border-slate-700 transition-all">
                         <div className="flex items-start justify-between mb-4">
                             <div className={`p-3 rounded-2xl bg-slate-800/50 ${stat.color}`}>
@@ -123,7 +123,7 @@ export default function HospitalsDashboard() {
                                         Synchronizing platform nodes...
                                     </td>
                                 </tr>
-                            ) : filteredHospitals?.map((hospital) => (
+                            ) : filteredHospitals?.map((hospital: any) => (
                                 <tr key={hospital.id} className="group hover:bg-slate-800/10 transition-colors">
                                     <td className="px-8 py-6">
                                         <div className="flex items-center gap-4">

@@ -26,6 +26,7 @@ import AccountingModule from '@/components/modules/AccountingModule';
 import RadiologyModule from '@/components/modules/RadiologyModule';
 import SubscriptionModule from '@/components/modules/SubscriptionModule';
 import { TenantDashboard } from '@/components/modules/TenantHome';
+import { getStaffDashboardOverview } from '@/lib/staff-tracking-actions';
 
 interface ModulePageProps {
   params: Promise<{
@@ -60,11 +61,26 @@ export default async function ModuleDispatcher({ params: paramsPromise, searchPa
   const clientModules = [
     'doctor', 'lab', 'laboratory', 'triage', 
     'pharmacy-on-duty', 'ward-on-duty', 'inventory-on-duty', 
-    'finance-on-duty', 'billing-on-duty', 'chat'
+    'finance-on-duty', 'billing-on-duty', 'chat',
+    'hr-performance', 'hr-activity'
   ];
 
   if (clientModules.includes(mainModule)) {
     return <ModuleClientDispatcher mainModule={mainModule} subPath={subPath} slug={slug} />;
+  }
+
+  // Handle HR sub-routes (performance, activity)
+  if (mainModule === 'hr') {
+    if (subPath.length >= 1) {
+      if (subPath[0] === 'performance') {
+        const overview = await getStaffDashboardOverview();
+        return <ModuleClientDispatcher mainModule="hr-performance" subPath={subPath} slug={slug} initialOverview={overview} />;
+      }
+      if (subPath[0] === 'activity') {
+        return <ModuleClientDispatcher mainModule="hr-activity" subPath={subPath} slug={slug} />;
+      }
+    }
+    return <HrModule params={{ slug }} />;
   }
 
   // Handle specialized Server/Client mix (EMR)

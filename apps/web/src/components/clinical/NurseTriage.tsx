@@ -79,7 +79,7 @@ export default function NurseTriage({ patient, onSave }: { patient: any, onSave:
             </div>
 
             <div className="grid grid-cols-3 gap-6">
-                {cards.map((card) => (
+                {cards.map((card: any) => (
                     <motion.div 
                         key={card.id}
                         whileHover={{ y: -4 }}
