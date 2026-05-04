@@ -39,6 +39,17 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ path
     const pathSegments = resolvedParams.path || [];
     const fullPath = pathSegments.join('/');
 
+    // 0. Health Check (no auth required)
+    if (fullPath === 'api/health') {
+        try {
+            // Quick DB check
+            await getControlDb().$queryRaw`SELECT 1`;
+            return NextResponse.json({ status: 'ok', timestamp: new Date().toISOString() });
+        } catch (error: any) {
+            return NextResponse.json({ status: 'error', message: error.message }, { status: 503 });
+        }
+    }
+
     // 1. Sync Pull
     if (fullPath === 'sync') {
         const tenantId = req.headers.get('x-resolved-tenant-id');

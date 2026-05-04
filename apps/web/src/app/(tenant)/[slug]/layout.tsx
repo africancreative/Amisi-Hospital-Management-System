@@ -1,7 +1,7 @@
 import { OnDutyProvider } from '@/context/OnDutyContext';
 import OnDutyWrapper from '@/components/clinical/OnDutyWrapper';
 import { getServerRole, getServerUser } from '@/lib/auth-utils';
-import { getControlDb } from '@/lib/modules';
+import { getTenantModules } from '@/lib/modules';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { 
@@ -15,7 +15,9 @@ import {
     MessageSquare, 
     Settings,
     LogOut,
-    Shield
+    Shield,
+    Activity,
+    FileText
 } from 'lucide-react';
 
 const MODULE_REGISTRY: any = {
@@ -26,6 +28,11 @@ const MODULE_REGISTRY: any = {
     'INVENTORY': { name: 'Inventory', href: '/inventory', icon: Package, roles: ['ADMIN', 'PHARMACIST'] },
     'WARD': { name: 'Wards', href: '/wards', icon: Bed, roles: ['NURSE', 'DOCTOR', 'ADMIN'] },
 };
+
+const ADMIN_LINKS = [
+    { name: 'Queue', href: '/queue', icon: Activity, roles: ['ADMIN', 'RECEPTIONIST', 'NURSE'] },
+    { name: 'Reports', href: '/reports', icon: FileText, roles: ['ADMIN', 'ACCOUNTANT'] },
+];
 
 export default async function TenantLayout({
     children,
@@ -48,10 +55,29 @@ export default async function TenantLayout({
         redirect('/system/suspended');
     }
 
-    const activeModCodes = tenant.enabledModules as string[] || [];
+    // Fetch enabled modules from TenantModule relation
+    let activeModCodes: string[] = [];
+    try {
+        const moduleSet = await getTenantModules(tenant.id);
+        activeModCodes = Array.from(moduleSet);
+    } catch (error) {
+        console.error('[TenantLayout] Failed to load modules:', error);
+        // Continue with empty modules - user will see "No modules assigned"
+    }
+
+    // Map internal module codes to UI registry keys
+    const moduleKeyMap: Record<string, string> = {
+        'MOD-EC': 'EHR',
+        'MOD-PH': 'PHARMACY',
+        'MOD-LD': 'LAB',
+        'MOD-BR': 'BILLING',
+        'MOD-IS': 'INVENTORY',
+        'MOD-WARD': 'WARD',
+    };
 
     // Filter by BOTH Tenant Entitlements AND User Role
     const navLinks = activeModCodes
+        .map(code => moduleKeyMap[code] || code)
         .filter((code: any) => MODULE_REGISTRY[code])
         .filter((code: any) => MODULE_REGISTRY[code].roles.includes(role))
         .map((code: any) => MODULE_REGISTRY[code]);
@@ -91,6 +117,16 @@ export default async function TenantLayout({
                         )
                     })
                 )}
+
+                {/* Admin/Staff Links */}
+                {ADMIN_LINKS.filter(link => link.roles.includes(role)).map((link: any, idx: any) => {
+                    const Icon = link.icon;
+                    return (
+                        <Link key={`admin-${idx}`} href={`/${slug}${link.href}`} className="flex items-center gap-3 px-4 py-3 rounded-xl text-neutral-300 hover:text-white hover:bg-white/5 transition-all text-sm font-semibold group">
+                            <Icon className="h-4 w-4 text-neutral-500 group-hover:text-blue-400 transition-colors" /> {link.name}
+                        </Link>
+                    )
+                })}
 
                 {role === 'ADMIN' && (
                     <>

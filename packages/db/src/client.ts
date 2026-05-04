@@ -24,10 +24,12 @@ declare global {
  * Targets Neon Cloud exclusively
  */
 export const getControlDb = (): ControlClientRaw => {
+    const dbUrl = config.NEON_DATABASE_URL + (config.NEON_DATABASE_URL.includes('?') ? '&' : '?') + 'connect_timeout=10';
+
     if (process.env.NODE_ENV === 'production') {
         return new ControlClientRaw({
             datasources: {
-                db: { url: config.NEON_DATABASE_URL }
+                db: { url: dbUrl }
             }
         });
     }
@@ -36,7 +38,7 @@ export const getControlDb = (): ControlClientRaw => {
         console.log('[Amisi DB] Initializing Control Plane Singleton...');
         global.prismaControl = new ControlClientRaw({
             datasources: {
-                db: { url: config.NEON_DATABASE_URL }
+                db: { url: dbUrl }
             }
         });
     }

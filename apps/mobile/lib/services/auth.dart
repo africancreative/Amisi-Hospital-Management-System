@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 // ─── Server configuration ──────────────────────────────────────────────────
 class ServerConfig {
   // Cloud base — fallback when LAN is unreachable
-  static const String cloudBaseUrl = 'https://amisigenuine.com';
+  static const String cloudBaseUrl = 'https://amisimedos.amisigenuine.com';
   
   String? _localIp;
   int _localPort = 3000;
