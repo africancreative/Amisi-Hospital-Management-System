@@ -392,7 +392,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/packages/db/generated/control-client",
+      "value": "/vercel/share/v0-project/packages/db/generated/control-client",
       "fromEnvVar": null
     },
     "config": {
@@ -410,12 +410,11 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/packages/db/prisma/control.prisma",
+    "sourceFilePath": "/vercel/share/v0-project/packages/db/prisma/control.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null,
-    "schemaEnvPath": "../../.env"
+    "rootEnvPath": null
   },
   "relativePath": "../../prisma",
   "clientVersion": "5.22.0",

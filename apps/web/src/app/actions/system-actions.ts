@@ -27,34 +27,16 @@ export async function createTenantWithModules(data: {
     const { createTenantDatabase } = await import('@amisimedos/db/neon' as any);
     const { dbUrl } = await createTenantDatabase(data.slug);
     
-    // 2. Fetch Module Details to pass proper structure if needed
-    // In this system, provisionTenant expects enabledModules as a mapping or list
-    // Based on tenant-actions.ts, it's often a boolean mapping.
-    const db = getControlDb();
-        const hospital = await db.tenant.create({
-            data: {
-                name: data.name,
-                slug: data.slug,
-                dbUrl: dbUrl || undefined,
-                encryptionKeyReference: data.slug,
-                region: data.region,
-                tier: data.tier as DeploymentTier,
-                status: 'active',
-                enabledModules: {},
-            }
-        });
+    // 2. Provision the tenant with the created database
+    const { provisionTenant } = await import('@amisimedos/db/provision' as any);
 
-        // Dynamic import to prevent Node.js module leaks
-        const { provisionTenant } = await import('@amisimedos/db/management' as any);
-
-        await provisionTenant({
-            tenantId: hospital.id,
-            slug: data.slug,
-            dbUrl: dbUrl || undefined,
-            tier: data.tier,
-            settings: {},
-            enabledModules: {}
-        });
+    const hospital = await provisionTenant(
+        data.name,
+        data.slug,
+        data.region,
+        dbUrl,
+        data.tier
+    );
 
     revalidatePath('/system/hospitals');
     revalidatePath('/system/dashboard');
