@@ -50,13 +50,26 @@ export const getControlDb = (): ControlClientRaw => {
  * Clinical Tenant Nodes (Hospital Data)
  * Dynamic routing per hospital ID (UUID)
  */
+
+// Connection pool cache - reuse Prisma clients by URL to prevent pool exhaustion
+const tenantClientCache = new Map<string, TenantClientRaw>();
+
 export const getTenantDb = async (tenantId: string, customUrl?: string): Promise<TenantClientRaw> => {
     // 1. Resolve connection URL: Provided > Local Edge > Cloud Neon
     const tenantUrl = customUrl || config.LOCAL_EDGE_DATABASE_URL || config.NEON_DATABASE_URL;
 
+    // Add connection pool parameters to prevent timeouts
+    const urlWithPool = tenantUrl + (tenantUrl.includes('?') ? '&' : '?') + 'connect_timeout=30&connection_limit=20&pool_timeout=30';
+
+    // Check cache first
+    const cacheKey = `${tenantId}:${urlWithPool}`;
+    if (tenantClientCache.has(cacheKey)) {
+        return tenantClientCache.get(cacheKey)!;
+    }
+
     const baseClient = new TenantClientRaw({
         datasources: {
-            db: { url: tenantUrl }
+            db: { url: urlWithPool }
         }
     });
 
@@ -64,27 +77,27 @@ export const getTenantDb = async (tenantId: string, customUrl?: string): Promise
     const sharedSecret = process.env.SYNC_SHARED_SECRET || config.SYNC_SHARED_SECRET;
     const nodeType = process.env.NODE_TYPE === 'CLOUD' ? 'CLOUD' : 'EDGE';
 
+    let clientToCache: any = baseClient;
+
     if (sharedSecret) {
         const journaledClient = baseClient.$extends(withJournaling({
             sharedSecret,
             nodeType: nodeType as any,
             tenantId: tenantId
         }));
-
-        if (!process.env.NODE_ENV || process.env.NODE_ENV !== 'production') {
-            if (!global.prismaTenants) global.prismaTenants = new Map<string, any>();
-            global.prismaTenants.set(tenantId, journaledClient as any);
-        }
-
-        return journaledClient as any;
+        clientToCache = journaledClient;
     }
 
-    if (process.env.NODE_ENV !== 'production') {
+    // Cache the client for reuse
+    tenantClientCache.set(cacheKey, clientToCache as TenantClientRaw);
+
+    // Also store in global for cleanup/disposal
+    if (!process.env.NODE_ENV || process.env.NODE_ENV !== 'production') {
         if (!global.prismaTenants) global.prismaTenants = new Map<string, any>();
-        global.prismaTenants.set(tenantId, baseClient);
+        global.prismaTenants.set(tenantId, clientToCache);
     }
 
-    return baseClient;
+    return clientToCache as any;
 };
 
 

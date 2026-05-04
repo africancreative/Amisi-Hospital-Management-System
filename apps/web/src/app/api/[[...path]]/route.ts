@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getControlDb, getTenantDb } from '@/lib/db';
-import { ControlClient } from '@amisimedos/db/client';
 import { resolveSemanticConflict } from '@amisimedos/sync/resolver';
 import { verifyPassword } from '@amisimedos/auth';
 import crypto from 'crypto';
@@ -32,7 +31,8 @@ function verifyJwt(token: string, secret: string): Record<string, unknown> | nul
     } catch { return null; }
 }
 
-const controlDb = new ControlClient();
+// Use singleton pattern to prevent connection pool exhaustion
+const controlDb = getControlDb();
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ path?: string[] }> }): Promise<Response | NextResponse> {
     const resolvedParams = await params;
