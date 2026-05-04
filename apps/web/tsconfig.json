@@ -21,6 +21,7 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
+      "@amisimedos/sync": ["../../packages/sync/src/index"],
       "@amisimedos/sync/*": ["../../packages/sync/src/*"],
       "@amisimedos/auth": ["../../packages/auth/src/index"],
       "@amisimedos/auth/*": ["../../packages/auth/src/*"],
