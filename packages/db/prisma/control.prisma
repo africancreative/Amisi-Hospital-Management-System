@@ -1,126 +1,87 @@
-datasource db {
-  provider  = "postgresql"
-  url       = env("NEON_DATABASE_URL")   // Pooled (PgBouncer) — runtime queries
-  directUrl = env("NEON_DIRECT_URL")     // Direct — Prisma migrations / db push only
-}
-
 generator client {
   provider      = "prisma-client-js"
   output        = "../generated/control-client"
   binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
-enum TenantStatus {
-  active
-  suspended
-  terminated
-}
-
-enum DeploymentTier {
-  CLINIC
-  PHARMACY
-  LAB
-  SPECIALIST
-  HOSPITAL
-  GENERAL
-  RESEARCH
-  NETWORK
-}
-
-enum FacilityType {
-  CLINIC
-  PHARMACY
-  LAB
-  SPECIALIST
-  HOSPITAL
+datasource db {
+  provider  = "postgresql"
+  url       = env("NEON_DATABASE_URL")
+  directUrl = env("NEON_DIRECT_URL")
 }
 
 model Tenant {
-  id                     String         @id @default(uuid())
+  id                     String                 @id @default(uuid())
   name                   String
-  slug                   String         @unique
-  dbUrl                  String         @map("db_url")
-  encryptionKeyReference String         @map("encryption_key_reference")
-  tier                   DeploymentTier @default(CLINIC)
-  facilityType           FacilityType   @default(CLINIC) @map("facility_type")
+  slug                   String                 @unique
+  dbUrl                  String                 @map("db_url")
+  encryptionKeyReference String                 @map("encryption_key_reference")
+  tier                   DeploymentTier         @default(CLINIC)
   region                 String
-  status                 TenantStatus   @default(active)
-  suspensionReason       String?        @map("suspension_reason")
-  suspendedAt            DateTime?      @map("suspended_at")
-
-  // Branding & Identity
+  status                 TenantStatus           @default(active)
+  suspensionReason       String?                @map("suspension_reason")
+  suspendedAt            DateTime?              @map("suspended_at")
   address                String?
-  logoUrl                String?        @map("logo_url")
-  primaryColor           String?        @map("primary_color") @default("#2563EB")
-  secondaryColor         String?        @map("secondary_color") @default("#0F172A")
-
-  // Lifecycle
-  trialEndsAt            DateTime?      @map("trial_ends_at")
-
-  // Full Tenant Config (JSON schema per our design)
-  enabledModules         Json           @map("enabled_modules") @default("{}")
-  moduleConfig           Json           @map("module_config") @default("{}")
-  workflowCustomization  Json           @map("workflow_customization") @default("{\"queue_logic\": {\"triage_levels\": [\"Critical\", \"Urgent\", \"Routine\"], \"routing_rules\": []}, \"billing_rules\": {\"currency\": \"USD\", \"tax_rate\": 0, \"payment_methods\": [\"CASH\", \"CARD\", \"MPESA\"]}, \"staff_roles\": {}}")
-  complianceIsolation    Json           @map("compliance_isolation") @default("{\"isolation_policy\": \"logical\", \"data_residency\": \"\", \"byok_enabled\": false}")
-  subscriptionQuotas     Json           @map("subscription_quotas") @default("{\"seat_limit\": 5, \"storage_mb\": 5000}")
-
-  // Retained legacy config columns
-  billingConfig         Json?          @map("billing_config")
-  queueConfig           Json?          @map("queue_config")
-  staffRoles            Json?          @map("staff_roles")
-
-  publicKeySpki          String?        @map("public_key_spki") @db.Text
-  sharedSecret           String?        @map("shared_secret") @db.Text
-  createdAt              DateTime       @default(now()) @map("created_at")
-  updatedAt              DateTime       @updatedAt @map("updated_at")
-
-  entitlements           TenantModule[]
-  payments               SystemPayment[]
-  subscriptions          Subscription[]
-  usages                 TenantUsage[]
-  configAuditLogs        TenantConfigAuditLog[]
+  logoUrl                String?                @map("logo_url")
+  primaryColor           String?                @default("#2563EB") @map("primary_color")
+  secondaryColor         String?                @default("#0F172A") @map("secondary_color")
+  trialEndsAt            DateTime?              @map("trial_ends_at")
+  enabledModules         Json                   @default("{}") @map("enabled_modules")
+  queueConfig            Json?                  @map("queue_config")
+  billingConfig          Json?                  @map("billing_config")
+  staffRoles             Json?                  @map("staff_roles")
+  publicKeySpki          String?                @map("public_key_spki")
+  sharedSecret           String?                @map("shared_secret")
+  createdAt              DateTime               @default(now()) @map("created_at")
+  updatedAt              DateTime               @updatedAt @map("updated_at")
+  complianceIsolation    Json                   @default("{\"byok_enabled\": false, \"data_residency\": \"\", \"isolation_policy\": \"logical\"}") @map("compliance_isolation")
+  facilityType           FacilityType           @default(CLINIC) @map("facility_type")
+  moduleConfig           Json                   @default("{}") @map("module_config")
+  subscriptionQuotas     Json                   @default("{\"seat_limit\": 5, \"storage_mb\": 5000}") @map("subscription_quotas")
+  workflowCustomization  Json                   @default("{\"queue_logic\": {\"routing_rules\": [], \"triage_levels\": [\"Critical\", \"Urgent\", \"Routine\"]}, \"staff_roles\": {}, \"billing_rules\": {\"currency\": \"USD\", \"tax_rate\": 0, \"payment_methods\": [\"CASH\", \"CARD\", \"MPESA\"]}}") @map("workflow_customization")
   featureFlagOverrides   FeatureFlagOverride[]
+  subscriptions          Subscription[]
+  payments               SystemPayment[]
+  configAuditLogs        TenantConfigAuditLog[]
   tenantFeatureFlags     TenantFeatureFlag[]
+  entitlements           TenantModule[]
+  usages                 TenantUsage[]
 
   @@map("tenants")
 }
 
 model Module {
-  id          String   @id @default(uuid())
-  name        String
-  code        String   @unique // e.g., 'MOD-PM', 'MOD-TQ', etc.
-  description String?
-  basePrice   Decimal  @default(0) @map("base_price") @db.Decimal(10, 2)
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
-
-  // Module metadata for dependencies, events, permissions
-  dependencies  Json @default("[]") @map("dependencies") // e.g., ["MOD-PM"]
-  events        Json @default("[]") @map("events") // e.g., ["patient.registered", "triage.completed"]
-  permissions   Json @default("[]") @map("permissions") // e.g., ["PATIENT_READ", "TRIAGE_WRITE"]
-
-  tenants       TenantModule[]
-  featureFlags   FeatureFlag[]
+  id           String         @id @default(uuid())
+  name         String
+  code         String         @unique
+  description  String?
+  basePrice    Decimal        @default(0) @map("base_price") @db.Decimal(10, 2)
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
+  dependencies Json           @default("[]") @map("dependencies")
+  events       Json           @default("[]") @map("events")
+  permissions  Json           @default("[]") @map("permissions")
+  featureFlags FeatureFlag[]
+  tenants      TenantModule[]
 
   @@map("modules")
 }
 
 model TenantModule {
-  id        String   @id @default(uuid())
-  tenantId  String   @map("tenant_id")
-  tenant    Tenant   @relation(fields: [tenantId], references: [id])
-  moduleId  String   @map("module_id")
-  module    Module   @relation(fields: [moduleId], references: [id])
-  
-  isEnabled Boolean  @default(true) @map("is_enabled")
+  id         String    @id @default(uuid())
+  tenantId   String    @map("tenant_id")
+  moduleId   String    @map("module_id")
+  isEnabled  Boolean   @default(true) @map("is_enabled")
   validUntil DateTime? @map("valid_until")
-  
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  module     Module    @relation(fields: [moduleId], references: [id])
+  tenant     Tenant    @relation(fields: [tenantId], references: [id])
 
   @@unique([tenantId, moduleId])
   @@map("tenant_modules")
 }
+
 model SystemAdmin {
   id           String   @id @default(uuid())
   name         String
@@ -133,116 +94,88 @@ model SystemAdmin {
 }
 
 model GlobalSettings {
-  id                     String   @id @default("singleton")
-  platformName           String   @default("AmisiMedOS") @map("platform_name")
-  platformLogoUrl        String?  @map("platform_logo_url")
-  platformSlogan         String?  @map("platform_slogan")
-  
-  // Frontend CMS Content
-  heroTitle              String?  @map("hero_title")
-  heroSubtitle           String?  @map("hero_subtitle")
-  heroCTA                String?  @map("hero_cta")
-  heroImageUrl           String?  @map("hero_image_url")
-  
-  showHero               Boolean  @default(true) @map("show_hero")
-  showFeatures           Boolean  @default(true) @map("show_features")
-  
-  feature1Title          String?  @map("feature1_title")
-  feature1Desc           String?  @map("feature1_desc")
-  feature1Icon           String?  @map("feature1_icon")
-  
-  feature2Title          String?  @map("feature2_title")
-  feature2Desc           String?  @map("feature2_desc")
-  feature2Icon           String?  @map("feature2_icon")
-  
-  feature3Title          String?  @map("feature3_title")
-  feature3Desc           String?  @map("feature3_desc")
-  feature3Icon           String?  @map("feature3_icon")
-  
-  // PayPal Settings
-  paypalClientId         String?  @map("paypal_client_id")
-  paypalClientSecret     String?  @map("paypal_client_secret")
-  paypalEnv              String   @default("sandbox") @map("paypal_env")
-  
-  // M-Pesa (Daraja) Settings
-  mpesaConsumerKey       String?  @map("mpesa_consumer_key")
-  mpesaConsumerSecret    String?  @map("mpesa_consumer_secret")
-  mpesaPasskey           String?  @map("mpesa_passkey")
-  mpesaShortcode         String?  @map("mpesa_shortcode")
-  
-  updatedAt              DateTime @updatedAt @map("updated_at")
+  id                  String   @id @default("singleton")
+  platformName        String   @default("AmisiMedOS") @map("platform_name")
+  platformLogoUrl     String?  @map("platform_logo_url")
+  platformSlogan      String?  @map("platform_slogan")
+  heroTitle           String?  @map("hero_title")
+  heroSubtitle        String?  @map("hero_subtitle")
+  heroCTA             String?  @map("hero_cta")
+  heroImageUrl        String?  @map("hero_image_url")
+  showHero            Boolean  @default(true) @map("show_hero")
+  showFeatures        Boolean  @default(true) @map("show_features")
+  feature1Title       String?  @map("feature1_title")
+  feature1Desc        String?  @map("feature1_desc")
+  feature1Icon        String?  @map("feature1_icon")
+  feature2Title       String?  @map("feature2_title")
+  feature2Desc        String?  @map("feature2_desc")
+  feature2Icon        String?  @map("feature2_icon")
+  feature3Title       String?  @map("feature3_title")
+  feature3Desc        String?  @map("feature3_desc")
+  feature3Icon        String?  @map("feature3_icon")
+  paypalClientId      String?  @map("paypal_client_id")
+  paypalClientSecret  String?  @map("paypal_client_secret")
+  paypalEnv           String   @default("sandbox") @map("paypal_env")
+  mpesaConsumerKey    String?  @map("mpesa_consumer_key")
+  mpesaConsumerSecret String?  @map("mpesa_consumer_secret")
+  mpesaPasskey        String?  @map("mpesa_passkey")
+  mpesaShortcode      String?  @map("mpesa_shortcode")
+  updatedAt           DateTime @updatedAt @map("updated_at")
 
   @@map("global_settings")
 }
 
 model SystemPayment {
-  id              String   @id @default(uuid())
-  tenantId        String?  @map("tenant_id")
-  tenant          Tenant?  @relation(fields: [tenantId], references: [id])
-  
-  amount          Decimal  @db.Decimal(10, 2)
-  currency        String   @default("USD")
-  method          String   // 'PAYPAL' | 'MPESA'
-  status          String   // 'COMPLETED' | 'PENDING' | 'FAILED'
-  reference       String   @unique // Provider Transaction ID
-  
-  customerEmail   String   @map("customer_email")
-  customerName    String   @map("customer_name")
-  
-  description     String?
-  createdAt       DateTime @default(now()) @map("created_at")
+  id            String   @id @default(uuid())
+  tenantId      String?  @map("tenant_id")
+  amount        Decimal  @db.Decimal(10, 2)
+  currency      String   @default("USD")
+  method        String
+  status        String
+  reference     String   @unique
+  customerEmail String   @map("customer_email")
+  customerName  String   @map("customer_name")
+  description   String?
+  createdAt     DateTime @default(now()) @map("created_at")
+  tenant        Tenant?  @relation(fields: [tenantId], references: [id])
 
   @@map("system_payments")
 }
 
-enum BillingCycle {
-  MONTHLY
-  YEARLY
-}
-
 model Plan {
-  id          String   @id @default(uuid())
-  name        String
-  code        String   @unique // 'STARTER', 'PRO', 'ENTERPRISE'
-  description String?
-  price       Decimal  @db.Decimal(10, 2)
-  currency    String   @default("USD")
-  billingCycle BillingCycle @default(MONTHLY) @map("billing_cycle")
-  features    Json     @default("[]") // List of enabled feature codes
-  
-  maxPatients Int      @default(100) @map("max_patients")
-  maxUsers    Int      @default(5) @map("max_users")
-  maxBeds     Int      @default(10) @map("max_beds")
-  
-  isActive    Boolean  @default(true) @map("is_active")
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
-
+  id            String         @id @default(uuid())
+  name          String
+  code          String         @unique
+  description   String?
+  price         Decimal        @db.Decimal(10, 2)
+  currency      String         @default("USD")
+  billingCycle  BillingCycle   @default(MONTHLY) @map("billing_cycle")
+  features      Json           @default("[]")
+  maxPatients   Int            @default(100) @map("max_patients")
+  maxUsers      Int            @default(5) @map("max_users")
+  maxBeds       Int            @default(10) @map("max_beds")
+  isActive      Boolean        @default(true) @map("is_active")
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
   subscriptions Subscription[]
 
   @@map("plans")
 }
 
 model Subscription {
-  id        String   @id @default(uuid())
-  tenantId  String   @map("tenant_id")
-  tenant    Tenant   @relation(fields: [tenantId], references: [id])
-  planId    String   @map("plan_id")
-  plan      Plan     @relation(fields: [planId], references: [id])
-  
-  status    String   @default("ACTIVE") // 'ACTIVE', 'EXPIRED', 'CANCELLED'
-  startDate DateTime @default(now()) @map("start_date")
-  endDate   DateTime? @map("end_date")
-  
-  // Resilient Billing
-  signedToken String? @map("signed_token") @db.Text // JWT signed by Cloud Hub for offline verification
-  
-  autoRenew Boolean  @default(true) @map("auto_renew")
-  
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  usages    TenantUsage[]
+  id          String        @id @default(uuid())
+  tenantId    String        @map("tenant_id")
+  planId      String        @map("plan_id")
+  status      String        @default("ACTIVE")
+  startDate   DateTime      @default(now()) @map("start_date")
+  endDate     DateTime?     @map("end_date")
+  signedToken String?       @map("signed_token")
+  autoRenew   Boolean       @default(true) @map("auto_renew")
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+  plan        Plan          @relation(fields: [planId], references: [id])
+  tenant      Tenant        @relation(fields: [tenantId], references: [id])
+  usages      TenantUsage[]
 
   @@map("subscriptions")
 }
@@ -252,7 +185,6 @@ model PatientIndex {
   biometricType String   @map("biometric_type")
   tenantId      String   @map("tenant_id")
   patientId     String   @map("patient_id")
-  
   description   String?
   timestamp     DateTime @default(now())
   updatedAt     DateTime @updatedAt @map("updated_at")
@@ -262,21 +194,18 @@ model PatientIndex {
 }
 
 model TenantUsage {
-  id              String   @id @default(uuid())
-  tenantId        String   @map("tenant_id")
-  subscriptionId  String   @map("subscription_id")
-  
-  date            DateTime @db.Date
-  activeUsers     Int      @default(0) @map("active_users")
-  activePatients  Int      @default(0) @map("active_patients")
-  storageUsedMb   Decimal  @default(0) @map("storage_used_mb") @db.Decimal(10, 2)
-  apiCallsCount   Int      @default(0) @map("api_calls_count")
-  
-  createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @updatedAt @map("updated_at")
-
-  tenant          Tenant   @relation(fields: [tenantId], references: [id])
-  subscription    Subscription @relation(fields: [subscriptionId], references: [id])
+  id             String       @id @default(uuid())
+  tenantId       String       @map("tenant_id")
+  subscriptionId String       @map("subscription_id")
+  date           DateTime     @db.Date
+  activeUsers    Int          @default(0) @map("active_users")
+  activePatients Int          @default(0) @map("active_patients")
+  storageUsedMb  Decimal      @default(0) @map("storage_used_mb") @db.Decimal(10, 2)
+  apiCallsCount  Int          @default(0) @map("api_calls_count")
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id])
+  tenant         Tenant       @relation(fields: [tenantId], references: [id])
 
   @@unique([tenantId, date])
   @@index([subscriptionId])
@@ -284,83 +213,107 @@ model TenantUsage {
 }
 
 model SyncNode {
-  id               String   @id @default(uuid())
-  nodeName         String   @map("node_name")
-  nodeType         String   @default("EDGE") // 'EDGE', 'CLOUD'
-  lastHeartbeat    DateTime @default(now()) @map("last_heartbeat")
-  version          String
-  status           String   @default("HEALTHY") // 'HEALTHY', 'DEGRADED', 'OFFLINE'
-
-  config           Json?
-
-  createdAt        DateTime @default(now()) @map("created_at")
-  updatedAt        DateTime @updatedAt @map("updated_at")
+  id            String   @id @default(uuid())
+  nodeName      String   @map("node_name")
+  nodeType      String   @default("EDGE")
+  lastHeartbeat DateTime @default(now()) @map("last_heartbeat")
+  version       String
+  status        String   @default("HEALTHY")
+  config        Json?
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
 
   @@map("sync_nodes")
 }
 
-// Feature Flags System (global/tenant/module-scoped)
 model FeatureFlag {
-  id          String   @id @default(uuid())
-  flagId      String   @unique @map("flag_id") // kebab-case, e.g., 'beta-ai-triage'
-  scope       String   @default("global") @map("scope") // 'global', 'tenant', 'module'
-  moduleId    String?  @map("module_id") // Required if scope = 'module'
-  module      Module?   @relation(fields: [moduleId], references: [id])
-  defaultValue Boolean  @default(false) @map("default_value")
-  description String?
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
-
+  id           String                @id @default(uuid())
+  flagId       String                @unique @map("flag_id")
+  scope        String                @default("global") @map("scope")
+  moduleId     String?               @map("module_id")
+  defaultValue Boolean               @default(false) @map("default_value")
+  description  String?
+  createdAt    DateTime              @default(now()) @map("created_at")
+  updatedAt    DateTime              @updatedAt @map("updated_at")
   overrides    FeatureFlagOverride[]
+  module       Module?               @relation(fields: [moduleId], references: [id])
   tenantFlags  TenantFeatureFlag[]
 
   @@map("feature_flags")
 }
 
 model FeatureFlagOverride {
-  id         String @id @default(uuid())
-  flagId     String @map("flag_id")
-  flag       FeatureFlag @relation(fields: [flagId], references: [id])
-  tenantId   String? @map("tenant_id")
-  tenant     Tenant?  @relation(fields: [tenantId], references: [id])
-  enabled    Boolean @default(true)
-  createdAt  DateTime @default(now()) @map("created_at")
+  id        String      @id @default(uuid())
+  flagId    String      @map("flag_id")
+  tenantId  String?     @map("tenant_id")
+  enabled   Boolean     @default(true)
+  createdAt DateTime    @default(now()) @map("created_at")
+  flag      FeatureFlag @relation(fields: [flagId], references: [id])
+  tenant    Tenant?     @relation(fields: [tenantId], references: [id])
 
   @@unique([flagId, tenantId])
   @@map("feature_flag_overrides")
 }
 
-// Audit Log for all tenant config changes
 model TenantConfigAuditLog {
-  id          String   @id @default(uuid())
-  tenantId    String   @map("tenant_id")
-  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  actorId     String   @map("actor_id")
-  actorName   String   @map("actor_name")
-  actorRole   String   @map("actor_role")
-  action      String   // 'MODULE_TOGGLE', 'CONFIG_UPDATE', 'WORKFLOW_CHANGE', 'FEATURE_FLAG_CHANGE'
-  field       String?  // which field changed
-  oldValue    Json?    @map("old_value")
-  newValue    Json?    @map("new_value")
-  ipAddress   String?  @map("ip_address")
-  userAgent   String?  @map("user_agent")
-  timestamp   DateTime @default(now()) @map("timestamp")
+  id        String   @id @default(uuid())
+  tenantId  String   @map("tenant_id")
+  actorId   String   @map("actor_id")
+  actorName String   @map("actor_name")
+  actorRole String   @map("actor_role")
+  action    String
+  field     String?
+  oldValue  Json?    @map("old_value")
+  newValue  Json?    @map("new_value")
+  ipAddress String?  @map("ip_address")
+  userAgent String?  @map("user_agent")
+  timestamp DateTime @default(now()) @map("timestamp")
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId, timestamp])
   @@map("tenant_config_audit_logs")
 }
 
-// Tenant-specific feature flag values
 model TenantFeatureFlag {
-  id          String   @id @default(uuid())
-  tenantId    String   @map("tenant_id")
-  tenant      Tenant   @relation(fields: [tenantId], references: [id])
-  flagId      String   @map("flag_id")
-  flag        FeatureFlag @relation(fields: [flagId], references: [id])
-  enabled     Boolean  @default(false)
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  id        String      @id @default(uuid())
+  tenantId  String      @map("tenant_id")
+  flagId    String      @map("flag_id")
+  enabled   Boolean     @default(false)
+  createdAt DateTime    @default(now()) @map("created_at")
+  updatedAt DateTime    @updatedAt @map("updated_at")
+  flag      FeatureFlag @relation(fields: [flagId], references: [id])
+  tenant    Tenant      @relation(fields: [tenantId], references: [id])
 
   @@unique([tenantId, flagId])
   @@map("tenant_feature_flags")
+}
+
+enum TenantStatus {
+  active
+  suspended
+  terminated
+}
+
+enum DeploymentTier {
+  CLINIC
+  HOSPITAL
+  NETWORK
+  GENERAL
+  RESEARCH
+  PHARMACY
+  LAB
+  SPECIALIST
+}
+
+enum FacilityType {
+  CLINIC
+  PHARMACY
+  LAB
+  SPECIALIST
+  HOSPITAL
+}
+
+enum BillingCycle {
+  MONTHLY
+  YEARLY
 }

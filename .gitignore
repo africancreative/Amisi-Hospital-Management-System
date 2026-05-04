@@ -15,4 +15,5 @@ build
 
 # Generated Prisma Clients
 /packages/database/generated/
+apps/web/generated/
 postgres_data/

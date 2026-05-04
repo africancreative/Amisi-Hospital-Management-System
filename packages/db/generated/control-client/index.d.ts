@@ -95,16 +95,25 @@ export type TenantFeatureFlag = $Result.DefaultSelection<Prisma.$TenantFeatureFl
 export namespace $Enums {
   export const DeploymentTier: {
   CLINIC: 'CLINIC',
-  PHARMACY: 'PHARMACY',
-  LAB: 'LAB',
-  SPECIALIST: 'SPECIALIST',
   HOSPITAL: 'HOSPITAL',
+  NETWORK: 'NETWORK',
   GENERAL: 'GENERAL',
   RESEARCH: 'RESEARCH',
-  NETWORK: 'NETWORK'
+  PHARMACY: 'PHARMACY',
+  LAB: 'LAB',
+  SPECIALIST: 'SPECIALIST'
 };
 
 export type DeploymentTier = (typeof DeploymentTier)[keyof typeof DeploymentTier]
+
+
+export const TenantStatus: {
+  active: 'active',
+  suspended: 'suspended',
+  terminated: 'terminated'
+};
+
+export type TenantStatus = (typeof TenantStatus)[keyof typeof TenantStatus]
 
 
 export const FacilityType: {
@@ -116,15 +125,6 @@ export const FacilityType: {
 };
 
 export type FacilityType = (typeof FacilityType)[keyof typeof FacilityType]
-
-
-export const TenantStatus: {
-  active: 'active',
-  suspended: 'suspended',
-  terminated: 'terminated'
-};
-
-export type TenantStatus = (typeof TenantStatus)[keyof typeof TenantStatus]
 
 
 export const BillingCycle: {
@@ -140,13 +140,13 @@ export type DeploymentTier = $Enums.DeploymentTier
 
 export const DeploymentTier: typeof $Enums.DeploymentTier
 
-export type FacilityType = $Enums.FacilityType
-
-export const FacilityType: typeof $Enums.FacilityType
-
 export type TenantStatus = $Enums.TenantStatus
 
 export const TenantStatus: typeof $Enums.TenantStatus
+
+export type FacilityType = $Enums.FacilityType
+
+export const FacilityType: typeof $Enums.FacilityType
 
 export type BillingCycle = $Enums.BillingCycle
 
@@ -2110,23 +2110,23 @@ export namespace Prisma {
    */
 
   export type TenantCountOutputType = {
-    entitlements: number
-    payments: number
-    subscriptions: number
-    usages: number
-    configAuditLogs: number
     featureFlagOverrides: number
+    subscriptions: number
+    payments: number
+    configAuditLogs: number
     tenantFeatureFlags: number
+    entitlements: number
+    usages: number
   }
 
   export type TenantCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    entitlements?: boolean | TenantCountOutputTypeCountEntitlementsArgs
-    payments?: boolean | TenantCountOutputTypeCountPaymentsArgs
-    subscriptions?: boolean | TenantCountOutputTypeCountSubscriptionsArgs
-    usages?: boolean | TenantCountOutputTypeCountUsagesArgs
-    configAuditLogs?: boolean | TenantCountOutputTypeCountConfigAuditLogsArgs
     featureFlagOverrides?: boolean | TenantCountOutputTypeCountFeatureFlagOverridesArgs
+    subscriptions?: boolean | TenantCountOutputTypeCountSubscriptionsArgs
+    payments?: boolean | TenantCountOutputTypeCountPaymentsArgs
+    configAuditLogs?: boolean | TenantCountOutputTypeCountConfigAuditLogsArgs
     tenantFeatureFlags?: boolean | TenantCountOutputTypeCountTenantFeatureFlagsArgs
+    entitlements?: boolean | TenantCountOutputTypeCountEntitlementsArgs
+    usages?: boolean | TenantCountOutputTypeCountUsagesArgs
   }
 
   // Custom InputTypes
@@ -2143,15 +2143,8 @@ export namespace Prisma {
   /**
    * TenantCountOutputType without action
    */
-  export type TenantCountOutputTypeCountEntitlementsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: TenantModuleWhereInput
-  }
-
-  /**
-   * TenantCountOutputType without action
-   */
-  export type TenantCountOutputTypeCountPaymentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: SystemPaymentWhereInput
+  export type TenantCountOutputTypeCountFeatureFlagOverridesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FeatureFlagOverrideWhereInput
   }
 
   /**
@@ -2164,8 +2157,8 @@ export namespace Prisma {
   /**
    * TenantCountOutputType without action
    */
-  export type TenantCountOutputTypeCountUsagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: TenantUsageWhereInput
+  export type TenantCountOutputTypeCountPaymentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SystemPaymentWhereInput
   }
 
   /**
@@ -2178,15 +2171,22 @@ export namespace Prisma {
   /**
    * TenantCountOutputType without action
    */
-  export type TenantCountOutputTypeCountFeatureFlagOverridesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: FeatureFlagOverrideWhereInput
+  export type TenantCountOutputTypeCountTenantFeatureFlagsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TenantFeatureFlagWhereInput
   }
 
   /**
    * TenantCountOutputType without action
    */
-  export type TenantCountOutputTypeCountTenantFeatureFlagsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: TenantFeatureFlagWhereInput
+  export type TenantCountOutputTypeCountEntitlementsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TenantModuleWhereInput
+  }
+
+  /**
+   * TenantCountOutputType without action
+   */
+  export type TenantCountOutputTypeCountUsagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TenantUsageWhereInput
   }
 
 
@@ -2195,13 +2195,13 @@ export namespace Prisma {
    */
 
   export type ModuleCountOutputType = {
-    tenants: number
     featureFlags: number
+    tenants: number
   }
 
   export type ModuleCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    tenants?: boolean | ModuleCountOutputTypeCountTenantsArgs
     featureFlags?: boolean | ModuleCountOutputTypeCountFeatureFlagsArgs
+    tenants?: boolean | ModuleCountOutputTypeCountTenantsArgs
   }
 
   // Custom InputTypes
@@ -2218,15 +2218,15 @@ export namespace Prisma {
   /**
    * ModuleCountOutputType without action
    */
-  export type ModuleCountOutputTypeCountTenantsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: TenantModuleWhereInput
+  export type ModuleCountOutputTypeCountFeatureFlagsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FeatureFlagWhereInput
   }
 
   /**
    * ModuleCountOutputType without action
    */
-  export type ModuleCountOutputTypeCountFeatureFlagsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: FeatureFlagWhereInput
+  export type ModuleCountOutputTypeCountTenantsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TenantModuleWhereInput
   }
 
 
@@ -2353,7 +2353,6 @@ export namespace Prisma {
     dbUrl: string | null
     encryptionKeyReference: string | null
     tier: $Enums.DeploymentTier | null
-    facilityType: $Enums.FacilityType | null
     region: string | null
     status: $Enums.TenantStatus | null
     suspensionReason: string | null
@@ -2367,6 +2366,7 @@ export namespace Prisma {
     sharedSecret: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    facilityType: $Enums.FacilityType | null
   }
 
   export type TenantMaxAggregateOutputType = {
@@ -2376,7 +2376,6 @@ export namespace Prisma {
     dbUrl: string | null
     encryptionKeyReference: string | null
     tier: $Enums.DeploymentTier | null
-    facilityType: $Enums.FacilityType | null
     region: string | null
     status: $Enums.TenantStatus | null
     suspensionReason: string | null
@@ -2390,6 +2389,7 @@ export namespace Prisma {
     sharedSecret: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    facilityType: $Enums.FacilityType | null
   }
 
   export type TenantCountAggregateOutputType = {
@@ -2399,7 +2399,6 @@ export namespace Prisma {
     dbUrl: number
     encryptionKeyReference: number
     tier: number
-    facilityType: number
     region: number
     status: number
     suspensionReason: number
@@ -2410,17 +2409,18 @@ export namespace Prisma {
     secondaryColor: number
     trialEndsAt: number
     enabledModules: number
-    moduleConfig: number
-    workflowCustomization: number
-    complianceIsolation: number
-    subscriptionQuotas: number
-    billingConfig: number
     queueConfig: number
+    billingConfig: number
     staffRoles: number
     publicKeySpki: number
     sharedSecret: number
     createdAt: number
     updatedAt: number
+    complianceIsolation: number
+    facilityType: number
+    moduleConfig: number
+    subscriptionQuotas: number
+    workflowCustomization: number
     _all: number
   }
 
@@ -2432,7 +2432,6 @@ export namespace Prisma {
     dbUrl?: true
     encryptionKeyReference?: true
     tier?: true
-    facilityType?: true
     region?: true
     status?: true
     suspensionReason?: true
@@ -2446,6 +2445,7 @@ export namespace Prisma {
     sharedSecret?: true
     createdAt?: true
     updatedAt?: true
+    facilityType?: true
   }
 
   export type TenantMaxAggregateInputType = {
@@ -2455,7 +2455,6 @@ export namespace Prisma {
     dbUrl?: true
     encryptionKeyReference?: true
     tier?: true
-    facilityType?: true
     region?: true
     status?: true
     suspensionReason?: true
@@ -2469,6 +2468,7 @@ export namespace Prisma {
     sharedSecret?: true
     createdAt?: true
     updatedAt?: true
+    facilityType?: true
   }
 
   export type TenantCountAggregateInputType = {
@@ -2478,7 +2478,6 @@ export namespace Prisma {
     dbUrl?: true
     encryptionKeyReference?: true
     tier?: true
-    facilityType?: true
     region?: true
     status?: true
     suspensionReason?: true
@@ -2489,17 +2488,18 @@ export namespace Prisma {
     secondaryColor?: true
     trialEndsAt?: true
     enabledModules?: true
-    moduleConfig?: true
-    workflowCustomization?: true
-    complianceIsolation?: true
-    subscriptionQuotas?: true
-    billingConfig?: true
     queueConfig?: true
+    billingConfig?: true
     staffRoles?: true
     publicKeySpki?: true
     sharedSecret?: true
     createdAt?: true
     updatedAt?: true
+    complianceIsolation?: true
+    facilityType?: true
+    moduleConfig?: true
+    subscriptionQuotas?: true
+    workflowCustomization?: true
     _all?: true
   }
 
@@ -2582,7 +2582,6 @@ export namespace Prisma {
     dbUrl: string
     encryptionKeyReference: string
     tier: $Enums.DeploymentTier
-    facilityType: $Enums.FacilityType
     region: string
     status: $Enums.TenantStatus
     suspensionReason: string | null
@@ -2593,17 +2592,18 @@ export namespace Prisma {
     secondaryColor: string | null
     trialEndsAt: Date | null
     enabledModules: JsonValue
-    moduleConfig: JsonValue
-    workflowCustomization: JsonValue
-    complianceIsolation: JsonValue
-    subscriptionQuotas: JsonValue
-    billingConfig: JsonValue | null
     queueConfig: JsonValue | null
+    billingConfig: JsonValue | null
     staffRoles: JsonValue | null
     publicKeySpki: string | null
     sharedSecret: string | null
     createdAt: Date
     updatedAt: Date
+    complianceIsolation: JsonValue
+    facilityType: $Enums.FacilityType
+    moduleConfig: JsonValue
+    subscriptionQuotas: JsonValue
+    workflowCustomization: JsonValue
     _count: TenantCountAggregateOutputType | null
     _min: TenantMinAggregateOutputType | null
     _max: TenantMaxAggregateOutputType | null
@@ -2630,7 +2630,6 @@ export namespace Prisma {
     dbUrl?: boolean
     encryptionKeyReference?: boolean
     tier?: boolean
-    facilityType?: boolean
     region?: boolean
     status?: boolean
     suspensionReason?: boolean
@@ -2641,24 +2640,25 @@ export namespace Prisma {
     secondaryColor?: boolean
     trialEndsAt?: boolean
     enabledModules?: boolean
-    moduleConfig?: boolean
-    workflowCustomization?: boolean
-    complianceIsolation?: boolean
-    subscriptionQuotas?: boolean
-    billingConfig?: boolean
     queueConfig?: boolean
+    billingConfig?: boolean
     staffRoles?: boolean
     publicKeySpki?: boolean
     sharedSecret?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    entitlements?: boolean | Tenant$entitlementsArgs<ExtArgs>
-    payments?: boolean | Tenant$paymentsArgs<ExtArgs>
-    subscriptions?: boolean | Tenant$subscriptionsArgs<ExtArgs>
-    usages?: boolean | Tenant$usagesArgs<ExtArgs>
-    configAuditLogs?: boolean | Tenant$configAuditLogsArgs<ExtArgs>
+    complianceIsolation?: boolean
+    facilityType?: boolean
+    moduleConfig?: boolean
+    subscriptionQuotas?: boolean
+    workflowCustomization?: boolean
     featureFlagOverrides?: boolean | Tenant$featureFlagOverridesArgs<ExtArgs>
+    subscriptions?: boolean | Tenant$subscriptionsArgs<ExtArgs>
+    payments?: boolean | Tenant$paymentsArgs<ExtArgs>
+    configAuditLogs?: boolean | Tenant$configAuditLogsArgs<ExtArgs>
     tenantFeatureFlags?: boolean | Tenant$tenantFeatureFlagsArgs<ExtArgs>
+    entitlements?: boolean | Tenant$entitlementsArgs<ExtArgs>
+    usages?: boolean | Tenant$usagesArgs<ExtArgs>
     _count?: boolean | TenantCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["tenant"]>
 
@@ -2669,7 +2669,6 @@ export namespace Prisma {
     dbUrl?: boolean
     encryptionKeyReference?: boolean
     tier?: boolean
-    facilityType?: boolean
     region?: boolean
     status?: boolean
     suspensionReason?: boolean
@@ -2680,17 +2679,18 @@ export namespace Prisma {
     secondaryColor?: boolean
     trialEndsAt?: boolean
     enabledModules?: boolean
-    moduleConfig?: boolean
-    workflowCustomization?: boolean
-    complianceIsolation?: boolean
-    subscriptionQuotas?: boolean
-    billingConfig?: boolean
     queueConfig?: boolean
+    billingConfig?: boolean
     staffRoles?: boolean
     publicKeySpki?: boolean
     sharedSecret?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    complianceIsolation?: boolean
+    facilityType?: boolean
+    moduleConfig?: boolean
+    subscriptionQuotas?: boolean
+    workflowCustomization?: boolean
   }, ExtArgs["result"]["tenant"]>
 
   export type TenantSelectScalar = {
@@ -2700,7 +2700,6 @@ export namespace Prisma {
     dbUrl?: boolean
     encryptionKeyReference?: boolean
     tier?: boolean
-    facilityType?: boolean
     region?: boolean
     status?: boolean
     suspensionReason?: boolean
@@ -2711,27 +2710,28 @@ export namespace Prisma {
     secondaryColor?: boolean
     trialEndsAt?: boolean
     enabledModules?: boolean
-    moduleConfig?: boolean
-    workflowCustomization?: boolean
-    complianceIsolation?: boolean
-    subscriptionQuotas?: boolean
-    billingConfig?: boolean
     queueConfig?: boolean
+    billingConfig?: boolean
     staffRoles?: boolean
     publicKeySpki?: boolean
     sharedSecret?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    complianceIsolation?: boolean
+    facilityType?: boolean
+    moduleConfig?: boolean
+    subscriptionQuotas?: boolean
+    workflowCustomization?: boolean
   }
 
   export type TenantInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    entitlements?: boolean | Tenant$entitlementsArgs<ExtArgs>
-    payments?: boolean | Tenant$paymentsArgs<ExtArgs>
-    subscriptions?: boolean | Tenant$subscriptionsArgs<ExtArgs>
-    usages?: boolean | Tenant$usagesArgs<ExtArgs>
-    configAuditLogs?: boolean | Tenant$configAuditLogsArgs<ExtArgs>
     featureFlagOverrides?: boolean | Tenant$featureFlagOverridesArgs<ExtArgs>
+    subscriptions?: boolean | Tenant$subscriptionsArgs<ExtArgs>
+    payments?: boolean | Tenant$paymentsArgs<ExtArgs>
+    configAuditLogs?: boolean | Tenant$configAuditLogsArgs<ExtArgs>
     tenantFeatureFlags?: boolean | Tenant$tenantFeatureFlagsArgs<ExtArgs>
+    entitlements?: boolean | Tenant$entitlementsArgs<ExtArgs>
+    usages?: boolean | Tenant$usagesArgs<ExtArgs>
     _count?: boolean | TenantCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type TenantIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -2739,13 +2739,13 @@ export namespace Prisma {
   export type $TenantPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Tenant"
     objects: {
-      entitlements: Prisma.$TenantModulePayload<ExtArgs>[]
-      payments: Prisma.$SystemPaymentPayload<ExtArgs>[]
-      subscriptions: Prisma.$SubscriptionPayload<ExtArgs>[]
-      usages: Prisma.$TenantUsagePayload<ExtArgs>[]
-      configAuditLogs: Prisma.$TenantConfigAuditLogPayload<ExtArgs>[]
       featureFlagOverrides: Prisma.$FeatureFlagOverridePayload<ExtArgs>[]
+      subscriptions: Prisma.$SubscriptionPayload<ExtArgs>[]
+      payments: Prisma.$SystemPaymentPayload<ExtArgs>[]
+      configAuditLogs: Prisma.$TenantConfigAuditLogPayload<ExtArgs>[]
       tenantFeatureFlags: Prisma.$TenantFeatureFlagPayload<ExtArgs>[]
+      entitlements: Prisma.$TenantModulePayload<ExtArgs>[]
+      usages: Prisma.$TenantUsagePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2754,7 +2754,6 @@ export namespace Prisma {
       dbUrl: string
       encryptionKeyReference: string
       tier: $Enums.DeploymentTier
-      facilityType: $Enums.FacilityType
       region: string
       status: $Enums.TenantStatus
       suspensionReason: string | null
@@ -2765,17 +2764,18 @@ export namespace Prisma {
       secondaryColor: string | null
       trialEndsAt: Date | null
       enabledModules: Prisma.JsonValue
-      moduleConfig: Prisma.JsonValue
-      workflowCustomization: Prisma.JsonValue
-      complianceIsolation: Prisma.JsonValue
-      subscriptionQuotas: Prisma.JsonValue
-      billingConfig: Prisma.JsonValue | null
       queueConfig: Prisma.JsonValue | null
+      billingConfig: Prisma.JsonValue | null
       staffRoles: Prisma.JsonValue | null
       publicKeySpki: string | null
       sharedSecret: string | null
       createdAt: Date
       updatedAt: Date
+      complianceIsolation: Prisma.JsonValue
+      facilityType: $Enums.FacilityType
+      moduleConfig: Prisma.JsonValue
+      subscriptionQuotas: Prisma.JsonValue
+      workflowCustomization: Prisma.JsonValue
     }, ExtArgs["result"]["tenant"]>
     composites: {}
   }
@@ -3140,13 +3140,13 @@ export namespace Prisma {
    */
   export interface Prisma__TenantClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    entitlements<T extends Tenant$entitlementsArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$entitlementsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TenantModulePayload<ExtArgs>, T, "findMany"> | Null>
-    payments<T extends Tenant$paymentsArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SystemPaymentPayload<ExtArgs>, T, "findMany"> | Null>
-    subscriptions<T extends Tenant$subscriptionsArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$subscriptionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SubscriptionPayload<ExtArgs>, T, "findMany"> | Null>
-    usages<T extends Tenant$usagesArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$usagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TenantUsagePayload<ExtArgs>, T, "findMany"> | Null>
-    configAuditLogs<T extends Tenant$configAuditLogsArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$configAuditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TenantConfigAuditLogPayload<ExtArgs>, T, "findMany"> | Null>
     featureFlagOverrides<T extends Tenant$featureFlagOverridesArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$featureFlagOverridesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FeatureFlagOverridePayload<ExtArgs>, T, "findMany"> | Null>
+    subscriptions<T extends Tenant$subscriptionsArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$subscriptionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SubscriptionPayload<ExtArgs>, T, "findMany"> | Null>
+    payments<T extends Tenant$paymentsArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SystemPaymentPayload<ExtArgs>, T, "findMany"> | Null>
+    configAuditLogs<T extends Tenant$configAuditLogsArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$configAuditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TenantConfigAuditLogPayload<ExtArgs>, T, "findMany"> | Null>
     tenantFeatureFlags<T extends Tenant$tenantFeatureFlagsArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$tenantFeatureFlagsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TenantFeatureFlagPayload<ExtArgs>, T, "findMany"> | Null>
+    entitlements<T extends Tenant$entitlementsArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$entitlementsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TenantModulePayload<ExtArgs>, T, "findMany"> | Null>
+    usages<T extends Tenant$usagesArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$usagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TenantUsagePayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3182,7 +3182,6 @@ export namespace Prisma {
     readonly dbUrl: FieldRef<"Tenant", 'String'>
     readonly encryptionKeyReference: FieldRef<"Tenant", 'String'>
     readonly tier: FieldRef<"Tenant", 'DeploymentTier'>
-    readonly facilityType: FieldRef<"Tenant", 'FacilityType'>
     readonly region: FieldRef<"Tenant", 'String'>
     readonly status: FieldRef<"Tenant", 'TenantStatus'>
     readonly suspensionReason: FieldRef<"Tenant", 'String'>
@@ -3193,17 +3192,18 @@ export namespace Prisma {
     readonly secondaryColor: FieldRef<"Tenant", 'String'>
     readonly trialEndsAt: FieldRef<"Tenant", 'DateTime'>
     readonly enabledModules: FieldRef<"Tenant", 'Json'>
-    readonly moduleConfig: FieldRef<"Tenant", 'Json'>
-    readonly workflowCustomization: FieldRef<"Tenant", 'Json'>
-    readonly complianceIsolation: FieldRef<"Tenant", 'Json'>
-    readonly subscriptionQuotas: FieldRef<"Tenant", 'Json'>
-    readonly billingConfig: FieldRef<"Tenant", 'Json'>
     readonly queueConfig: FieldRef<"Tenant", 'Json'>
+    readonly billingConfig: FieldRef<"Tenant", 'Json'>
     readonly staffRoles: FieldRef<"Tenant", 'Json'>
     readonly publicKeySpki: FieldRef<"Tenant", 'String'>
     readonly sharedSecret: FieldRef<"Tenant", 'String'>
     readonly createdAt: FieldRef<"Tenant", 'DateTime'>
     readonly updatedAt: FieldRef<"Tenant", 'DateTime'>
+    readonly complianceIsolation: FieldRef<"Tenant", 'Json'>
+    readonly facilityType: FieldRef<"Tenant", 'FacilityType'>
+    readonly moduleConfig: FieldRef<"Tenant", 'Json'>
+    readonly subscriptionQuotas: FieldRef<"Tenant", 'Json'>
+    readonly workflowCustomization: FieldRef<"Tenant", 'Json'>
   }
     
 
@@ -3518,43 +3518,23 @@ export namespace Prisma {
   }
 
   /**
-   * Tenant.entitlements
+   * Tenant.featureFlagOverrides
    */
-  export type Tenant$entitlementsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Tenant$featureFlagOverridesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the TenantModule
+     * Select specific fields to fetch from the FeatureFlagOverride
      */
-    select?: TenantModuleSelect<ExtArgs> | null
+    select?: FeatureFlagOverrideSelect<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: TenantModuleInclude<ExtArgs> | null
-    where?: TenantModuleWhereInput
-    orderBy?: TenantModuleOrderByWithRelationInput | TenantModuleOrderByWithRelationInput[]
-    cursor?: TenantModuleWhereUniqueInput
+    include?: FeatureFlagOverrideInclude<ExtArgs> | null
+    where?: FeatureFlagOverrideWhereInput
+    orderBy?: FeatureFlagOverrideOrderByWithRelationInput | FeatureFlagOverrideOrderByWithRelationInput[]
+    cursor?: FeatureFlagOverrideWhereUniqueInput
     take?: number
     skip?: number
-    distinct?: TenantModuleScalarFieldEnum | TenantModuleScalarFieldEnum[]
-  }
-
-  /**
-   * Tenant.payments
-   */
-  export type Tenant$paymentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SystemPayment
-     */
-    select?: SystemPaymentSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SystemPaymentInclude<ExtArgs> | null
-    where?: SystemPaymentWhereInput
-    orderBy?: SystemPaymentOrderByWithRelationInput | SystemPaymentOrderByWithRelationInput[]
-    cursor?: SystemPaymentWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: SystemPaymentScalarFieldEnum | SystemPaymentScalarFieldEnum[]
+    distinct?: FeatureFlagOverrideScalarFieldEnum | FeatureFlagOverrideScalarFieldEnum[]
   }
 
   /**
@@ -3578,23 +3558,23 @@ export namespace Prisma {
   }
 
   /**
-   * Tenant.usages
+   * Tenant.payments
    */
-  export type Tenant$usagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Tenant$paymentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the TenantUsage
+     * Select specific fields to fetch from the SystemPayment
      */
-    select?: TenantUsageSelect<ExtArgs> | null
+    select?: SystemPaymentSelect<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: TenantUsageInclude<ExtArgs> | null
-    where?: TenantUsageWhereInput
-    orderBy?: TenantUsageOrderByWithRelationInput | TenantUsageOrderByWithRelationInput[]
-    cursor?: TenantUsageWhereUniqueInput
+    include?: SystemPaymentInclude<ExtArgs> | null
+    where?: SystemPaymentWhereInput
+    orderBy?: SystemPaymentOrderByWithRelationInput | SystemPaymentOrderByWithRelationInput[]
+    cursor?: SystemPaymentWhereUniqueInput
     take?: number
     skip?: number
-    distinct?: TenantUsageScalarFieldEnum | TenantUsageScalarFieldEnum[]
+    distinct?: SystemPaymentScalarFieldEnum | SystemPaymentScalarFieldEnum[]
   }
 
   /**
@@ -3618,26 +3598,6 @@ export namespace Prisma {
   }
 
   /**
-   * Tenant.featureFlagOverrides
-   */
-  export type Tenant$featureFlagOverridesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the FeatureFlagOverride
-     */
-    select?: FeatureFlagOverrideSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: FeatureFlagOverrideInclude<ExtArgs> | null
-    where?: FeatureFlagOverrideWhereInput
-    orderBy?: FeatureFlagOverrideOrderByWithRelationInput | FeatureFlagOverrideOrderByWithRelationInput[]
-    cursor?: FeatureFlagOverrideWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: FeatureFlagOverrideScalarFieldEnum | FeatureFlagOverrideScalarFieldEnum[]
-  }
-
-  /**
    * Tenant.tenantFeatureFlags
    */
   export type Tenant$tenantFeatureFlagsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3655,6 +3615,46 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: TenantFeatureFlagScalarFieldEnum | TenantFeatureFlagScalarFieldEnum[]
+  }
+
+  /**
+   * Tenant.entitlements
+   */
+  export type Tenant$entitlementsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantModule
+     */
+    select?: TenantModuleSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantModuleInclude<ExtArgs> | null
+    where?: TenantModuleWhereInput
+    orderBy?: TenantModuleOrderByWithRelationInput | TenantModuleOrderByWithRelationInput[]
+    cursor?: TenantModuleWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TenantModuleScalarFieldEnum | TenantModuleScalarFieldEnum[]
+  }
+
+  /**
+   * Tenant.usages
+   */
+  export type Tenant$usagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantUsage
+     */
+    select?: TenantUsageSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantUsageInclude<ExtArgs> | null
+    where?: TenantUsageWhereInput
+    orderBy?: TenantUsageOrderByWithRelationInput | TenantUsageOrderByWithRelationInput[]
+    cursor?: TenantUsageWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TenantUsageScalarFieldEnum | TenantUsageScalarFieldEnum[]
   }
 
   /**
@@ -3898,8 +3898,8 @@ export namespace Prisma {
     dependencies?: boolean
     events?: boolean
     permissions?: boolean
-    tenants?: boolean | Module$tenantsArgs<ExtArgs>
     featureFlags?: boolean | Module$featureFlagsArgs<ExtArgs>
+    tenants?: boolean | Module$tenantsArgs<ExtArgs>
     _count?: boolean | ModuleCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["module"]>
 
@@ -3930,8 +3930,8 @@ export namespace Prisma {
   }
 
   export type ModuleInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    tenants?: boolean | Module$tenantsArgs<ExtArgs>
     featureFlags?: boolean | Module$featureFlagsArgs<ExtArgs>
+    tenants?: boolean | Module$tenantsArgs<ExtArgs>
     _count?: boolean | ModuleCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ModuleIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -3939,8 +3939,8 @@ export namespace Prisma {
   export type $ModulePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Module"
     objects: {
-      tenants: Prisma.$TenantModulePayload<ExtArgs>[]
       featureFlags: Prisma.$FeatureFlagPayload<ExtArgs>[]
+      tenants: Prisma.$TenantModulePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -4317,8 +4317,8 @@ export namespace Prisma {
    */
   export interface Prisma__ModuleClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    tenants<T extends Module$tenantsArgs<ExtArgs> = {}>(args?: Subset<T, Module$tenantsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TenantModulePayload<ExtArgs>, T, "findMany"> | Null>
     featureFlags<T extends Module$featureFlagsArgs<ExtArgs> = {}>(args?: Subset<T, Module$featureFlagsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FeatureFlagPayload<ExtArgs>, T, "findMany"> | Null>
+    tenants<T extends Module$tenantsArgs<ExtArgs> = {}>(args?: Subset<T, Module$tenantsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TenantModulePayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4672,26 +4672,6 @@ export namespace Prisma {
   }
 
   /**
-   * Module.tenants
-   */
-  export type Module$tenantsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the TenantModule
-     */
-    select?: TenantModuleSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TenantModuleInclude<ExtArgs> | null
-    where?: TenantModuleWhereInput
-    orderBy?: TenantModuleOrderByWithRelationInput | TenantModuleOrderByWithRelationInput[]
-    cursor?: TenantModuleWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: TenantModuleScalarFieldEnum | TenantModuleScalarFieldEnum[]
-  }
-
-  /**
    * Module.featureFlags
    */
   export type Module$featureFlagsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4709,6 +4689,26 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: FeatureFlagScalarFieldEnum | FeatureFlagScalarFieldEnum[]
+  }
+
+  /**
+   * Module.tenants
+   */
+  export type Module$tenantsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantModule
+     */
+    select?: TenantModuleSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantModuleInclude<ExtArgs> | null
+    where?: TenantModuleWhereInput
+    orderBy?: TenantModuleOrderByWithRelationInput | TenantModuleOrderByWithRelationInput[]
+    cursor?: TenantModuleWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TenantModuleScalarFieldEnum | TenantModuleScalarFieldEnum[]
   }
 
   /**
@@ -4906,8 +4906,8 @@ export namespace Prisma {
     validUntil?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    tenant?: boolean | TenantDefaultArgs<ExtArgs>
     module?: boolean | ModuleDefaultArgs<ExtArgs>
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["tenantModule"]>
 
   export type TenantModuleSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -4918,8 +4918,8 @@ export namespace Prisma {
     validUntil?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    tenant?: boolean | TenantDefaultArgs<ExtArgs>
     module?: boolean | ModuleDefaultArgs<ExtArgs>
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["tenantModule"]>
 
   export type TenantModuleSelectScalar = {
@@ -4933,19 +4933,19 @@ export namespace Prisma {
   }
 
   export type TenantModuleInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    tenant?: boolean | TenantDefaultArgs<ExtArgs>
     module?: boolean | ModuleDefaultArgs<ExtArgs>
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
   }
   export type TenantModuleIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    tenant?: boolean | TenantDefaultArgs<ExtArgs>
     module?: boolean | ModuleDefaultArgs<ExtArgs>
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
   }
 
   export type $TenantModulePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "TenantModule"
     objects: {
-      tenant: Prisma.$TenantPayload<ExtArgs>
       module: Prisma.$ModulePayload<ExtArgs>
+      tenant: Prisma.$TenantPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -5319,8 +5319,8 @@ export namespace Prisma {
    */
   export interface Prisma__TenantModuleClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    tenant<T extends TenantDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TenantDefaultArgs<ExtArgs>>): Prisma__TenantClient<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
     module<T extends ModuleDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ModuleDefaultArgs<ExtArgs>>): Prisma__ModuleClient<$Result.GetResult<Prisma.$ModulePayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    tenant<T extends TenantDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TenantDefaultArgs<ExtArgs>>): Prisma__TenantClient<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -10077,8 +10077,8 @@ export namespace Prisma {
     autoRenew?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    tenant?: boolean | TenantDefaultArgs<ExtArgs>
     plan?: boolean | PlanDefaultArgs<ExtArgs>
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
     usages?: boolean | Subscription$usagesArgs<ExtArgs>
     _count?: boolean | SubscriptionCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["subscription"]>
@@ -10094,8 +10094,8 @@ export namespace Prisma {
     autoRenew?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    tenant?: boolean | TenantDefaultArgs<ExtArgs>
     plan?: boolean | PlanDefaultArgs<ExtArgs>
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["subscription"]>
 
   export type SubscriptionSelectScalar = {
@@ -10112,21 +10112,21 @@ export namespace Prisma {
   }
 
   export type SubscriptionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    tenant?: boolean | TenantDefaultArgs<ExtArgs>
     plan?: boolean | PlanDefaultArgs<ExtArgs>
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
     usages?: boolean | Subscription$usagesArgs<ExtArgs>
     _count?: boolean | SubscriptionCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type SubscriptionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    tenant?: boolean | TenantDefaultArgs<ExtArgs>
     plan?: boolean | PlanDefaultArgs<ExtArgs>
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
   }
 
   export type $SubscriptionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Subscription"
     objects: {
-      tenant: Prisma.$TenantPayload<ExtArgs>
       plan: Prisma.$PlanPayload<ExtArgs>
+      tenant: Prisma.$TenantPayload<ExtArgs>
       usages: Prisma.$TenantUsagePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -10504,8 +10504,8 @@ export namespace Prisma {
    */
   export interface Prisma__SubscriptionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    tenant<T extends TenantDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TenantDefaultArgs<ExtArgs>>): Prisma__TenantClient<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
     plan<T extends PlanDefaultArgs<ExtArgs> = {}>(args?: Subset<T, PlanDefaultArgs<ExtArgs>>): Prisma__PlanClient<$Result.GetResult<Prisma.$PlanPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    tenant<T extends TenantDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TenantDefaultArgs<ExtArgs>>): Prisma__TenantClient<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
     usages<T extends Subscription$usagesArgs<ExtArgs> = {}>(args?: Subset<T, Subscription$usagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TenantUsagePayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -12050,8 +12050,8 @@ export namespace Prisma {
     apiCallsCount?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    tenant?: boolean | TenantDefaultArgs<ExtArgs>
     subscription?: boolean | SubscriptionDefaultArgs<ExtArgs>
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["tenantUsage"]>
 
   export type TenantUsageSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -12065,8 +12065,8 @@ export namespace Prisma {
     apiCallsCount?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    tenant?: boolean | TenantDefaultArgs<ExtArgs>
     subscription?: boolean | SubscriptionDefaultArgs<ExtArgs>
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["tenantUsage"]>
 
   export type TenantUsageSelectScalar = {
@@ -12083,19 +12083,19 @@ export namespace Prisma {
   }
 
   export type TenantUsageInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    tenant?: boolean | TenantDefaultArgs<ExtArgs>
     subscription?: boolean | SubscriptionDefaultArgs<ExtArgs>
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
   }
   export type TenantUsageIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    tenant?: boolean | TenantDefaultArgs<ExtArgs>
     subscription?: boolean | SubscriptionDefaultArgs<ExtArgs>
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
   }
 
   export type $TenantUsagePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "TenantUsage"
     objects: {
-      tenant: Prisma.$TenantPayload<ExtArgs>
       subscription: Prisma.$SubscriptionPayload<ExtArgs>
+      tenant: Prisma.$TenantPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -12472,8 +12472,8 @@ export namespace Prisma {
    */
   export interface Prisma__TenantUsageClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    tenant<T extends TenantDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TenantDefaultArgs<ExtArgs>>): Prisma__TenantClient<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
     subscription<T extends SubscriptionDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SubscriptionDefaultArgs<ExtArgs>>): Prisma__SubscriptionClient<$Result.GetResult<Prisma.$SubscriptionPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    tenant<T extends TenantDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TenantDefaultArgs<ExtArgs>>): Prisma__TenantClient<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -13955,8 +13955,8 @@ export namespace Prisma {
     description?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    module?: boolean | FeatureFlag$moduleArgs<ExtArgs>
     overrides?: boolean | FeatureFlag$overridesArgs<ExtArgs>
+    module?: boolean | FeatureFlag$moduleArgs<ExtArgs>
     tenantFlags?: boolean | FeatureFlag$tenantFlagsArgs<ExtArgs>
     _count?: boolean | FeatureFlagCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["featureFlag"]>
@@ -13985,8 +13985,8 @@ export namespace Prisma {
   }
 
   export type FeatureFlagInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    module?: boolean | FeatureFlag$moduleArgs<ExtArgs>
     overrides?: boolean | FeatureFlag$overridesArgs<ExtArgs>
+    module?: boolean | FeatureFlag$moduleArgs<ExtArgs>
     tenantFlags?: boolean | FeatureFlag$tenantFlagsArgs<ExtArgs>
     _count?: boolean | FeatureFlagCountOutputTypeDefaultArgs<ExtArgs>
   }
@@ -13997,8 +13997,8 @@ export namespace Prisma {
   export type $FeatureFlagPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "FeatureFlag"
     objects: {
-      module: Prisma.$ModulePayload<ExtArgs> | null
       overrides: Prisma.$FeatureFlagOverridePayload<ExtArgs>[]
+      module: Prisma.$ModulePayload<ExtArgs> | null
       tenantFlags: Prisma.$TenantFeatureFlagPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -14374,8 +14374,8 @@ export namespace Prisma {
    */
   export interface Prisma__FeatureFlagClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    module<T extends FeatureFlag$moduleArgs<ExtArgs> = {}>(args?: Subset<T, FeatureFlag$moduleArgs<ExtArgs>>): Prisma__ModuleClient<$Result.GetResult<Prisma.$ModulePayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     overrides<T extends FeatureFlag$overridesArgs<ExtArgs> = {}>(args?: Subset<T, FeatureFlag$overridesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FeatureFlagOverridePayload<ExtArgs>, T, "findMany"> | Null>
+    module<T extends FeatureFlag$moduleArgs<ExtArgs> = {}>(args?: Subset<T, FeatureFlag$moduleArgs<ExtArgs>>): Prisma__ModuleClient<$Result.GetResult<Prisma.$ModulePayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     tenantFlags<T extends FeatureFlag$tenantFlagsArgs<ExtArgs> = {}>(args?: Subset<T, FeatureFlag$tenantFlagsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TenantFeatureFlagPayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -14732,21 +14732,6 @@ export namespace Prisma {
   }
 
   /**
-   * FeatureFlag.module
-   */
-  export type FeatureFlag$moduleArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Module
-     */
-    select?: ModuleSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ModuleInclude<ExtArgs> | null
-    where?: ModuleWhereInput
-  }
-
-  /**
    * FeatureFlag.overrides
    */
   export type FeatureFlag$overridesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -14764,6 +14749,21 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: FeatureFlagOverrideScalarFieldEnum | FeatureFlagOverrideScalarFieldEnum[]
+  }
+
+  /**
+   * FeatureFlag.module
+   */
+  export type FeatureFlag$moduleArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Module
+     */
+    select?: ModuleSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ModuleInclude<ExtArgs> | null
+    where?: ModuleWhereInput
   }
 
   /**
@@ -16936,8 +16936,8 @@ export namespace Prisma {
     enabled?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    tenant?: boolean | TenantDefaultArgs<ExtArgs>
     flag?: boolean | FeatureFlagDefaultArgs<ExtArgs>
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["tenantFeatureFlag"]>
 
   export type TenantFeatureFlagSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -16947,8 +16947,8 @@ export namespace Prisma {
     enabled?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    tenant?: boolean | TenantDefaultArgs<ExtArgs>
     flag?: boolean | FeatureFlagDefaultArgs<ExtArgs>
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["tenantFeatureFlag"]>
 
   export type TenantFeatureFlagSelectScalar = {
@@ -16961,19 +16961,19 @@ export namespace Prisma {
   }
 
   export type TenantFeatureFlagInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    tenant?: boolean | TenantDefaultArgs<ExtArgs>
     flag?: boolean | FeatureFlagDefaultArgs<ExtArgs>
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
   }
   export type TenantFeatureFlagIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    tenant?: boolean | TenantDefaultArgs<ExtArgs>
     flag?: boolean | FeatureFlagDefaultArgs<ExtArgs>
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
   }
 
   export type $TenantFeatureFlagPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "TenantFeatureFlag"
     objects: {
-      tenant: Prisma.$TenantPayload<ExtArgs>
       flag: Prisma.$FeatureFlagPayload<ExtArgs>
+      tenant: Prisma.$TenantPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -17346,8 +17346,8 @@ export namespace Prisma {
    */
   export interface Prisma__TenantFeatureFlagClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    tenant<T extends TenantDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TenantDefaultArgs<ExtArgs>>): Prisma__TenantClient<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
     flag<T extends FeatureFlagDefaultArgs<ExtArgs> = {}>(args?: Subset<T, FeatureFlagDefaultArgs<ExtArgs>>): Prisma__FeatureFlagClient<$Result.GetResult<Prisma.$FeatureFlagPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    tenant<T extends TenantDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TenantDefaultArgs<ExtArgs>>): Prisma__TenantClient<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -17736,7 +17736,6 @@ export namespace Prisma {
     dbUrl: 'dbUrl',
     encryptionKeyReference: 'encryptionKeyReference',
     tier: 'tier',
-    facilityType: 'facilityType',
     region: 'region',
     status: 'status',
     suspensionReason: 'suspensionReason',
@@ -17747,17 +17746,18 @@ export namespace Prisma {
     secondaryColor: 'secondaryColor',
     trialEndsAt: 'trialEndsAt',
     enabledModules: 'enabledModules',
-    moduleConfig: 'moduleConfig',
-    workflowCustomization: 'workflowCustomization',
-    complianceIsolation: 'complianceIsolation',
-    subscriptionQuotas: 'subscriptionQuotas',
-    billingConfig: 'billingConfig',
     queueConfig: 'queueConfig',
+    billingConfig: 'billingConfig',
     staffRoles: 'staffRoles',
     publicKeySpki: 'publicKeySpki',
     sharedSecret: 'sharedSecret',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    complianceIsolation: 'complianceIsolation',
+    facilityType: 'facilityType',
+    moduleConfig: 'moduleConfig',
+    subscriptionQuotas: 'subscriptionQuotas',
+    workflowCustomization: 'workflowCustomization'
   };
 
   export type TenantScalarFieldEnum = (typeof TenantScalarFieldEnum)[keyof typeof TenantScalarFieldEnum]
@@ -18071,20 +18071,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'FacilityType'
-   */
-  export type EnumFacilityTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FacilityType'>
-    
-
-
-  /**
-   * Reference to a field of type 'FacilityType[]'
-   */
-  export type ListEnumFacilityTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FacilityType[]'>
-    
-
-
-  /**
    * Reference to a field of type 'TenantStatus'
    */
   export type EnumTenantStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TenantStatus'>
@@ -18116,6 +18102,20 @@ export namespace Prisma {
    * Reference to a field of type 'Json'
    */
   export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+  /**
+   * Reference to a field of type 'FacilityType'
+   */
+  export type EnumFacilityTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FacilityType'>
+    
+
+
+  /**
+   * Reference to a field of type 'FacilityType[]'
+   */
+  export type ListEnumFacilityTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FacilityType[]'>
     
 
 
@@ -18195,7 +18195,6 @@ export namespace Prisma {
     dbUrl?: StringFilter<"Tenant"> | string
     encryptionKeyReference?: StringFilter<"Tenant"> | string
     tier?: EnumDeploymentTierFilter<"Tenant"> | $Enums.DeploymentTier
-    facilityType?: EnumFacilityTypeFilter<"Tenant"> | $Enums.FacilityType
     region?: StringFilter<"Tenant"> | string
     status?: EnumTenantStatusFilter<"Tenant"> | $Enums.TenantStatus
     suspensionReason?: StringNullableFilter<"Tenant"> | string | null
@@ -18206,24 +18205,25 @@ export namespace Prisma {
     secondaryColor?: StringNullableFilter<"Tenant"> | string | null
     trialEndsAt?: DateTimeNullableFilter<"Tenant"> | Date | string | null
     enabledModules?: JsonFilter<"Tenant">
-    moduleConfig?: JsonFilter<"Tenant">
-    workflowCustomization?: JsonFilter<"Tenant">
-    complianceIsolation?: JsonFilter<"Tenant">
-    subscriptionQuotas?: JsonFilter<"Tenant">
-    billingConfig?: JsonNullableFilter<"Tenant">
     queueConfig?: JsonNullableFilter<"Tenant">
+    billingConfig?: JsonNullableFilter<"Tenant">
     staffRoles?: JsonNullableFilter<"Tenant">
     publicKeySpki?: StringNullableFilter<"Tenant"> | string | null
     sharedSecret?: StringNullableFilter<"Tenant"> | string | null
     createdAt?: DateTimeFilter<"Tenant"> | Date | string
     updatedAt?: DateTimeFilter<"Tenant"> | Date | string
-    entitlements?: TenantModuleListRelationFilter
-    payments?: SystemPaymentListRelationFilter
-    subscriptions?: SubscriptionListRelationFilter
-    usages?: TenantUsageListRelationFilter
-    configAuditLogs?: TenantConfigAuditLogListRelationFilter
+    complianceIsolation?: JsonFilter<"Tenant">
+    facilityType?: EnumFacilityTypeFilter<"Tenant"> | $Enums.FacilityType
+    moduleConfig?: JsonFilter<"Tenant">
+    subscriptionQuotas?: JsonFilter<"Tenant">
+    workflowCustomization?: JsonFilter<"Tenant">
     featureFlagOverrides?: FeatureFlagOverrideListRelationFilter
+    subscriptions?: SubscriptionListRelationFilter
+    payments?: SystemPaymentListRelationFilter
+    configAuditLogs?: TenantConfigAuditLogListRelationFilter
     tenantFeatureFlags?: TenantFeatureFlagListRelationFilter
+    entitlements?: TenantModuleListRelationFilter
+    usages?: TenantUsageListRelationFilter
   }
 
   export type TenantOrderByWithRelationInput = {
@@ -18233,7 +18233,6 @@ export namespace Prisma {
     dbUrl?: SortOrder
     encryptionKeyReference?: SortOrder
     tier?: SortOrder
-    facilityType?: SortOrder
     region?: SortOrder
     status?: SortOrder
     suspensionReason?: SortOrderInput | SortOrder
@@ -18244,24 +18243,25 @@ export namespace Prisma {
     secondaryColor?: SortOrderInput | SortOrder
     trialEndsAt?: SortOrderInput | SortOrder
     enabledModules?: SortOrder
-    moduleConfig?: SortOrder
-    workflowCustomization?: SortOrder
-    complianceIsolation?: SortOrder
-    subscriptionQuotas?: SortOrder
-    billingConfig?: SortOrderInput | SortOrder
     queueConfig?: SortOrderInput | SortOrder
+    billingConfig?: SortOrderInput | SortOrder
     staffRoles?: SortOrderInput | SortOrder
     publicKeySpki?: SortOrderInput | SortOrder
     sharedSecret?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    entitlements?: TenantModuleOrderByRelationAggregateInput
-    payments?: SystemPaymentOrderByRelationAggregateInput
-    subscriptions?: SubscriptionOrderByRelationAggregateInput
-    usages?: TenantUsageOrderByRelationAggregateInput
-    configAuditLogs?: TenantConfigAuditLogOrderByRelationAggregateInput
+    complianceIsolation?: SortOrder
+    facilityType?: SortOrder
+    moduleConfig?: SortOrder
+    subscriptionQuotas?: SortOrder
+    workflowCustomization?: SortOrder
     featureFlagOverrides?: FeatureFlagOverrideOrderByRelationAggregateInput
+    subscriptions?: SubscriptionOrderByRelationAggregateInput
+    payments?: SystemPaymentOrderByRelationAggregateInput
+    configAuditLogs?: TenantConfigAuditLogOrderByRelationAggregateInput
     tenantFeatureFlags?: TenantFeatureFlagOrderByRelationAggregateInput
+    entitlements?: TenantModuleOrderByRelationAggregateInput
+    usages?: TenantUsageOrderByRelationAggregateInput
   }
 
   export type TenantWhereUniqueInput = Prisma.AtLeast<{
@@ -18274,7 +18274,6 @@ export namespace Prisma {
     dbUrl?: StringFilter<"Tenant"> | string
     encryptionKeyReference?: StringFilter<"Tenant"> | string
     tier?: EnumDeploymentTierFilter<"Tenant"> | $Enums.DeploymentTier
-    facilityType?: EnumFacilityTypeFilter<"Tenant"> | $Enums.FacilityType
     region?: StringFilter<"Tenant"> | string
     status?: EnumTenantStatusFilter<"Tenant"> | $Enums.TenantStatus
     suspensionReason?: StringNullableFilter<"Tenant"> | string | null
@@ -18285,24 +18284,25 @@ export namespace Prisma {
     secondaryColor?: StringNullableFilter<"Tenant"> | string | null
     trialEndsAt?: DateTimeNullableFilter<"Tenant"> | Date | string | null
     enabledModules?: JsonFilter<"Tenant">
-    moduleConfig?: JsonFilter<"Tenant">
-    workflowCustomization?: JsonFilter<"Tenant">
-    complianceIsolation?: JsonFilter<"Tenant">
-    subscriptionQuotas?: JsonFilter<"Tenant">
-    billingConfig?: JsonNullableFilter<"Tenant">
     queueConfig?: JsonNullableFilter<"Tenant">
+    billingConfig?: JsonNullableFilter<"Tenant">
     staffRoles?: JsonNullableFilter<"Tenant">
     publicKeySpki?: StringNullableFilter<"Tenant"> | string | null
     sharedSecret?: StringNullableFilter<"Tenant"> | string | null
     createdAt?: DateTimeFilter<"Tenant"> | Date | string
     updatedAt?: DateTimeFilter<"Tenant"> | Date | string
-    entitlements?: TenantModuleListRelationFilter
-    payments?: SystemPaymentListRelationFilter
-    subscriptions?: SubscriptionListRelationFilter
-    usages?: TenantUsageListRelationFilter
-    configAuditLogs?: TenantConfigAuditLogListRelationFilter
+    complianceIsolation?: JsonFilter<"Tenant">
+    facilityType?: EnumFacilityTypeFilter<"Tenant"> | $Enums.FacilityType
+    moduleConfig?: JsonFilter<"Tenant">
+    subscriptionQuotas?: JsonFilter<"Tenant">
+    workflowCustomization?: JsonFilter<"Tenant">
     featureFlagOverrides?: FeatureFlagOverrideListRelationFilter
+    subscriptions?: SubscriptionListRelationFilter
+    payments?: SystemPaymentListRelationFilter
+    configAuditLogs?: TenantConfigAuditLogListRelationFilter
     tenantFeatureFlags?: TenantFeatureFlagListRelationFilter
+    entitlements?: TenantModuleListRelationFilter
+    usages?: TenantUsageListRelationFilter
   }, "id" | "slug">
 
   export type TenantOrderByWithAggregationInput = {
@@ -18312,7 +18312,6 @@ export namespace Prisma {
     dbUrl?: SortOrder
     encryptionKeyReference?: SortOrder
     tier?: SortOrder
-    facilityType?: SortOrder
     region?: SortOrder
     status?: SortOrder
     suspensionReason?: SortOrderInput | SortOrder
@@ -18323,17 +18322,18 @@ export namespace Prisma {
     secondaryColor?: SortOrderInput | SortOrder
     trialEndsAt?: SortOrderInput | SortOrder
     enabledModules?: SortOrder
-    moduleConfig?: SortOrder
-    workflowCustomization?: SortOrder
-    complianceIsolation?: SortOrder
-    subscriptionQuotas?: SortOrder
-    billingConfig?: SortOrderInput | SortOrder
     queueConfig?: SortOrderInput | SortOrder
+    billingConfig?: SortOrderInput | SortOrder
     staffRoles?: SortOrderInput | SortOrder
     publicKeySpki?: SortOrderInput | SortOrder
     sharedSecret?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    complianceIsolation?: SortOrder
+    facilityType?: SortOrder
+    moduleConfig?: SortOrder
+    subscriptionQuotas?: SortOrder
+    workflowCustomization?: SortOrder
     _count?: TenantCountOrderByAggregateInput
     _max?: TenantMaxOrderByAggregateInput
     _min?: TenantMinOrderByAggregateInput
@@ -18349,7 +18349,6 @@ export namespace Prisma {
     dbUrl?: StringWithAggregatesFilter<"Tenant"> | string
     encryptionKeyReference?: StringWithAggregatesFilter<"Tenant"> | string
     tier?: EnumDeploymentTierWithAggregatesFilter<"Tenant"> | $Enums.DeploymentTier
-    facilityType?: EnumFacilityTypeWithAggregatesFilter<"Tenant"> | $Enums.FacilityType
     region?: StringWithAggregatesFilter<"Tenant"> | string
     status?: EnumTenantStatusWithAggregatesFilter<"Tenant"> | $Enums.TenantStatus
     suspensionReason?: StringNullableWithAggregatesFilter<"Tenant"> | string | null
@@ -18360,17 +18359,18 @@ export namespace Prisma {
     secondaryColor?: StringNullableWithAggregatesFilter<"Tenant"> | string | null
     trialEndsAt?: DateTimeNullableWithAggregatesFilter<"Tenant"> | Date | string | null
     enabledModules?: JsonWithAggregatesFilter<"Tenant">
-    moduleConfig?: JsonWithAggregatesFilter<"Tenant">
-    workflowCustomization?: JsonWithAggregatesFilter<"Tenant">
-    complianceIsolation?: JsonWithAggregatesFilter<"Tenant">
-    subscriptionQuotas?: JsonWithAggregatesFilter<"Tenant">
-    billingConfig?: JsonNullableWithAggregatesFilter<"Tenant">
     queueConfig?: JsonNullableWithAggregatesFilter<"Tenant">
+    billingConfig?: JsonNullableWithAggregatesFilter<"Tenant">
     staffRoles?: JsonNullableWithAggregatesFilter<"Tenant">
     publicKeySpki?: StringNullableWithAggregatesFilter<"Tenant"> | string | null
     sharedSecret?: StringNullableWithAggregatesFilter<"Tenant"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Tenant"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Tenant"> | Date | string
+    complianceIsolation?: JsonWithAggregatesFilter<"Tenant">
+    facilityType?: EnumFacilityTypeWithAggregatesFilter<"Tenant"> | $Enums.FacilityType
+    moduleConfig?: JsonWithAggregatesFilter<"Tenant">
+    subscriptionQuotas?: JsonWithAggregatesFilter<"Tenant">
+    workflowCustomization?: JsonWithAggregatesFilter<"Tenant">
   }
 
   export type ModuleWhereInput = {
@@ -18387,8 +18387,8 @@ export namespace Prisma {
     dependencies?: JsonFilter<"Module">
     events?: JsonFilter<"Module">
     permissions?: JsonFilter<"Module">
-    tenants?: TenantModuleListRelationFilter
     featureFlags?: FeatureFlagListRelationFilter
+    tenants?: TenantModuleListRelationFilter
   }
 
   export type ModuleOrderByWithRelationInput = {
@@ -18402,8 +18402,8 @@ export namespace Prisma {
     dependencies?: SortOrder
     events?: SortOrder
     permissions?: SortOrder
-    tenants?: TenantModuleOrderByRelationAggregateInput
     featureFlags?: FeatureFlagOrderByRelationAggregateInput
+    tenants?: TenantModuleOrderByRelationAggregateInput
   }
 
   export type ModuleWhereUniqueInput = Prisma.AtLeast<{
@@ -18420,8 +18420,8 @@ export namespace Prisma {
     dependencies?: JsonFilter<"Module">
     events?: JsonFilter<"Module">
     permissions?: JsonFilter<"Module">
-    tenants?: TenantModuleListRelationFilter
     featureFlags?: FeatureFlagListRelationFilter
+    tenants?: TenantModuleListRelationFilter
   }, "id" | "code">
 
   export type ModuleOrderByWithAggregationInput = {
@@ -18469,8 +18469,8 @@ export namespace Prisma {
     validUntil?: DateTimeNullableFilter<"TenantModule"> | Date | string | null
     createdAt?: DateTimeFilter<"TenantModule"> | Date | string
     updatedAt?: DateTimeFilter<"TenantModule"> | Date | string
-    tenant?: XOR<TenantRelationFilter, TenantWhereInput>
     module?: XOR<ModuleRelationFilter, ModuleWhereInput>
+    tenant?: XOR<TenantRelationFilter, TenantWhereInput>
   }
 
   export type TenantModuleOrderByWithRelationInput = {
@@ -18481,8 +18481,8 @@ export namespace Prisma {
     validUntil?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    tenant?: TenantOrderByWithRelationInput
     module?: ModuleOrderByWithRelationInput
+    tenant?: TenantOrderByWithRelationInput
   }
 
   export type TenantModuleWhereUniqueInput = Prisma.AtLeast<{
@@ -18497,8 +18497,8 @@ export namespace Prisma {
     validUntil?: DateTimeNullableFilter<"TenantModule"> | Date | string | null
     createdAt?: DateTimeFilter<"TenantModule"> | Date | string
     updatedAt?: DateTimeFilter<"TenantModule"> | Date | string
-    tenant?: XOR<TenantRelationFilter, TenantWhereInput>
     module?: XOR<ModuleRelationFilter, ModuleWhereInput>
+    tenant?: XOR<TenantRelationFilter, TenantWhereInput>
   }, "id" | "tenantId_moduleId">
 
   export type TenantModuleOrderByWithAggregationInput = {
@@ -18949,8 +18949,8 @@ export namespace Prisma {
     autoRenew?: BoolFilter<"Subscription"> | boolean
     createdAt?: DateTimeFilter<"Subscription"> | Date | string
     updatedAt?: DateTimeFilter<"Subscription"> | Date | string
-    tenant?: XOR<TenantRelationFilter, TenantWhereInput>
     plan?: XOR<PlanRelationFilter, PlanWhereInput>
+    tenant?: XOR<TenantRelationFilter, TenantWhereInput>
     usages?: TenantUsageListRelationFilter
   }
 
@@ -18965,8 +18965,8 @@ export namespace Prisma {
     autoRenew?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    tenant?: TenantOrderByWithRelationInput
     plan?: PlanOrderByWithRelationInput
+    tenant?: TenantOrderByWithRelationInput
     usages?: TenantUsageOrderByRelationAggregateInput
   }
 
@@ -18984,8 +18984,8 @@ export namespace Prisma {
     autoRenew?: BoolFilter<"Subscription"> | boolean
     createdAt?: DateTimeFilter<"Subscription"> | Date | string
     updatedAt?: DateTimeFilter<"Subscription"> | Date | string
-    tenant?: XOR<TenantRelationFilter, TenantWhereInput>
     plan?: XOR<PlanRelationFilter, PlanWhereInput>
+    tenant?: XOR<TenantRelationFilter, TenantWhereInput>
     usages?: TenantUsageListRelationFilter
   }, "id">
 
@@ -19097,8 +19097,8 @@ export namespace Prisma {
     apiCallsCount?: IntFilter<"TenantUsage"> | number
     createdAt?: DateTimeFilter<"TenantUsage"> | Date | string
     updatedAt?: DateTimeFilter<"TenantUsage"> | Date | string
-    tenant?: XOR<TenantRelationFilter, TenantWhereInput>
     subscription?: XOR<SubscriptionRelationFilter, SubscriptionWhereInput>
+    tenant?: XOR<TenantRelationFilter, TenantWhereInput>
   }
 
   export type TenantUsageOrderByWithRelationInput = {
@@ -19112,8 +19112,8 @@ export namespace Prisma {
     apiCallsCount?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    tenant?: TenantOrderByWithRelationInput
     subscription?: SubscriptionOrderByWithRelationInput
+    tenant?: TenantOrderByWithRelationInput
   }
 
   export type TenantUsageWhereUniqueInput = Prisma.AtLeast<{
@@ -19131,8 +19131,8 @@ export namespace Prisma {
     apiCallsCount?: IntFilter<"TenantUsage"> | number
     createdAt?: DateTimeFilter<"TenantUsage"> | Date | string
     updatedAt?: DateTimeFilter<"TenantUsage"> | Date | string
-    tenant?: XOR<TenantRelationFilter, TenantWhereInput>
     subscription?: XOR<SubscriptionRelationFilter, SubscriptionWhereInput>
+    tenant?: XOR<TenantRelationFilter, TenantWhereInput>
   }, "id" | "tenantId_date">
 
   export type TenantUsageOrderByWithAggregationInput = {
@@ -19253,8 +19253,8 @@ export namespace Prisma {
     description?: StringNullableFilter<"FeatureFlag"> | string | null
     createdAt?: DateTimeFilter<"FeatureFlag"> | Date | string
     updatedAt?: DateTimeFilter<"FeatureFlag"> | Date | string
-    module?: XOR<ModuleNullableRelationFilter, ModuleWhereInput> | null
     overrides?: FeatureFlagOverrideListRelationFilter
+    module?: XOR<ModuleNullableRelationFilter, ModuleWhereInput> | null
     tenantFlags?: TenantFeatureFlagListRelationFilter
   }
 
@@ -19267,8 +19267,8 @@ export namespace Prisma {
     description?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    module?: ModuleOrderByWithRelationInput
     overrides?: FeatureFlagOverrideOrderByRelationAggregateInput
+    module?: ModuleOrderByWithRelationInput
     tenantFlags?: TenantFeatureFlagOrderByRelationAggregateInput
   }
 
@@ -19284,8 +19284,8 @@ export namespace Prisma {
     description?: StringNullableFilter<"FeatureFlag"> | string | null
     createdAt?: DateTimeFilter<"FeatureFlag"> | Date | string
     updatedAt?: DateTimeFilter<"FeatureFlag"> | Date | string
-    module?: XOR<ModuleNullableRelationFilter, ModuleWhereInput> | null
     overrides?: FeatureFlagOverrideListRelationFilter
+    module?: XOR<ModuleNullableRelationFilter, ModuleWhereInput> | null
     tenantFlags?: TenantFeatureFlagListRelationFilter
   }, "id" | "flagId">
 
@@ -19476,8 +19476,8 @@ export namespace Prisma {
     enabled?: BoolFilter<"TenantFeatureFlag"> | boolean
     createdAt?: DateTimeFilter<"TenantFeatureFlag"> | Date | string
     updatedAt?: DateTimeFilter<"TenantFeatureFlag"> | Date | string
-    tenant?: XOR<TenantRelationFilter, TenantWhereInput>
     flag?: XOR<FeatureFlagRelationFilter, FeatureFlagWhereInput>
+    tenant?: XOR<TenantRelationFilter, TenantWhereInput>
   }
 
   export type TenantFeatureFlagOrderByWithRelationInput = {
@@ -19487,8 +19487,8 @@ export namespace Prisma {
     enabled?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    tenant?: TenantOrderByWithRelationInput
     flag?: FeatureFlagOrderByWithRelationInput
+    tenant?: TenantOrderByWithRelationInput
   }
 
   export type TenantFeatureFlagWhereUniqueInput = Prisma.AtLeast<{
@@ -19502,8 +19502,8 @@ export namespace Prisma {
     enabled?: BoolFilter<"TenantFeatureFlag"> | boolean
     createdAt?: DateTimeFilter<"TenantFeatureFlag"> | Date | string
     updatedAt?: DateTimeFilter<"TenantFeatureFlag"> | Date | string
-    tenant?: XOR<TenantRelationFilter, TenantWhereInput>
     flag?: XOR<FeatureFlagRelationFilter, FeatureFlagWhereInput>
+    tenant?: XOR<TenantRelationFilter, TenantWhereInput>
   }, "id" | "tenantId_flagId">
 
   export type TenantFeatureFlagOrderByWithAggregationInput = {
@@ -19537,7 +19537,6 @@ export namespace Prisma {
     dbUrl: string
     encryptionKeyReference: string
     tier?: $Enums.DeploymentTier
-    facilityType?: $Enums.FacilityType
     region: string
     status?: $Enums.TenantStatus
     suspensionReason?: string | null
@@ -19548,24 +19547,25 @@ export namespace Prisma {
     secondaryColor?: string | null
     trialEndsAt?: Date | string | null
     enabledModules?: JsonNullValueInput | InputJsonValue
-    moduleConfig?: JsonNullValueInput | InputJsonValue
-    workflowCustomization?: JsonNullValueInput | InputJsonValue
-    complianceIsolation?: JsonNullValueInput | InputJsonValue
-    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
-    billingConfig?: NullableJsonNullValueInput | InputJsonValue
     queueConfig?: NullableJsonNullValueInput | InputJsonValue
+    billingConfig?: NullableJsonNullValueInput | InputJsonValue
     staffRoles?: NullableJsonNullValueInput | InputJsonValue
     publicKeySpki?: string | null
     sharedSecret?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    entitlements?: TenantModuleCreateNestedManyWithoutTenantInput
-    payments?: SystemPaymentCreateNestedManyWithoutTenantInput
-    subscriptions?: SubscriptionCreateNestedManyWithoutTenantInput
-    usages?: TenantUsageCreateNestedManyWithoutTenantInput
-    configAuditLogs?: TenantConfigAuditLogCreateNestedManyWithoutTenantInput
+    complianceIsolation?: JsonNullValueInput | InputJsonValue
+    facilityType?: $Enums.FacilityType
+    moduleConfig?: JsonNullValueInput | InputJsonValue
+    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
+    workflowCustomization?: JsonNullValueInput | InputJsonValue
     featureFlagOverrides?: FeatureFlagOverrideCreateNestedManyWithoutTenantInput
+    subscriptions?: SubscriptionCreateNestedManyWithoutTenantInput
+    payments?: SystemPaymentCreateNestedManyWithoutTenantInput
+    configAuditLogs?: TenantConfigAuditLogCreateNestedManyWithoutTenantInput
     tenantFeatureFlags?: TenantFeatureFlagCreateNestedManyWithoutTenantInput
+    entitlements?: TenantModuleCreateNestedManyWithoutTenantInput
+    usages?: TenantUsageCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateInput = {
@@ -19575,7 +19575,6 @@ export namespace Prisma {
     dbUrl: string
     encryptionKeyReference: string
     tier?: $Enums.DeploymentTier
-    facilityType?: $Enums.FacilityType
     region: string
     status?: $Enums.TenantStatus
     suspensionReason?: string | null
@@ -19586,24 +19585,25 @@ export namespace Prisma {
     secondaryColor?: string | null
     trialEndsAt?: Date | string | null
     enabledModules?: JsonNullValueInput | InputJsonValue
-    moduleConfig?: JsonNullValueInput | InputJsonValue
-    workflowCustomization?: JsonNullValueInput | InputJsonValue
-    complianceIsolation?: JsonNullValueInput | InputJsonValue
-    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
-    billingConfig?: NullableJsonNullValueInput | InputJsonValue
     queueConfig?: NullableJsonNullValueInput | InputJsonValue
+    billingConfig?: NullableJsonNullValueInput | InputJsonValue
     staffRoles?: NullableJsonNullValueInput | InputJsonValue
     publicKeySpki?: string | null
     sharedSecret?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    entitlements?: TenantModuleUncheckedCreateNestedManyWithoutTenantInput
-    payments?: SystemPaymentUncheckedCreateNestedManyWithoutTenantInput
-    subscriptions?: SubscriptionUncheckedCreateNestedManyWithoutTenantInput
-    usages?: TenantUsageUncheckedCreateNestedManyWithoutTenantInput
-    configAuditLogs?: TenantConfigAuditLogUncheckedCreateNestedManyWithoutTenantInput
+    complianceIsolation?: JsonNullValueInput | InputJsonValue
+    facilityType?: $Enums.FacilityType
+    moduleConfig?: JsonNullValueInput | InputJsonValue
+    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
+    workflowCustomization?: JsonNullValueInput | InputJsonValue
     featureFlagOverrides?: FeatureFlagOverrideUncheckedCreateNestedManyWithoutTenantInput
+    subscriptions?: SubscriptionUncheckedCreateNestedManyWithoutTenantInput
+    payments?: SystemPaymentUncheckedCreateNestedManyWithoutTenantInput
+    configAuditLogs?: TenantConfigAuditLogUncheckedCreateNestedManyWithoutTenantInput
     tenantFeatureFlags?: TenantFeatureFlagUncheckedCreateNestedManyWithoutTenantInput
+    entitlements?: TenantModuleUncheckedCreateNestedManyWithoutTenantInput
+    usages?: TenantUsageUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUpdateInput = {
@@ -19613,7 +19613,6 @@ export namespace Prisma {
     dbUrl?: StringFieldUpdateOperationsInput | string
     encryptionKeyReference?: StringFieldUpdateOperationsInput | string
     tier?: EnumDeploymentTierFieldUpdateOperationsInput | $Enums.DeploymentTier
-    facilityType?: EnumFacilityTypeFieldUpdateOperationsInput | $Enums.FacilityType
     region?: StringFieldUpdateOperationsInput | string
     status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
     suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -19624,24 +19623,25 @@ export namespace Prisma {
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     enabledModules?: JsonNullValueInput | InputJsonValue
-    moduleConfig?: JsonNullValueInput | InputJsonValue
-    workflowCustomization?: JsonNullValueInput | InputJsonValue
-    complianceIsolation?: JsonNullValueInput | InputJsonValue
-    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
-    billingConfig?: NullableJsonNullValueInput | InputJsonValue
     queueConfig?: NullableJsonNullValueInput | InputJsonValue
+    billingConfig?: NullableJsonNullValueInput | InputJsonValue
     staffRoles?: NullableJsonNullValueInput | InputJsonValue
     publicKeySpki?: NullableStringFieldUpdateOperationsInput | string | null
     sharedSecret?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    entitlements?: TenantModuleUpdateManyWithoutTenantNestedInput
-    payments?: SystemPaymentUpdateManyWithoutTenantNestedInput
-    subscriptions?: SubscriptionUpdateManyWithoutTenantNestedInput
-    usages?: TenantUsageUpdateManyWithoutTenantNestedInput
-    configAuditLogs?: TenantConfigAuditLogUpdateManyWithoutTenantNestedInput
+    complianceIsolation?: JsonNullValueInput | InputJsonValue
+    facilityType?: EnumFacilityTypeFieldUpdateOperationsInput | $Enums.FacilityType
+    moduleConfig?: JsonNullValueInput | InputJsonValue
+    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
+    workflowCustomization?: JsonNullValueInput | InputJsonValue
     featureFlagOverrides?: FeatureFlagOverrideUpdateManyWithoutTenantNestedInput
+    subscriptions?: SubscriptionUpdateManyWithoutTenantNestedInput
+    payments?: SystemPaymentUpdateManyWithoutTenantNestedInput
+    configAuditLogs?: TenantConfigAuditLogUpdateManyWithoutTenantNestedInput
     tenantFeatureFlags?: TenantFeatureFlagUpdateManyWithoutTenantNestedInput
+    entitlements?: TenantModuleUpdateManyWithoutTenantNestedInput
+    usages?: TenantUsageUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateInput = {
@@ -19651,7 +19651,6 @@ export namespace Prisma {
     dbUrl?: StringFieldUpdateOperationsInput | string
     encryptionKeyReference?: StringFieldUpdateOperationsInput | string
     tier?: EnumDeploymentTierFieldUpdateOperationsInput | $Enums.DeploymentTier
-    facilityType?: EnumFacilityTypeFieldUpdateOperationsInput | $Enums.FacilityType
     region?: StringFieldUpdateOperationsInput | string
     status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
     suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -19662,24 +19661,25 @@ export namespace Prisma {
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     enabledModules?: JsonNullValueInput | InputJsonValue
-    moduleConfig?: JsonNullValueInput | InputJsonValue
-    workflowCustomization?: JsonNullValueInput | InputJsonValue
-    complianceIsolation?: JsonNullValueInput | InputJsonValue
-    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
-    billingConfig?: NullableJsonNullValueInput | InputJsonValue
     queueConfig?: NullableJsonNullValueInput | InputJsonValue
+    billingConfig?: NullableJsonNullValueInput | InputJsonValue
     staffRoles?: NullableJsonNullValueInput | InputJsonValue
     publicKeySpki?: NullableStringFieldUpdateOperationsInput | string | null
     sharedSecret?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    entitlements?: TenantModuleUncheckedUpdateManyWithoutTenantNestedInput
-    payments?: SystemPaymentUncheckedUpdateManyWithoutTenantNestedInput
-    subscriptions?: SubscriptionUncheckedUpdateManyWithoutTenantNestedInput
-    usages?: TenantUsageUncheckedUpdateManyWithoutTenantNestedInput
-    configAuditLogs?: TenantConfigAuditLogUncheckedUpdateManyWithoutTenantNestedInput
+    complianceIsolation?: JsonNullValueInput | InputJsonValue
+    facilityType?: EnumFacilityTypeFieldUpdateOperationsInput | $Enums.FacilityType
+    moduleConfig?: JsonNullValueInput | InputJsonValue
+    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
+    workflowCustomization?: JsonNullValueInput | InputJsonValue
     featureFlagOverrides?: FeatureFlagOverrideUncheckedUpdateManyWithoutTenantNestedInput
+    subscriptions?: SubscriptionUncheckedUpdateManyWithoutTenantNestedInput
+    payments?: SystemPaymentUncheckedUpdateManyWithoutTenantNestedInput
+    configAuditLogs?: TenantConfigAuditLogUncheckedUpdateManyWithoutTenantNestedInput
     tenantFeatureFlags?: TenantFeatureFlagUncheckedUpdateManyWithoutTenantNestedInput
+    entitlements?: TenantModuleUncheckedUpdateManyWithoutTenantNestedInput
+    usages?: TenantUsageUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantCreateManyInput = {
@@ -19689,7 +19689,6 @@ export namespace Prisma {
     dbUrl: string
     encryptionKeyReference: string
     tier?: $Enums.DeploymentTier
-    facilityType?: $Enums.FacilityType
     region: string
     status?: $Enums.TenantStatus
     suspensionReason?: string | null
@@ -19700,17 +19699,18 @@ export namespace Prisma {
     secondaryColor?: string | null
     trialEndsAt?: Date | string | null
     enabledModules?: JsonNullValueInput | InputJsonValue
-    moduleConfig?: JsonNullValueInput | InputJsonValue
-    workflowCustomization?: JsonNullValueInput | InputJsonValue
-    complianceIsolation?: JsonNullValueInput | InputJsonValue
-    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
-    billingConfig?: NullableJsonNullValueInput | InputJsonValue
     queueConfig?: NullableJsonNullValueInput | InputJsonValue
+    billingConfig?: NullableJsonNullValueInput | InputJsonValue
     staffRoles?: NullableJsonNullValueInput | InputJsonValue
     publicKeySpki?: string | null
     sharedSecret?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    complianceIsolation?: JsonNullValueInput | InputJsonValue
+    facilityType?: $Enums.FacilityType
+    moduleConfig?: JsonNullValueInput | InputJsonValue
+    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
+    workflowCustomization?: JsonNullValueInput | InputJsonValue
   }
 
   export type TenantUpdateManyMutationInput = {
@@ -19720,7 +19720,6 @@ export namespace Prisma {
     dbUrl?: StringFieldUpdateOperationsInput | string
     encryptionKeyReference?: StringFieldUpdateOperationsInput | string
     tier?: EnumDeploymentTierFieldUpdateOperationsInput | $Enums.DeploymentTier
-    facilityType?: EnumFacilityTypeFieldUpdateOperationsInput | $Enums.FacilityType
     region?: StringFieldUpdateOperationsInput | string
     status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
     suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -19731,17 +19730,18 @@ export namespace Prisma {
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     enabledModules?: JsonNullValueInput | InputJsonValue
-    moduleConfig?: JsonNullValueInput | InputJsonValue
-    workflowCustomization?: JsonNullValueInput | InputJsonValue
-    complianceIsolation?: JsonNullValueInput | InputJsonValue
-    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
-    billingConfig?: NullableJsonNullValueInput | InputJsonValue
     queueConfig?: NullableJsonNullValueInput | InputJsonValue
+    billingConfig?: NullableJsonNullValueInput | InputJsonValue
     staffRoles?: NullableJsonNullValueInput | InputJsonValue
     publicKeySpki?: NullableStringFieldUpdateOperationsInput | string | null
     sharedSecret?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    complianceIsolation?: JsonNullValueInput | InputJsonValue
+    facilityType?: EnumFacilityTypeFieldUpdateOperationsInput | $Enums.FacilityType
+    moduleConfig?: JsonNullValueInput | InputJsonValue
+    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
+    workflowCustomization?: JsonNullValueInput | InputJsonValue
   }
 
   export type TenantUncheckedUpdateManyInput = {
@@ -19751,7 +19751,6 @@ export namespace Prisma {
     dbUrl?: StringFieldUpdateOperationsInput | string
     encryptionKeyReference?: StringFieldUpdateOperationsInput | string
     tier?: EnumDeploymentTierFieldUpdateOperationsInput | $Enums.DeploymentTier
-    facilityType?: EnumFacilityTypeFieldUpdateOperationsInput | $Enums.FacilityType
     region?: StringFieldUpdateOperationsInput | string
     status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
     suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -19762,17 +19761,18 @@ export namespace Prisma {
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     enabledModules?: JsonNullValueInput | InputJsonValue
-    moduleConfig?: JsonNullValueInput | InputJsonValue
-    workflowCustomization?: JsonNullValueInput | InputJsonValue
-    complianceIsolation?: JsonNullValueInput | InputJsonValue
-    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
-    billingConfig?: NullableJsonNullValueInput | InputJsonValue
     queueConfig?: NullableJsonNullValueInput | InputJsonValue
+    billingConfig?: NullableJsonNullValueInput | InputJsonValue
     staffRoles?: NullableJsonNullValueInput | InputJsonValue
     publicKeySpki?: NullableStringFieldUpdateOperationsInput | string | null
     sharedSecret?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    complianceIsolation?: JsonNullValueInput | InputJsonValue
+    facilityType?: EnumFacilityTypeFieldUpdateOperationsInput | $Enums.FacilityType
+    moduleConfig?: JsonNullValueInput | InputJsonValue
+    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
+    workflowCustomization?: JsonNullValueInput | InputJsonValue
   }
 
   export type ModuleCreateInput = {
@@ -19786,8 +19786,8 @@ export namespace Prisma {
     dependencies?: JsonNullValueInput | InputJsonValue
     events?: JsonNullValueInput | InputJsonValue
     permissions?: JsonNullValueInput | InputJsonValue
-    tenants?: TenantModuleCreateNestedManyWithoutModuleInput
     featureFlags?: FeatureFlagCreateNestedManyWithoutModuleInput
+    tenants?: TenantModuleCreateNestedManyWithoutModuleInput
   }
 
   export type ModuleUncheckedCreateInput = {
@@ -19801,8 +19801,8 @@ export namespace Prisma {
     dependencies?: JsonNullValueInput | InputJsonValue
     events?: JsonNullValueInput | InputJsonValue
     permissions?: JsonNullValueInput | InputJsonValue
-    tenants?: TenantModuleUncheckedCreateNestedManyWithoutModuleInput
     featureFlags?: FeatureFlagUncheckedCreateNestedManyWithoutModuleInput
+    tenants?: TenantModuleUncheckedCreateNestedManyWithoutModuleInput
   }
 
   export type ModuleUpdateInput = {
@@ -19816,8 +19816,8 @@ export namespace Prisma {
     dependencies?: JsonNullValueInput | InputJsonValue
     events?: JsonNullValueInput | InputJsonValue
     permissions?: JsonNullValueInput | InputJsonValue
-    tenants?: TenantModuleUpdateManyWithoutModuleNestedInput
     featureFlags?: FeatureFlagUpdateManyWithoutModuleNestedInput
+    tenants?: TenantModuleUpdateManyWithoutModuleNestedInput
   }
 
   export type ModuleUncheckedUpdateInput = {
@@ -19831,8 +19831,8 @@ export namespace Prisma {
     dependencies?: JsonNullValueInput | InputJsonValue
     events?: JsonNullValueInput | InputJsonValue
     permissions?: JsonNullValueInput | InputJsonValue
-    tenants?: TenantModuleUncheckedUpdateManyWithoutModuleNestedInput
     featureFlags?: FeatureFlagUncheckedUpdateManyWithoutModuleNestedInput
+    tenants?: TenantModuleUncheckedUpdateManyWithoutModuleNestedInput
   }
 
   export type ModuleCreateManyInput = {
@@ -19880,8 +19880,8 @@ export namespace Prisma {
     validUntil?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    tenant: TenantCreateNestedOneWithoutEntitlementsInput
     module: ModuleCreateNestedOneWithoutTenantsInput
+    tenant: TenantCreateNestedOneWithoutEntitlementsInput
   }
 
   export type TenantModuleUncheckedCreateInput = {
@@ -19900,8 +19900,8 @@ export namespace Prisma {
     validUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    tenant?: TenantUpdateOneRequiredWithoutEntitlementsNestedInput
     module?: ModuleUpdateOneRequiredWithoutTenantsNestedInput
+    tenant?: TenantUpdateOneRequiredWithoutEntitlementsNestedInput
   }
 
   export type TenantModuleUncheckedUpdateInput = {
@@ -20444,8 +20444,8 @@ export namespace Prisma {
     autoRenew?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
-    tenant: TenantCreateNestedOneWithoutSubscriptionsInput
     plan: PlanCreateNestedOneWithoutSubscriptionsInput
+    tenant: TenantCreateNestedOneWithoutSubscriptionsInput
     usages?: TenantUsageCreateNestedManyWithoutSubscriptionInput
   }
 
@@ -20472,8 +20472,8 @@ export namespace Prisma {
     autoRenew?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    tenant?: TenantUpdateOneRequiredWithoutSubscriptionsNestedInput
     plan?: PlanUpdateOneRequiredWithoutSubscriptionsNestedInput
+    tenant?: TenantUpdateOneRequiredWithoutSubscriptionsNestedInput
     usages?: TenantUsageUpdateManyWithoutSubscriptionNestedInput
   }
 
@@ -20607,8 +20607,8 @@ export namespace Prisma {
     apiCallsCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
-    tenant: TenantCreateNestedOneWithoutUsagesInput
     subscription: SubscriptionCreateNestedOneWithoutUsagesInput
+    tenant: TenantCreateNestedOneWithoutUsagesInput
   }
 
   export type TenantUsageUncheckedCreateInput = {
@@ -20633,8 +20633,8 @@ export namespace Prisma {
     apiCallsCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    tenant?: TenantUpdateOneRequiredWithoutUsagesNestedInput
     subscription?: SubscriptionUpdateOneRequiredWithoutUsagesNestedInput
+    tenant?: TenantUpdateOneRequiredWithoutUsagesNestedInput
   }
 
   export type TenantUsageUncheckedUpdateInput = {
@@ -20779,8 +20779,8 @@ export namespace Prisma {
     description?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    module?: ModuleCreateNestedOneWithoutFeatureFlagsInput
     overrides?: FeatureFlagOverrideCreateNestedManyWithoutFlagInput
+    module?: ModuleCreateNestedOneWithoutFeatureFlagsInput
     tenantFlags?: TenantFeatureFlagCreateNestedManyWithoutFlagInput
   }
 
@@ -20805,8 +20805,8 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    module?: ModuleUpdateOneWithoutFeatureFlagsNestedInput
     overrides?: FeatureFlagOverrideUpdateManyWithoutFlagNestedInput
+    module?: ModuleUpdateOneWithoutFeatureFlagsNestedInput
     tenantFlags?: TenantFeatureFlagUpdateManyWithoutFlagNestedInput
   }
 
@@ -21018,8 +21018,8 @@ export namespace Prisma {
     enabled?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
-    tenant: TenantCreateNestedOneWithoutTenantFeatureFlagsInput
     flag: FeatureFlagCreateNestedOneWithoutTenantFlagsInput
+    tenant: TenantCreateNestedOneWithoutTenantFeatureFlagsInput
   }
 
   export type TenantFeatureFlagUncheckedCreateInput = {
@@ -21036,8 +21036,8 @@ export namespace Prisma {
     enabled?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    tenant?: TenantUpdateOneRequiredWithoutTenantFeatureFlagsNestedInput
     flag?: FeatureFlagUpdateOneRequiredWithoutTenantFlagsNestedInput
+    tenant?: TenantUpdateOneRequiredWithoutTenantFeatureFlagsNestedInput
   }
 
   export type TenantFeatureFlagUncheckedUpdateInput = {
@@ -21094,13 +21094,6 @@ export namespace Prisma {
     in?: $Enums.DeploymentTier[] | ListEnumDeploymentTierFieldRefInput<$PrismaModel>
     notIn?: $Enums.DeploymentTier[] | ListEnumDeploymentTierFieldRefInput<$PrismaModel>
     not?: NestedEnumDeploymentTierFilter<$PrismaModel> | $Enums.DeploymentTier
-  }
-
-  export type EnumFacilityTypeFilter<$PrismaModel = never> = {
-    equals?: $Enums.FacilityType | EnumFacilityTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.FacilityType[] | ListEnumFacilityTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.FacilityType[] | ListEnumFacilityTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumFacilityTypeFilter<$PrismaModel> | $Enums.FacilityType
   }
 
   export type EnumTenantStatusFilter<$PrismaModel = never> = {
@@ -21191,34 +21184,11 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
-  export type TenantModuleListRelationFilter = {
-    every?: TenantModuleWhereInput
-    some?: TenantModuleWhereInput
-    none?: TenantModuleWhereInput
-  }
-
-  export type SystemPaymentListRelationFilter = {
-    every?: SystemPaymentWhereInput
-    some?: SystemPaymentWhereInput
-    none?: SystemPaymentWhereInput
-  }
-
-  export type SubscriptionListRelationFilter = {
-    every?: SubscriptionWhereInput
-    some?: SubscriptionWhereInput
-    none?: SubscriptionWhereInput
-  }
-
-  export type TenantUsageListRelationFilter = {
-    every?: TenantUsageWhereInput
-    some?: TenantUsageWhereInput
-    none?: TenantUsageWhereInput
-  }
-
-  export type TenantConfigAuditLogListRelationFilter = {
-    every?: TenantConfigAuditLogWhereInput
-    some?: TenantConfigAuditLogWhereInput
-    none?: TenantConfigAuditLogWhereInput
+  export type EnumFacilityTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.FacilityType | EnumFacilityTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.FacilityType[] | ListEnumFacilityTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FacilityType[] | ListEnumFacilityTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumFacilityTypeFilter<$PrismaModel> | $Enums.FacilityType
   }
 
   export type FeatureFlagOverrideListRelationFilter = {
@@ -21227,10 +21197,40 @@ export namespace Prisma {
     none?: FeatureFlagOverrideWhereInput
   }
 
+  export type SubscriptionListRelationFilter = {
+    every?: SubscriptionWhereInput
+    some?: SubscriptionWhereInput
+    none?: SubscriptionWhereInput
+  }
+
+  export type SystemPaymentListRelationFilter = {
+    every?: SystemPaymentWhereInput
+    some?: SystemPaymentWhereInput
+    none?: SystemPaymentWhereInput
+  }
+
+  export type TenantConfigAuditLogListRelationFilter = {
+    every?: TenantConfigAuditLogWhereInput
+    some?: TenantConfigAuditLogWhereInput
+    none?: TenantConfigAuditLogWhereInput
+  }
+
   export type TenantFeatureFlagListRelationFilter = {
     every?: TenantFeatureFlagWhereInput
     some?: TenantFeatureFlagWhereInput
     none?: TenantFeatureFlagWhereInput
+  }
+
+  export type TenantModuleListRelationFilter = {
+    every?: TenantModuleWhereInput
+    some?: TenantModuleWhereInput
+    none?: TenantModuleWhereInput
+  }
+
+  export type TenantUsageListRelationFilter = {
+    every?: TenantUsageWhereInput
+    some?: TenantUsageWhereInput
+    none?: TenantUsageWhereInput
   }
 
   export type SortOrderInput = {
@@ -21238,11 +21238,7 @@ export namespace Prisma {
     nulls?: NullsOrder
   }
 
-  export type TenantModuleOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type SystemPaymentOrderByRelationAggregateInput = {
+  export type FeatureFlagOverrideOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -21250,7 +21246,7 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
-  export type TenantUsageOrderByRelationAggregateInput = {
+  export type SystemPaymentOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -21258,11 +21254,15 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
-  export type FeatureFlagOverrideOrderByRelationAggregateInput = {
+  export type TenantFeatureFlagOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
-  export type TenantFeatureFlagOrderByRelationAggregateInput = {
+  export type TenantModuleOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type TenantUsageOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -21273,7 +21273,6 @@ export namespace Prisma {
     dbUrl?: SortOrder
     encryptionKeyReference?: SortOrder
     tier?: SortOrder
-    facilityType?: SortOrder
     region?: SortOrder
     status?: SortOrder
     suspensionReason?: SortOrder
@@ -21284,17 +21283,18 @@ export namespace Prisma {
     secondaryColor?: SortOrder
     trialEndsAt?: SortOrder
     enabledModules?: SortOrder
-    moduleConfig?: SortOrder
-    workflowCustomization?: SortOrder
-    complianceIsolation?: SortOrder
-    subscriptionQuotas?: SortOrder
-    billingConfig?: SortOrder
     queueConfig?: SortOrder
+    billingConfig?: SortOrder
     staffRoles?: SortOrder
     publicKeySpki?: SortOrder
     sharedSecret?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    complianceIsolation?: SortOrder
+    facilityType?: SortOrder
+    moduleConfig?: SortOrder
+    subscriptionQuotas?: SortOrder
+    workflowCustomization?: SortOrder
   }
 
   export type TenantMaxOrderByAggregateInput = {
@@ -21304,7 +21304,6 @@ export namespace Prisma {
     dbUrl?: SortOrder
     encryptionKeyReference?: SortOrder
     tier?: SortOrder
-    facilityType?: SortOrder
     region?: SortOrder
     status?: SortOrder
     suspensionReason?: SortOrder
@@ -21318,6 +21317,7 @@ export namespace Prisma {
     sharedSecret?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    facilityType?: SortOrder
   }
 
   export type TenantMinOrderByAggregateInput = {
@@ -21327,7 +21327,6 @@ export namespace Prisma {
     dbUrl?: SortOrder
     encryptionKeyReference?: SortOrder
     tier?: SortOrder
-    facilityType?: SortOrder
     region?: SortOrder
     status?: SortOrder
     suspensionReason?: SortOrder
@@ -21341,6 +21340,7 @@ export namespace Prisma {
     sharedSecret?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    facilityType?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -21369,16 +21369,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumDeploymentTierFilter<$PrismaModel>
     _max?: NestedEnumDeploymentTierFilter<$PrismaModel>
-  }
-
-  export type EnumFacilityTypeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.FacilityType | EnumFacilityTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.FacilityType[] | ListEnumFacilityTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.FacilityType[] | ListEnumFacilityTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumFacilityTypeWithAggregatesFilter<$PrismaModel> | $Enums.FacilityType
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumFacilityTypeFilter<$PrismaModel>
-    _max?: NestedEnumFacilityTypeFilter<$PrismaModel>
   }
 
   export type EnumTenantStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -21487,6 +21477,16 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type EnumFacilityTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.FacilityType | EnumFacilityTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.FacilityType[] | ListEnumFacilityTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FacilityType[] | ListEnumFacilityTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumFacilityTypeWithAggregatesFilter<$PrismaModel> | $Enums.FacilityType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumFacilityTypeFilter<$PrismaModel>
+    _max?: NestedEnumFacilityTypeFilter<$PrismaModel>
+  }
+
   export type DecimalFilter<$PrismaModel = never> = {
     equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
     in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
@@ -21570,14 +21570,14 @@ export namespace Prisma {
     not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
-  export type TenantRelationFilter = {
-    is?: TenantWhereInput
-    isNot?: TenantWhereInput
-  }
-
   export type ModuleRelationFilter = {
     is?: ModuleWhereInput
     isNot?: ModuleWhereInput
+  }
+
+  export type TenantRelationFilter = {
+    is?: TenantWhereInput
+    isNot?: TenantWhereInput
   }
 
   export type TenantModuleTenantIdModuleIdCompoundUniqueInput = {
@@ -22218,18 +22218,11 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
-  export type TenantModuleCreateNestedManyWithoutTenantInput = {
-    create?: XOR<TenantModuleCreateWithoutTenantInput, TenantModuleUncheckedCreateWithoutTenantInput> | TenantModuleCreateWithoutTenantInput[] | TenantModuleUncheckedCreateWithoutTenantInput[]
-    connectOrCreate?: TenantModuleCreateOrConnectWithoutTenantInput | TenantModuleCreateOrConnectWithoutTenantInput[]
-    createMany?: TenantModuleCreateManyTenantInputEnvelope
-    connect?: TenantModuleWhereUniqueInput | TenantModuleWhereUniqueInput[]
-  }
-
-  export type SystemPaymentCreateNestedManyWithoutTenantInput = {
-    create?: XOR<SystemPaymentCreateWithoutTenantInput, SystemPaymentUncheckedCreateWithoutTenantInput> | SystemPaymentCreateWithoutTenantInput[] | SystemPaymentUncheckedCreateWithoutTenantInput[]
-    connectOrCreate?: SystemPaymentCreateOrConnectWithoutTenantInput | SystemPaymentCreateOrConnectWithoutTenantInput[]
-    createMany?: SystemPaymentCreateManyTenantInputEnvelope
-    connect?: SystemPaymentWhereUniqueInput | SystemPaymentWhereUniqueInput[]
+  export type FeatureFlagOverrideCreateNestedManyWithoutTenantInput = {
+    create?: XOR<FeatureFlagOverrideCreateWithoutTenantInput, FeatureFlagOverrideUncheckedCreateWithoutTenantInput> | FeatureFlagOverrideCreateWithoutTenantInput[] | FeatureFlagOverrideUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: FeatureFlagOverrideCreateOrConnectWithoutTenantInput | FeatureFlagOverrideCreateOrConnectWithoutTenantInput[]
+    createMany?: FeatureFlagOverrideCreateManyTenantInputEnvelope
+    connect?: FeatureFlagOverrideWhereUniqueInput | FeatureFlagOverrideWhereUniqueInput[]
   }
 
   export type SubscriptionCreateNestedManyWithoutTenantInput = {
@@ -22239,11 +22232,11 @@ export namespace Prisma {
     connect?: SubscriptionWhereUniqueInput | SubscriptionWhereUniqueInput[]
   }
 
-  export type TenantUsageCreateNestedManyWithoutTenantInput = {
-    create?: XOR<TenantUsageCreateWithoutTenantInput, TenantUsageUncheckedCreateWithoutTenantInput> | TenantUsageCreateWithoutTenantInput[] | TenantUsageUncheckedCreateWithoutTenantInput[]
-    connectOrCreate?: TenantUsageCreateOrConnectWithoutTenantInput | TenantUsageCreateOrConnectWithoutTenantInput[]
-    createMany?: TenantUsageCreateManyTenantInputEnvelope
-    connect?: TenantUsageWhereUniqueInput | TenantUsageWhereUniqueInput[]
+  export type SystemPaymentCreateNestedManyWithoutTenantInput = {
+    create?: XOR<SystemPaymentCreateWithoutTenantInput, SystemPaymentUncheckedCreateWithoutTenantInput> | SystemPaymentCreateWithoutTenantInput[] | SystemPaymentUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: SystemPaymentCreateOrConnectWithoutTenantInput | SystemPaymentCreateOrConnectWithoutTenantInput[]
+    createMany?: SystemPaymentCreateManyTenantInputEnvelope
+    connect?: SystemPaymentWhereUniqueInput | SystemPaymentWhereUniqueInput[]
   }
 
   export type TenantConfigAuditLogCreateNestedManyWithoutTenantInput = {
@@ -22253,14 +22246,56 @@ export namespace Prisma {
     connect?: TenantConfigAuditLogWhereUniqueInput | TenantConfigAuditLogWhereUniqueInput[]
   }
 
-  export type FeatureFlagOverrideCreateNestedManyWithoutTenantInput = {
+  export type TenantFeatureFlagCreateNestedManyWithoutTenantInput = {
+    create?: XOR<TenantFeatureFlagCreateWithoutTenantInput, TenantFeatureFlagUncheckedCreateWithoutTenantInput> | TenantFeatureFlagCreateWithoutTenantInput[] | TenantFeatureFlagUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: TenantFeatureFlagCreateOrConnectWithoutTenantInput | TenantFeatureFlagCreateOrConnectWithoutTenantInput[]
+    createMany?: TenantFeatureFlagCreateManyTenantInputEnvelope
+    connect?: TenantFeatureFlagWhereUniqueInput | TenantFeatureFlagWhereUniqueInput[]
+  }
+
+  export type TenantModuleCreateNestedManyWithoutTenantInput = {
+    create?: XOR<TenantModuleCreateWithoutTenantInput, TenantModuleUncheckedCreateWithoutTenantInput> | TenantModuleCreateWithoutTenantInput[] | TenantModuleUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: TenantModuleCreateOrConnectWithoutTenantInput | TenantModuleCreateOrConnectWithoutTenantInput[]
+    createMany?: TenantModuleCreateManyTenantInputEnvelope
+    connect?: TenantModuleWhereUniqueInput | TenantModuleWhereUniqueInput[]
+  }
+
+  export type TenantUsageCreateNestedManyWithoutTenantInput = {
+    create?: XOR<TenantUsageCreateWithoutTenantInput, TenantUsageUncheckedCreateWithoutTenantInput> | TenantUsageCreateWithoutTenantInput[] | TenantUsageUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: TenantUsageCreateOrConnectWithoutTenantInput | TenantUsageCreateOrConnectWithoutTenantInput[]
+    createMany?: TenantUsageCreateManyTenantInputEnvelope
+    connect?: TenantUsageWhereUniqueInput | TenantUsageWhereUniqueInput[]
+  }
+
+  export type FeatureFlagOverrideUncheckedCreateNestedManyWithoutTenantInput = {
     create?: XOR<FeatureFlagOverrideCreateWithoutTenantInput, FeatureFlagOverrideUncheckedCreateWithoutTenantInput> | FeatureFlagOverrideCreateWithoutTenantInput[] | FeatureFlagOverrideUncheckedCreateWithoutTenantInput[]
     connectOrCreate?: FeatureFlagOverrideCreateOrConnectWithoutTenantInput | FeatureFlagOverrideCreateOrConnectWithoutTenantInput[]
     createMany?: FeatureFlagOverrideCreateManyTenantInputEnvelope
     connect?: FeatureFlagOverrideWhereUniqueInput | FeatureFlagOverrideWhereUniqueInput[]
   }
 
-  export type TenantFeatureFlagCreateNestedManyWithoutTenantInput = {
+  export type SubscriptionUncheckedCreateNestedManyWithoutTenantInput = {
+    create?: XOR<SubscriptionCreateWithoutTenantInput, SubscriptionUncheckedCreateWithoutTenantInput> | SubscriptionCreateWithoutTenantInput[] | SubscriptionUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: SubscriptionCreateOrConnectWithoutTenantInput | SubscriptionCreateOrConnectWithoutTenantInput[]
+    createMany?: SubscriptionCreateManyTenantInputEnvelope
+    connect?: SubscriptionWhereUniqueInput | SubscriptionWhereUniqueInput[]
+  }
+
+  export type SystemPaymentUncheckedCreateNestedManyWithoutTenantInput = {
+    create?: XOR<SystemPaymentCreateWithoutTenantInput, SystemPaymentUncheckedCreateWithoutTenantInput> | SystemPaymentCreateWithoutTenantInput[] | SystemPaymentUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: SystemPaymentCreateOrConnectWithoutTenantInput | SystemPaymentCreateOrConnectWithoutTenantInput[]
+    createMany?: SystemPaymentCreateManyTenantInputEnvelope
+    connect?: SystemPaymentWhereUniqueInput | SystemPaymentWhereUniqueInput[]
+  }
+
+  export type TenantConfigAuditLogUncheckedCreateNestedManyWithoutTenantInput = {
+    create?: XOR<TenantConfigAuditLogCreateWithoutTenantInput, TenantConfigAuditLogUncheckedCreateWithoutTenantInput> | TenantConfigAuditLogCreateWithoutTenantInput[] | TenantConfigAuditLogUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: TenantConfigAuditLogCreateOrConnectWithoutTenantInput | TenantConfigAuditLogCreateOrConnectWithoutTenantInput[]
+    createMany?: TenantConfigAuditLogCreateManyTenantInputEnvelope
+    connect?: TenantConfigAuditLogWhereUniqueInput | TenantConfigAuditLogWhereUniqueInput[]
+  }
+
+  export type TenantFeatureFlagUncheckedCreateNestedManyWithoutTenantInput = {
     create?: XOR<TenantFeatureFlagCreateWithoutTenantInput, TenantFeatureFlagUncheckedCreateWithoutTenantInput> | TenantFeatureFlagCreateWithoutTenantInput[] | TenantFeatureFlagUncheckedCreateWithoutTenantInput[]
     connectOrCreate?: TenantFeatureFlagCreateOrConnectWithoutTenantInput | TenantFeatureFlagCreateOrConnectWithoutTenantInput[]
     createMany?: TenantFeatureFlagCreateManyTenantInputEnvelope
@@ -22274,46 +22309,11 @@ export namespace Prisma {
     connect?: TenantModuleWhereUniqueInput | TenantModuleWhereUniqueInput[]
   }
 
-  export type SystemPaymentUncheckedCreateNestedManyWithoutTenantInput = {
-    create?: XOR<SystemPaymentCreateWithoutTenantInput, SystemPaymentUncheckedCreateWithoutTenantInput> | SystemPaymentCreateWithoutTenantInput[] | SystemPaymentUncheckedCreateWithoutTenantInput[]
-    connectOrCreate?: SystemPaymentCreateOrConnectWithoutTenantInput | SystemPaymentCreateOrConnectWithoutTenantInput[]
-    createMany?: SystemPaymentCreateManyTenantInputEnvelope
-    connect?: SystemPaymentWhereUniqueInput | SystemPaymentWhereUniqueInput[]
-  }
-
-  export type SubscriptionUncheckedCreateNestedManyWithoutTenantInput = {
-    create?: XOR<SubscriptionCreateWithoutTenantInput, SubscriptionUncheckedCreateWithoutTenantInput> | SubscriptionCreateWithoutTenantInput[] | SubscriptionUncheckedCreateWithoutTenantInput[]
-    connectOrCreate?: SubscriptionCreateOrConnectWithoutTenantInput | SubscriptionCreateOrConnectWithoutTenantInput[]
-    createMany?: SubscriptionCreateManyTenantInputEnvelope
-    connect?: SubscriptionWhereUniqueInput | SubscriptionWhereUniqueInput[]
-  }
-
   export type TenantUsageUncheckedCreateNestedManyWithoutTenantInput = {
     create?: XOR<TenantUsageCreateWithoutTenantInput, TenantUsageUncheckedCreateWithoutTenantInput> | TenantUsageCreateWithoutTenantInput[] | TenantUsageUncheckedCreateWithoutTenantInput[]
     connectOrCreate?: TenantUsageCreateOrConnectWithoutTenantInput | TenantUsageCreateOrConnectWithoutTenantInput[]
     createMany?: TenantUsageCreateManyTenantInputEnvelope
     connect?: TenantUsageWhereUniqueInput | TenantUsageWhereUniqueInput[]
-  }
-
-  export type TenantConfigAuditLogUncheckedCreateNestedManyWithoutTenantInput = {
-    create?: XOR<TenantConfigAuditLogCreateWithoutTenantInput, TenantConfigAuditLogUncheckedCreateWithoutTenantInput> | TenantConfigAuditLogCreateWithoutTenantInput[] | TenantConfigAuditLogUncheckedCreateWithoutTenantInput[]
-    connectOrCreate?: TenantConfigAuditLogCreateOrConnectWithoutTenantInput | TenantConfigAuditLogCreateOrConnectWithoutTenantInput[]
-    createMany?: TenantConfigAuditLogCreateManyTenantInputEnvelope
-    connect?: TenantConfigAuditLogWhereUniqueInput | TenantConfigAuditLogWhereUniqueInput[]
-  }
-
-  export type FeatureFlagOverrideUncheckedCreateNestedManyWithoutTenantInput = {
-    create?: XOR<FeatureFlagOverrideCreateWithoutTenantInput, FeatureFlagOverrideUncheckedCreateWithoutTenantInput> | FeatureFlagOverrideCreateWithoutTenantInput[] | FeatureFlagOverrideUncheckedCreateWithoutTenantInput[]
-    connectOrCreate?: FeatureFlagOverrideCreateOrConnectWithoutTenantInput | FeatureFlagOverrideCreateOrConnectWithoutTenantInput[]
-    createMany?: FeatureFlagOverrideCreateManyTenantInputEnvelope
-    connect?: FeatureFlagOverrideWhereUniqueInput | FeatureFlagOverrideWhereUniqueInput[]
-  }
-
-  export type TenantFeatureFlagUncheckedCreateNestedManyWithoutTenantInput = {
-    create?: XOR<TenantFeatureFlagCreateWithoutTenantInput, TenantFeatureFlagUncheckedCreateWithoutTenantInput> | TenantFeatureFlagCreateWithoutTenantInput[] | TenantFeatureFlagUncheckedCreateWithoutTenantInput[]
-    connectOrCreate?: TenantFeatureFlagCreateOrConnectWithoutTenantInput | TenantFeatureFlagCreateOrConnectWithoutTenantInput[]
-    createMany?: TenantFeatureFlagCreateManyTenantInputEnvelope
-    connect?: TenantFeatureFlagWhereUniqueInput | TenantFeatureFlagWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -22322,10 +22322,6 @@ export namespace Prisma {
 
   export type EnumDeploymentTierFieldUpdateOperationsInput = {
     set?: $Enums.DeploymentTier
-  }
-
-  export type EnumFacilityTypeFieldUpdateOperationsInput = {
-    set?: $Enums.FacilityType
   }
 
   export type EnumTenantStatusFieldUpdateOperationsInput = {
@@ -22344,74 +22340,8 @@ export namespace Prisma {
     set?: Date | string
   }
 
-  export type TenantModuleUpdateManyWithoutTenantNestedInput = {
-    create?: XOR<TenantModuleCreateWithoutTenantInput, TenantModuleUncheckedCreateWithoutTenantInput> | TenantModuleCreateWithoutTenantInput[] | TenantModuleUncheckedCreateWithoutTenantInput[]
-    connectOrCreate?: TenantModuleCreateOrConnectWithoutTenantInput | TenantModuleCreateOrConnectWithoutTenantInput[]
-    upsert?: TenantModuleUpsertWithWhereUniqueWithoutTenantInput | TenantModuleUpsertWithWhereUniqueWithoutTenantInput[]
-    createMany?: TenantModuleCreateManyTenantInputEnvelope
-    set?: TenantModuleWhereUniqueInput | TenantModuleWhereUniqueInput[]
-    disconnect?: TenantModuleWhereUniqueInput | TenantModuleWhereUniqueInput[]
-    delete?: TenantModuleWhereUniqueInput | TenantModuleWhereUniqueInput[]
-    connect?: TenantModuleWhereUniqueInput | TenantModuleWhereUniqueInput[]
-    update?: TenantModuleUpdateWithWhereUniqueWithoutTenantInput | TenantModuleUpdateWithWhereUniqueWithoutTenantInput[]
-    updateMany?: TenantModuleUpdateManyWithWhereWithoutTenantInput | TenantModuleUpdateManyWithWhereWithoutTenantInput[]
-    deleteMany?: TenantModuleScalarWhereInput | TenantModuleScalarWhereInput[]
-  }
-
-  export type SystemPaymentUpdateManyWithoutTenantNestedInput = {
-    create?: XOR<SystemPaymentCreateWithoutTenantInput, SystemPaymentUncheckedCreateWithoutTenantInput> | SystemPaymentCreateWithoutTenantInput[] | SystemPaymentUncheckedCreateWithoutTenantInput[]
-    connectOrCreate?: SystemPaymentCreateOrConnectWithoutTenantInput | SystemPaymentCreateOrConnectWithoutTenantInput[]
-    upsert?: SystemPaymentUpsertWithWhereUniqueWithoutTenantInput | SystemPaymentUpsertWithWhereUniqueWithoutTenantInput[]
-    createMany?: SystemPaymentCreateManyTenantInputEnvelope
-    set?: SystemPaymentWhereUniqueInput | SystemPaymentWhereUniqueInput[]
-    disconnect?: SystemPaymentWhereUniqueInput | SystemPaymentWhereUniqueInput[]
-    delete?: SystemPaymentWhereUniqueInput | SystemPaymentWhereUniqueInput[]
-    connect?: SystemPaymentWhereUniqueInput | SystemPaymentWhereUniqueInput[]
-    update?: SystemPaymentUpdateWithWhereUniqueWithoutTenantInput | SystemPaymentUpdateWithWhereUniqueWithoutTenantInput[]
-    updateMany?: SystemPaymentUpdateManyWithWhereWithoutTenantInput | SystemPaymentUpdateManyWithWhereWithoutTenantInput[]
-    deleteMany?: SystemPaymentScalarWhereInput | SystemPaymentScalarWhereInput[]
-  }
-
-  export type SubscriptionUpdateManyWithoutTenantNestedInput = {
-    create?: XOR<SubscriptionCreateWithoutTenantInput, SubscriptionUncheckedCreateWithoutTenantInput> | SubscriptionCreateWithoutTenantInput[] | SubscriptionUncheckedCreateWithoutTenantInput[]
-    connectOrCreate?: SubscriptionCreateOrConnectWithoutTenantInput | SubscriptionCreateOrConnectWithoutTenantInput[]
-    upsert?: SubscriptionUpsertWithWhereUniqueWithoutTenantInput | SubscriptionUpsertWithWhereUniqueWithoutTenantInput[]
-    createMany?: SubscriptionCreateManyTenantInputEnvelope
-    set?: SubscriptionWhereUniqueInput | SubscriptionWhereUniqueInput[]
-    disconnect?: SubscriptionWhereUniqueInput | SubscriptionWhereUniqueInput[]
-    delete?: SubscriptionWhereUniqueInput | SubscriptionWhereUniqueInput[]
-    connect?: SubscriptionWhereUniqueInput | SubscriptionWhereUniqueInput[]
-    update?: SubscriptionUpdateWithWhereUniqueWithoutTenantInput | SubscriptionUpdateWithWhereUniqueWithoutTenantInput[]
-    updateMany?: SubscriptionUpdateManyWithWhereWithoutTenantInput | SubscriptionUpdateManyWithWhereWithoutTenantInput[]
-    deleteMany?: SubscriptionScalarWhereInput | SubscriptionScalarWhereInput[]
-  }
-
-  export type TenantUsageUpdateManyWithoutTenantNestedInput = {
-    create?: XOR<TenantUsageCreateWithoutTenantInput, TenantUsageUncheckedCreateWithoutTenantInput> | TenantUsageCreateWithoutTenantInput[] | TenantUsageUncheckedCreateWithoutTenantInput[]
-    connectOrCreate?: TenantUsageCreateOrConnectWithoutTenantInput | TenantUsageCreateOrConnectWithoutTenantInput[]
-    upsert?: TenantUsageUpsertWithWhereUniqueWithoutTenantInput | TenantUsageUpsertWithWhereUniqueWithoutTenantInput[]
-    createMany?: TenantUsageCreateManyTenantInputEnvelope
-    set?: TenantUsageWhereUniqueInput | TenantUsageWhereUniqueInput[]
-    disconnect?: TenantUsageWhereUniqueInput | TenantUsageWhereUniqueInput[]
-    delete?: TenantUsageWhereUniqueInput | TenantUsageWhereUniqueInput[]
-    connect?: TenantUsageWhereUniqueInput | TenantUsageWhereUniqueInput[]
-    update?: TenantUsageUpdateWithWhereUniqueWithoutTenantInput | TenantUsageUpdateWithWhereUniqueWithoutTenantInput[]
-    updateMany?: TenantUsageUpdateManyWithWhereWithoutTenantInput | TenantUsageUpdateManyWithWhereWithoutTenantInput[]
-    deleteMany?: TenantUsageScalarWhereInput | TenantUsageScalarWhereInput[]
-  }
-
-  export type TenantConfigAuditLogUpdateManyWithoutTenantNestedInput = {
-    create?: XOR<TenantConfigAuditLogCreateWithoutTenantInput, TenantConfigAuditLogUncheckedCreateWithoutTenantInput> | TenantConfigAuditLogCreateWithoutTenantInput[] | TenantConfigAuditLogUncheckedCreateWithoutTenantInput[]
-    connectOrCreate?: TenantConfigAuditLogCreateOrConnectWithoutTenantInput | TenantConfigAuditLogCreateOrConnectWithoutTenantInput[]
-    upsert?: TenantConfigAuditLogUpsertWithWhereUniqueWithoutTenantInput | TenantConfigAuditLogUpsertWithWhereUniqueWithoutTenantInput[]
-    createMany?: TenantConfigAuditLogCreateManyTenantInputEnvelope
-    set?: TenantConfigAuditLogWhereUniqueInput | TenantConfigAuditLogWhereUniqueInput[]
-    disconnect?: TenantConfigAuditLogWhereUniqueInput | TenantConfigAuditLogWhereUniqueInput[]
-    delete?: TenantConfigAuditLogWhereUniqueInput | TenantConfigAuditLogWhereUniqueInput[]
-    connect?: TenantConfigAuditLogWhereUniqueInput | TenantConfigAuditLogWhereUniqueInput[]
-    update?: TenantConfigAuditLogUpdateWithWhereUniqueWithoutTenantInput | TenantConfigAuditLogUpdateWithWhereUniqueWithoutTenantInput[]
-    updateMany?: TenantConfigAuditLogUpdateManyWithWhereWithoutTenantInput | TenantConfigAuditLogUpdateManyWithWhereWithoutTenantInput[]
-    deleteMany?: TenantConfigAuditLogScalarWhereInput | TenantConfigAuditLogScalarWhereInput[]
+  export type EnumFacilityTypeFieldUpdateOperationsInput = {
+    set?: $Enums.FacilityType
   }
 
   export type FeatureFlagOverrideUpdateManyWithoutTenantNestedInput = {
@@ -22428,7 +22358,147 @@ export namespace Prisma {
     deleteMany?: FeatureFlagOverrideScalarWhereInput | FeatureFlagOverrideScalarWhereInput[]
   }
 
+  export type SubscriptionUpdateManyWithoutTenantNestedInput = {
+    create?: XOR<SubscriptionCreateWithoutTenantInput, SubscriptionUncheckedCreateWithoutTenantInput> | SubscriptionCreateWithoutTenantInput[] | SubscriptionUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: SubscriptionCreateOrConnectWithoutTenantInput | SubscriptionCreateOrConnectWithoutTenantInput[]
+    upsert?: SubscriptionUpsertWithWhereUniqueWithoutTenantInput | SubscriptionUpsertWithWhereUniqueWithoutTenantInput[]
+    createMany?: SubscriptionCreateManyTenantInputEnvelope
+    set?: SubscriptionWhereUniqueInput | SubscriptionWhereUniqueInput[]
+    disconnect?: SubscriptionWhereUniqueInput | SubscriptionWhereUniqueInput[]
+    delete?: SubscriptionWhereUniqueInput | SubscriptionWhereUniqueInput[]
+    connect?: SubscriptionWhereUniqueInput | SubscriptionWhereUniqueInput[]
+    update?: SubscriptionUpdateWithWhereUniqueWithoutTenantInput | SubscriptionUpdateWithWhereUniqueWithoutTenantInput[]
+    updateMany?: SubscriptionUpdateManyWithWhereWithoutTenantInput | SubscriptionUpdateManyWithWhereWithoutTenantInput[]
+    deleteMany?: SubscriptionScalarWhereInput | SubscriptionScalarWhereInput[]
+  }
+
+  export type SystemPaymentUpdateManyWithoutTenantNestedInput = {
+    create?: XOR<SystemPaymentCreateWithoutTenantInput, SystemPaymentUncheckedCreateWithoutTenantInput> | SystemPaymentCreateWithoutTenantInput[] | SystemPaymentUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: SystemPaymentCreateOrConnectWithoutTenantInput | SystemPaymentCreateOrConnectWithoutTenantInput[]
+    upsert?: SystemPaymentUpsertWithWhereUniqueWithoutTenantInput | SystemPaymentUpsertWithWhereUniqueWithoutTenantInput[]
+    createMany?: SystemPaymentCreateManyTenantInputEnvelope
+    set?: SystemPaymentWhereUniqueInput | SystemPaymentWhereUniqueInput[]
+    disconnect?: SystemPaymentWhereUniqueInput | SystemPaymentWhereUniqueInput[]
+    delete?: SystemPaymentWhereUniqueInput | SystemPaymentWhereUniqueInput[]
+    connect?: SystemPaymentWhereUniqueInput | SystemPaymentWhereUniqueInput[]
+    update?: SystemPaymentUpdateWithWhereUniqueWithoutTenantInput | SystemPaymentUpdateWithWhereUniqueWithoutTenantInput[]
+    updateMany?: SystemPaymentUpdateManyWithWhereWithoutTenantInput | SystemPaymentUpdateManyWithWhereWithoutTenantInput[]
+    deleteMany?: SystemPaymentScalarWhereInput | SystemPaymentScalarWhereInput[]
+  }
+
+  export type TenantConfigAuditLogUpdateManyWithoutTenantNestedInput = {
+    create?: XOR<TenantConfigAuditLogCreateWithoutTenantInput, TenantConfigAuditLogUncheckedCreateWithoutTenantInput> | TenantConfigAuditLogCreateWithoutTenantInput[] | TenantConfigAuditLogUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: TenantConfigAuditLogCreateOrConnectWithoutTenantInput | TenantConfigAuditLogCreateOrConnectWithoutTenantInput[]
+    upsert?: TenantConfigAuditLogUpsertWithWhereUniqueWithoutTenantInput | TenantConfigAuditLogUpsertWithWhereUniqueWithoutTenantInput[]
+    createMany?: TenantConfigAuditLogCreateManyTenantInputEnvelope
+    set?: TenantConfigAuditLogWhereUniqueInput | TenantConfigAuditLogWhereUniqueInput[]
+    disconnect?: TenantConfigAuditLogWhereUniqueInput | TenantConfigAuditLogWhereUniqueInput[]
+    delete?: TenantConfigAuditLogWhereUniqueInput | TenantConfigAuditLogWhereUniqueInput[]
+    connect?: TenantConfigAuditLogWhereUniqueInput | TenantConfigAuditLogWhereUniqueInput[]
+    update?: TenantConfigAuditLogUpdateWithWhereUniqueWithoutTenantInput | TenantConfigAuditLogUpdateWithWhereUniqueWithoutTenantInput[]
+    updateMany?: TenantConfigAuditLogUpdateManyWithWhereWithoutTenantInput | TenantConfigAuditLogUpdateManyWithWhereWithoutTenantInput[]
+    deleteMany?: TenantConfigAuditLogScalarWhereInput | TenantConfigAuditLogScalarWhereInput[]
+  }
+
   export type TenantFeatureFlagUpdateManyWithoutTenantNestedInput = {
+    create?: XOR<TenantFeatureFlagCreateWithoutTenantInput, TenantFeatureFlagUncheckedCreateWithoutTenantInput> | TenantFeatureFlagCreateWithoutTenantInput[] | TenantFeatureFlagUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: TenantFeatureFlagCreateOrConnectWithoutTenantInput | TenantFeatureFlagCreateOrConnectWithoutTenantInput[]
+    upsert?: TenantFeatureFlagUpsertWithWhereUniqueWithoutTenantInput | TenantFeatureFlagUpsertWithWhereUniqueWithoutTenantInput[]
+    createMany?: TenantFeatureFlagCreateManyTenantInputEnvelope
+    set?: TenantFeatureFlagWhereUniqueInput | TenantFeatureFlagWhereUniqueInput[]
+    disconnect?: TenantFeatureFlagWhereUniqueInput | TenantFeatureFlagWhereUniqueInput[]
+    delete?: TenantFeatureFlagWhereUniqueInput | TenantFeatureFlagWhereUniqueInput[]
+    connect?: TenantFeatureFlagWhereUniqueInput | TenantFeatureFlagWhereUniqueInput[]
+    update?: TenantFeatureFlagUpdateWithWhereUniqueWithoutTenantInput | TenantFeatureFlagUpdateWithWhereUniqueWithoutTenantInput[]
+    updateMany?: TenantFeatureFlagUpdateManyWithWhereWithoutTenantInput | TenantFeatureFlagUpdateManyWithWhereWithoutTenantInput[]
+    deleteMany?: TenantFeatureFlagScalarWhereInput | TenantFeatureFlagScalarWhereInput[]
+  }
+
+  export type TenantModuleUpdateManyWithoutTenantNestedInput = {
+    create?: XOR<TenantModuleCreateWithoutTenantInput, TenantModuleUncheckedCreateWithoutTenantInput> | TenantModuleCreateWithoutTenantInput[] | TenantModuleUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: TenantModuleCreateOrConnectWithoutTenantInput | TenantModuleCreateOrConnectWithoutTenantInput[]
+    upsert?: TenantModuleUpsertWithWhereUniqueWithoutTenantInput | TenantModuleUpsertWithWhereUniqueWithoutTenantInput[]
+    createMany?: TenantModuleCreateManyTenantInputEnvelope
+    set?: TenantModuleWhereUniqueInput | TenantModuleWhereUniqueInput[]
+    disconnect?: TenantModuleWhereUniqueInput | TenantModuleWhereUniqueInput[]
+    delete?: TenantModuleWhereUniqueInput | TenantModuleWhereUniqueInput[]
+    connect?: TenantModuleWhereUniqueInput | TenantModuleWhereUniqueInput[]
+    update?: TenantModuleUpdateWithWhereUniqueWithoutTenantInput | TenantModuleUpdateWithWhereUniqueWithoutTenantInput[]
+    updateMany?: TenantModuleUpdateManyWithWhereWithoutTenantInput | TenantModuleUpdateManyWithWhereWithoutTenantInput[]
+    deleteMany?: TenantModuleScalarWhereInput | TenantModuleScalarWhereInput[]
+  }
+
+  export type TenantUsageUpdateManyWithoutTenantNestedInput = {
+    create?: XOR<TenantUsageCreateWithoutTenantInput, TenantUsageUncheckedCreateWithoutTenantInput> | TenantUsageCreateWithoutTenantInput[] | TenantUsageUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: TenantUsageCreateOrConnectWithoutTenantInput | TenantUsageCreateOrConnectWithoutTenantInput[]
+    upsert?: TenantUsageUpsertWithWhereUniqueWithoutTenantInput | TenantUsageUpsertWithWhereUniqueWithoutTenantInput[]
+    createMany?: TenantUsageCreateManyTenantInputEnvelope
+    set?: TenantUsageWhereUniqueInput | TenantUsageWhereUniqueInput[]
+    disconnect?: TenantUsageWhereUniqueInput | TenantUsageWhereUniqueInput[]
+    delete?: TenantUsageWhereUniqueInput | TenantUsageWhereUniqueInput[]
+    connect?: TenantUsageWhereUniqueInput | TenantUsageWhereUniqueInput[]
+    update?: TenantUsageUpdateWithWhereUniqueWithoutTenantInput | TenantUsageUpdateWithWhereUniqueWithoutTenantInput[]
+    updateMany?: TenantUsageUpdateManyWithWhereWithoutTenantInput | TenantUsageUpdateManyWithWhereWithoutTenantInput[]
+    deleteMany?: TenantUsageScalarWhereInput | TenantUsageScalarWhereInput[]
+  }
+
+  export type FeatureFlagOverrideUncheckedUpdateManyWithoutTenantNestedInput = {
+    create?: XOR<FeatureFlagOverrideCreateWithoutTenantInput, FeatureFlagOverrideUncheckedCreateWithoutTenantInput> | FeatureFlagOverrideCreateWithoutTenantInput[] | FeatureFlagOverrideUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: FeatureFlagOverrideCreateOrConnectWithoutTenantInput | FeatureFlagOverrideCreateOrConnectWithoutTenantInput[]
+    upsert?: FeatureFlagOverrideUpsertWithWhereUniqueWithoutTenantInput | FeatureFlagOverrideUpsertWithWhereUniqueWithoutTenantInput[]
+    createMany?: FeatureFlagOverrideCreateManyTenantInputEnvelope
+    set?: FeatureFlagOverrideWhereUniqueInput | FeatureFlagOverrideWhereUniqueInput[]
+    disconnect?: FeatureFlagOverrideWhereUniqueInput | FeatureFlagOverrideWhereUniqueInput[]
+    delete?: FeatureFlagOverrideWhereUniqueInput | FeatureFlagOverrideWhereUniqueInput[]
+    connect?: FeatureFlagOverrideWhereUniqueInput | FeatureFlagOverrideWhereUniqueInput[]
+    update?: FeatureFlagOverrideUpdateWithWhereUniqueWithoutTenantInput | FeatureFlagOverrideUpdateWithWhereUniqueWithoutTenantInput[]
+    updateMany?: FeatureFlagOverrideUpdateManyWithWhereWithoutTenantInput | FeatureFlagOverrideUpdateManyWithWhereWithoutTenantInput[]
+    deleteMany?: FeatureFlagOverrideScalarWhereInput | FeatureFlagOverrideScalarWhereInput[]
+  }
+
+  export type SubscriptionUncheckedUpdateManyWithoutTenantNestedInput = {
+    create?: XOR<SubscriptionCreateWithoutTenantInput, SubscriptionUncheckedCreateWithoutTenantInput> | SubscriptionCreateWithoutTenantInput[] | SubscriptionUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: SubscriptionCreateOrConnectWithoutTenantInput | SubscriptionCreateOrConnectWithoutTenantInput[]
+    upsert?: SubscriptionUpsertWithWhereUniqueWithoutTenantInput | SubscriptionUpsertWithWhereUniqueWithoutTenantInput[]
+    createMany?: SubscriptionCreateManyTenantInputEnvelope
+    set?: SubscriptionWhereUniqueInput | SubscriptionWhereUniqueInput[]
+    disconnect?: SubscriptionWhereUniqueInput | SubscriptionWhereUniqueInput[]
+    delete?: SubscriptionWhereUniqueInput | SubscriptionWhereUniqueInput[]
+    connect?: SubscriptionWhereUniqueInput | SubscriptionWhereUniqueInput[]
+    update?: SubscriptionUpdateWithWhereUniqueWithoutTenantInput | SubscriptionUpdateWithWhereUniqueWithoutTenantInput[]
+    updateMany?: SubscriptionUpdateManyWithWhereWithoutTenantInput | SubscriptionUpdateManyWithWhereWithoutTenantInput[]
+    deleteMany?: SubscriptionScalarWhereInput | SubscriptionScalarWhereInput[]
+  }
+
+  export type SystemPaymentUncheckedUpdateManyWithoutTenantNestedInput = {
+    create?: XOR<SystemPaymentCreateWithoutTenantInput, SystemPaymentUncheckedCreateWithoutTenantInput> | SystemPaymentCreateWithoutTenantInput[] | SystemPaymentUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: SystemPaymentCreateOrConnectWithoutTenantInput | SystemPaymentCreateOrConnectWithoutTenantInput[]
+    upsert?: SystemPaymentUpsertWithWhereUniqueWithoutTenantInput | SystemPaymentUpsertWithWhereUniqueWithoutTenantInput[]
+    createMany?: SystemPaymentCreateManyTenantInputEnvelope
+    set?: SystemPaymentWhereUniqueInput | SystemPaymentWhereUniqueInput[]
+    disconnect?: SystemPaymentWhereUniqueInput | SystemPaymentWhereUniqueInput[]
+    delete?: SystemPaymentWhereUniqueInput | SystemPaymentWhereUniqueInput[]
+    connect?: SystemPaymentWhereUniqueInput | SystemPaymentWhereUniqueInput[]
+    update?: SystemPaymentUpdateWithWhereUniqueWithoutTenantInput | SystemPaymentUpdateWithWhereUniqueWithoutTenantInput[]
+    updateMany?: SystemPaymentUpdateManyWithWhereWithoutTenantInput | SystemPaymentUpdateManyWithWhereWithoutTenantInput[]
+    deleteMany?: SystemPaymentScalarWhereInput | SystemPaymentScalarWhereInput[]
+  }
+
+  export type TenantConfigAuditLogUncheckedUpdateManyWithoutTenantNestedInput = {
+    create?: XOR<TenantConfigAuditLogCreateWithoutTenantInput, TenantConfigAuditLogUncheckedCreateWithoutTenantInput> | TenantConfigAuditLogCreateWithoutTenantInput[] | TenantConfigAuditLogUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: TenantConfigAuditLogCreateOrConnectWithoutTenantInput | TenantConfigAuditLogCreateOrConnectWithoutTenantInput[]
+    upsert?: TenantConfigAuditLogUpsertWithWhereUniqueWithoutTenantInput | TenantConfigAuditLogUpsertWithWhereUniqueWithoutTenantInput[]
+    createMany?: TenantConfigAuditLogCreateManyTenantInputEnvelope
+    set?: TenantConfigAuditLogWhereUniqueInput | TenantConfigAuditLogWhereUniqueInput[]
+    disconnect?: TenantConfigAuditLogWhereUniqueInput | TenantConfigAuditLogWhereUniqueInput[]
+    delete?: TenantConfigAuditLogWhereUniqueInput | TenantConfigAuditLogWhereUniqueInput[]
+    connect?: TenantConfigAuditLogWhereUniqueInput | TenantConfigAuditLogWhereUniqueInput[]
+    update?: TenantConfigAuditLogUpdateWithWhereUniqueWithoutTenantInput | TenantConfigAuditLogUpdateWithWhereUniqueWithoutTenantInput[]
+    updateMany?: TenantConfigAuditLogUpdateManyWithWhereWithoutTenantInput | TenantConfigAuditLogUpdateManyWithWhereWithoutTenantInput[]
+    deleteMany?: TenantConfigAuditLogScalarWhereInput | TenantConfigAuditLogScalarWhereInput[]
+  }
+
+  export type TenantFeatureFlagUncheckedUpdateManyWithoutTenantNestedInput = {
     create?: XOR<TenantFeatureFlagCreateWithoutTenantInput, TenantFeatureFlagUncheckedCreateWithoutTenantInput> | TenantFeatureFlagCreateWithoutTenantInput[] | TenantFeatureFlagUncheckedCreateWithoutTenantInput[]
     connectOrCreate?: TenantFeatureFlagCreateOrConnectWithoutTenantInput | TenantFeatureFlagCreateOrConnectWithoutTenantInput[]
     upsert?: TenantFeatureFlagUpsertWithWhereUniqueWithoutTenantInput | TenantFeatureFlagUpsertWithWhereUniqueWithoutTenantInput[]
@@ -22456,34 +22526,6 @@ export namespace Prisma {
     deleteMany?: TenantModuleScalarWhereInput | TenantModuleScalarWhereInput[]
   }
 
-  export type SystemPaymentUncheckedUpdateManyWithoutTenantNestedInput = {
-    create?: XOR<SystemPaymentCreateWithoutTenantInput, SystemPaymentUncheckedCreateWithoutTenantInput> | SystemPaymentCreateWithoutTenantInput[] | SystemPaymentUncheckedCreateWithoutTenantInput[]
-    connectOrCreate?: SystemPaymentCreateOrConnectWithoutTenantInput | SystemPaymentCreateOrConnectWithoutTenantInput[]
-    upsert?: SystemPaymentUpsertWithWhereUniqueWithoutTenantInput | SystemPaymentUpsertWithWhereUniqueWithoutTenantInput[]
-    createMany?: SystemPaymentCreateManyTenantInputEnvelope
-    set?: SystemPaymentWhereUniqueInput | SystemPaymentWhereUniqueInput[]
-    disconnect?: SystemPaymentWhereUniqueInput | SystemPaymentWhereUniqueInput[]
-    delete?: SystemPaymentWhereUniqueInput | SystemPaymentWhereUniqueInput[]
-    connect?: SystemPaymentWhereUniqueInput | SystemPaymentWhereUniqueInput[]
-    update?: SystemPaymentUpdateWithWhereUniqueWithoutTenantInput | SystemPaymentUpdateWithWhereUniqueWithoutTenantInput[]
-    updateMany?: SystemPaymentUpdateManyWithWhereWithoutTenantInput | SystemPaymentUpdateManyWithWhereWithoutTenantInput[]
-    deleteMany?: SystemPaymentScalarWhereInput | SystemPaymentScalarWhereInput[]
-  }
-
-  export type SubscriptionUncheckedUpdateManyWithoutTenantNestedInput = {
-    create?: XOR<SubscriptionCreateWithoutTenantInput, SubscriptionUncheckedCreateWithoutTenantInput> | SubscriptionCreateWithoutTenantInput[] | SubscriptionUncheckedCreateWithoutTenantInput[]
-    connectOrCreate?: SubscriptionCreateOrConnectWithoutTenantInput | SubscriptionCreateOrConnectWithoutTenantInput[]
-    upsert?: SubscriptionUpsertWithWhereUniqueWithoutTenantInput | SubscriptionUpsertWithWhereUniqueWithoutTenantInput[]
-    createMany?: SubscriptionCreateManyTenantInputEnvelope
-    set?: SubscriptionWhereUniqueInput | SubscriptionWhereUniqueInput[]
-    disconnect?: SubscriptionWhereUniqueInput | SubscriptionWhereUniqueInput[]
-    delete?: SubscriptionWhereUniqueInput | SubscriptionWhereUniqueInput[]
-    connect?: SubscriptionWhereUniqueInput | SubscriptionWhereUniqueInput[]
-    update?: SubscriptionUpdateWithWhereUniqueWithoutTenantInput | SubscriptionUpdateWithWhereUniqueWithoutTenantInput[]
-    updateMany?: SubscriptionUpdateManyWithWhereWithoutTenantInput | SubscriptionUpdateManyWithWhereWithoutTenantInput[]
-    deleteMany?: SubscriptionScalarWhereInput | SubscriptionScalarWhereInput[]
-  }
-
   export type TenantUsageUncheckedUpdateManyWithoutTenantNestedInput = {
     create?: XOR<TenantUsageCreateWithoutTenantInput, TenantUsageUncheckedCreateWithoutTenantInput> | TenantUsageCreateWithoutTenantInput[] | TenantUsageUncheckedCreateWithoutTenantInput[]
     connectOrCreate?: TenantUsageCreateOrConnectWithoutTenantInput | TenantUsageCreateOrConnectWithoutTenantInput[]
@@ -22498,55 +22540,6 @@ export namespace Prisma {
     deleteMany?: TenantUsageScalarWhereInput | TenantUsageScalarWhereInput[]
   }
 
-  export type TenantConfigAuditLogUncheckedUpdateManyWithoutTenantNestedInput = {
-    create?: XOR<TenantConfigAuditLogCreateWithoutTenantInput, TenantConfigAuditLogUncheckedCreateWithoutTenantInput> | TenantConfigAuditLogCreateWithoutTenantInput[] | TenantConfigAuditLogUncheckedCreateWithoutTenantInput[]
-    connectOrCreate?: TenantConfigAuditLogCreateOrConnectWithoutTenantInput | TenantConfigAuditLogCreateOrConnectWithoutTenantInput[]
-    upsert?: TenantConfigAuditLogUpsertWithWhereUniqueWithoutTenantInput | TenantConfigAuditLogUpsertWithWhereUniqueWithoutTenantInput[]
-    createMany?: TenantConfigAuditLogCreateManyTenantInputEnvelope
-    set?: TenantConfigAuditLogWhereUniqueInput | TenantConfigAuditLogWhereUniqueInput[]
-    disconnect?: TenantConfigAuditLogWhereUniqueInput | TenantConfigAuditLogWhereUniqueInput[]
-    delete?: TenantConfigAuditLogWhereUniqueInput | TenantConfigAuditLogWhereUniqueInput[]
-    connect?: TenantConfigAuditLogWhereUniqueInput | TenantConfigAuditLogWhereUniqueInput[]
-    update?: TenantConfigAuditLogUpdateWithWhereUniqueWithoutTenantInput | TenantConfigAuditLogUpdateWithWhereUniqueWithoutTenantInput[]
-    updateMany?: TenantConfigAuditLogUpdateManyWithWhereWithoutTenantInput | TenantConfigAuditLogUpdateManyWithWhereWithoutTenantInput[]
-    deleteMany?: TenantConfigAuditLogScalarWhereInput | TenantConfigAuditLogScalarWhereInput[]
-  }
-
-  export type FeatureFlagOverrideUncheckedUpdateManyWithoutTenantNestedInput = {
-    create?: XOR<FeatureFlagOverrideCreateWithoutTenantInput, FeatureFlagOverrideUncheckedCreateWithoutTenantInput> | FeatureFlagOverrideCreateWithoutTenantInput[] | FeatureFlagOverrideUncheckedCreateWithoutTenantInput[]
-    connectOrCreate?: FeatureFlagOverrideCreateOrConnectWithoutTenantInput | FeatureFlagOverrideCreateOrConnectWithoutTenantInput[]
-    upsert?: FeatureFlagOverrideUpsertWithWhereUniqueWithoutTenantInput | FeatureFlagOverrideUpsertWithWhereUniqueWithoutTenantInput[]
-    createMany?: FeatureFlagOverrideCreateManyTenantInputEnvelope
-    set?: FeatureFlagOverrideWhereUniqueInput | FeatureFlagOverrideWhereUniqueInput[]
-    disconnect?: FeatureFlagOverrideWhereUniqueInput | FeatureFlagOverrideWhereUniqueInput[]
-    delete?: FeatureFlagOverrideWhereUniqueInput | FeatureFlagOverrideWhereUniqueInput[]
-    connect?: FeatureFlagOverrideWhereUniqueInput | FeatureFlagOverrideWhereUniqueInput[]
-    update?: FeatureFlagOverrideUpdateWithWhereUniqueWithoutTenantInput | FeatureFlagOverrideUpdateWithWhereUniqueWithoutTenantInput[]
-    updateMany?: FeatureFlagOverrideUpdateManyWithWhereWithoutTenantInput | FeatureFlagOverrideUpdateManyWithWhereWithoutTenantInput[]
-    deleteMany?: FeatureFlagOverrideScalarWhereInput | FeatureFlagOverrideScalarWhereInput[]
-  }
-
-  export type TenantFeatureFlagUncheckedUpdateManyWithoutTenantNestedInput = {
-    create?: XOR<TenantFeatureFlagCreateWithoutTenantInput, TenantFeatureFlagUncheckedCreateWithoutTenantInput> | TenantFeatureFlagCreateWithoutTenantInput[] | TenantFeatureFlagUncheckedCreateWithoutTenantInput[]
-    connectOrCreate?: TenantFeatureFlagCreateOrConnectWithoutTenantInput | TenantFeatureFlagCreateOrConnectWithoutTenantInput[]
-    upsert?: TenantFeatureFlagUpsertWithWhereUniqueWithoutTenantInput | TenantFeatureFlagUpsertWithWhereUniqueWithoutTenantInput[]
-    createMany?: TenantFeatureFlagCreateManyTenantInputEnvelope
-    set?: TenantFeatureFlagWhereUniqueInput | TenantFeatureFlagWhereUniqueInput[]
-    disconnect?: TenantFeatureFlagWhereUniqueInput | TenantFeatureFlagWhereUniqueInput[]
-    delete?: TenantFeatureFlagWhereUniqueInput | TenantFeatureFlagWhereUniqueInput[]
-    connect?: TenantFeatureFlagWhereUniqueInput | TenantFeatureFlagWhereUniqueInput[]
-    update?: TenantFeatureFlagUpdateWithWhereUniqueWithoutTenantInput | TenantFeatureFlagUpdateWithWhereUniqueWithoutTenantInput[]
-    updateMany?: TenantFeatureFlagUpdateManyWithWhereWithoutTenantInput | TenantFeatureFlagUpdateManyWithWhereWithoutTenantInput[]
-    deleteMany?: TenantFeatureFlagScalarWhereInput | TenantFeatureFlagScalarWhereInput[]
-  }
-
-  export type TenantModuleCreateNestedManyWithoutModuleInput = {
-    create?: XOR<TenantModuleCreateWithoutModuleInput, TenantModuleUncheckedCreateWithoutModuleInput> | TenantModuleCreateWithoutModuleInput[] | TenantModuleUncheckedCreateWithoutModuleInput[]
-    connectOrCreate?: TenantModuleCreateOrConnectWithoutModuleInput | TenantModuleCreateOrConnectWithoutModuleInput[]
-    createMany?: TenantModuleCreateManyModuleInputEnvelope
-    connect?: TenantModuleWhereUniqueInput | TenantModuleWhereUniqueInput[]
-  }
-
   export type FeatureFlagCreateNestedManyWithoutModuleInput = {
     create?: XOR<FeatureFlagCreateWithoutModuleInput, FeatureFlagUncheckedCreateWithoutModuleInput> | FeatureFlagCreateWithoutModuleInput[] | FeatureFlagUncheckedCreateWithoutModuleInput[]
     connectOrCreate?: FeatureFlagCreateOrConnectWithoutModuleInput | FeatureFlagCreateOrConnectWithoutModuleInput[]
@@ -22554,7 +22547,7 @@ export namespace Prisma {
     connect?: FeatureFlagWhereUniqueInput | FeatureFlagWhereUniqueInput[]
   }
 
-  export type TenantModuleUncheckedCreateNestedManyWithoutModuleInput = {
+  export type TenantModuleCreateNestedManyWithoutModuleInput = {
     create?: XOR<TenantModuleCreateWithoutModuleInput, TenantModuleUncheckedCreateWithoutModuleInput> | TenantModuleCreateWithoutModuleInput[] | TenantModuleUncheckedCreateWithoutModuleInput[]
     connectOrCreate?: TenantModuleCreateOrConnectWithoutModuleInput | TenantModuleCreateOrConnectWithoutModuleInput[]
     createMany?: TenantModuleCreateManyModuleInputEnvelope
@@ -22568,26 +22561,19 @@ export namespace Prisma {
     connect?: FeatureFlagWhereUniqueInput | FeatureFlagWhereUniqueInput[]
   }
 
+  export type TenantModuleUncheckedCreateNestedManyWithoutModuleInput = {
+    create?: XOR<TenantModuleCreateWithoutModuleInput, TenantModuleUncheckedCreateWithoutModuleInput> | TenantModuleCreateWithoutModuleInput[] | TenantModuleUncheckedCreateWithoutModuleInput[]
+    connectOrCreate?: TenantModuleCreateOrConnectWithoutModuleInput | TenantModuleCreateOrConnectWithoutModuleInput[]
+    createMany?: TenantModuleCreateManyModuleInputEnvelope
+    connect?: TenantModuleWhereUniqueInput | TenantModuleWhereUniqueInput[]
+  }
+
   export type DecimalFieldUpdateOperationsInput = {
     set?: Decimal | DecimalJsLike | number | string
     increment?: Decimal | DecimalJsLike | number | string
     decrement?: Decimal | DecimalJsLike | number | string
     multiply?: Decimal | DecimalJsLike | number | string
     divide?: Decimal | DecimalJsLike | number | string
-  }
-
-  export type TenantModuleUpdateManyWithoutModuleNestedInput = {
-    create?: XOR<TenantModuleCreateWithoutModuleInput, TenantModuleUncheckedCreateWithoutModuleInput> | TenantModuleCreateWithoutModuleInput[] | TenantModuleUncheckedCreateWithoutModuleInput[]
-    connectOrCreate?: TenantModuleCreateOrConnectWithoutModuleInput | TenantModuleCreateOrConnectWithoutModuleInput[]
-    upsert?: TenantModuleUpsertWithWhereUniqueWithoutModuleInput | TenantModuleUpsertWithWhereUniqueWithoutModuleInput[]
-    createMany?: TenantModuleCreateManyModuleInputEnvelope
-    set?: TenantModuleWhereUniqueInput | TenantModuleWhereUniqueInput[]
-    disconnect?: TenantModuleWhereUniqueInput | TenantModuleWhereUniqueInput[]
-    delete?: TenantModuleWhereUniqueInput | TenantModuleWhereUniqueInput[]
-    connect?: TenantModuleWhereUniqueInput | TenantModuleWhereUniqueInput[]
-    update?: TenantModuleUpdateWithWhereUniqueWithoutModuleInput | TenantModuleUpdateWithWhereUniqueWithoutModuleInput[]
-    updateMany?: TenantModuleUpdateManyWithWhereWithoutModuleInput | TenantModuleUpdateManyWithWhereWithoutModuleInput[]
-    deleteMany?: TenantModuleScalarWhereInput | TenantModuleScalarWhereInput[]
   }
 
   export type FeatureFlagUpdateManyWithoutModuleNestedInput = {
@@ -22604,7 +22590,7 @@ export namespace Prisma {
     deleteMany?: FeatureFlagScalarWhereInput | FeatureFlagScalarWhereInput[]
   }
 
-  export type TenantModuleUncheckedUpdateManyWithoutModuleNestedInput = {
+  export type TenantModuleUpdateManyWithoutModuleNestedInput = {
     create?: XOR<TenantModuleCreateWithoutModuleInput, TenantModuleUncheckedCreateWithoutModuleInput> | TenantModuleCreateWithoutModuleInput[] | TenantModuleUncheckedCreateWithoutModuleInput[]
     connectOrCreate?: TenantModuleCreateOrConnectWithoutModuleInput | TenantModuleCreateOrConnectWithoutModuleInput[]
     upsert?: TenantModuleUpsertWithWhereUniqueWithoutModuleInput | TenantModuleUpsertWithWhereUniqueWithoutModuleInput[]
@@ -22632,10 +22618,18 @@ export namespace Prisma {
     deleteMany?: FeatureFlagScalarWhereInput | FeatureFlagScalarWhereInput[]
   }
 
-  export type TenantCreateNestedOneWithoutEntitlementsInput = {
-    create?: XOR<TenantCreateWithoutEntitlementsInput, TenantUncheckedCreateWithoutEntitlementsInput>
-    connectOrCreate?: TenantCreateOrConnectWithoutEntitlementsInput
-    connect?: TenantWhereUniqueInput
+  export type TenantModuleUncheckedUpdateManyWithoutModuleNestedInput = {
+    create?: XOR<TenantModuleCreateWithoutModuleInput, TenantModuleUncheckedCreateWithoutModuleInput> | TenantModuleCreateWithoutModuleInput[] | TenantModuleUncheckedCreateWithoutModuleInput[]
+    connectOrCreate?: TenantModuleCreateOrConnectWithoutModuleInput | TenantModuleCreateOrConnectWithoutModuleInput[]
+    upsert?: TenantModuleUpsertWithWhereUniqueWithoutModuleInput | TenantModuleUpsertWithWhereUniqueWithoutModuleInput[]
+    createMany?: TenantModuleCreateManyModuleInputEnvelope
+    set?: TenantModuleWhereUniqueInput | TenantModuleWhereUniqueInput[]
+    disconnect?: TenantModuleWhereUniqueInput | TenantModuleWhereUniqueInput[]
+    delete?: TenantModuleWhereUniqueInput | TenantModuleWhereUniqueInput[]
+    connect?: TenantModuleWhereUniqueInput | TenantModuleWhereUniqueInput[]
+    update?: TenantModuleUpdateWithWhereUniqueWithoutModuleInput | TenantModuleUpdateWithWhereUniqueWithoutModuleInput[]
+    updateMany?: TenantModuleUpdateManyWithWhereWithoutModuleInput | TenantModuleUpdateManyWithWhereWithoutModuleInput[]
+    deleteMany?: TenantModuleScalarWhereInput | TenantModuleScalarWhereInput[]
   }
 
   export type ModuleCreateNestedOneWithoutTenantsInput = {
@@ -22644,16 +22638,14 @@ export namespace Prisma {
     connect?: ModuleWhereUniqueInput
   }
 
-  export type BoolFieldUpdateOperationsInput = {
-    set?: boolean
-  }
-
-  export type TenantUpdateOneRequiredWithoutEntitlementsNestedInput = {
+  export type TenantCreateNestedOneWithoutEntitlementsInput = {
     create?: XOR<TenantCreateWithoutEntitlementsInput, TenantUncheckedCreateWithoutEntitlementsInput>
     connectOrCreate?: TenantCreateOrConnectWithoutEntitlementsInput
-    upsert?: TenantUpsertWithoutEntitlementsInput
     connect?: TenantWhereUniqueInput
-    update?: XOR<XOR<TenantUpdateToOneWithWhereWithoutEntitlementsInput, TenantUpdateWithoutEntitlementsInput>, TenantUncheckedUpdateWithoutEntitlementsInput>
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
   }
 
   export type ModuleUpdateOneRequiredWithoutTenantsNestedInput = {
@@ -22662,6 +22654,14 @@ export namespace Prisma {
     upsert?: ModuleUpsertWithoutTenantsInput
     connect?: ModuleWhereUniqueInput
     update?: XOR<XOR<ModuleUpdateToOneWithWhereWithoutTenantsInput, ModuleUpdateWithoutTenantsInput>, ModuleUncheckedUpdateWithoutTenantsInput>
+  }
+
+  export type TenantUpdateOneRequiredWithoutEntitlementsNestedInput = {
+    create?: XOR<TenantCreateWithoutEntitlementsInput, TenantUncheckedCreateWithoutEntitlementsInput>
+    connectOrCreate?: TenantCreateOrConnectWithoutEntitlementsInput
+    upsert?: TenantUpsertWithoutEntitlementsInput
+    connect?: TenantWhereUniqueInput
+    update?: XOR<XOR<TenantUpdateToOneWithWhereWithoutEntitlementsInput, TenantUpdateWithoutEntitlementsInput>, TenantUncheckedUpdateWithoutEntitlementsInput>
   }
 
   export type TenantCreateNestedOneWithoutPaymentsInput = {
@@ -22734,16 +22734,16 @@ export namespace Prisma {
     deleteMany?: SubscriptionScalarWhereInput | SubscriptionScalarWhereInput[]
   }
 
-  export type TenantCreateNestedOneWithoutSubscriptionsInput = {
-    create?: XOR<TenantCreateWithoutSubscriptionsInput, TenantUncheckedCreateWithoutSubscriptionsInput>
-    connectOrCreate?: TenantCreateOrConnectWithoutSubscriptionsInput
-    connect?: TenantWhereUniqueInput
-  }
-
   export type PlanCreateNestedOneWithoutSubscriptionsInput = {
     create?: XOR<PlanCreateWithoutSubscriptionsInput, PlanUncheckedCreateWithoutSubscriptionsInput>
     connectOrCreate?: PlanCreateOrConnectWithoutSubscriptionsInput
     connect?: PlanWhereUniqueInput
+  }
+
+  export type TenantCreateNestedOneWithoutSubscriptionsInput = {
+    create?: XOR<TenantCreateWithoutSubscriptionsInput, TenantUncheckedCreateWithoutSubscriptionsInput>
+    connectOrCreate?: TenantCreateOrConnectWithoutSubscriptionsInput
+    connect?: TenantWhereUniqueInput
   }
 
   export type TenantUsageCreateNestedManyWithoutSubscriptionInput = {
@@ -22760,20 +22760,20 @@ export namespace Prisma {
     connect?: TenantUsageWhereUniqueInput | TenantUsageWhereUniqueInput[]
   }
 
-  export type TenantUpdateOneRequiredWithoutSubscriptionsNestedInput = {
-    create?: XOR<TenantCreateWithoutSubscriptionsInput, TenantUncheckedCreateWithoutSubscriptionsInput>
-    connectOrCreate?: TenantCreateOrConnectWithoutSubscriptionsInput
-    upsert?: TenantUpsertWithoutSubscriptionsInput
-    connect?: TenantWhereUniqueInput
-    update?: XOR<XOR<TenantUpdateToOneWithWhereWithoutSubscriptionsInput, TenantUpdateWithoutSubscriptionsInput>, TenantUncheckedUpdateWithoutSubscriptionsInput>
-  }
-
   export type PlanUpdateOneRequiredWithoutSubscriptionsNestedInput = {
     create?: XOR<PlanCreateWithoutSubscriptionsInput, PlanUncheckedCreateWithoutSubscriptionsInput>
     connectOrCreate?: PlanCreateOrConnectWithoutSubscriptionsInput
     upsert?: PlanUpsertWithoutSubscriptionsInput
     connect?: PlanWhereUniqueInput
     update?: XOR<XOR<PlanUpdateToOneWithWhereWithoutSubscriptionsInput, PlanUpdateWithoutSubscriptionsInput>, PlanUncheckedUpdateWithoutSubscriptionsInput>
+  }
+
+  export type TenantUpdateOneRequiredWithoutSubscriptionsNestedInput = {
+    create?: XOR<TenantCreateWithoutSubscriptionsInput, TenantUncheckedCreateWithoutSubscriptionsInput>
+    connectOrCreate?: TenantCreateOrConnectWithoutSubscriptionsInput
+    upsert?: TenantUpsertWithoutSubscriptionsInput
+    connect?: TenantWhereUniqueInput
+    update?: XOR<XOR<TenantUpdateToOneWithWhereWithoutSubscriptionsInput, TenantUpdateWithoutSubscriptionsInput>, TenantUncheckedUpdateWithoutSubscriptionsInput>
   }
 
   export type TenantUsageUpdateManyWithoutSubscriptionNestedInput = {
@@ -22804,24 +22804,16 @@ export namespace Prisma {
     deleteMany?: TenantUsageScalarWhereInput | TenantUsageScalarWhereInput[]
   }
 
-  export type TenantCreateNestedOneWithoutUsagesInput = {
-    create?: XOR<TenantCreateWithoutUsagesInput, TenantUncheckedCreateWithoutUsagesInput>
-    connectOrCreate?: TenantCreateOrConnectWithoutUsagesInput
-    connect?: TenantWhereUniqueInput
-  }
-
   export type SubscriptionCreateNestedOneWithoutUsagesInput = {
     create?: XOR<SubscriptionCreateWithoutUsagesInput, SubscriptionUncheckedCreateWithoutUsagesInput>
     connectOrCreate?: SubscriptionCreateOrConnectWithoutUsagesInput
     connect?: SubscriptionWhereUniqueInput
   }
 
-  export type TenantUpdateOneRequiredWithoutUsagesNestedInput = {
+  export type TenantCreateNestedOneWithoutUsagesInput = {
     create?: XOR<TenantCreateWithoutUsagesInput, TenantUncheckedCreateWithoutUsagesInput>
     connectOrCreate?: TenantCreateOrConnectWithoutUsagesInput
-    upsert?: TenantUpsertWithoutUsagesInput
     connect?: TenantWhereUniqueInput
-    update?: XOR<XOR<TenantUpdateToOneWithWhereWithoutUsagesInput, TenantUpdateWithoutUsagesInput>, TenantUncheckedUpdateWithoutUsagesInput>
   }
 
   export type SubscriptionUpdateOneRequiredWithoutUsagesNestedInput = {
@@ -22832,10 +22824,12 @@ export namespace Prisma {
     update?: XOR<XOR<SubscriptionUpdateToOneWithWhereWithoutUsagesInput, SubscriptionUpdateWithoutUsagesInput>, SubscriptionUncheckedUpdateWithoutUsagesInput>
   }
 
-  export type ModuleCreateNestedOneWithoutFeatureFlagsInput = {
-    create?: XOR<ModuleCreateWithoutFeatureFlagsInput, ModuleUncheckedCreateWithoutFeatureFlagsInput>
-    connectOrCreate?: ModuleCreateOrConnectWithoutFeatureFlagsInput
-    connect?: ModuleWhereUniqueInput
+  export type TenantUpdateOneRequiredWithoutUsagesNestedInput = {
+    create?: XOR<TenantCreateWithoutUsagesInput, TenantUncheckedCreateWithoutUsagesInput>
+    connectOrCreate?: TenantCreateOrConnectWithoutUsagesInput
+    upsert?: TenantUpsertWithoutUsagesInput
+    connect?: TenantWhereUniqueInput
+    update?: XOR<XOR<TenantUpdateToOneWithWhereWithoutUsagesInput, TenantUpdateWithoutUsagesInput>, TenantUncheckedUpdateWithoutUsagesInput>
   }
 
   export type FeatureFlagOverrideCreateNestedManyWithoutFlagInput = {
@@ -22843,6 +22837,12 @@ export namespace Prisma {
     connectOrCreate?: FeatureFlagOverrideCreateOrConnectWithoutFlagInput | FeatureFlagOverrideCreateOrConnectWithoutFlagInput[]
     createMany?: FeatureFlagOverrideCreateManyFlagInputEnvelope
     connect?: FeatureFlagOverrideWhereUniqueInput | FeatureFlagOverrideWhereUniqueInput[]
+  }
+
+  export type ModuleCreateNestedOneWithoutFeatureFlagsInput = {
+    create?: XOR<ModuleCreateWithoutFeatureFlagsInput, ModuleUncheckedCreateWithoutFeatureFlagsInput>
+    connectOrCreate?: ModuleCreateOrConnectWithoutFeatureFlagsInput
+    connect?: ModuleWhereUniqueInput
   }
 
   export type TenantFeatureFlagCreateNestedManyWithoutFlagInput = {
@@ -22866,16 +22866,6 @@ export namespace Prisma {
     connect?: TenantFeatureFlagWhereUniqueInput | TenantFeatureFlagWhereUniqueInput[]
   }
 
-  export type ModuleUpdateOneWithoutFeatureFlagsNestedInput = {
-    create?: XOR<ModuleCreateWithoutFeatureFlagsInput, ModuleUncheckedCreateWithoutFeatureFlagsInput>
-    connectOrCreate?: ModuleCreateOrConnectWithoutFeatureFlagsInput
-    upsert?: ModuleUpsertWithoutFeatureFlagsInput
-    disconnect?: ModuleWhereInput | boolean
-    delete?: ModuleWhereInput | boolean
-    connect?: ModuleWhereUniqueInput
-    update?: XOR<XOR<ModuleUpdateToOneWithWhereWithoutFeatureFlagsInput, ModuleUpdateWithoutFeatureFlagsInput>, ModuleUncheckedUpdateWithoutFeatureFlagsInput>
-  }
-
   export type FeatureFlagOverrideUpdateManyWithoutFlagNestedInput = {
     create?: XOR<FeatureFlagOverrideCreateWithoutFlagInput, FeatureFlagOverrideUncheckedCreateWithoutFlagInput> | FeatureFlagOverrideCreateWithoutFlagInput[] | FeatureFlagOverrideUncheckedCreateWithoutFlagInput[]
     connectOrCreate?: FeatureFlagOverrideCreateOrConnectWithoutFlagInput | FeatureFlagOverrideCreateOrConnectWithoutFlagInput[]
@@ -22888,6 +22878,16 @@ export namespace Prisma {
     update?: FeatureFlagOverrideUpdateWithWhereUniqueWithoutFlagInput | FeatureFlagOverrideUpdateWithWhereUniqueWithoutFlagInput[]
     updateMany?: FeatureFlagOverrideUpdateManyWithWhereWithoutFlagInput | FeatureFlagOverrideUpdateManyWithWhereWithoutFlagInput[]
     deleteMany?: FeatureFlagOverrideScalarWhereInput | FeatureFlagOverrideScalarWhereInput[]
+  }
+
+  export type ModuleUpdateOneWithoutFeatureFlagsNestedInput = {
+    create?: XOR<ModuleCreateWithoutFeatureFlagsInput, ModuleUncheckedCreateWithoutFeatureFlagsInput>
+    connectOrCreate?: ModuleCreateOrConnectWithoutFeatureFlagsInput
+    upsert?: ModuleUpsertWithoutFeatureFlagsInput
+    disconnect?: ModuleWhereInput | boolean
+    delete?: ModuleWhereInput | boolean
+    connect?: ModuleWhereUniqueInput
+    update?: XOR<XOR<ModuleUpdateToOneWithWhereWithoutFeatureFlagsInput, ModuleUpdateWithoutFeatureFlagsInput>, ModuleUncheckedUpdateWithoutFeatureFlagsInput>
   }
 
   export type TenantFeatureFlagUpdateManyWithoutFlagNestedInput = {
@@ -22976,24 +22976,16 @@ export namespace Prisma {
     update?: XOR<XOR<TenantUpdateToOneWithWhereWithoutConfigAuditLogsInput, TenantUpdateWithoutConfigAuditLogsInput>, TenantUncheckedUpdateWithoutConfigAuditLogsInput>
   }
 
-  export type TenantCreateNestedOneWithoutTenantFeatureFlagsInput = {
-    create?: XOR<TenantCreateWithoutTenantFeatureFlagsInput, TenantUncheckedCreateWithoutTenantFeatureFlagsInput>
-    connectOrCreate?: TenantCreateOrConnectWithoutTenantFeatureFlagsInput
-    connect?: TenantWhereUniqueInput
-  }
-
   export type FeatureFlagCreateNestedOneWithoutTenantFlagsInput = {
     create?: XOR<FeatureFlagCreateWithoutTenantFlagsInput, FeatureFlagUncheckedCreateWithoutTenantFlagsInput>
     connectOrCreate?: FeatureFlagCreateOrConnectWithoutTenantFlagsInput
     connect?: FeatureFlagWhereUniqueInput
   }
 
-  export type TenantUpdateOneRequiredWithoutTenantFeatureFlagsNestedInput = {
+  export type TenantCreateNestedOneWithoutTenantFeatureFlagsInput = {
     create?: XOR<TenantCreateWithoutTenantFeatureFlagsInput, TenantUncheckedCreateWithoutTenantFeatureFlagsInput>
     connectOrCreate?: TenantCreateOrConnectWithoutTenantFeatureFlagsInput
-    upsert?: TenantUpsertWithoutTenantFeatureFlagsInput
     connect?: TenantWhereUniqueInput
-    update?: XOR<XOR<TenantUpdateToOneWithWhereWithoutTenantFeatureFlagsInput, TenantUpdateWithoutTenantFeatureFlagsInput>, TenantUncheckedUpdateWithoutTenantFeatureFlagsInput>
   }
 
   export type FeatureFlagUpdateOneRequiredWithoutTenantFlagsNestedInput = {
@@ -23002,6 +22994,14 @@ export namespace Prisma {
     upsert?: FeatureFlagUpsertWithoutTenantFlagsInput
     connect?: FeatureFlagWhereUniqueInput
     update?: XOR<XOR<FeatureFlagUpdateToOneWithWhereWithoutTenantFlagsInput, FeatureFlagUpdateWithoutTenantFlagsInput>, FeatureFlagUncheckedUpdateWithoutTenantFlagsInput>
+  }
+
+  export type TenantUpdateOneRequiredWithoutTenantFeatureFlagsNestedInput = {
+    create?: XOR<TenantCreateWithoutTenantFeatureFlagsInput, TenantUncheckedCreateWithoutTenantFeatureFlagsInput>
+    connectOrCreate?: TenantCreateOrConnectWithoutTenantFeatureFlagsInput
+    upsert?: TenantUpsertWithoutTenantFeatureFlagsInput
+    connect?: TenantWhereUniqueInput
+    update?: XOR<XOR<TenantUpdateToOneWithWhereWithoutTenantFeatureFlagsInput, TenantUpdateWithoutTenantFeatureFlagsInput>, TenantUncheckedUpdateWithoutTenantFeatureFlagsInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -23023,13 +23023,6 @@ export namespace Prisma {
     in?: $Enums.DeploymentTier[] | ListEnumDeploymentTierFieldRefInput<$PrismaModel>
     notIn?: $Enums.DeploymentTier[] | ListEnumDeploymentTierFieldRefInput<$PrismaModel>
     not?: NestedEnumDeploymentTierFilter<$PrismaModel> | $Enums.DeploymentTier
-  }
-
-  export type NestedEnumFacilityTypeFilter<$PrismaModel = never> = {
-    equals?: $Enums.FacilityType | EnumFacilityTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.FacilityType[] | ListEnumFacilityTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.FacilityType[] | ListEnumFacilityTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumFacilityTypeFilter<$PrismaModel> | $Enums.FacilityType
   }
 
   export type NestedEnumTenantStatusFilter<$PrismaModel = never> = {
@@ -23075,6 +23068,13 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
+  export type NestedEnumFacilityTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.FacilityType | EnumFacilityTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.FacilityType[] | ListEnumFacilityTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FacilityType[] | ListEnumFacilityTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumFacilityTypeFilter<$PrismaModel> | $Enums.FacilityType
+  }
+
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -23111,16 +23111,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumDeploymentTierFilter<$PrismaModel>
     _max?: NestedEnumDeploymentTierFilter<$PrismaModel>
-  }
-
-  export type NestedEnumFacilityTypeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.FacilityType | EnumFacilityTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.FacilityType[] | ListEnumFacilityTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.FacilityType[] | ListEnumFacilityTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumFacilityTypeWithAggregatesFilter<$PrismaModel> | $Enums.FacilityType
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumFacilityTypeFilter<$PrismaModel>
-    _max?: NestedEnumFacilityTypeFilter<$PrismaModel>
   }
 
   export type NestedEnumTenantStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -23233,6 +23223,16 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type NestedEnumFacilityTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.FacilityType | EnumFacilityTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.FacilityType[] | ListEnumFacilityTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FacilityType[] | ListEnumFacilityTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumFacilityTypeWithAggregatesFilter<$PrismaModel> | $Enums.FacilityType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumFacilityTypeFilter<$PrismaModel>
+    _max?: NestedEnumFacilityTypeFilter<$PrismaModel>
+  }
+
   export type NestedDecimalFilter<$PrismaModel = never> = {
     equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
     in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
@@ -23317,67 +23317,27 @@ export namespace Prisma {
     not?: NestedFloatFilter<$PrismaModel> | number
   }
 
-  export type TenantModuleCreateWithoutTenantInput = {
+  export type FeatureFlagOverrideCreateWithoutTenantInput = {
     id?: string
-    isEnabled?: boolean
-    validUntil?: Date | string | null
+    enabled?: boolean
     createdAt?: Date | string
-    updatedAt?: Date | string
-    module: ModuleCreateNestedOneWithoutTenantsInput
+    flag: FeatureFlagCreateNestedOneWithoutOverridesInput
   }
 
-  export type TenantModuleUncheckedCreateWithoutTenantInput = {
+  export type FeatureFlagOverrideUncheckedCreateWithoutTenantInput = {
     id?: string
-    moduleId: string
-    isEnabled?: boolean
-    validUntil?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type TenantModuleCreateOrConnectWithoutTenantInput = {
-    where: TenantModuleWhereUniqueInput
-    create: XOR<TenantModuleCreateWithoutTenantInput, TenantModuleUncheckedCreateWithoutTenantInput>
-  }
-
-  export type TenantModuleCreateManyTenantInputEnvelope = {
-    data: TenantModuleCreateManyTenantInput | TenantModuleCreateManyTenantInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type SystemPaymentCreateWithoutTenantInput = {
-    id?: string
-    amount: Decimal | DecimalJsLike | number | string
-    currency?: string
-    method: string
-    status: string
-    reference: string
-    customerEmail: string
-    customerName: string
-    description?: string | null
+    flagId: string
+    enabled?: boolean
     createdAt?: Date | string
   }
 
-  export type SystemPaymentUncheckedCreateWithoutTenantInput = {
-    id?: string
-    amount: Decimal | DecimalJsLike | number | string
-    currency?: string
-    method: string
-    status: string
-    reference: string
-    customerEmail: string
-    customerName: string
-    description?: string | null
-    createdAt?: Date | string
+  export type FeatureFlagOverrideCreateOrConnectWithoutTenantInput = {
+    where: FeatureFlagOverrideWhereUniqueInput
+    create: XOR<FeatureFlagOverrideCreateWithoutTenantInput, FeatureFlagOverrideUncheckedCreateWithoutTenantInput>
   }
 
-  export type SystemPaymentCreateOrConnectWithoutTenantInput = {
-    where: SystemPaymentWhereUniqueInput
-    create: XOR<SystemPaymentCreateWithoutTenantInput, SystemPaymentUncheckedCreateWithoutTenantInput>
-  }
-
-  export type SystemPaymentCreateManyTenantInputEnvelope = {
-    data: SystemPaymentCreateManyTenantInput | SystemPaymentCreateManyTenantInput[]
+  export type FeatureFlagOverrideCreateManyTenantInputEnvelope = {
+    data: FeatureFlagOverrideCreateManyTenantInput | FeatureFlagOverrideCreateManyTenantInput[]
     skipDuplicates?: boolean
   }
 
@@ -23417,37 +23377,39 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type TenantUsageCreateWithoutTenantInput = {
+  export type SystemPaymentCreateWithoutTenantInput = {
     id?: string
-    date: Date | string
-    activeUsers?: number
-    activePatients?: number
-    storageUsedMb?: Decimal | DecimalJsLike | number | string
-    apiCallsCount?: number
+    amount: Decimal | DecimalJsLike | number | string
+    currency?: string
+    method: string
+    status: string
+    reference: string
+    customerEmail: string
+    customerName: string
+    description?: string | null
     createdAt?: Date | string
-    updatedAt?: Date | string
-    subscription: SubscriptionCreateNestedOneWithoutUsagesInput
   }
 
-  export type TenantUsageUncheckedCreateWithoutTenantInput = {
+  export type SystemPaymentUncheckedCreateWithoutTenantInput = {
     id?: string
-    subscriptionId: string
-    date: Date | string
-    activeUsers?: number
-    activePatients?: number
-    storageUsedMb?: Decimal | DecimalJsLike | number | string
-    apiCallsCount?: number
+    amount: Decimal | DecimalJsLike | number | string
+    currency?: string
+    method: string
+    status: string
+    reference: string
+    customerEmail: string
+    customerName: string
+    description?: string | null
     createdAt?: Date | string
-    updatedAt?: Date | string
   }
 
-  export type TenantUsageCreateOrConnectWithoutTenantInput = {
-    where: TenantUsageWhereUniqueInput
-    create: XOR<TenantUsageCreateWithoutTenantInput, TenantUsageUncheckedCreateWithoutTenantInput>
+  export type SystemPaymentCreateOrConnectWithoutTenantInput = {
+    where: SystemPaymentWhereUniqueInput
+    create: XOR<SystemPaymentCreateWithoutTenantInput, SystemPaymentUncheckedCreateWithoutTenantInput>
   }
 
-  export type TenantUsageCreateManyTenantInputEnvelope = {
-    data: TenantUsageCreateManyTenantInput | TenantUsageCreateManyTenantInput[]
+  export type SystemPaymentCreateManyTenantInputEnvelope = {
+    data: SystemPaymentCreateManyTenantInput | SystemPaymentCreateManyTenantInput[]
     skipDuplicates?: boolean
   }
 
@@ -23489,30 +23451,6 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type FeatureFlagOverrideCreateWithoutTenantInput = {
-    id?: string
-    enabled?: boolean
-    createdAt?: Date | string
-    flag: FeatureFlagCreateNestedOneWithoutOverridesInput
-  }
-
-  export type FeatureFlagOverrideUncheckedCreateWithoutTenantInput = {
-    id?: string
-    flagId: string
-    enabled?: boolean
-    createdAt?: Date | string
-  }
-
-  export type FeatureFlagOverrideCreateOrConnectWithoutTenantInput = {
-    where: FeatureFlagOverrideWhereUniqueInput
-    create: XOR<FeatureFlagOverrideCreateWithoutTenantInput, FeatureFlagOverrideUncheckedCreateWithoutTenantInput>
-  }
-
-  export type FeatureFlagOverrideCreateManyTenantInputEnvelope = {
-    data: FeatureFlagOverrideCreateManyTenantInput | FeatureFlagOverrideCreateManyTenantInput[]
-    skipDuplicates?: boolean
-  }
-
   export type TenantFeatureFlagCreateWithoutTenantInput = {
     id?: string
     enabled?: boolean
@@ -23539,66 +23477,93 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type TenantModuleUpsertWithWhereUniqueWithoutTenantInput = {
+  export type TenantModuleCreateWithoutTenantInput = {
+    id?: string
+    isEnabled?: boolean
+    validUntil?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    module: ModuleCreateNestedOneWithoutTenantsInput
+  }
+
+  export type TenantModuleUncheckedCreateWithoutTenantInput = {
+    id?: string
+    moduleId: string
+    isEnabled?: boolean
+    validUntil?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TenantModuleCreateOrConnectWithoutTenantInput = {
     where: TenantModuleWhereUniqueInput
-    update: XOR<TenantModuleUpdateWithoutTenantInput, TenantModuleUncheckedUpdateWithoutTenantInput>
     create: XOR<TenantModuleCreateWithoutTenantInput, TenantModuleUncheckedCreateWithoutTenantInput>
   }
 
-  export type TenantModuleUpdateWithWhereUniqueWithoutTenantInput = {
-    where: TenantModuleWhereUniqueInput
-    data: XOR<TenantModuleUpdateWithoutTenantInput, TenantModuleUncheckedUpdateWithoutTenantInput>
+  export type TenantModuleCreateManyTenantInputEnvelope = {
+    data: TenantModuleCreateManyTenantInput | TenantModuleCreateManyTenantInput[]
+    skipDuplicates?: boolean
   }
 
-  export type TenantModuleUpdateManyWithWhereWithoutTenantInput = {
-    where: TenantModuleScalarWhereInput
-    data: XOR<TenantModuleUpdateManyMutationInput, TenantModuleUncheckedUpdateManyWithoutTenantInput>
+  export type TenantUsageCreateWithoutTenantInput = {
+    id?: string
+    date: Date | string
+    activeUsers?: number
+    activePatients?: number
+    storageUsedMb?: Decimal | DecimalJsLike | number | string
+    apiCallsCount?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    subscription: SubscriptionCreateNestedOneWithoutUsagesInput
   }
 
-  export type TenantModuleScalarWhereInput = {
-    AND?: TenantModuleScalarWhereInput | TenantModuleScalarWhereInput[]
-    OR?: TenantModuleScalarWhereInput[]
-    NOT?: TenantModuleScalarWhereInput | TenantModuleScalarWhereInput[]
-    id?: StringFilter<"TenantModule"> | string
-    tenantId?: StringFilter<"TenantModule"> | string
-    moduleId?: StringFilter<"TenantModule"> | string
-    isEnabled?: BoolFilter<"TenantModule"> | boolean
-    validUntil?: DateTimeNullableFilter<"TenantModule"> | Date | string | null
-    createdAt?: DateTimeFilter<"TenantModule"> | Date | string
-    updatedAt?: DateTimeFilter<"TenantModule"> | Date | string
+  export type TenantUsageUncheckedCreateWithoutTenantInput = {
+    id?: string
+    subscriptionId: string
+    date: Date | string
+    activeUsers?: number
+    activePatients?: number
+    storageUsedMb?: Decimal | DecimalJsLike | number | string
+    apiCallsCount?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
-  export type SystemPaymentUpsertWithWhereUniqueWithoutTenantInput = {
-    where: SystemPaymentWhereUniqueInput
-    update: XOR<SystemPaymentUpdateWithoutTenantInput, SystemPaymentUncheckedUpdateWithoutTenantInput>
-    create: XOR<SystemPaymentCreateWithoutTenantInput, SystemPaymentUncheckedCreateWithoutTenantInput>
+  export type TenantUsageCreateOrConnectWithoutTenantInput = {
+    where: TenantUsageWhereUniqueInput
+    create: XOR<TenantUsageCreateWithoutTenantInput, TenantUsageUncheckedCreateWithoutTenantInput>
   }
 
-  export type SystemPaymentUpdateWithWhereUniqueWithoutTenantInput = {
-    where: SystemPaymentWhereUniqueInput
-    data: XOR<SystemPaymentUpdateWithoutTenantInput, SystemPaymentUncheckedUpdateWithoutTenantInput>
+  export type TenantUsageCreateManyTenantInputEnvelope = {
+    data: TenantUsageCreateManyTenantInput | TenantUsageCreateManyTenantInput[]
+    skipDuplicates?: boolean
   }
 
-  export type SystemPaymentUpdateManyWithWhereWithoutTenantInput = {
-    where: SystemPaymentScalarWhereInput
-    data: XOR<SystemPaymentUpdateManyMutationInput, SystemPaymentUncheckedUpdateManyWithoutTenantInput>
+  export type FeatureFlagOverrideUpsertWithWhereUniqueWithoutTenantInput = {
+    where: FeatureFlagOverrideWhereUniqueInput
+    update: XOR<FeatureFlagOverrideUpdateWithoutTenantInput, FeatureFlagOverrideUncheckedUpdateWithoutTenantInput>
+    create: XOR<FeatureFlagOverrideCreateWithoutTenantInput, FeatureFlagOverrideUncheckedCreateWithoutTenantInput>
   }
 
-  export type SystemPaymentScalarWhereInput = {
-    AND?: SystemPaymentScalarWhereInput | SystemPaymentScalarWhereInput[]
-    OR?: SystemPaymentScalarWhereInput[]
-    NOT?: SystemPaymentScalarWhereInput | SystemPaymentScalarWhereInput[]
-    id?: StringFilter<"SystemPayment"> | string
-    tenantId?: StringNullableFilter<"SystemPayment"> | string | null
-    amount?: DecimalFilter<"SystemPayment"> | Decimal | DecimalJsLike | number | string
-    currency?: StringFilter<"SystemPayment"> | string
-    method?: StringFilter<"SystemPayment"> | string
-    status?: StringFilter<"SystemPayment"> | string
-    reference?: StringFilter<"SystemPayment"> | string
-    customerEmail?: StringFilter<"SystemPayment"> | string
-    customerName?: StringFilter<"SystemPayment"> | string
-    description?: StringNullableFilter<"SystemPayment"> | string | null
-    createdAt?: DateTimeFilter<"SystemPayment"> | Date | string
+  export type FeatureFlagOverrideUpdateWithWhereUniqueWithoutTenantInput = {
+    where: FeatureFlagOverrideWhereUniqueInput
+    data: XOR<FeatureFlagOverrideUpdateWithoutTenantInput, FeatureFlagOverrideUncheckedUpdateWithoutTenantInput>
+  }
+
+  export type FeatureFlagOverrideUpdateManyWithWhereWithoutTenantInput = {
+    where: FeatureFlagOverrideScalarWhereInput
+    data: XOR<FeatureFlagOverrideUpdateManyMutationInput, FeatureFlagOverrideUncheckedUpdateManyWithoutTenantInput>
+  }
+
+  export type FeatureFlagOverrideScalarWhereInput = {
+    AND?: FeatureFlagOverrideScalarWhereInput | FeatureFlagOverrideScalarWhereInput[]
+    OR?: FeatureFlagOverrideScalarWhereInput[]
+    NOT?: FeatureFlagOverrideScalarWhereInput | FeatureFlagOverrideScalarWhereInput[]
+    id?: StringFilter<"FeatureFlagOverride"> | string
+    flagId?: StringFilter<"FeatureFlagOverride"> | string
+    tenantId?: StringNullableFilter<"FeatureFlagOverride"> | string | null
+    enabled?: BoolFilter<"FeatureFlagOverride"> | boolean
+    createdAt?: DateTimeFilter<"FeatureFlagOverride"> | Date | string
   }
 
   export type SubscriptionUpsertWithWhereUniqueWithoutTenantInput = {
@@ -23633,36 +23598,37 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Subscription"> | Date | string
   }
 
-  export type TenantUsageUpsertWithWhereUniqueWithoutTenantInput = {
-    where: TenantUsageWhereUniqueInput
-    update: XOR<TenantUsageUpdateWithoutTenantInput, TenantUsageUncheckedUpdateWithoutTenantInput>
-    create: XOR<TenantUsageCreateWithoutTenantInput, TenantUsageUncheckedCreateWithoutTenantInput>
+  export type SystemPaymentUpsertWithWhereUniqueWithoutTenantInput = {
+    where: SystemPaymentWhereUniqueInput
+    update: XOR<SystemPaymentUpdateWithoutTenantInput, SystemPaymentUncheckedUpdateWithoutTenantInput>
+    create: XOR<SystemPaymentCreateWithoutTenantInput, SystemPaymentUncheckedCreateWithoutTenantInput>
   }
 
-  export type TenantUsageUpdateWithWhereUniqueWithoutTenantInput = {
-    where: TenantUsageWhereUniqueInput
-    data: XOR<TenantUsageUpdateWithoutTenantInput, TenantUsageUncheckedUpdateWithoutTenantInput>
+  export type SystemPaymentUpdateWithWhereUniqueWithoutTenantInput = {
+    where: SystemPaymentWhereUniqueInput
+    data: XOR<SystemPaymentUpdateWithoutTenantInput, SystemPaymentUncheckedUpdateWithoutTenantInput>
   }
 
-  export type TenantUsageUpdateManyWithWhereWithoutTenantInput = {
-    where: TenantUsageScalarWhereInput
-    data: XOR<TenantUsageUpdateManyMutationInput, TenantUsageUncheckedUpdateManyWithoutTenantInput>
+  export type SystemPaymentUpdateManyWithWhereWithoutTenantInput = {
+    where: SystemPaymentScalarWhereInput
+    data: XOR<SystemPaymentUpdateManyMutationInput, SystemPaymentUncheckedUpdateManyWithoutTenantInput>
   }
 
-  export type TenantUsageScalarWhereInput = {
-    AND?: TenantUsageScalarWhereInput | TenantUsageScalarWhereInput[]
-    OR?: TenantUsageScalarWhereInput[]
-    NOT?: TenantUsageScalarWhereInput | TenantUsageScalarWhereInput[]
-    id?: StringFilter<"TenantUsage"> | string
-    tenantId?: StringFilter<"TenantUsage"> | string
-    subscriptionId?: StringFilter<"TenantUsage"> | string
-    date?: DateTimeFilter<"TenantUsage"> | Date | string
-    activeUsers?: IntFilter<"TenantUsage"> | number
-    activePatients?: IntFilter<"TenantUsage"> | number
-    storageUsedMb?: DecimalFilter<"TenantUsage"> | Decimal | DecimalJsLike | number | string
-    apiCallsCount?: IntFilter<"TenantUsage"> | number
-    createdAt?: DateTimeFilter<"TenantUsage"> | Date | string
-    updatedAt?: DateTimeFilter<"TenantUsage"> | Date | string
+  export type SystemPaymentScalarWhereInput = {
+    AND?: SystemPaymentScalarWhereInput | SystemPaymentScalarWhereInput[]
+    OR?: SystemPaymentScalarWhereInput[]
+    NOT?: SystemPaymentScalarWhereInput | SystemPaymentScalarWhereInput[]
+    id?: StringFilter<"SystemPayment"> | string
+    tenantId?: StringNullableFilter<"SystemPayment"> | string | null
+    amount?: DecimalFilter<"SystemPayment"> | Decimal | DecimalJsLike | number | string
+    currency?: StringFilter<"SystemPayment"> | string
+    method?: StringFilter<"SystemPayment"> | string
+    status?: StringFilter<"SystemPayment"> | string
+    reference?: StringFilter<"SystemPayment"> | string
+    customerEmail?: StringFilter<"SystemPayment"> | string
+    customerName?: StringFilter<"SystemPayment"> | string
+    description?: StringNullableFilter<"SystemPayment"> | string | null
+    createdAt?: DateTimeFilter<"SystemPayment"> | Date | string
   }
 
   export type TenantConfigAuditLogUpsertWithWhereUniqueWithoutTenantInput = {
@@ -23699,33 +23665,6 @@ export namespace Prisma {
     timestamp?: DateTimeFilter<"TenantConfigAuditLog"> | Date | string
   }
 
-  export type FeatureFlagOverrideUpsertWithWhereUniqueWithoutTenantInput = {
-    where: FeatureFlagOverrideWhereUniqueInput
-    update: XOR<FeatureFlagOverrideUpdateWithoutTenantInput, FeatureFlagOverrideUncheckedUpdateWithoutTenantInput>
-    create: XOR<FeatureFlagOverrideCreateWithoutTenantInput, FeatureFlagOverrideUncheckedCreateWithoutTenantInput>
-  }
-
-  export type FeatureFlagOverrideUpdateWithWhereUniqueWithoutTenantInput = {
-    where: FeatureFlagOverrideWhereUniqueInput
-    data: XOR<FeatureFlagOverrideUpdateWithoutTenantInput, FeatureFlagOverrideUncheckedUpdateWithoutTenantInput>
-  }
-
-  export type FeatureFlagOverrideUpdateManyWithWhereWithoutTenantInput = {
-    where: FeatureFlagOverrideScalarWhereInput
-    data: XOR<FeatureFlagOverrideUpdateManyMutationInput, FeatureFlagOverrideUncheckedUpdateManyWithoutTenantInput>
-  }
-
-  export type FeatureFlagOverrideScalarWhereInput = {
-    AND?: FeatureFlagOverrideScalarWhereInput | FeatureFlagOverrideScalarWhereInput[]
-    OR?: FeatureFlagOverrideScalarWhereInput[]
-    NOT?: FeatureFlagOverrideScalarWhereInput | FeatureFlagOverrideScalarWhereInput[]
-    id?: StringFilter<"FeatureFlagOverride"> | string
-    flagId?: StringFilter<"FeatureFlagOverride"> | string
-    tenantId?: StringNullableFilter<"FeatureFlagOverride"> | string | null
-    enabled?: BoolFilter<"FeatureFlagOverride"> | boolean
-    createdAt?: DateTimeFilter<"FeatureFlagOverride"> | Date | string
-  }
-
   export type TenantFeatureFlagUpsertWithWhereUniqueWithoutTenantInput = {
     where: TenantFeatureFlagWhereUniqueInput
     update: XOR<TenantFeatureFlagUpdateWithoutTenantInput, TenantFeatureFlagUncheckedUpdateWithoutTenantInput>
@@ -23754,32 +23693,65 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"TenantFeatureFlag"> | Date | string
   }
 
-  export type TenantModuleCreateWithoutModuleInput = {
-    id?: string
-    isEnabled?: boolean
-    validUntil?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    tenant: TenantCreateNestedOneWithoutEntitlementsInput
-  }
-
-  export type TenantModuleUncheckedCreateWithoutModuleInput = {
-    id?: string
-    tenantId: string
-    isEnabled?: boolean
-    validUntil?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type TenantModuleCreateOrConnectWithoutModuleInput = {
+  export type TenantModuleUpsertWithWhereUniqueWithoutTenantInput = {
     where: TenantModuleWhereUniqueInput
-    create: XOR<TenantModuleCreateWithoutModuleInput, TenantModuleUncheckedCreateWithoutModuleInput>
+    update: XOR<TenantModuleUpdateWithoutTenantInput, TenantModuleUncheckedUpdateWithoutTenantInput>
+    create: XOR<TenantModuleCreateWithoutTenantInput, TenantModuleUncheckedCreateWithoutTenantInput>
   }
 
-  export type TenantModuleCreateManyModuleInputEnvelope = {
-    data: TenantModuleCreateManyModuleInput | TenantModuleCreateManyModuleInput[]
-    skipDuplicates?: boolean
+  export type TenantModuleUpdateWithWhereUniqueWithoutTenantInput = {
+    where: TenantModuleWhereUniqueInput
+    data: XOR<TenantModuleUpdateWithoutTenantInput, TenantModuleUncheckedUpdateWithoutTenantInput>
+  }
+
+  export type TenantModuleUpdateManyWithWhereWithoutTenantInput = {
+    where: TenantModuleScalarWhereInput
+    data: XOR<TenantModuleUpdateManyMutationInput, TenantModuleUncheckedUpdateManyWithoutTenantInput>
+  }
+
+  export type TenantModuleScalarWhereInput = {
+    AND?: TenantModuleScalarWhereInput | TenantModuleScalarWhereInput[]
+    OR?: TenantModuleScalarWhereInput[]
+    NOT?: TenantModuleScalarWhereInput | TenantModuleScalarWhereInput[]
+    id?: StringFilter<"TenantModule"> | string
+    tenantId?: StringFilter<"TenantModule"> | string
+    moduleId?: StringFilter<"TenantModule"> | string
+    isEnabled?: BoolFilter<"TenantModule"> | boolean
+    validUntil?: DateTimeNullableFilter<"TenantModule"> | Date | string | null
+    createdAt?: DateTimeFilter<"TenantModule"> | Date | string
+    updatedAt?: DateTimeFilter<"TenantModule"> | Date | string
+  }
+
+  export type TenantUsageUpsertWithWhereUniqueWithoutTenantInput = {
+    where: TenantUsageWhereUniqueInput
+    update: XOR<TenantUsageUpdateWithoutTenantInput, TenantUsageUncheckedUpdateWithoutTenantInput>
+    create: XOR<TenantUsageCreateWithoutTenantInput, TenantUsageUncheckedCreateWithoutTenantInput>
+  }
+
+  export type TenantUsageUpdateWithWhereUniqueWithoutTenantInput = {
+    where: TenantUsageWhereUniqueInput
+    data: XOR<TenantUsageUpdateWithoutTenantInput, TenantUsageUncheckedUpdateWithoutTenantInput>
+  }
+
+  export type TenantUsageUpdateManyWithWhereWithoutTenantInput = {
+    where: TenantUsageScalarWhereInput
+    data: XOR<TenantUsageUpdateManyMutationInput, TenantUsageUncheckedUpdateManyWithoutTenantInput>
+  }
+
+  export type TenantUsageScalarWhereInput = {
+    AND?: TenantUsageScalarWhereInput | TenantUsageScalarWhereInput[]
+    OR?: TenantUsageScalarWhereInput[]
+    NOT?: TenantUsageScalarWhereInput | TenantUsageScalarWhereInput[]
+    id?: StringFilter<"TenantUsage"> | string
+    tenantId?: StringFilter<"TenantUsage"> | string
+    subscriptionId?: StringFilter<"TenantUsage"> | string
+    date?: DateTimeFilter<"TenantUsage"> | Date | string
+    activeUsers?: IntFilter<"TenantUsage"> | number
+    activePatients?: IntFilter<"TenantUsage"> | number
+    storageUsedMb?: DecimalFilter<"TenantUsage"> | Decimal | DecimalJsLike | number | string
+    apiCallsCount?: IntFilter<"TenantUsage"> | number
+    createdAt?: DateTimeFilter<"TenantUsage"> | Date | string
+    updatedAt?: DateTimeFilter<"TenantUsage"> | Date | string
   }
 
   export type FeatureFlagCreateWithoutModuleInput = {
@@ -23816,20 +23788,32 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type TenantModuleUpsertWithWhereUniqueWithoutModuleInput = {
+  export type TenantModuleCreateWithoutModuleInput = {
+    id?: string
+    isEnabled?: boolean
+    validUntil?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tenant: TenantCreateNestedOneWithoutEntitlementsInput
+  }
+
+  export type TenantModuleUncheckedCreateWithoutModuleInput = {
+    id?: string
+    tenantId: string
+    isEnabled?: boolean
+    validUntil?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TenantModuleCreateOrConnectWithoutModuleInput = {
     where: TenantModuleWhereUniqueInput
-    update: XOR<TenantModuleUpdateWithoutModuleInput, TenantModuleUncheckedUpdateWithoutModuleInput>
     create: XOR<TenantModuleCreateWithoutModuleInput, TenantModuleUncheckedCreateWithoutModuleInput>
   }
 
-  export type TenantModuleUpdateWithWhereUniqueWithoutModuleInput = {
-    where: TenantModuleWhereUniqueInput
-    data: XOR<TenantModuleUpdateWithoutModuleInput, TenantModuleUncheckedUpdateWithoutModuleInput>
-  }
-
-  export type TenantModuleUpdateManyWithWhereWithoutModuleInput = {
-    where: TenantModuleScalarWhereInput
-    data: XOR<TenantModuleUpdateManyMutationInput, TenantModuleUncheckedUpdateManyWithoutModuleInput>
+  export type TenantModuleCreateManyModuleInputEnvelope = {
+    data: TenantModuleCreateManyModuleInput | TenantModuleCreateManyModuleInput[]
+    skipDuplicates?: boolean
   }
 
   export type FeatureFlagUpsertWithWhereUniqueWithoutModuleInput = {
@@ -23862,83 +23846,20 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"FeatureFlag"> | Date | string
   }
 
-  export type TenantCreateWithoutEntitlementsInput = {
-    id?: string
-    name: string
-    slug: string
-    dbUrl: string
-    encryptionKeyReference: string
-    tier?: $Enums.DeploymentTier
-    facilityType?: $Enums.FacilityType
-    region: string
-    status?: $Enums.TenantStatus
-    suspensionReason?: string | null
-    suspendedAt?: Date | string | null
-    address?: string | null
-    logoUrl?: string | null
-    primaryColor?: string | null
-    secondaryColor?: string | null
-    trialEndsAt?: Date | string | null
-    enabledModules?: JsonNullValueInput | InputJsonValue
-    moduleConfig?: JsonNullValueInput | InputJsonValue
-    workflowCustomization?: JsonNullValueInput | InputJsonValue
-    complianceIsolation?: JsonNullValueInput | InputJsonValue
-    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
-    billingConfig?: NullableJsonNullValueInput | InputJsonValue
-    queueConfig?: NullableJsonNullValueInput | InputJsonValue
-    staffRoles?: NullableJsonNullValueInput | InputJsonValue
-    publicKeySpki?: string | null
-    sharedSecret?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    payments?: SystemPaymentCreateNestedManyWithoutTenantInput
-    subscriptions?: SubscriptionCreateNestedManyWithoutTenantInput
-    usages?: TenantUsageCreateNestedManyWithoutTenantInput
-    configAuditLogs?: TenantConfigAuditLogCreateNestedManyWithoutTenantInput
-    featureFlagOverrides?: FeatureFlagOverrideCreateNestedManyWithoutTenantInput
-    tenantFeatureFlags?: TenantFeatureFlagCreateNestedManyWithoutTenantInput
+  export type TenantModuleUpsertWithWhereUniqueWithoutModuleInput = {
+    where: TenantModuleWhereUniqueInput
+    update: XOR<TenantModuleUpdateWithoutModuleInput, TenantModuleUncheckedUpdateWithoutModuleInput>
+    create: XOR<TenantModuleCreateWithoutModuleInput, TenantModuleUncheckedCreateWithoutModuleInput>
   }
 
-  export type TenantUncheckedCreateWithoutEntitlementsInput = {
-    id?: string
-    name: string
-    slug: string
-    dbUrl: string
-    encryptionKeyReference: string
-    tier?: $Enums.DeploymentTier
-    facilityType?: $Enums.FacilityType
-    region: string
-    status?: $Enums.TenantStatus
-    suspensionReason?: string | null
-    suspendedAt?: Date | string | null
-    address?: string | null
-    logoUrl?: string | null
-    primaryColor?: string | null
-    secondaryColor?: string | null
-    trialEndsAt?: Date | string | null
-    enabledModules?: JsonNullValueInput | InputJsonValue
-    moduleConfig?: JsonNullValueInput | InputJsonValue
-    workflowCustomization?: JsonNullValueInput | InputJsonValue
-    complianceIsolation?: JsonNullValueInput | InputJsonValue
-    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
-    billingConfig?: NullableJsonNullValueInput | InputJsonValue
-    queueConfig?: NullableJsonNullValueInput | InputJsonValue
-    staffRoles?: NullableJsonNullValueInput | InputJsonValue
-    publicKeySpki?: string | null
-    sharedSecret?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    payments?: SystemPaymentUncheckedCreateNestedManyWithoutTenantInput
-    subscriptions?: SubscriptionUncheckedCreateNestedManyWithoutTenantInput
-    usages?: TenantUsageUncheckedCreateNestedManyWithoutTenantInput
-    configAuditLogs?: TenantConfigAuditLogUncheckedCreateNestedManyWithoutTenantInput
-    featureFlagOverrides?: FeatureFlagOverrideUncheckedCreateNestedManyWithoutTenantInput
-    tenantFeatureFlags?: TenantFeatureFlagUncheckedCreateNestedManyWithoutTenantInput
+  export type TenantModuleUpdateWithWhereUniqueWithoutModuleInput = {
+    where: TenantModuleWhereUniqueInput
+    data: XOR<TenantModuleUpdateWithoutModuleInput, TenantModuleUncheckedUpdateWithoutModuleInput>
   }
 
-  export type TenantCreateOrConnectWithoutEntitlementsInput = {
-    where: TenantWhereUniqueInput
-    create: XOR<TenantCreateWithoutEntitlementsInput, TenantUncheckedCreateWithoutEntitlementsInput>
+  export type TenantModuleUpdateManyWithWhereWithoutModuleInput = {
+    where: TenantModuleScalarWhereInput
+    data: XOR<TenantModuleUpdateManyMutationInput, TenantModuleUncheckedUpdateManyWithoutModuleInput>
   }
 
   export type ModuleCreateWithoutTenantsInput = {
@@ -23974,89 +23895,83 @@ export namespace Prisma {
     create: XOR<ModuleCreateWithoutTenantsInput, ModuleUncheckedCreateWithoutTenantsInput>
   }
 
-  export type TenantUpsertWithoutEntitlementsInput = {
-    update: XOR<TenantUpdateWithoutEntitlementsInput, TenantUncheckedUpdateWithoutEntitlementsInput>
+  export type TenantCreateWithoutEntitlementsInput = {
+    id?: string
+    name: string
+    slug: string
+    dbUrl: string
+    encryptionKeyReference: string
+    tier?: $Enums.DeploymentTier
+    region: string
+    status?: $Enums.TenantStatus
+    suspensionReason?: string | null
+    suspendedAt?: Date | string | null
+    address?: string | null
+    logoUrl?: string | null
+    primaryColor?: string | null
+    secondaryColor?: string | null
+    trialEndsAt?: Date | string | null
+    enabledModules?: JsonNullValueInput | InputJsonValue
+    queueConfig?: NullableJsonNullValueInput | InputJsonValue
+    billingConfig?: NullableJsonNullValueInput | InputJsonValue
+    staffRoles?: NullableJsonNullValueInput | InputJsonValue
+    publicKeySpki?: string | null
+    sharedSecret?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    complianceIsolation?: JsonNullValueInput | InputJsonValue
+    facilityType?: $Enums.FacilityType
+    moduleConfig?: JsonNullValueInput | InputJsonValue
+    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
+    workflowCustomization?: JsonNullValueInput | InputJsonValue
+    featureFlagOverrides?: FeatureFlagOverrideCreateNestedManyWithoutTenantInput
+    subscriptions?: SubscriptionCreateNestedManyWithoutTenantInput
+    payments?: SystemPaymentCreateNestedManyWithoutTenantInput
+    configAuditLogs?: TenantConfigAuditLogCreateNestedManyWithoutTenantInput
+    tenantFeatureFlags?: TenantFeatureFlagCreateNestedManyWithoutTenantInput
+    usages?: TenantUsageCreateNestedManyWithoutTenantInput
+  }
+
+  export type TenantUncheckedCreateWithoutEntitlementsInput = {
+    id?: string
+    name: string
+    slug: string
+    dbUrl: string
+    encryptionKeyReference: string
+    tier?: $Enums.DeploymentTier
+    region: string
+    status?: $Enums.TenantStatus
+    suspensionReason?: string | null
+    suspendedAt?: Date | string | null
+    address?: string | null
+    logoUrl?: string | null
+    primaryColor?: string | null
+    secondaryColor?: string | null
+    trialEndsAt?: Date | string | null
+    enabledModules?: JsonNullValueInput | InputJsonValue
+    queueConfig?: NullableJsonNullValueInput | InputJsonValue
+    billingConfig?: NullableJsonNullValueInput | InputJsonValue
+    staffRoles?: NullableJsonNullValueInput | InputJsonValue
+    publicKeySpki?: string | null
+    sharedSecret?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    complianceIsolation?: JsonNullValueInput | InputJsonValue
+    facilityType?: $Enums.FacilityType
+    moduleConfig?: JsonNullValueInput | InputJsonValue
+    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
+    workflowCustomization?: JsonNullValueInput | InputJsonValue
+    featureFlagOverrides?: FeatureFlagOverrideUncheckedCreateNestedManyWithoutTenantInput
+    subscriptions?: SubscriptionUncheckedCreateNestedManyWithoutTenantInput
+    payments?: SystemPaymentUncheckedCreateNestedManyWithoutTenantInput
+    configAuditLogs?: TenantConfigAuditLogUncheckedCreateNestedManyWithoutTenantInput
+    tenantFeatureFlags?: TenantFeatureFlagUncheckedCreateNestedManyWithoutTenantInput
+    usages?: TenantUsageUncheckedCreateNestedManyWithoutTenantInput
+  }
+
+  export type TenantCreateOrConnectWithoutEntitlementsInput = {
+    where: TenantWhereUniqueInput
     create: XOR<TenantCreateWithoutEntitlementsInput, TenantUncheckedCreateWithoutEntitlementsInput>
-    where?: TenantWhereInput
-  }
-
-  export type TenantUpdateToOneWithWhereWithoutEntitlementsInput = {
-    where?: TenantWhereInput
-    data: XOR<TenantUpdateWithoutEntitlementsInput, TenantUncheckedUpdateWithoutEntitlementsInput>
-  }
-
-  export type TenantUpdateWithoutEntitlementsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    slug?: StringFieldUpdateOperationsInput | string
-    dbUrl?: StringFieldUpdateOperationsInput | string
-    encryptionKeyReference?: StringFieldUpdateOperationsInput | string
-    tier?: EnumDeploymentTierFieldUpdateOperationsInput | $Enums.DeploymentTier
-    facilityType?: EnumFacilityTypeFieldUpdateOperationsInput | $Enums.FacilityType
-    region?: StringFieldUpdateOperationsInput | string
-    status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
-    suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
-    suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
-    secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
-    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    enabledModules?: JsonNullValueInput | InputJsonValue
-    moduleConfig?: JsonNullValueInput | InputJsonValue
-    workflowCustomization?: JsonNullValueInput | InputJsonValue
-    complianceIsolation?: JsonNullValueInput | InputJsonValue
-    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
-    billingConfig?: NullableJsonNullValueInput | InputJsonValue
-    queueConfig?: NullableJsonNullValueInput | InputJsonValue
-    staffRoles?: NullableJsonNullValueInput | InputJsonValue
-    publicKeySpki?: NullableStringFieldUpdateOperationsInput | string | null
-    sharedSecret?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    payments?: SystemPaymentUpdateManyWithoutTenantNestedInput
-    subscriptions?: SubscriptionUpdateManyWithoutTenantNestedInput
-    usages?: TenantUsageUpdateManyWithoutTenantNestedInput
-    configAuditLogs?: TenantConfigAuditLogUpdateManyWithoutTenantNestedInput
-    featureFlagOverrides?: FeatureFlagOverrideUpdateManyWithoutTenantNestedInput
-    tenantFeatureFlags?: TenantFeatureFlagUpdateManyWithoutTenantNestedInput
-  }
-
-  export type TenantUncheckedUpdateWithoutEntitlementsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    slug?: StringFieldUpdateOperationsInput | string
-    dbUrl?: StringFieldUpdateOperationsInput | string
-    encryptionKeyReference?: StringFieldUpdateOperationsInput | string
-    tier?: EnumDeploymentTierFieldUpdateOperationsInput | $Enums.DeploymentTier
-    facilityType?: EnumFacilityTypeFieldUpdateOperationsInput | $Enums.FacilityType
-    region?: StringFieldUpdateOperationsInput | string
-    status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
-    suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
-    suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
-    secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
-    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    enabledModules?: JsonNullValueInput | InputJsonValue
-    moduleConfig?: JsonNullValueInput | InputJsonValue
-    workflowCustomization?: JsonNullValueInput | InputJsonValue
-    complianceIsolation?: JsonNullValueInput | InputJsonValue
-    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
-    billingConfig?: NullableJsonNullValueInput | InputJsonValue
-    queueConfig?: NullableJsonNullValueInput | InputJsonValue
-    staffRoles?: NullableJsonNullValueInput | InputJsonValue
-    publicKeySpki?: NullableStringFieldUpdateOperationsInput | string | null
-    sharedSecret?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    payments?: SystemPaymentUncheckedUpdateManyWithoutTenantNestedInput
-    subscriptions?: SubscriptionUncheckedUpdateManyWithoutTenantNestedInput
-    usages?: TenantUsageUncheckedUpdateManyWithoutTenantNestedInput
-    configAuditLogs?: TenantConfigAuditLogUncheckedUpdateManyWithoutTenantNestedInput
-    featureFlagOverrides?: FeatureFlagOverrideUncheckedUpdateManyWithoutTenantNestedInput
-    tenantFeatureFlags?: TenantFeatureFlagUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type ModuleUpsertWithoutTenantsInput = {
@@ -24098,6 +24013,91 @@ export namespace Prisma {
     featureFlags?: FeatureFlagUncheckedUpdateManyWithoutModuleNestedInput
   }
 
+  export type TenantUpsertWithoutEntitlementsInput = {
+    update: XOR<TenantUpdateWithoutEntitlementsInput, TenantUncheckedUpdateWithoutEntitlementsInput>
+    create: XOR<TenantCreateWithoutEntitlementsInput, TenantUncheckedCreateWithoutEntitlementsInput>
+    where?: TenantWhereInput
+  }
+
+  export type TenantUpdateToOneWithWhereWithoutEntitlementsInput = {
+    where?: TenantWhereInput
+    data: XOR<TenantUpdateWithoutEntitlementsInput, TenantUncheckedUpdateWithoutEntitlementsInput>
+  }
+
+  export type TenantUpdateWithoutEntitlementsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    dbUrl?: StringFieldUpdateOperationsInput | string
+    encryptionKeyReference?: StringFieldUpdateOperationsInput | string
+    tier?: EnumDeploymentTierFieldUpdateOperationsInput | $Enums.DeploymentTier
+    region?: StringFieldUpdateOperationsInput | string
+    status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
+    suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    enabledModules?: JsonNullValueInput | InputJsonValue
+    queueConfig?: NullableJsonNullValueInput | InputJsonValue
+    billingConfig?: NullableJsonNullValueInput | InputJsonValue
+    staffRoles?: NullableJsonNullValueInput | InputJsonValue
+    publicKeySpki?: NullableStringFieldUpdateOperationsInput | string | null
+    sharedSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    complianceIsolation?: JsonNullValueInput | InputJsonValue
+    facilityType?: EnumFacilityTypeFieldUpdateOperationsInput | $Enums.FacilityType
+    moduleConfig?: JsonNullValueInput | InputJsonValue
+    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
+    workflowCustomization?: JsonNullValueInput | InputJsonValue
+    featureFlagOverrides?: FeatureFlagOverrideUpdateManyWithoutTenantNestedInput
+    subscriptions?: SubscriptionUpdateManyWithoutTenantNestedInput
+    payments?: SystemPaymentUpdateManyWithoutTenantNestedInput
+    configAuditLogs?: TenantConfigAuditLogUpdateManyWithoutTenantNestedInput
+    tenantFeatureFlags?: TenantFeatureFlagUpdateManyWithoutTenantNestedInput
+    usages?: TenantUsageUpdateManyWithoutTenantNestedInput
+  }
+
+  export type TenantUncheckedUpdateWithoutEntitlementsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    dbUrl?: StringFieldUpdateOperationsInput | string
+    encryptionKeyReference?: StringFieldUpdateOperationsInput | string
+    tier?: EnumDeploymentTierFieldUpdateOperationsInput | $Enums.DeploymentTier
+    region?: StringFieldUpdateOperationsInput | string
+    status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
+    suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    enabledModules?: JsonNullValueInput | InputJsonValue
+    queueConfig?: NullableJsonNullValueInput | InputJsonValue
+    billingConfig?: NullableJsonNullValueInput | InputJsonValue
+    staffRoles?: NullableJsonNullValueInput | InputJsonValue
+    publicKeySpki?: NullableStringFieldUpdateOperationsInput | string | null
+    sharedSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    complianceIsolation?: JsonNullValueInput | InputJsonValue
+    facilityType?: EnumFacilityTypeFieldUpdateOperationsInput | $Enums.FacilityType
+    moduleConfig?: JsonNullValueInput | InputJsonValue
+    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
+    workflowCustomization?: JsonNullValueInput | InputJsonValue
+    featureFlagOverrides?: FeatureFlagOverrideUncheckedUpdateManyWithoutTenantNestedInput
+    subscriptions?: SubscriptionUncheckedUpdateManyWithoutTenantNestedInput
+    payments?: SystemPaymentUncheckedUpdateManyWithoutTenantNestedInput
+    configAuditLogs?: TenantConfigAuditLogUncheckedUpdateManyWithoutTenantNestedInput
+    tenantFeatureFlags?: TenantFeatureFlagUncheckedUpdateManyWithoutTenantNestedInput
+    usages?: TenantUsageUncheckedUpdateManyWithoutTenantNestedInput
+  }
+
   export type TenantCreateWithoutPaymentsInput = {
     id?: string
     name: string
@@ -24105,7 +24105,6 @@ export namespace Prisma {
     dbUrl: string
     encryptionKeyReference: string
     tier?: $Enums.DeploymentTier
-    facilityType?: $Enums.FacilityType
     region: string
     status?: $Enums.TenantStatus
     suspensionReason?: string | null
@@ -24116,23 +24115,24 @@ export namespace Prisma {
     secondaryColor?: string | null
     trialEndsAt?: Date | string | null
     enabledModules?: JsonNullValueInput | InputJsonValue
-    moduleConfig?: JsonNullValueInput | InputJsonValue
-    workflowCustomization?: JsonNullValueInput | InputJsonValue
-    complianceIsolation?: JsonNullValueInput | InputJsonValue
-    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
-    billingConfig?: NullableJsonNullValueInput | InputJsonValue
     queueConfig?: NullableJsonNullValueInput | InputJsonValue
+    billingConfig?: NullableJsonNullValueInput | InputJsonValue
     staffRoles?: NullableJsonNullValueInput | InputJsonValue
     publicKeySpki?: string | null
     sharedSecret?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    entitlements?: TenantModuleCreateNestedManyWithoutTenantInput
-    subscriptions?: SubscriptionCreateNestedManyWithoutTenantInput
-    usages?: TenantUsageCreateNestedManyWithoutTenantInput
-    configAuditLogs?: TenantConfigAuditLogCreateNestedManyWithoutTenantInput
+    complianceIsolation?: JsonNullValueInput | InputJsonValue
+    facilityType?: $Enums.FacilityType
+    moduleConfig?: JsonNullValueInput | InputJsonValue
+    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
+    workflowCustomization?: JsonNullValueInput | InputJsonValue
     featureFlagOverrides?: FeatureFlagOverrideCreateNestedManyWithoutTenantInput
+    subscriptions?: SubscriptionCreateNestedManyWithoutTenantInput
+    configAuditLogs?: TenantConfigAuditLogCreateNestedManyWithoutTenantInput
     tenantFeatureFlags?: TenantFeatureFlagCreateNestedManyWithoutTenantInput
+    entitlements?: TenantModuleCreateNestedManyWithoutTenantInput
+    usages?: TenantUsageCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutPaymentsInput = {
@@ -24142,7 +24142,6 @@ export namespace Prisma {
     dbUrl: string
     encryptionKeyReference: string
     tier?: $Enums.DeploymentTier
-    facilityType?: $Enums.FacilityType
     region: string
     status?: $Enums.TenantStatus
     suspensionReason?: string | null
@@ -24153,23 +24152,24 @@ export namespace Prisma {
     secondaryColor?: string | null
     trialEndsAt?: Date | string | null
     enabledModules?: JsonNullValueInput | InputJsonValue
-    moduleConfig?: JsonNullValueInput | InputJsonValue
-    workflowCustomization?: JsonNullValueInput | InputJsonValue
-    complianceIsolation?: JsonNullValueInput | InputJsonValue
-    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
-    billingConfig?: NullableJsonNullValueInput | InputJsonValue
     queueConfig?: NullableJsonNullValueInput | InputJsonValue
+    billingConfig?: NullableJsonNullValueInput | InputJsonValue
     staffRoles?: NullableJsonNullValueInput | InputJsonValue
     publicKeySpki?: string | null
     sharedSecret?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    entitlements?: TenantModuleUncheckedCreateNestedManyWithoutTenantInput
-    subscriptions?: SubscriptionUncheckedCreateNestedManyWithoutTenantInput
-    usages?: TenantUsageUncheckedCreateNestedManyWithoutTenantInput
-    configAuditLogs?: TenantConfigAuditLogUncheckedCreateNestedManyWithoutTenantInput
+    complianceIsolation?: JsonNullValueInput | InputJsonValue
+    facilityType?: $Enums.FacilityType
+    moduleConfig?: JsonNullValueInput | InputJsonValue
+    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
+    workflowCustomization?: JsonNullValueInput | InputJsonValue
     featureFlagOverrides?: FeatureFlagOverrideUncheckedCreateNestedManyWithoutTenantInput
+    subscriptions?: SubscriptionUncheckedCreateNestedManyWithoutTenantInput
+    configAuditLogs?: TenantConfigAuditLogUncheckedCreateNestedManyWithoutTenantInput
     tenantFeatureFlags?: TenantFeatureFlagUncheckedCreateNestedManyWithoutTenantInput
+    entitlements?: TenantModuleUncheckedCreateNestedManyWithoutTenantInput
+    usages?: TenantUsageUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutPaymentsInput = {
@@ -24195,7 +24195,6 @@ export namespace Prisma {
     dbUrl?: StringFieldUpdateOperationsInput | string
     encryptionKeyReference?: StringFieldUpdateOperationsInput | string
     tier?: EnumDeploymentTierFieldUpdateOperationsInput | $Enums.DeploymentTier
-    facilityType?: EnumFacilityTypeFieldUpdateOperationsInput | $Enums.FacilityType
     region?: StringFieldUpdateOperationsInput | string
     status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
     suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -24206,23 +24205,24 @@ export namespace Prisma {
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     enabledModules?: JsonNullValueInput | InputJsonValue
-    moduleConfig?: JsonNullValueInput | InputJsonValue
-    workflowCustomization?: JsonNullValueInput | InputJsonValue
-    complianceIsolation?: JsonNullValueInput | InputJsonValue
-    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
-    billingConfig?: NullableJsonNullValueInput | InputJsonValue
     queueConfig?: NullableJsonNullValueInput | InputJsonValue
+    billingConfig?: NullableJsonNullValueInput | InputJsonValue
     staffRoles?: NullableJsonNullValueInput | InputJsonValue
     publicKeySpki?: NullableStringFieldUpdateOperationsInput | string | null
     sharedSecret?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    entitlements?: TenantModuleUpdateManyWithoutTenantNestedInput
-    subscriptions?: SubscriptionUpdateManyWithoutTenantNestedInput
-    usages?: TenantUsageUpdateManyWithoutTenantNestedInput
-    configAuditLogs?: TenantConfigAuditLogUpdateManyWithoutTenantNestedInput
+    complianceIsolation?: JsonNullValueInput | InputJsonValue
+    facilityType?: EnumFacilityTypeFieldUpdateOperationsInput | $Enums.FacilityType
+    moduleConfig?: JsonNullValueInput | InputJsonValue
+    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
+    workflowCustomization?: JsonNullValueInput | InputJsonValue
     featureFlagOverrides?: FeatureFlagOverrideUpdateManyWithoutTenantNestedInput
+    subscriptions?: SubscriptionUpdateManyWithoutTenantNestedInput
+    configAuditLogs?: TenantConfigAuditLogUpdateManyWithoutTenantNestedInput
     tenantFeatureFlags?: TenantFeatureFlagUpdateManyWithoutTenantNestedInput
+    entitlements?: TenantModuleUpdateManyWithoutTenantNestedInput
+    usages?: TenantUsageUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutPaymentsInput = {
@@ -24232,7 +24232,6 @@ export namespace Prisma {
     dbUrl?: StringFieldUpdateOperationsInput | string
     encryptionKeyReference?: StringFieldUpdateOperationsInput | string
     tier?: EnumDeploymentTierFieldUpdateOperationsInput | $Enums.DeploymentTier
-    facilityType?: EnumFacilityTypeFieldUpdateOperationsInput | $Enums.FacilityType
     region?: StringFieldUpdateOperationsInput | string
     status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
     suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -24243,23 +24242,24 @@ export namespace Prisma {
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     enabledModules?: JsonNullValueInput | InputJsonValue
-    moduleConfig?: JsonNullValueInput | InputJsonValue
-    workflowCustomization?: JsonNullValueInput | InputJsonValue
-    complianceIsolation?: JsonNullValueInput | InputJsonValue
-    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
-    billingConfig?: NullableJsonNullValueInput | InputJsonValue
     queueConfig?: NullableJsonNullValueInput | InputJsonValue
+    billingConfig?: NullableJsonNullValueInput | InputJsonValue
     staffRoles?: NullableJsonNullValueInput | InputJsonValue
     publicKeySpki?: NullableStringFieldUpdateOperationsInput | string | null
     sharedSecret?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    entitlements?: TenantModuleUncheckedUpdateManyWithoutTenantNestedInput
-    subscriptions?: SubscriptionUncheckedUpdateManyWithoutTenantNestedInput
-    usages?: TenantUsageUncheckedUpdateManyWithoutTenantNestedInput
-    configAuditLogs?: TenantConfigAuditLogUncheckedUpdateManyWithoutTenantNestedInput
+    complianceIsolation?: JsonNullValueInput | InputJsonValue
+    facilityType?: EnumFacilityTypeFieldUpdateOperationsInput | $Enums.FacilityType
+    moduleConfig?: JsonNullValueInput | InputJsonValue
+    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
+    workflowCustomization?: JsonNullValueInput | InputJsonValue
     featureFlagOverrides?: FeatureFlagOverrideUncheckedUpdateManyWithoutTenantNestedInput
+    subscriptions?: SubscriptionUncheckedUpdateManyWithoutTenantNestedInput
+    configAuditLogs?: TenantConfigAuditLogUncheckedUpdateManyWithoutTenantNestedInput
     tenantFeatureFlags?: TenantFeatureFlagUncheckedUpdateManyWithoutTenantNestedInput
+    entitlements?: TenantModuleUncheckedUpdateManyWithoutTenantNestedInput
+    usages?: TenantUsageUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type SubscriptionCreateWithoutPlanInput = {
@@ -24314,85 +24314,6 @@ export namespace Prisma {
     data: XOR<SubscriptionUpdateManyMutationInput, SubscriptionUncheckedUpdateManyWithoutPlanInput>
   }
 
-  export type TenantCreateWithoutSubscriptionsInput = {
-    id?: string
-    name: string
-    slug: string
-    dbUrl: string
-    encryptionKeyReference: string
-    tier?: $Enums.DeploymentTier
-    facilityType?: $Enums.FacilityType
-    region: string
-    status?: $Enums.TenantStatus
-    suspensionReason?: string | null
-    suspendedAt?: Date | string | null
-    address?: string | null
-    logoUrl?: string | null
-    primaryColor?: string | null
-    secondaryColor?: string | null
-    trialEndsAt?: Date | string | null
-    enabledModules?: JsonNullValueInput | InputJsonValue
-    moduleConfig?: JsonNullValueInput | InputJsonValue
-    workflowCustomization?: JsonNullValueInput | InputJsonValue
-    complianceIsolation?: JsonNullValueInput | InputJsonValue
-    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
-    billingConfig?: NullableJsonNullValueInput | InputJsonValue
-    queueConfig?: NullableJsonNullValueInput | InputJsonValue
-    staffRoles?: NullableJsonNullValueInput | InputJsonValue
-    publicKeySpki?: string | null
-    sharedSecret?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    entitlements?: TenantModuleCreateNestedManyWithoutTenantInput
-    payments?: SystemPaymentCreateNestedManyWithoutTenantInput
-    usages?: TenantUsageCreateNestedManyWithoutTenantInput
-    configAuditLogs?: TenantConfigAuditLogCreateNestedManyWithoutTenantInput
-    featureFlagOverrides?: FeatureFlagOverrideCreateNestedManyWithoutTenantInput
-    tenantFeatureFlags?: TenantFeatureFlagCreateNestedManyWithoutTenantInput
-  }
-
-  export type TenantUncheckedCreateWithoutSubscriptionsInput = {
-    id?: string
-    name: string
-    slug: string
-    dbUrl: string
-    encryptionKeyReference: string
-    tier?: $Enums.DeploymentTier
-    facilityType?: $Enums.FacilityType
-    region: string
-    status?: $Enums.TenantStatus
-    suspensionReason?: string | null
-    suspendedAt?: Date | string | null
-    address?: string | null
-    logoUrl?: string | null
-    primaryColor?: string | null
-    secondaryColor?: string | null
-    trialEndsAt?: Date | string | null
-    enabledModules?: JsonNullValueInput | InputJsonValue
-    moduleConfig?: JsonNullValueInput | InputJsonValue
-    workflowCustomization?: JsonNullValueInput | InputJsonValue
-    complianceIsolation?: JsonNullValueInput | InputJsonValue
-    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
-    billingConfig?: NullableJsonNullValueInput | InputJsonValue
-    queueConfig?: NullableJsonNullValueInput | InputJsonValue
-    staffRoles?: NullableJsonNullValueInput | InputJsonValue
-    publicKeySpki?: string | null
-    sharedSecret?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    entitlements?: TenantModuleUncheckedCreateNestedManyWithoutTenantInput
-    payments?: SystemPaymentUncheckedCreateNestedManyWithoutTenantInput
-    usages?: TenantUsageUncheckedCreateNestedManyWithoutTenantInput
-    configAuditLogs?: TenantConfigAuditLogUncheckedCreateNestedManyWithoutTenantInput
-    featureFlagOverrides?: FeatureFlagOverrideUncheckedCreateNestedManyWithoutTenantInput
-    tenantFeatureFlags?: TenantFeatureFlagUncheckedCreateNestedManyWithoutTenantInput
-  }
-
-  export type TenantCreateOrConnectWithoutSubscriptionsInput = {
-    where: TenantWhereUniqueInput
-    create: XOR<TenantCreateWithoutSubscriptionsInput, TenantUncheckedCreateWithoutSubscriptionsInput>
-  }
-
   export type PlanCreateWithoutSubscriptionsInput = {
     id?: string
     name: string
@@ -24432,6 +24353,85 @@ export namespace Prisma {
     create: XOR<PlanCreateWithoutSubscriptionsInput, PlanUncheckedCreateWithoutSubscriptionsInput>
   }
 
+  export type TenantCreateWithoutSubscriptionsInput = {
+    id?: string
+    name: string
+    slug: string
+    dbUrl: string
+    encryptionKeyReference: string
+    tier?: $Enums.DeploymentTier
+    region: string
+    status?: $Enums.TenantStatus
+    suspensionReason?: string | null
+    suspendedAt?: Date | string | null
+    address?: string | null
+    logoUrl?: string | null
+    primaryColor?: string | null
+    secondaryColor?: string | null
+    trialEndsAt?: Date | string | null
+    enabledModules?: JsonNullValueInput | InputJsonValue
+    queueConfig?: NullableJsonNullValueInput | InputJsonValue
+    billingConfig?: NullableJsonNullValueInput | InputJsonValue
+    staffRoles?: NullableJsonNullValueInput | InputJsonValue
+    publicKeySpki?: string | null
+    sharedSecret?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    complianceIsolation?: JsonNullValueInput | InputJsonValue
+    facilityType?: $Enums.FacilityType
+    moduleConfig?: JsonNullValueInput | InputJsonValue
+    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
+    workflowCustomization?: JsonNullValueInput | InputJsonValue
+    featureFlagOverrides?: FeatureFlagOverrideCreateNestedManyWithoutTenantInput
+    payments?: SystemPaymentCreateNestedManyWithoutTenantInput
+    configAuditLogs?: TenantConfigAuditLogCreateNestedManyWithoutTenantInput
+    tenantFeatureFlags?: TenantFeatureFlagCreateNestedManyWithoutTenantInput
+    entitlements?: TenantModuleCreateNestedManyWithoutTenantInput
+    usages?: TenantUsageCreateNestedManyWithoutTenantInput
+  }
+
+  export type TenantUncheckedCreateWithoutSubscriptionsInput = {
+    id?: string
+    name: string
+    slug: string
+    dbUrl: string
+    encryptionKeyReference: string
+    tier?: $Enums.DeploymentTier
+    region: string
+    status?: $Enums.TenantStatus
+    suspensionReason?: string | null
+    suspendedAt?: Date | string | null
+    address?: string | null
+    logoUrl?: string | null
+    primaryColor?: string | null
+    secondaryColor?: string | null
+    trialEndsAt?: Date | string | null
+    enabledModules?: JsonNullValueInput | InputJsonValue
+    queueConfig?: NullableJsonNullValueInput | InputJsonValue
+    billingConfig?: NullableJsonNullValueInput | InputJsonValue
+    staffRoles?: NullableJsonNullValueInput | InputJsonValue
+    publicKeySpki?: string | null
+    sharedSecret?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    complianceIsolation?: JsonNullValueInput | InputJsonValue
+    facilityType?: $Enums.FacilityType
+    moduleConfig?: JsonNullValueInput | InputJsonValue
+    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
+    workflowCustomization?: JsonNullValueInput | InputJsonValue
+    featureFlagOverrides?: FeatureFlagOverrideUncheckedCreateNestedManyWithoutTenantInput
+    payments?: SystemPaymentUncheckedCreateNestedManyWithoutTenantInput
+    configAuditLogs?: TenantConfigAuditLogUncheckedCreateNestedManyWithoutTenantInput
+    tenantFeatureFlags?: TenantFeatureFlagUncheckedCreateNestedManyWithoutTenantInput
+    entitlements?: TenantModuleUncheckedCreateNestedManyWithoutTenantInput
+    usages?: TenantUsageUncheckedCreateNestedManyWithoutTenantInput
+  }
+
+  export type TenantCreateOrConnectWithoutSubscriptionsInput = {
+    where: TenantWhereUniqueInput
+    create: XOR<TenantCreateWithoutSubscriptionsInput, TenantUncheckedCreateWithoutSubscriptionsInput>
+  }
+
   export type TenantUsageCreateWithoutSubscriptionInput = {
     id?: string
     date: Date | string
@@ -24464,91 +24464,6 @@ export namespace Prisma {
   export type TenantUsageCreateManySubscriptionInputEnvelope = {
     data: TenantUsageCreateManySubscriptionInput | TenantUsageCreateManySubscriptionInput[]
     skipDuplicates?: boolean
-  }
-
-  export type TenantUpsertWithoutSubscriptionsInput = {
-    update: XOR<TenantUpdateWithoutSubscriptionsInput, TenantUncheckedUpdateWithoutSubscriptionsInput>
-    create: XOR<TenantCreateWithoutSubscriptionsInput, TenantUncheckedCreateWithoutSubscriptionsInput>
-    where?: TenantWhereInput
-  }
-
-  export type TenantUpdateToOneWithWhereWithoutSubscriptionsInput = {
-    where?: TenantWhereInput
-    data: XOR<TenantUpdateWithoutSubscriptionsInput, TenantUncheckedUpdateWithoutSubscriptionsInput>
-  }
-
-  export type TenantUpdateWithoutSubscriptionsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    slug?: StringFieldUpdateOperationsInput | string
-    dbUrl?: StringFieldUpdateOperationsInput | string
-    encryptionKeyReference?: StringFieldUpdateOperationsInput | string
-    tier?: EnumDeploymentTierFieldUpdateOperationsInput | $Enums.DeploymentTier
-    facilityType?: EnumFacilityTypeFieldUpdateOperationsInput | $Enums.FacilityType
-    region?: StringFieldUpdateOperationsInput | string
-    status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
-    suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
-    suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
-    secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
-    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    enabledModules?: JsonNullValueInput | InputJsonValue
-    moduleConfig?: JsonNullValueInput | InputJsonValue
-    workflowCustomization?: JsonNullValueInput | InputJsonValue
-    complianceIsolation?: JsonNullValueInput | InputJsonValue
-    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
-    billingConfig?: NullableJsonNullValueInput | InputJsonValue
-    queueConfig?: NullableJsonNullValueInput | InputJsonValue
-    staffRoles?: NullableJsonNullValueInput | InputJsonValue
-    publicKeySpki?: NullableStringFieldUpdateOperationsInput | string | null
-    sharedSecret?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    entitlements?: TenantModuleUpdateManyWithoutTenantNestedInput
-    payments?: SystemPaymentUpdateManyWithoutTenantNestedInput
-    usages?: TenantUsageUpdateManyWithoutTenantNestedInput
-    configAuditLogs?: TenantConfigAuditLogUpdateManyWithoutTenantNestedInput
-    featureFlagOverrides?: FeatureFlagOverrideUpdateManyWithoutTenantNestedInput
-    tenantFeatureFlags?: TenantFeatureFlagUpdateManyWithoutTenantNestedInput
-  }
-
-  export type TenantUncheckedUpdateWithoutSubscriptionsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    slug?: StringFieldUpdateOperationsInput | string
-    dbUrl?: StringFieldUpdateOperationsInput | string
-    encryptionKeyReference?: StringFieldUpdateOperationsInput | string
-    tier?: EnumDeploymentTierFieldUpdateOperationsInput | $Enums.DeploymentTier
-    facilityType?: EnumFacilityTypeFieldUpdateOperationsInput | $Enums.FacilityType
-    region?: StringFieldUpdateOperationsInput | string
-    status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
-    suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
-    suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
-    secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
-    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    enabledModules?: JsonNullValueInput | InputJsonValue
-    moduleConfig?: JsonNullValueInput | InputJsonValue
-    workflowCustomization?: JsonNullValueInput | InputJsonValue
-    complianceIsolation?: JsonNullValueInput | InputJsonValue
-    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
-    billingConfig?: NullableJsonNullValueInput | InputJsonValue
-    queueConfig?: NullableJsonNullValueInput | InputJsonValue
-    staffRoles?: NullableJsonNullValueInput | InputJsonValue
-    publicKeySpki?: NullableStringFieldUpdateOperationsInput | string | null
-    sharedSecret?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    entitlements?: TenantModuleUncheckedUpdateManyWithoutTenantNestedInput
-    payments?: SystemPaymentUncheckedUpdateManyWithoutTenantNestedInput
-    usages?: TenantUsageUncheckedUpdateManyWithoutTenantNestedInput
-    configAuditLogs?: TenantConfigAuditLogUncheckedUpdateManyWithoutTenantNestedInput
-    featureFlagOverrides?: FeatureFlagOverrideUncheckedUpdateManyWithoutTenantNestedInput
-    tenantFeatureFlags?: TenantFeatureFlagUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type PlanUpsertWithoutSubscriptionsInput = {
@@ -24596,6 +24511,91 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type TenantUpsertWithoutSubscriptionsInput = {
+    update: XOR<TenantUpdateWithoutSubscriptionsInput, TenantUncheckedUpdateWithoutSubscriptionsInput>
+    create: XOR<TenantCreateWithoutSubscriptionsInput, TenantUncheckedCreateWithoutSubscriptionsInput>
+    where?: TenantWhereInput
+  }
+
+  export type TenantUpdateToOneWithWhereWithoutSubscriptionsInput = {
+    where?: TenantWhereInput
+    data: XOR<TenantUpdateWithoutSubscriptionsInput, TenantUncheckedUpdateWithoutSubscriptionsInput>
+  }
+
+  export type TenantUpdateWithoutSubscriptionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    dbUrl?: StringFieldUpdateOperationsInput | string
+    encryptionKeyReference?: StringFieldUpdateOperationsInput | string
+    tier?: EnumDeploymentTierFieldUpdateOperationsInput | $Enums.DeploymentTier
+    region?: StringFieldUpdateOperationsInput | string
+    status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
+    suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    enabledModules?: JsonNullValueInput | InputJsonValue
+    queueConfig?: NullableJsonNullValueInput | InputJsonValue
+    billingConfig?: NullableJsonNullValueInput | InputJsonValue
+    staffRoles?: NullableJsonNullValueInput | InputJsonValue
+    publicKeySpki?: NullableStringFieldUpdateOperationsInput | string | null
+    sharedSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    complianceIsolation?: JsonNullValueInput | InputJsonValue
+    facilityType?: EnumFacilityTypeFieldUpdateOperationsInput | $Enums.FacilityType
+    moduleConfig?: JsonNullValueInput | InputJsonValue
+    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
+    workflowCustomization?: JsonNullValueInput | InputJsonValue
+    featureFlagOverrides?: FeatureFlagOverrideUpdateManyWithoutTenantNestedInput
+    payments?: SystemPaymentUpdateManyWithoutTenantNestedInput
+    configAuditLogs?: TenantConfigAuditLogUpdateManyWithoutTenantNestedInput
+    tenantFeatureFlags?: TenantFeatureFlagUpdateManyWithoutTenantNestedInput
+    entitlements?: TenantModuleUpdateManyWithoutTenantNestedInput
+    usages?: TenantUsageUpdateManyWithoutTenantNestedInput
+  }
+
+  export type TenantUncheckedUpdateWithoutSubscriptionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    dbUrl?: StringFieldUpdateOperationsInput | string
+    encryptionKeyReference?: StringFieldUpdateOperationsInput | string
+    tier?: EnumDeploymentTierFieldUpdateOperationsInput | $Enums.DeploymentTier
+    region?: StringFieldUpdateOperationsInput | string
+    status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
+    suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    enabledModules?: JsonNullValueInput | InputJsonValue
+    queueConfig?: NullableJsonNullValueInput | InputJsonValue
+    billingConfig?: NullableJsonNullValueInput | InputJsonValue
+    staffRoles?: NullableJsonNullValueInput | InputJsonValue
+    publicKeySpki?: NullableStringFieldUpdateOperationsInput | string | null
+    sharedSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    complianceIsolation?: JsonNullValueInput | InputJsonValue
+    facilityType?: EnumFacilityTypeFieldUpdateOperationsInput | $Enums.FacilityType
+    moduleConfig?: JsonNullValueInput | InputJsonValue
+    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
+    workflowCustomization?: JsonNullValueInput | InputJsonValue
+    featureFlagOverrides?: FeatureFlagOverrideUncheckedUpdateManyWithoutTenantNestedInput
+    payments?: SystemPaymentUncheckedUpdateManyWithoutTenantNestedInput
+    configAuditLogs?: TenantConfigAuditLogUncheckedUpdateManyWithoutTenantNestedInput
+    tenantFeatureFlags?: TenantFeatureFlagUncheckedUpdateManyWithoutTenantNestedInput
+    entitlements?: TenantModuleUncheckedUpdateManyWithoutTenantNestedInput
+    usages?: TenantUsageUncheckedUpdateManyWithoutTenantNestedInput
+  }
+
   export type TenantUsageUpsertWithWhereUniqueWithoutSubscriptionInput = {
     where: TenantUsageWhereUniqueInput
     update: XOR<TenantUsageUpdateWithoutSubscriptionInput, TenantUsageUncheckedUpdateWithoutSubscriptionInput>
@@ -24612,85 +24612,6 @@ export namespace Prisma {
     data: XOR<TenantUsageUpdateManyMutationInput, TenantUsageUncheckedUpdateManyWithoutSubscriptionInput>
   }
 
-  export type TenantCreateWithoutUsagesInput = {
-    id?: string
-    name: string
-    slug: string
-    dbUrl: string
-    encryptionKeyReference: string
-    tier?: $Enums.DeploymentTier
-    facilityType?: $Enums.FacilityType
-    region: string
-    status?: $Enums.TenantStatus
-    suspensionReason?: string | null
-    suspendedAt?: Date | string | null
-    address?: string | null
-    logoUrl?: string | null
-    primaryColor?: string | null
-    secondaryColor?: string | null
-    trialEndsAt?: Date | string | null
-    enabledModules?: JsonNullValueInput | InputJsonValue
-    moduleConfig?: JsonNullValueInput | InputJsonValue
-    workflowCustomization?: JsonNullValueInput | InputJsonValue
-    complianceIsolation?: JsonNullValueInput | InputJsonValue
-    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
-    billingConfig?: NullableJsonNullValueInput | InputJsonValue
-    queueConfig?: NullableJsonNullValueInput | InputJsonValue
-    staffRoles?: NullableJsonNullValueInput | InputJsonValue
-    publicKeySpki?: string | null
-    sharedSecret?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    entitlements?: TenantModuleCreateNestedManyWithoutTenantInput
-    payments?: SystemPaymentCreateNestedManyWithoutTenantInput
-    subscriptions?: SubscriptionCreateNestedManyWithoutTenantInput
-    configAuditLogs?: TenantConfigAuditLogCreateNestedManyWithoutTenantInput
-    featureFlagOverrides?: FeatureFlagOverrideCreateNestedManyWithoutTenantInput
-    tenantFeatureFlags?: TenantFeatureFlagCreateNestedManyWithoutTenantInput
-  }
-
-  export type TenantUncheckedCreateWithoutUsagesInput = {
-    id?: string
-    name: string
-    slug: string
-    dbUrl: string
-    encryptionKeyReference: string
-    tier?: $Enums.DeploymentTier
-    facilityType?: $Enums.FacilityType
-    region: string
-    status?: $Enums.TenantStatus
-    suspensionReason?: string | null
-    suspendedAt?: Date | string | null
-    address?: string | null
-    logoUrl?: string | null
-    primaryColor?: string | null
-    secondaryColor?: string | null
-    trialEndsAt?: Date | string | null
-    enabledModules?: JsonNullValueInput | InputJsonValue
-    moduleConfig?: JsonNullValueInput | InputJsonValue
-    workflowCustomization?: JsonNullValueInput | InputJsonValue
-    complianceIsolation?: JsonNullValueInput | InputJsonValue
-    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
-    billingConfig?: NullableJsonNullValueInput | InputJsonValue
-    queueConfig?: NullableJsonNullValueInput | InputJsonValue
-    staffRoles?: NullableJsonNullValueInput | InputJsonValue
-    publicKeySpki?: string | null
-    sharedSecret?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    entitlements?: TenantModuleUncheckedCreateNestedManyWithoutTenantInput
-    payments?: SystemPaymentUncheckedCreateNestedManyWithoutTenantInput
-    subscriptions?: SubscriptionUncheckedCreateNestedManyWithoutTenantInput
-    configAuditLogs?: TenantConfigAuditLogUncheckedCreateNestedManyWithoutTenantInput
-    featureFlagOverrides?: FeatureFlagOverrideUncheckedCreateNestedManyWithoutTenantInput
-    tenantFeatureFlags?: TenantFeatureFlagUncheckedCreateNestedManyWithoutTenantInput
-  }
-
-  export type TenantCreateOrConnectWithoutUsagesInput = {
-    where: TenantWhereUniqueInput
-    create: XOR<TenantCreateWithoutUsagesInput, TenantUncheckedCreateWithoutUsagesInput>
-  }
-
   export type SubscriptionCreateWithoutUsagesInput = {
     id?: string
     status?: string
@@ -24700,8 +24621,8 @@ export namespace Prisma {
     autoRenew?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
-    tenant: TenantCreateNestedOneWithoutSubscriptionsInput
     plan: PlanCreateNestedOneWithoutSubscriptionsInput
+    tenant: TenantCreateNestedOneWithoutSubscriptionsInput
   }
 
   export type SubscriptionUncheckedCreateWithoutUsagesInput = {
@@ -24722,89 +24643,83 @@ export namespace Prisma {
     create: XOR<SubscriptionCreateWithoutUsagesInput, SubscriptionUncheckedCreateWithoutUsagesInput>
   }
 
-  export type TenantUpsertWithoutUsagesInput = {
-    update: XOR<TenantUpdateWithoutUsagesInput, TenantUncheckedUpdateWithoutUsagesInput>
+  export type TenantCreateWithoutUsagesInput = {
+    id?: string
+    name: string
+    slug: string
+    dbUrl: string
+    encryptionKeyReference: string
+    tier?: $Enums.DeploymentTier
+    region: string
+    status?: $Enums.TenantStatus
+    suspensionReason?: string | null
+    suspendedAt?: Date | string | null
+    address?: string | null
+    logoUrl?: string | null
+    primaryColor?: string | null
+    secondaryColor?: string | null
+    trialEndsAt?: Date | string | null
+    enabledModules?: JsonNullValueInput | InputJsonValue
+    queueConfig?: NullableJsonNullValueInput | InputJsonValue
+    billingConfig?: NullableJsonNullValueInput | InputJsonValue
+    staffRoles?: NullableJsonNullValueInput | InputJsonValue
+    publicKeySpki?: string | null
+    sharedSecret?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    complianceIsolation?: JsonNullValueInput | InputJsonValue
+    facilityType?: $Enums.FacilityType
+    moduleConfig?: JsonNullValueInput | InputJsonValue
+    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
+    workflowCustomization?: JsonNullValueInput | InputJsonValue
+    featureFlagOverrides?: FeatureFlagOverrideCreateNestedManyWithoutTenantInput
+    subscriptions?: SubscriptionCreateNestedManyWithoutTenantInput
+    payments?: SystemPaymentCreateNestedManyWithoutTenantInput
+    configAuditLogs?: TenantConfigAuditLogCreateNestedManyWithoutTenantInput
+    tenantFeatureFlags?: TenantFeatureFlagCreateNestedManyWithoutTenantInput
+    entitlements?: TenantModuleCreateNestedManyWithoutTenantInput
+  }
+
+  export type TenantUncheckedCreateWithoutUsagesInput = {
+    id?: string
+    name: string
+    slug: string
+    dbUrl: string
+    encryptionKeyReference: string
+    tier?: $Enums.DeploymentTier
+    region: string
+    status?: $Enums.TenantStatus
+    suspensionReason?: string | null
+    suspendedAt?: Date | string | null
+    address?: string | null
+    logoUrl?: string | null
+    primaryColor?: string | null
+    secondaryColor?: string | null
+    trialEndsAt?: Date | string | null
+    enabledModules?: JsonNullValueInput | InputJsonValue
+    queueConfig?: NullableJsonNullValueInput | InputJsonValue
+    billingConfig?: NullableJsonNullValueInput | InputJsonValue
+    staffRoles?: NullableJsonNullValueInput | InputJsonValue
+    publicKeySpki?: string | null
+    sharedSecret?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    complianceIsolation?: JsonNullValueInput | InputJsonValue
+    facilityType?: $Enums.FacilityType
+    moduleConfig?: JsonNullValueInput | InputJsonValue
+    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
+    workflowCustomization?: JsonNullValueInput | InputJsonValue
+    featureFlagOverrides?: FeatureFlagOverrideUncheckedCreateNestedManyWithoutTenantInput
+    subscriptions?: SubscriptionUncheckedCreateNestedManyWithoutTenantInput
+    payments?: SystemPaymentUncheckedCreateNestedManyWithoutTenantInput
+    configAuditLogs?: TenantConfigAuditLogUncheckedCreateNestedManyWithoutTenantInput
+    tenantFeatureFlags?: TenantFeatureFlagUncheckedCreateNestedManyWithoutTenantInput
+    entitlements?: TenantModuleUncheckedCreateNestedManyWithoutTenantInput
+  }
+
+  export type TenantCreateOrConnectWithoutUsagesInput = {
+    where: TenantWhereUniqueInput
     create: XOR<TenantCreateWithoutUsagesInput, TenantUncheckedCreateWithoutUsagesInput>
-    where?: TenantWhereInput
-  }
-
-  export type TenantUpdateToOneWithWhereWithoutUsagesInput = {
-    where?: TenantWhereInput
-    data: XOR<TenantUpdateWithoutUsagesInput, TenantUncheckedUpdateWithoutUsagesInput>
-  }
-
-  export type TenantUpdateWithoutUsagesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    slug?: StringFieldUpdateOperationsInput | string
-    dbUrl?: StringFieldUpdateOperationsInput | string
-    encryptionKeyReference?: StringFieldUpdateOperationsInput | string
-    tier?: EnumDeploymentTierFieldUpdateOperationsInput | $Enums.DeploymentTier
-    facilityType?: EnumFacilityTypeFieldUpdateOperationsInput | $Enums.FacilityType
-    region?: StringFieldUpdateOperationsInput | string
-    status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
-    suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
-    suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
-    secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
-    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    enabledModules?: JsonNullValueInput | InputJsonValue
-    moduleConfig?: JsonNullValueInput | InputJsonValue
-    workflowCustomization?: JsonNullValueInput | InputJsonValue
-    complianceIsolation?: JsonNullValueInput | InputJsonValue
-    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
-    billingConfig?: NullableJsonNullValueInput | InputJsonValue
-    queueConfig?: NullableJsonNullValueInput | InputJsonValue
-    staffRoles?: NullableJsonNullValueInput | InputJsonValue
-    publicKeySpki?: NullableStringFieldUpdateOperationsInput | string | null
-    sharedSecret?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    entitlements?: TenantModuleUpdateManyWithoutTenantNestedInput
-    payments?: SystemPaymentUpdateManyWithoutTenantNestedInput
-    subscriptions?: SubscriptionUpdateManyWithoutTenantNestedInput
-    configAuditLogs?: TenantConfigAuditLogUpdateManyWithoutTenantNestedInput
-    featureFlagOverrides?: FeatureFlagOverrideUpdateManyWithoutTenantNestedInput
-    tenantFeatureFlags?: TenantFeatureFlagUpdateManyWithoutTenantNestedInput
-  }
-
-  export type TenantUncheckedUpdateWithoutUsagesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    slug?: StringFieldUpdateOperationsInput | string
-    dbUrl?: StringFieldUpdateOperationsInput | string
-    encryptionKeyReference?: StringFieldUpdateOperationsInput | string
-    tier?: EnumDeploymentTierFieldUpdateOperationsInput | $Enums.DeploymentTier
-    facilityType?: EnumFacilityTypeFieldUpdateOperationsInput | $Enums.FacilityType
-    region?: StringFieldUpdateOperationsInput | string
-    status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
-    suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
-    suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
-    secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
-    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    enabledModules?: JsonNullValueInput | InputJsonValue
-    moduleConfig?: JsonNullValueInput | InputJsonValue
-    workflowCustomization?: JsonNullValueInput | InputJsonValue
-    complianceIsolation?: JsonNullValueInput | InputJsonValue
-    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
-    billingConfig?: NullableJsonNullValueInput | InputJsonValue
-    queueConfig?: NullableJsonNullValueInput | InputJsonValue
-    staffRoles?: NullableJsonNullValueInput | InputJsonValue
-    publicKeySpki?: NullableStringFieldUpdateOperationsInput | string | null
-    sharedSecret?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    entitlements?: TenantModuleUncheckedUpdateManyWithoutTenantNestedInput
-    payments?: SystemPaymentUncheckedUpdateManyWithoutTenantNestedInput
-    subscriptions?: SubscriptionUncheckedUpdateManyWithoutTenantNestedInput
-    configAuditLogs?: TenantConfigAuditLogUncheckedUpdateManyWithoutTenantNestedInput
-    featureFlagOverrides?: FeatureFlagOverrideUncheckedUpdateManyWithoutTenantNestedInput
-    tenantFeatureFlags?: TenantFeatureFlagUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type SubscriptionUpsertWithoutUsagesInput = {
@@ -24827,8 +24742,8 @@ export namespace Prisma {
     autoRenew?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    tenant?: TenantUpdateOneRequiredWithoutSubscriptionsNestedInput
     plan?: PlanUpdateOneRequiredWithoutSubscriptionsNestedInput
+    tenant?: TenantUpdateOneRequiredWithoutSubscriptionsNestedInput
   }
 
   export type SubscriptionUncheckedUpdateWithoutUsagesInput = {
@@ -24842,6 +24757,115 @@ export namespace Prisma {
     autoRenew?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TenantUpsertWithoutUsagesInput = {
+    update: XOR<TenantUpdateWithoutUsagesInput, TenantUncheckedUpdateWithoutUsagesInput>
+    create: XOR<TenantCreateWithoutUsagesInput, TenantUncheckedCreateWithoutUsagesInput>
+    where?: TenantWhereInput
+  }
+
+  export type TenantUpdateToOneWithWhereWithoutUsagesInput = {
+    where?: TenantWhereInput
+    data: XOR<TenantUpdateWithoutUsagesInput, TenantUncheckedUpdateWithoutUsagesInput>
+  }
+
+  export type TenantUpdateWithoutUsagesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    dbUrl?: StringFieldUpdateOperationsInput | string
+    encryptionKeyReference?: StringFieldUpdateOperationsInput | string
+    tier?: EnumDeploymentTierFieldUpdateOperationsInput | $Enums.DeploymentTier
+    region?: StringFieldUpdateOperationsInput | string
+    status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
+    suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    enabledModules?: JsonNullValueInput | InputJsonValue
+    queueConfig?: NullableJsonNullValueInput | InputJsonValue
+    billingConfig?: NullableJsonNullValueInput | InputJsonValue
+    staffRoles?: NullableJsonNullValueInput | InputJsonValue
+    publicKeySpki?: NullableStringFieldUpdateOperationsInput | string | null
+    sharedSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    complianceIsolation?: JsonNullValueInput | InputJsonValue
+    facilityType?: EnumFacilityTypeFieldUpdateOperationsInput | $Enums.FacilityType
+    moduleConfig?: JsonNullValueInput | InputJsonValue
+    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
+    workflowCustomization?: JsonNullValueInput | InputJsonValue
+    featureFlagOverrides?: FeatureFlagOverrideUpdateManyWithoutTenantNestedInput
+    subscriptions?: SubscriptionUpdateManyWithoutTenantNestedInput
+    payments?: SystemPaymentUpdateManyWithoutTenantNestedInput
+    configAuditLogs?: TenantConfigAuditLogUpdateManyWithoutTenantNestedInput
+    tenantFeatureFlags?: TenantFeatureFlagUpdateManyWithoutTenantNestedInput
+    entitlements?: TenantModuleUpdateManyWithoutTenantNestedInput
+  }
+
+  export type TenantUncheckedUpdateWithoutUsagesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    dbUrl?: StringFieldUpdateOperationsInput | string
+    encryptionKeyReference?: StringFieldUpdateOperationsInput | string
+    tier?: EnumDeploymentTierFieldUpdateOperationsInput | $Enums.DeploymentTier
+    region?: StringFieldUpdateOperationsInput | string
+    status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
+    suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    enabledModules?: JsonNullValueInput | InputJsonValue
+    queueConfig?: NullableJsonNullValueInput | InputJsonValue
+    billingConfig?: NullableJsonNullValueInput | InputJsonValue
+    staffRoles?: NullableJsonNullValueInput | InputJsonValue
+    publicKeySpki?: NullableStringFieldUpdateOperationsInput | string | null
+    sharedSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    complianceIsolation?: JsonNullValueInput | InputJsonValue
+    facilityType?: EnumFacilityTypeFieldUpdateOperationsInput | $Enums.FacilityType
+    moduleConfig?: JsonNullValueInput | InputJsonValue
+    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
+    workflowCustomization?: JsonNullValueInput | InputJsonValue
+    featureFlagOverrides?: FeatureFlagOverrideUncheckedUpdateManyWithoutTenantNestedInput
+    subscriptions?: SubscriptionUncheckedUpdateManyWithoutTenantNestedInput
+    payments?: SystemPaymentUncheckedUpdateManyWithoutTenantNestedInput
+    configAuditLogs?: TenantConfigAuditLogUncheckedUpdateManyWithoutTenantNestedInput
+    tenantFeatureFlags?: TenantFeatureFlagUncheckedUpdateManyWithoutTenantNestedInput
+    entitlements?: TenantModuleUncheckedUpdateManyWithoutTenantNestedInput
+  }
+
+  export type FeatureFlagOverrideCreateWithoutFlagInput = {
+    id?: string
+    enabled?: boolean
+    createdAt?: Date | string
+    tenant?: TenantCreateNestedOneWithoutFeatureFlagOverridesInput
+  }
+
+  export type FeatureFlagOverrideUncheckedCreateWithoutFlagInput = {
+    id?: string
+    tenantId?: string | null
+    enabled?: boolean
+    createdAt?: Date | string
+  }
+
+  export type FeatureFlagOverrideCreateOrConnectWithoutFlagInput = {
+    where: FeatureFlagOverrideWhereUniqueInput
+    create: XOR<FeatureFlagOverrideCreateWithoutFlagInput, FeatureFlagOverrideUncheckedCreateWithoutFlagInput>
+  }
+
+  export type FeatureFlagOverrideCreateManyFlagInputEnvelope = {
+    data: FeatureFlagOverrideCreateManyFlagInput | FeatureFlagOverrideCreateManyFlagInput[]
+    skipDuplicates?: boolean
   }
 
   export type ModuleCreateWithoutFeatureFlagsInput = {
@@ -24877,30 +24901,6 @@ export namespace Prisma {
     create: XOR<ModuleCreateWithoutFeatureFlagsInput, ModuleUncheckedCreateWithoutFeatureFlagsInput>
   }
 
-  export type FeatureFlagOverrideCreateWithoutFlagInput = {
-    id?: string
-    enabled?: boolean
-    createdAt?: Date | string
-    tenant?: TenantCreateNestedOneWithoutFeatureFlagOverridesInput
-  }
-
-  export type FeatureFlagOverrideUncheckedCreateWithoutFlagInput = {
-    id?: string
-    tenantId?: string | null
-    enabled?: boolean
-    createdAt?: Date | string
-  }
-
-  export type FeatureFlagOverrideCreateOrConnectWithoutFlagInput = {
-    where: FeatureFlagOverrideWhereUniqueInput
-    create: XOR<FeatureFlagOverrideCreateWithoutFlagInput, FeatureFlagOverrideUncheckedCreateWithoutFlagInput>
-  }
-
-  export type FeatureFlagOverrideCreateManyFlagInputEnvelope = {
-    data: FeatureFlagOverrideCreateManyFlagInput | FeatureFlagOverrideCreateManyFlagInput[]
-    skipDuplicates?: boolean
-  }
-
   export type TenantFeatureFlagCreateWithoutFlagInput = {
     id?: string
     enabled?: boolean
@@ -24925,6 +24925,22 @@ export namespace Prisma {
   export type TenantFeatureFlagCreateManyFlagInputEnvelope = {
     data: TenantFeatureFlagCreateManyFlagInput | TenantFeatureFlagCreateManyFlagInput[]
     skipDuplicates?: boolean
+  }
+
+  export type FeatureFlagOverrideUpsertWithWhereUniqueWithoutFlagInput = {
+    where: FeatureFlagOverrideWhereUniqueInput
+    update: XOR<FeatureFlagOverrideUpdateWithoutFlagInput, FeatureFlagOverrideUncheckedUpdateWithoutFlagInput>
+    create: XOR<FeatureFlagOverrideCreateWithoutFlagInput, FeatureFlagOverrideUncheckedCreateWithoutFlagInput>
+  }
+
+  export type FeatureFlagOverrideUpdateWithWhereUniqueWithoutFlagInput = {
+    where: FeatureFlagOverrideWhereUniqueInput
+    data: XOR<FeatureFlagOverrideUpdateWithoutFlagInput, FeatureFlagOverrideUncheckedUpdateWithoutFlagInput>
+  }
+
+  export type FeatureFlagOverrideUpdateManyWithWhereWithoutFlagInput = {
+    where: FeatureFlagOverrideScalarWhereInput
+    data: XOR<FeatureFlagOverrideUpdateManyMutationInput, FeatureFlagOverrideUncheckedUpdateManyWithoutFlagInput>
   }
 
   export type ModuleUpsertWithoutFeatureFlagsInput = {
@@ -24964,22 +24980,6 @@ export namespace Prisma {
     events?: JsonNullValueInput | InputJsonValue
     permissions?: JsonNullValueInput | InputJsonValue
     tenants?: TenantModuleUncheckedUpdateManyWithoutModuleNestedInput
-  }
-
-  export type FeatureFlagOverrideUpsertWithWhereUniqueWithoutFlagInput = {
-    where: FeatureFlagOverrideWhereUniqueInput
-    update: XOR<FeatureFlagOverrideUpdateWithoutFlagInput, FeatureFlagOverrideUncheckedUpdateWithoutFlagInput>
-    create: XOR<FeatureFlagOverrideCreateWithoutFlagInput, FeatureFlagOverrideUncheckedCreateWithoutFlagInput>
-  }
-
-  export type FeatureFlagOverrideUpdateWithWhereUniqueWithoutFlagInput = {
-    where: FeatureFlagOverrideWhereUniqueInput
-    data: XOR<FeatureFlagOverrideUpdateWithoutFlagInput, FeatureFlagOverrideUncheckedUpdateWithoutFlagInput>
-  }
-
-  export type FeatureFlagOverrideUpdateManyWithWhereWithoutFlagInput = {
-    where: FeatureFlagOverrideScalarWhereInput
-    data: XOR<FeatureFlagOverrideUpdateManyMutationInput, FeatureFlagOverrideUncheckedUpdateManyWithoutFlagInput>
   }
 
   export type TenantFeatureFlagUpsertWithWhereUniqueWithoutFlagInput = {
@@ -25034,7 +25034,6 @@ export namespace Prisma {
     dbUrl: string
     encryptionKeyReference: string
     tier?: $Enums.DeploymentTier
-    facilityType?: $Enums.FacilityType
     region: string
     status?: $Enums.TenantStatus
     suspensionReason?: string | null
@@ -25045,23 +25044,24 @@ export namespace Prisma {
     secondaryColor?: string | null
     trialEndsAt?: Date | string | null
     enabledModules?: JsonNullValueInput | InputJsonValue
-    moduleConfig?: JsonNullValueInput | InputJsonValue
-    workflowCustomization?: JsonNullValueInput | InputJsonValue
-    complianceIsolation?: JsonNullValueInput | InputJsonValue
-    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
-    billingConfig?: NullableJsonNullValueInput | InputJsonValue
     queueConfig?: NullableJsonNullValueInput | InputJsonValue
+    billingConfig?: NullableJsonNullValueInput | InputJsonValue
     staffRoles?: NullableJsonNullValueInput | InputJsonValue
     publicKeySpki?: string | null
     sharedSecret?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    entitlements?: TenantModuleCreateNestedManyWithoutTenantInput
-    payments?: SystemPaymentCreateNestedManyWithoutTenantInput
+    complianceIsolation?: JsonNullValueInput | InputJsonValue
+    facilityType?: $Enums.FacilityType
+    moduleConfig?: JsonNullValueInput | InputJsonValue
+    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
+    workflowCustomization?: JsonNullValueInput | InputJsonValue
     subscriptions?: SubscriptionCreateNestedManyWithoutTenantInput
-    usages?: TenantUsageCreateNestedManyWithoutTenantInput
+    payments?: SystemPaymentCreateNestedManyWithoutTenantInput
     configAuditLogs?: TenantConfigAuditLogCreateNestedManyWithoutTenantInput
     tenantFeatureFlags?: TenantFeatureFlagCreateNestedManyWithoutTenantInput
+    entitlements?: TenantModuleCreateNestedManyWithoutTenantInput
+    usages?: TenantUsageCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutFeatureFlagOverridesInput = {
@@ -25071,7 +25071,6 @@ export namespace Prisma {
     dbUrl: string
     encryptionKeyReference: string
     tier?: $Enums.DeploymentTier
-    facilityType?: $Enums.FacilityType
     region: string
     status?: $Enums.TenantStatus
     suspensionReason?: string | null
@@ -25082,23 +25081,24 @@ export namespace Prisma {
     secondaryColor?: string | null
     trialEndsAt?: Date | string | null
     enabledModules?: JsonNullValueInput | InputJsonValue
-    moduleConfig?: JsonNullValueInput | InputJsonValue
-    workflowCustomization?: JsonNullValueInput | InputJsonValue
-    complianceIsolation?: JsonNullValueInput | InputJsonValue
-    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
-    billingConfig?: NullableJsonNullValueInput | InputJsonValue
     queueConfig?: NullableJsonNullValueInput | InputJsonValue
+    billingConfig?: NullableJsonNullValueInput | InputJsonValue
     staffRoles?: NullableJsonNullValueInput | InputJsonValue
     publicKeySpki?: string | null
     sharedSecret?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    entitlements?: TenantModuleUncheckedCreateNestedManyWithoutTenantInput
-    payments?: SystemPaymentUncheckedCreateNestedManyWithoutTenantInput
+    complianceIsolation?: JsonNullValueInput | InputJsonValue
+    facilityType?: $Enums.FacilityType
+    moduleConfig?: JsonNullValueInput | InputJsonValue
+    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
+    workflowCustomization?: JsonNullValueInput | InputJsonValue
     subscriptions?: SubscriptionUncheckedCreateNestedManyWithoutTenantInput
-    usages?: TenantUsageUncheckedCreateNestedManyWithoutTenantInput
+    payments?: SystemPaymentUncheckedCreateNestedManyWithoutTenantInput
     configAuditLogs?: TenantConfigAuditLogUncheckedCreateNestedManyWithoutTenantInput
     tenantFeatureFlags?: TenantFeatureFlagUncheckedCreateNestedManyWithoutTenantInput
+    entitlements?: TenantModuleUncheckedCreateNestedManyWithoutTenantInput
+    usages?: TenantUsageUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutFeatureFlagOverridesInput = {
@@ -25159,7 +25159,6 @@ export namespace Prisma {
     dbUrl?: StringFieldUpdateOperationsInput | string
     encryptionKeyReference?: StringFieldUpdateOperationsInput | string
     tier?: EnumDeploymentTierFieldUpdateOperationsInput | $Enums.DeploymentTier
-    facilityType?: EnumFacilityTypeFieldUpdateOperationsInput | $Enums.FacilityType
     region?: StringFieldUpdateOperationsInput | string
     status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
     suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -25170,23 +25169,24 @@ export namespace Prisma {
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     enabledModules?: JsonNullValueInput | InputJsonValue
-    moduleConfig?: JsonNullValueInput | InputJsonValue
-    workflowCustomization?: JsonNullValueInput | InputJsonValue
-    complianceIsolation?: JsonNullValueInput | InputJsonValue
-    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
-    billingConfig?: NullableJsonNullValueInput | InputJsonValue
     queueConfig?: NullableJsonNullValueInput | InputJsonValue
+    billingConfig?: NullableJsonNullValueInput | InputJsonValue
     staffRoles?: NullableJsonNullValueInput | InputJsonValue
     publicKeySpki?: NullableStringFieldUpdateOperationsInput | string | null
     sharedSecret?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    entitlements?: TenantModuleUpdateManyWithoutTenantNestedInput
-    payments?: SystemPaymentUpdateManyWithoutTenantNestedInput
+    complianceIsolation?: JsonNullValueInput | InputJsonValue
+    facilityType?: EnumFacilityTypeFieldUpdateOperationsInput | $Enums.FacilityType
+    moduleConfig?: JsonNullValueInput | InputJsonValue
+    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
+    workflowCustomization?: JsonNullValueInput | InputJsonValue
     subscriptions?: SubscriptionUpdateManyWithoutTenantNestedInput
-    usages?: TenantUsageUpdateManyWithoutTenantNestedInput
+    payments?: SystemPaymentUpdateManyWithoutTenantNestedInput
     configAuditLogs?: TenantConfigAuditLogUpdateManyWithoutTenantNestedInput
     tenantFeatureFlags?: TenantFeatureFlagUpdateManyWithoutTenantNestedInput
+    entitlements?: TenantModuleUpdateManyWithoutTenantNestedInput
+    usages?: TenantUsageUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutFeatureFlagOverridesInput = {
@@ -25196,7 +25196,6 @@ export namespace Prisma {
     dbUrl?: StringFieldUpdateOperationsInput | string
     encryptionKeyReference?: StringFieldUpdateOperationsInput | string
     tier?: EnumDeploymentTierFieldUpdateOperationsInput | $Enums.DeploymentTier
-    facilityType?: EnumFacilityTypeFieldUpdateOperationsInput | $Enums.FacilityType
     region?: StringFieldUpdateOperationsInput | string
     status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
     suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -25207,23 +25206,24 @@ export namespace Prisma {
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     enabledModules?: JsonNullValueInput | InputJsonValue
-    moduleConfig?: JsonNullValueInput | InputJsonValue
-    workflowCustomization?: JsonNullValueInput | InputJsonValue
-    complianceIsolation?: JsonNullValueInput | InputJsonValue
-    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
-    billingConfig?: NullableJsonNullValueInput | InputJsonValue
     queueConfig?: NullableJsonNullValueInput | InputJsonValue
+    billingConfig?: NullableJsonNullValueInput | InputJsonValue
     staffRoles?: NullableJsonNullValueInput | InputJsonValue
     publicKeySpki?: NullableStringFieldUpdateOperationsInput | string | null
     sharedSecret?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    entitlements?: TenantModuleUncheckedUpdateManyWithoutTenantNestedInput
-    payments?: SystemPaymentUncheckedUpdateManyWithoutTenantNestedInput
+    complianceIsolation?: JsonNullValueInput | InputJsonValue
+    facilityType?: EnumFacilityTypeFieldUpdateOperationsInput | $Enums.FacilityType
+    moduleConfig?: JsonNullValueInput | InputJsonValue
+    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
+    workflowCustomization?: JsonNullValueInput | InputJsonValue
     subscriptions?: SubscriptionUncheckedUpdateManyWithoutTenantNestedInput
-    usages?: TenantUsageUncheckedUpdateManyWithoutTenantNestedInput
+    payments?: SystemPaymentUncheckedUpdateManyWithoutTenantNestedInput
     configAuditLogs?: TenantConfigAuditLogUncheckedUpdateManyWithoutTenantNestedInput
     tenantFeatureFlags?: TenantFeatureFlagUncheckedUpdateManyWithoutTenantNestedInput
+    entitlements?: TenantModuleUncheckedUpdateManyWithoutTenantNestedInput
+    usages?: TenantUsageUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantCreateWithoutConfigAuditLogsInput = {
@@ -25233,7 +25233,6 @@ export namespace Prisma {
     dbUrl: string
     encryptionKeyReference: string
     tier?: $Enums.DeploymentTier
-    facilityType?: $Enums.FacilityType
     region: string
     status?: $Enums.TenantStatus
     suspensionReason?: string | null
@@ -25244,23 +25243,24 @@ export namespace Prisma {
     secondaryColor?: string | null
     trialEndsAt?: Date | string | null
     enabledModules?: JsonNullValueInput | InputJsonValue
-    moduleConfig?: JsonNullValueInput | InputJsonValue
-    workflowCustomization?: JsonNullValueInput | InputJsonValue
-    complianceIsolation?: JsonNullValueInput | InputJsonValue
-    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
-    billingConfig?: NullableJsonNullValueInput | InputJsonValue
     queueConfig?: NullableJsonNullValueInput | InputJsonValue
+    billingConfig?: NullableJsonNullValueInput | InputJsonValue
     staffRoles?: NullableJsonNullValueInput | InputJsonValue
     publicKeySpki?: string | null
     sharedSecret?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    entitlements?: TenantModuleCreateNestedManyWithoutTenantInput
-    payments?: SystemPaymentCreateNestedManyWithoutTenantInput
-    subscriptions?: SubscriptionCreateNestedManyWithoutTenantInput
-    usages?: TenantUsageCreateNestedManyWithoutTenantInput
+    complianceIsolation?: JsonNullValueInput | InputJsonValue
+    facilityType?: $Enums.FacilityType
+    moduleConfig?: JsonNullValueInput | InputJsonValue
+    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
+    workflowCustomization?: JsonNullValueInput | InputJsonValue
     featureFlagOverrides?: FeatureFlagOverrideCreateNestedManyWithoutTenantInput
+    subscriptions?: SubscriptionCreateNestedManyWithoutTenantInput
+    payments?: SystemPaymentCreateNestedManyWithoutTenantInput
     tenantFeatureFlags?: TenantFeatureFlagCreateNestedManyWithoutTenantInput
+    entitlements?: TenantModuleCreateNestedManyWithoutTenantInput
+    usages?: TenantUsageCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutConfigAuditLogsInput = {
@@ -25270,7 +25270,6 @@ export namespace Prisma {
     dbUrl: string
     encryptionKeyReference: string
     tier?: $Enums.DeploymentTier
-    facilityType?: $Enums.FacilityType
     region: string
     status?: $Enums.TenantStatus
     suspensionReason?: string | null
@@ -25281,23 +25280,24 @@ export namespace Prisma {
     secondaryColor?: string | null
     trialEndsAt?: Date | string | null
     enabledModules?: JsonNullValueInput | InputJsonValue
-    moduleConfig?: JsonNullValueInput | InputJsonValue
-    workflowCustomization?: JsonNullValueInput | InputJsonValue
-    complianceIsolation?: JsonNullValueInput | InputJsonValue
-    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
-    billingConfig?: NullableJsonNullValueInput | InputJsonValue
     queueConfig?: NullableJsonNullValueInput | InputJsonValue
+    billingConfig?: NullableJsonNullValueInput | InputJsonValue
     staffRoles?: NullableJsonNullValueInput | InputJsonValue
     publicKeySpki?: string | null
     sharedSecret?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    entitlements?: TenantModuleUncheckedCreateNestedManyWithoutTenantInput
-    payments?: SystemPaymentUncheckedCreateNestedManyWithoutTenantInput
-    subscriptions?: SubscriptionUncheckedCreateNestedManyWithoutTenantInput
-    usages?: TenantUsageUncheckedCreateNestedManyWithoutTenantInput
+    complianceIsolation?: JsonNullValueInput | InputJsonValue
+    facilityType?: $Enums.FacilityType
+    moduleConfig?: JsonNullValueInput | InputJsonValue
+    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
+    workflowCustomization?: JsonNullValueInput | InputJsonValue
     featureFlagOverrides?: FeatureFlagOverrideUncheckedCreateNestedManyWithoutTenantInput
+    subscriptions?: SubscriptionUncheckedCreateNestedManyWithoutTenantInput
+    payments?: SystemPaymentUncheckedCreateNestedManyWithoutTenantInput
     tenantFeatureFlags?: TenantFeatureFlagUncheckedCreateNestedManyWithoutTenantInput
+    entitlements?: TenantModuleUncheckedCreateNestedManyWithoutTenantInput
+    usages?: TenantUsageUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutConfigAuditLogsInput = {
@@ -25323,7 +25323,6 @@ export namespace Prisma {
     dbUrl?: StringFieldUpdateOperationsInput | string
     encryptionKeyReference?: StringFieldUpdateOperationsInput | string
     tier?: EnumDeploymentTierFieldUpdateOperationsInput | $Enums.DeploymentTier
-    facilityType?: EnumFacilityTypeFieldUpdateOperationsInput | $Enums.FacilityType
     region?: StringFieldUpdateOperationsInput | string
     status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
     suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -25334,23 +25333,24 @@ export namespace Prisma {
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     enabledModules?: JsonNullValueInput | InputJsonValue
-    moduleConfig?: JsonNullValueInput | InputJsonValue
-    workflowCustomization?: JsonNullValueInput | InputJsonValue
-    complianceIsolation?: JsonNullValueInput | InputJsonValue
-    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
-    billingConfig?: NullableJsonNullValueInput | InputJsonValue
     queueConfig?: NullableJsonNullValueInput | InputJsonValue
+    billingConfig?: NullableJsonNullValueInput | InputJsonValue
     staffRoles?: NullableJsonNullValueInput | InputJsonValue
     publicKeySpki?: NullableStringFieldUpdateOperationsInput | string | null
     sharedSecret?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    entitlements?: TenantModuleUpdateManyWithoutTenantNestedInput
-    payments?: SystemPaymentUpdateManyWithoutTenantNestedInput
-    subscriptions?: SubscriptionUpdateManyWithoutTenantNestedInput
-    usages?: TenantUsageUpdateManyWithoutTenantNestedInput
+    complianceIsolation?: JsonNullValueInput | InputJsonValue
+    facilityType?: EnumFacilityTypeFieldUpdateOperationsInput | $Enums.FacilityType
+    moduleConfig?: JsonNullValueInput | InputJsonValue
+    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
+    workflowCustomization?: JsonNullValueInput | InputJsonValue
     featureFlagOverrides?: FeatureFlagOverrideUpdateManyWithoutTenantNestedInput
+    subscriptions?: SubscriptionUpdateManyWithoutTenantNestedInput
+    payments?: SystemPaymentUpdateManyWithoutTenantNestedInput
     tenantFeatureFlags?: TenantFeatureFlagUpdateManyWithoutTenantNestedInput
+    entitlements?: TenantModuleUpdateManyWithoutTenantNestedInput
+    usages?: TenantUsageUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutConfigAuditLogsInput = {
@@ -25360,7 +25360,6 @@ export namespace Prisma {
     dbUrl?: StringFieldUpdateOperationsInput | string
     encryptionKeyReference?: StringFieldUpdateOperationsInput | string
     tier?: EnumDeploymentTierFieldUpdateOperationsInput | $Enums.DeploymentTier
-    facilityType?: EnumFacilityTypeFieldUpdateOperationsInput | $Enums.FacilityType
     region?: StringFieldUpdateOperationsInput | string
     status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
     suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -25371,102 +25370,24 @@ export namespace Prisma {
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     enabledModules?: JsonNullValueInput | InputJsonValue
-    moduleConfig?: JsonNullValueInput | InputJsonValue
-    workflowCustomization?: JsonNullValueInput | InputJsonValue
-    complianceIsolation?: JsonNullValueInput | InputJsonValue
-    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
-    billingConfig?: NullableJsonNullValueInput | InputJsonValue
     queueConfig?: NullableJsonNullValueInput | InputJsonValue
+    billingConfig?: NullableJsonNullValueInput | InputJsonValue
     staffRoles?: NullableJsonNullValueInput | InputJsonValue
     publicKeySpki?: NullableStringFieldUpdateOperationsInput | string | null
     sharedSecret?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    entitlements?: TenantModuleUncheckedUpdateManyWithoutTenantNestedInput
-    payments?: SystemPaymentUncheckedUpdateManyWithoutTenantNestedInput
-    subscriptions?: SubscriptionUncheckedUpdateManyWithoutTenantNestedInput
-    usages?: TenantUsageUncheckedUpdateManyWithoutTenantNestedInput
+    complianceIsolation?: JsonNullValueInput | InputJsonValue
+    facilityType?: EnumFacilityTypeFieldUpdateOperationsInput | $Enums.FacilityType
+    moduleConfig?: JsonNullValueInput | InputJsonValue
+    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
+    workflowCustomization?: JsonNullValueInput | InputJsonValue
     featureFlagOverrides?: FeatureFlagOverrideUncheckedUpdateManyWithoutTenantNestedInput
+    subscriptions?: SubscriptionUncheckedUpdateManyWithoutTenantNestedInput
+    payments?: SystemPaymentUncheckedUpdateManyWithoutTenantNestedInput
     tenantFeatureFlags?: TenantFeatureFlagUncheckedUpdateManyWithoutTenantNestedInput
-  }
-
-  export type TenantCreateWithoutTenantFeatureFlagsInput = {
-    id?: string
-    name: string
-    slug: string
-    dbUrl: string
-    encryptionKeyReference: string
-    tier?: $Enums.DeploymentTier
-    facilityType?: $Enums.FacilityType
-    region: string
-    status?: $Enums.TenantStatus
-    suspensionReason?: string | null
-    suspendedAt?: Date | string | null
-    address?: string | null
-    logoUrl?: string | null
-    primaryColor?: string | null
-    secondaryColor?: string | null
-    trialEndsAt?: Date | string | null
-    enabledModules?: JsonNullValueInput | InputJsonValue
-    moduleConfig?: JsonNullValueInput | InputJsonValue
-    workflowCustomization?: JsonNullValueInput | InputJsonValue
-    complianceIsolation?: JsonNullValueInput | InputJsonValue
-    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
-    billingConfig?: NullableJsonNullValueInput | InputJsonValue
-    queueConfig?: NullableJsonNullValueInput | InputJsonValue
-    staffRoles?: NullableJsonNullValueInput | InputJsonValue
-    publicKeySpki?: string | null
-    sharedSecret?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    entitlements?: TenantModuleCreateNestedManyWithoutTenantInput
-    payments?: SystemPaymentCreateNestedManyWithoutTenantInput
-    subscriptions?: SubscriptionCreateNestedManyWithoutTenantInput
-    usages?: TenantUsageCreateNestedManyWithoutTenantInput
-    configAuditLogs?: TenantConfigAuditLogCreateNestedManyWithoutTenantInput
-    featureFlagOverrides?: FeatureFlagOverrideCreateNestedManyWithoutTenantInput
-  }
-
-  export type TenantUncheckedCreateWithoutTenantFeatureFlagsInput = {
-    id?: string
-    name: string
-    slug: string
-    dbUrl: string
-    encryptionKeyReference: string
-    tier?: $Enums.DeploymentTier
-    facilityType?: $Enums.FacilityType
-    region: string
-    status?: $Enums.TenantStatus
-    suspensionReason?: string | null
-    suspendedAt?: Date | string | null
-    address?: string | null
-    logoUrl?: string | null
-    primaryColor?: string | null
-    secondaryColor?: string | null
-    trialEndsAt?: Date | string | null
-    enabledModules?: JsonNullValueInput | InputJsonValue
-    moduleConfig?: JsonNullValueInput | InputJsonValue
-    workflowCustomization?: JsonNullValueInput | InputJsonValue
-    complianceIsolation?: JsonNullValueInput | InputJsonValue
-    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
-    billingConfig?: NullableJsonNullValueInput | InputJsonValue
-    queueConfig?: NullableJsonNullValueInput | InputJsonValue
-    staffRoles?: NullableJsonNullValueInput | InputJsonValue
-    publicKeySpki?: string | null
-    sharedSecret?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    entitlements?: TenantModuleUncheckedCreateNestedManyWithoutTenantInput
-    payments?: SystemPaymentUncheckedCreateNestedManyWithoutTenantInput
-    subscriptions?: SubscriptionUncheckedCreateNestedManyWithoutTenantInput
-    usages?: TenantUsageUncheckedCreateNestedManyWithoutTenantInput
-    configAuditLogs?: TenantConfigAuditLogUncheckedCreateNestedManyWithoutTenantInput
-    featureFlagOverrides?: FeatureFlagOverrideUncheckedCreateNestedManyWithoutTenantInput
-  }
-
-  export type TenantCreateOrConnectWithoutTenantFeatureFlagsInput = {
-    where: TenantWhereUniqueInput
-    create: XOR<TenantCreateWithoutTenantFeatureFlagsInput, TenantUncheckedCreateWithoutTenantFeatureFlagsInput>
+    entitlements?: TenantModuleUncheckedUpdateManyWithoutTenantNestedInput
+    usages?: TenantUsageUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type FeatureFlagCreateWithoutTenantFlagsInput = {
@@ -25477,8 +25398,8 @@ export namespace Prisma {
     description?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    module?: ModuleCreateNestedOneWithoutFeatureFlagsInput
     overrides?: FeatureFlagOverrideCreateNestedManyWithoutFlagInput
+    module?: ModuleCreateNestedOneWithoutFeatureFlagsInput
   }
 
   export type FeatureFlagUncheckedCreateWithoutTenantFlagsInput = {
@@ -25498,89 +25419,83 @@ export namespace Prisma {
     create: XOR<FeatureFlagCreateWithoutTenantFlagsInput, FeatureFlagUncheckedCreateWithoutTenantFlagsInput>
   }
 
-  export type TenantUpsertWithoutTenantFeatureFlagsInput = {
-    update: XOR<TenantUpdateWithoutTenantFeatureFlagsInput, TenantUncheckedUpdateWithoutTenantFeatureFlagsInput>
+  export type TenantCreateWithoutTenantFeatureFlagsInput = {
+    id?: string
+    name: string
+    slug: string
+    dbUrl: string
+    encryptionKeyReference: string
+    tier?: $Enums.DeploymentTier
+    region: string
+    status?: $Enums.TenantStatus
+    suspensionReason?: string | null
+    suspendedAt?: Date | string | null
+    address?: string | null
+    logoUrl?: string | null
+    primaryColor?: string | null
+    secondaryColor?: string | null
+    trialEndsAt?: Date | string | null
+    enabledModules?: JsonNullValueInput | InputJsonValue
+    queueConfig?: NullableJsonNullValueInput | InputJsonValue
+    billingConfig?: NullableJsonNullValueInput | InputJsonValue
+    staffRoles?: NullableJsonNullValueInput | InputJsonValue
+    publicKeySpki?: string | null
+    sharedSecret?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    complianceIsolation?: JsonNullValueInput | InputJsonValue
+    facilityType?: $Enums.FacilityType
+    moduleConfig?: JsonNullValueInput | InputJsonValue
+    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
+    workflowCustomization?: JsonNullValueInput | InputJsonValue
+    featureFlagOverrides?: FeatureFlagOverrideCreateNestedManyWithoutTenantInput
+    subscriptions?: SubscriptionCreateNestedManyWithoutTenantInput
+    payments?: SystemPaymentCreateNestedManyWithoutTenantInput
+    configAuditLogs?: TenantConfigAuditLogCreateNestedManyWithoutTenantInput
+    entitlements?: TenantModuleCreateNestedManyWithoutTenantInput
+    usages?: TenantUsageCreateNestedManyWithoutTenantInput
+  }
+
+  export type TenantUncheckedCreateWithoutTenantFeatureFlagsInput = {
+    id?: string
+    name: string
+    slug: string
+    dbUrl: string
+    encryptionKeyReference: string
+    tier?: $Enums.DeploymentTier
+    region: string
+    status?: $Enums.TenantStatus
+    suspensionReason?: string | null
+    suspendedAt?: Date | string | null
+    address?: string | null
+    logoUrl?: string | null
+    primaryColor?: string | null
+    secondaryColor?: string | null
+    trialEndsAt?: Date | string | null
+    enabledModules?: JsonNullValueInput | InputJsonValue
+    queueConfig?: NullableJsonNullValueInput | InputJsonValue
+    billingConfig?: NullableJsonNullValueInput | InputJsonValue
+    staffRoles?: NullableJsonNullValueInput | InputJsonValue
+    publicKeySpki?: string | null
+    sharedSecret?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    complianceIsolation?: JsonNullValueInput | InputJsonValue
+    facilityType?: $Enums.FacilityType
+    moduleConfig?: JsonNullValueInput | InputJsonValue
+    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
+    workflowCustomization?: JsonNullValueInput | InputJsonValue
+    featureFlagOverrides?: FeatureFlagOverrideUncheckedCreateNestedManyWithoutTenantInput
+    subscriptions?: SubscriptionUncheckedCreateNestedManyWithoutTenantInput
+    payments?: SystemPaymentUncheckedCreateNestedManyWithoutTenantInput
+    configAuditLogs?: TenantConfigAuditLogUncheckedCreateNestedManyWithoutTenantInput
+    entitlements?: TenantModuleUncheckedCreateNestedManyWithoutTenantInput
+    usages?: TenantUsageUncheckedCreateNestedManyWithoutTenantInput
+  }
+
+  export type TenantCreateOrConnectWithoutTenantFeatureFlagsInput = {
+    where: TenantWhereUniqueInput
     create: XOR<TenantCreateWithoutTenantFeatureFlagsInput, TenantUncheckedCreateWithoutTenantFeatureFlagsInput>
-    where?: TenantWhereInput
-  }
-
-  export type TenantUpdateToOneWithWhereWithoutTenantFeatureFlagsInput = {
-    where?: TenantWhereInput
-    data: XOR<TenantUpdateWithoutTenantFeatureFlagsInput, TenantUncheckedUpdateWithoutTenantFeatureFlagsInput>
-  }
-
-  export type TenantUpdateWithoutTenantFeatureFlagsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    slug?: StringFieldUpdateOperationsInput | string
-    dbUrl?: StringFieldUpdateOperationsInput | string
-    encryptionKeyReference?: StringFieldUpdateOperationsInput | string
-    tier?: EnumDeploymentTierFieldUpdateOperationsInput | $Enums.DeploymentTier
-    facilityType?: EnumFacilityTypeFieldUpdateOperationsInput | $Enums.FacilityType
-    region?: StringFieldUpdateOperationsInput | string
-    status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
-    suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
-    suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
-    secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
-    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    enabledModules?: JsonNullValueInput | InputJsonValue
-    moduleConfig?: JsonNullValueInput | InputJsonValue
-    workflowCustomization?: JsonNullValueInput | InputJsonValue
-    complianceIsolation?: JsonNullValueInput | InputJsonValue
-    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
-    billingConfig?: NullableJsonNullValueInput | InputJsonValue
-    queueConfig?: NullableJsonNullValueInput | InputJsonValue
-    staffRoles?: NullableJsonNullValueInput | InputJsonValue
-    publicKeySpki?: NullableStringFieldUpdateOperationsInput | string | null
-    sharedSecret?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    entitlements?: TenantModuleUpdateManyWithoutTenantNestedInput
-    payments?: SystemPaymentUpdateManyWithoutTenantNestedInput
-    subscriptions?: SubscriptionUpdateManyWithoutTenantNestedInput
-    usages?: TenantUsageUpdateManyWithoutTenantNestedInput
-    configAuditLogs?: TenantConfigAuditLogUpdateManyWithoutTenantNestedInput
-    featureFlagOverrides?: FeatureFlagOverrideUpdateManyWithoutTenantNestedInput
-  }
-
-  export type TenantUncheckedUpdateWithoutTenantFeatureFlagsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    slug?: StringFieldUpdateOperationsInput | string
-    dbUrl?: StringFieldUpdateOperationsInput | string
-    encryptionKeyReference?: StringFieldUpdateOperationsInput | string
-    tier?: EnumDeploymentTierFieldUpdateOperationsInput | $Enums.DeploymentTier
-    facilityType?: EnumFacilityTypeFieldUpdateOperationsInput | $Enums.FacilityType
-    region?: StringFieldUpdateOperationsInput | string
-    status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
-    suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
-    suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
-    secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
-    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    enabledModules?: JsonNullValueInput | InputJsonValue
-    moduleConfig?: JsonNullValueInput | InputJsonValue
-    workflowCustomization?: JsonNullValueInput | InputJsonValue
-    complianceIsolation?: JsonNullValueInput | InputJsonValue
-    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
-    billingConfig?: NullableJsonNullValueInput | InputJsonValue
-    queueConfig?: NullableJsonNullValueInput | InputJsonValue
-    staffRoles?: NullableJsonNullValueInput | InputJsonValue
-    publicKeySpki?: NullableStringFieldUpdateOperationsInput | string | null
-    sharedSecret?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    entitlements?: TenantModuleUncheckedUpdateManyWithoutTenantNestedInput
-    payments?: SystemPaymentUncheckedUpdateManyWithoutTenantNestedInput
-    subscriptions?: SubscriptionUncheckedUpdateManyWithoutTenantNestedInput
-    usages?: TenantUsageUncheckedUpdateManyWithoutTenantNestedInput
-    configAuditLogs?: TenantConfigAuditLogUncheckedUpdateManyWithoutTenantNestedInput
-    featureFlagOverrides?: FeatureFlagOverrideUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type FeatureFlagUpsertWithoutTenantFlagsInput = {
@@ -25602,8 +25517,8 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    module?: ModuleUpdateOneWithoutFeatureFlagsNestedInput
     overrides?: FeatureFlagOverrideUpdateManyWithoutFlagNestedInput
+    module?: ModuleUpdateOneWithoutFeatureFlagsNestedInput
   }
 
   export type FeatureFlagUncheckedUpdateWithoutTenantFlagsInput = {
@@ -25618,11 +25533,106 @@ export namespace Prisma {
     overrides?: FeatureFlagOverrideUncheckedUpdateManyWithoutFlagNestedInput
   }
 
-  export type TenantModuleCreateManyTenantInput = {
+  export type TenantUpsertWithoutTenantFeatureFlagsInput = {
+    update: XOR<TenantUpdateWithoutTenantFeatureFlagsInput, TenantUncheckedUpdateWithoutTenantFeatureFlagsInput>
+    create: XOR<TenantCreateWithoutTenantFeatureFlagsInput, TenantUncheckedCreateWithoutTenantFeatureFlagsInput>
+    where?: TenantWhereInput
+  }
+
+  export type TenantUpdateToOneWithWhereWithoutTenantFeatureFlagsInput = {
+    where?: TenantWhereInput
+    data: XOR<TenantUpdateWithoutTenantFeatureFlagsInput, TenantUncheckedUpdateWithoutTenantFeatureFlagsInput>
+  }
+
+  export type TenantUpdateWithoutTenantFeatureFlagsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    dbUrl?: StringFieldUpdateOperationsInput | string
+    encryptionKeyReference?: StringFieldUpdateOperationsInput | string
+    tier?: EnumDeploymentTierFieldUpdateOperationsInput | $Enums.DeploymentTier
+    region?: StringFieldUpdateOperationsInput | string
+    status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
+    suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    enabledModules?: JsonNullValueInput | InputJsonValue
+    queueConfig?: NullableJsonNullValueInput | InputJsonValue
+    billingConfig?: NullableJsonNullValueInput | InputJsonValue
+    staffRoles?: NullableJsonNullValueInput | InputJsonValue
+    publicKeySpki?: NullableStringFieldUpdateOperationsInput | string | null
+    sharedSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    complianceIsolation?: JsonNullValueInput | InputJsonValue
+    facilityType?: EnumFacilityTypeFieldUpdateOperationsInput | $Enums.FacilityType
+    moduleConfig?: JsonNullValueInput | InputJsonValue
+    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
+    workflowCustomization?: JsonNullValueInput | InputJsonValue
+    featureFlagOverrides?: FeatureFlagOverrideUpdateManyWithoutTenantNestedInput
+    subscriptions?: SubscriptionUpdateManyWithoutTenantNestedInput
+    payments?: SystemPaymentUpdateManyWithoutTenantNestedInput
+    configAuditLogs?: TenantConfigAuditLogUpdateManyWithoutTenantNestedInput
+    entitlements?: TenantModuleUpdateManyWithoutTenantNestedInput
+    usages?: TenantUsageUpdateManyWithoutTenantNestedInput
+  }
+
+  export type TenantUncheckedUpdateWithoutTenantFeatureFlagsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    dbUrl?: StringFieldUpdateOperationsInput | string
+    encryptionKeyReference?: StringFieldUpdateOperationsInput | string
+    tier?: EnumDeploymentTierFieldUpdateOperationsInput | $Enums.DeploymentTier
+    region?: StringFieldUpdateOperationsInput | string
+    status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
+    suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    enabledModules?: JsonNullValueInput | InputJsonValue
+    queueConfig?: NullableJsonNullValueInput | InputJsonValue
+    billingConfig?: NullableJsonNullValueInput | InputJsonValue
+    staffRoles?: NullableJsonNullValueInput | InputJsonValue
+    publicKeySpki?: NullableStringFieldUpdateOperationsInput | string | null
+    sharedSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    complianceIsolation?: JsonNullValueInput | InputJsonValue
+    facilityType?: EnumFacilityTypeFieldUpdateOperationsInput | $Enums.FacilityType
+    moduleConfig?: JsonNullValueInput | InputJsonValue
+    subscriptionQuotas?: JsonNullValueInput | InputJsonValue
+    workflowCustomization?: JsonNullValueInput | InputJsonValue
+    featureFlagOverrides?: FeatureFlagOverrideUncheckedUpdateManyWithoutTenantNestedInput
+    subscriptions?: SubscriptionUncheckedUpdateManyWithoutTenantNestedInput
+    payments?: SystemPaymentUncheckedUpdateManyWithoutTenantNestedInput
+    configAuditLogs?: TenantConfigAuditLogUncheckedUpdateManyWithoutTenantNestedInput
+    entitlements?: TenantModuleUncheckedUpdateManyWithoutTenantNestedInput
+    usages?: TenantUsageUncheckedUpdateManyWithoutTenantNestedInput
+  }
+
+  export type FeatureFlagOverrideCreateManyTenantInput = {
     id?: string
-    moduleId: string
-    isEnabled?: boolean
-    validUntil?: Date | string | null
+    flagId: string
+    enabled?: boolean
+    createdAt?: Date | string
+  }
+
+  export type SubscriptionCreateManyTenantInput = {
+    id?: string
+    planId: string
+    status?: string
+    startDate?: Date | string
+    endDate?: Date | string | null
+    signedToken?: string | null
+    autoRenew?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -25640,14 +25650,33 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
-  export type SubscriptionCreateManyTenantInput = {
+  export type TenantConfigAuditLogCreateManyTenantInput = {
     id?: string
-    planId: string
-    status?: string
-    startDate?: Date | string
-    endDate?: Date | string | null
-    signedToken?: string | null
-    autoRenew?: boolean
+    actorId: string
+    actorName: string
+    actorRole: string
+    action: string
+    field?: string | null
+    oldValue?: NullableJsonNullValueInput | InputJsonValue
+    newValue?: NullableJsonNullValueInput | InputJsonValue
+    ipAddress?: string | null
+    userAgent?: string | null
+    timestamp?: Date | string
+  }
+
+  export type TenantFeatureFlagCreateManyTenantInput = {
+    id?: string
+    flagId: string
+    enabled?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TenantModuleCreateManyTenantInput = {
+    id?: string
+    moduleId: string
+    isEnabled?: boolean
+    validUntil?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -25664,98 +25693,24 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
-  export type TenantConfigAuditLogCreateManyTenantInput = {
-    id?: string
-    actorId: string
-    actorName: string
-    actorRole: string
-    action: string
-    field?: string | null
-    oldValue?: NullableJsonNullValueInput | InputJsonValue
-    newValue?: NullableJsonNullValueInput | InputJsonValue
-    ipAddress?: string | null
-    userAgent?: string | null
-    timestamp?: Date | string
-  }
-
-  export type FeatureFlagOverrideCreateManyTenantInput = {
-    id?: string
-    flagId: string
-    enabled?: boolean
-    createdAt?: Date | string
-  }
-
-  export type TenantFeatureFlagCreateManyTenantInput = {
-    id?: string
-    flagId: string
-    enabled?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type TenantModuleUpdateWithoutTenantInput = {
+  export type FeatureFlagOverrideUpdateWithoutTenantInput = {
     id?: StringFieldUpdateOperationsInput | string
-    isEnabled?: BoolFieldUpdateOperationsInput | boolean
-    validUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    enabled?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    module?: ModuleUpdateOneRequiredWithoutTenantsNestedInput
+    flag?: FeatureFlagUpdateOneRequiredWithoutOverridesNestedInput
   }
 
-  export type TenantModuleUncheckedUpdateWithoutTenantInput = {
+  export type FeatureFlagOverrideUncheckedUpdateWithoutTenantInput = {
     id?: StringFieldUpdateOperationsInput | string
-    moduleId?: StringFieldUpdateOperationsInput | string
-    isEnabled?: BoolFieldUpdateOperationsInput | boolean
-    validUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type TenantModuleUncheckedUpdateManyWithoutTenantInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    moduleId?: StringFieldUpdateOperationsInput | string
-    isEnabled?: BoolFieldUpdateOperationsInput | boolean
-    validUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type SystemPaymentUpdateWithoutTenantInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    currency?: StringFieldUpdateOperationsInput | string
-    method?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    reference?: StringFieldUpdateOperationsInput | string
-    customerEmail?: StringFieldUpdateOperationsInput | string
-    customerName?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
+    flagId?: StringFieldUpdateOperationsInput | string
+    enabled?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type SystemPaymentUncheckedUpdateWithoutTenantInput = {
+  export type FeatureFlagOverrideUncheckedUpdateManyWithoutTenantInput = {
     id?: StringFieldUpdateOperationsInput | string
-    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    currency?: StringFieldUpdateOperationsInput | string
-    method?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    reference?: StringFieldUpdateOperationsInput | string
-    customerEmail?: StringFieldUpdateOperationsInput | string
-    customerName?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type SystemPaymentUncheckedUpdateManyWithoutTenantInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    currency?: StringFieldUpdateOperationsInput | string
-    method?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    reference?: StringFieldUpdateOperationsInput | string
-    customerEmail?: StringFieldUpdateOperationsInput | string
-    customerName?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
+    flagId?: StringFieldUpdateOperationsInput | string
+    enabled?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -25797,40 +25752,43 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type TenantUsageUpdateWithoutTenantInput = {
+  export type SystemPaymentUpdateWithoutTenantInput = {
     id?: StringFieldUpdateOperationsInput | string
-    date?: DateTimeFieldUpdateOperationsInput | Date | string
-    activeUsers?: IntFieldUpdateOperationsInput | number
-    activePatients?: IntFieldUpdateOperationsInput | number
-    storageUsedMb?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    apiCallsCount?: IntFieldUpdateOperationsInput | number
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: StringFieldUpdateOperationsInput | string
+    method?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    reference?: StringFieldUpdateOperationsInput | string
+    customerEmail?: StringFieldUpdateOperationsInput | string
+    customerName?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    subscription?: SubscriptionUpdateOneRequiredWithoutUsagesNestedInput
   }
 
-  export type TenantUsageUncheckedUpdateWithoutTenantInput = {
+  export type SystemPaymentUncheckedUpdateWithoutTenantInput = {
     id?: StringFieldUpdateOperationsInput | string
-    subscriptionId?: StringFieldUpdateOperationsInput | string
-    date?: DateTimeFieldUpdateOperationsInput | Date | string
-    activeUsers?: IntFieldUpdateOperationsInput | number
-    activePatients?: IntFieldUpdateOperationsInput | number
-    storageUsedMb?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    apiCallsCount?: IntFieldUpdateOperationsInput | number
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: StringFieldUpdateOperationsInput | string
+    method?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    reference?: StringFieldUpdateOperationsInput | string
+    customerEmail?: StringFieldUpdateOperationsInput | string
+    customerName?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type TenantUsageUncheckedUpdateManyWithoutTenantInput = {
+  export type SystemPaymentUncheckedUpdateManyWithoutTenantInput = {
     id?: StringFieldUpdateOperationsInput | string
-    subscriptionId?: StringFieldUpdateOperationsInput | string
-    date?: DateTimeFieldUpdateOperationsInput | Date | string
-    activeUsers?: IntFieldUpdateOperationsInput | number
-    activePatients?: IntFieldUpdateOperationsInput | number
-    storageUsedMb?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    apiCallsCount?: IntFieldUpdateOperationsInput | number
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: StringFieldUpdateOperationsInput | string
+    method?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    reference?: StringFieldUpdateOperationsInput | string
+    customerEmail?: StringFieldUpdateOperationsInput | string
+    customerName?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type TenantConfigAuditLogUpdateWithoutTenantInput = {
@@ -25875,27 +25833,6 @@ export namespace Prisma {
     timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type FeatureFlagOverrideUpdateWithoutTenantInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    enabled?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    flag?: FeatureFlagUpdateOneRequiredWithoutOverridesNestedInput
-  }
-
-  export type FeatureFlagOverrideUncheckedUpdateWithoutTenantInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    flagId?: StringFieldUpdateOperationsInput | string
-    enabled?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type FeatureFlagOverrideUncheckedUpdateManyWithoutTenantInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    flagId?: StringFieldUpdateOperationsInput | string
-    enabled?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
   export type TenantFeatureFlagUpdateWithoutTenantInput = {
     id?: StringFieldUpdateOperationsInput | string
     enabled?: BoolFieldUpdateOperationsInput | boolean
@@ -25920,13 +25857,67 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type TenantModuleCreateManyModuleInput = {
-    id?: string
-    tenantId: string
-    isEnabled?: boolean
-    validUntil?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
+  export type TenantModuleUpdateWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    isEnabled?: BoolFieldUpdateOperationsInput | boolean
+    validUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    module?: ModuleUpdateOneRequiredWithoutTenantsNestedInput
+  }
+
+  export type TenantModuleUncheckedUpdateWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    moduleId?: StringFieldUpdateOperationsInput | string
+    isEnabled?: BoolFieldUpdateOperationsInput | boolean
+    validUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TenantModuleUncheckedUpdateManyWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    moduleId?: StringFieldUpdateOperationsInput | string
+    isEnabled?: BoolFieldUpdateOperationsInput | boolean
+    validUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TenantUsageUpdateWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    activeUsers?: IntFieldUpdateOperationsInput | number
+    activePatients?: IntFieldUpdateOperationsInput | number
+    storageUsedMb?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    apiCallsCount?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    subscription?: SubscriptionUpdateOneRequiredWithoutUsagesNestedInput
+  }
+
+  export type TenantUsageUncheckedUpdateWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    subscriptionId?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    activeUsers?: IntFieldUpdateOperationsInput | number
+    activePatients?: IntFieldUpdateOperationsInput | number
+    storageUsedMb?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    apiCallsCount?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TenantUsageUncheckedUpdateManyWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    subscriptionId?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    activeUsers?: IntFieldUpdateOperationsInput | number
+    activePatients?: IntFieldUpdateOperationsInput | number
+    storageUsedMb?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    apiCallsCount?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type FeatureFlagCreateManyModuleInput = {
@@ -25939,31 +25930,13 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
-  export type TenantModuleUpdateWithoutModuleInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    isEnabled?: BoolFieldUpdateOperationsInput | boolean
-    validUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    tenant?: TenantUpdateOneRequiredWithoutEntitlementsNestedInput
-  }
-
-  export type TenantModuleUncheckedUpdateWithoutModuleInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    tenantId?: StringFieldUpdateOperationsInput | string
-    isEnabled?: BoolFieldUpdateOperationsInput | boolean
-    validUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type TenantModuleUncheckedUpdateManyWithoutModuleInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    tenantId?: StringFieldUpdateOperationsInput | string
-    isEnabled?: BoolFieldUpdateOperationsInput | boolean
-    validUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  export type TenantModuleCreateManyModuleInput = {
+    id?: string
+    tenantId: string
+    isEnabled?: boolean
+    validUntil?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type FeatureFlagUpdateWithoutModuleInput = {
@@ -25996,6 +25969,33 @@ export namespace Prisma {
     scope?: StringFieldUpdateOperationsInput | string
     defaultValue?: BoolFieldUpdateOperationsInput | boolean
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TenantModuleUpdateWithoutModuleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    isEnabled?: BoolFieldUpdateOperationsInput | boolean
+    validUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenant?: TenantUpdateOneRequiredWithoutEntitlementsNestedInput
+  }
+
+  export type TenantModuleUncheckedUpdateWithoutModuleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    isEnabled?: BoolFieldUpdateOperationsInput | boolean
+    validUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TenantModuleUncheckedUpdateManyWithoutModuleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    isEnabled?: BoolFieldUpdateOperationsInput | boolean
+    validUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

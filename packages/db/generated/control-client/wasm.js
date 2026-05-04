@@ -129,7 +129,6 @@ exports.Prisma.TenantScalarFieldEnum = {
   dbUrl: 'dbUrl',
   encryptionKeyReference: 'encryptionKeyReference',
   tier: 'tier',
-  facilityType: 'facilityType',
   region: 'region',
   status: 'status',
   suspensionReason: 'suspensionReason',
@@ -140,17 +139,18 @@ exports.Prisma.TenantScalarFieldEnum = {
   secondaryColor: 'secondaryColor',
   trialEndsAt: 'trialEndsAt',
   enabledModules: 'enabledModules',
-  moduleConfig: 'moduleConfig',
-  workflowCustomization: 'workflowCustomization',
-  complianceIsolation: 'complianceIsolation',
-  subscriptionQuotas: 'subscriptionQuotas',
-  billingConfig: 'billingConfig',
   queueConfig: 'queueConfig',
+  billingConfig: 'billingConfig',
   staffRoles: 'staffRoles',
   publicKeySpki: 'publicKeySpki',
   sharedSecret: 'sharedSecret',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  complianceIsolation: 'complianceIsolation',
+  facilityType: 'facilityType',
+  moduleConfig: 'moduleConfig',
+  subscriptionQuotas: 'subscriptionQuotas',
+  workflowCustomization: 'workflowCustomization'
 };
 
 exports.Prisma.ModuleScalarFieldEnum = {
@@ -368,13 +368,19 @@ exports.Prisma.NullsOrder = {
 };
 exports.DeploymentTier = exports.$Enums.DeploymentTier = {
   CLINIC: 'CLINIC',
-  PHARMACY: 'PHARMACY',
-  LAB: 'LAB',
-  SPECIALIST: 'SPECIALIST',
   HOSPITAL: 'HOSPITAL',
+  NETWORK: 'NETWORK',
   GENERAL: 'GENERAL',
   RESEARCH: 'RESEARCH',
-  NETWORK: 'NETWORK'
+  PHARMACY: 'PHARMACY',
+  LAB: 'LAB',
+  SPECIALIST: 'SPECIALIST'
+};
+
+exports.TenantStatus = exports.$Enums.TenantStatus = {
+  active: 'active',
+  suspended: 'suspended',
+  terminated: 'terminated'
 };
 
 exports.FacilityType = exports.$Enums.FacilityType = {
@@ -383,12 +389,6 @@ exports.FacilityType = exports.$Enums.FacilityType = {
   LAB: 'LAB',
   SPECIALIST: 'SPECIALIST',
   HOSPITAL: 'HOSPITAL'
-};
-
-exports.TenantStatus = exports.$Enums.TenantStatus = {
-  active: 'active',
-  suspended: 'suspended',
-  terminated: 'terminated'
 };
 
 exports.BillingCycle = exports.$Enums.BillingCycle = {
