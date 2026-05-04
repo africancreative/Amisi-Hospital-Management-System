@@ -1,0 +1,242 @@
+
+> amisimedos-monorepo@ build /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System
+> turbo run build
+
+• turbo 2.8.12
+• Packages in scope: @amisi/core, @amisimedos/api, @amisimedos/auth, @amisimedos/billing, @amisimedos/chat, @amisimedos/config, @amisimedos/constants, @amisimedos/db, @amisimedos/desktop, @amisimedos/local-node, @amisimedos/mobile, @amisimedos/sync, @amisimedos/ui, @amisimedos/web
+• Running build in 14 packages
+• Remote caching disabled
+@amisimedos/chat:build: cache hit, replaying logs 0541ded859d1caf8
+@amisimedos/chat:build: 
+@amisimedos/chat:build: > @amisimedos/chat@1.0.0 build /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/packages/chat
+@amisimedos/chat:build: > tsc
+@amisimedos/chat:build: 
+@amisimedos/ui:build: cache hit, replaying logs 004a75bcac82dceb
+@amisimedos/ui:build: 
+@amisimedos/ui:build: > @amisimedos/ui@1.0.0 build /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/packages/ui
+@amisimedos/ui:build: > tsc
+@amisimedos/ui:build: 
+@amisimedos/db:build: cache hit, replaying logs aad27ede9ba0ac71
+@amisimedos/db:build: 
+@amisimedos/db:build: > @amisimedos/db@1.0.0 build /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/packages/db
+@amisimedos/db:build: > pnpm generate && tsc
+@amisimedos/db:build: 
+@amisimedos/db:build: 
+@amisimedos/db:build: > @amisimedos/db@1.0.0 generate /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/packages/db
+@amisimedos/db:build: > prisma generate --schema=./prisma/control.prisma && prisma generate --schema=./prisma/tenant.prisma
+@amisimedos/db:build: 
+@amisimedos/db:build: Environment variables loaded from .env
+@amisimedos/db:build: Prisma schema loaded from prisma/control.prisma
+@amisimedos/db:build: 
+@amisimedos/db:build: ✔ Generated Prisma Client (v5.22.0) to ./generated/control-client in 155ms
+@amisimedos/db:build: 
+@amisimedos/db:build: Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+@amisimedos/db:build: 
+@amisimedos/db:build: Tip: Want to react to database changes in your app as they happen? Discover how with Pulse: https://pris.ly/tip-1-pulse
+@amisimedos/db:build: 
+@amisimedos/db:build: Environment variables loaded from .env
+@amisimedos/db:build: Prisma schema loaded from prisma/tenant.prisma
+@amisimedos/db:build: 
+@amisimedos/db:build: ✔ Generated Prisma Client (v5.22.0) to ./generated/tenant-client in 1.39s
+@amisimedos/db:build: 
+@amisimedos/db:build: Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+@amisimedos/db:build: 
+@amisimedos/db:build: Tip: Need your database queries to be 1000x faster? Accelerate offers you that and more: https://pris.ly/tip-2-accelerate
+@amisimedos/db:build: 
+@amisimedos/local-node:build: cache miss, executing 290800a76b6ae2da
+@amisimedos/auth:build: cache hit, replaying logs 29d540cc51ebd8d5
+@amisimedos/auth:build: 
+@amisimedos/auth:build: > @amisimedos/auth@1.0.0 build /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/packages/auth
+@amisimedos/auth:build: > tsc
+@amisimedos/auth:build: 
+@amisimedos/billing:build: cache hit, replaying logs 4c4f8d67258dbffa
+@amisimedos/billing:build: 
+@amisimedos/billing:build: > @amisimedos/billing@1.0.0 build /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/packages/billing
+@amisimedos/billing:build: > tsc
+@amisimedos/billing:build: 
+@amisimedos/sync:build: cache hit, replaying logs 7e0029ce14b780d7
+@amisimedos/sync:build: 
+@amisimedos/sync:build: > @amisimedos/sync@1.0.0 build /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/packages/sync
+@amisimedos/sync:build: > tsc
+@amisimedos/sync:build: 
+@amisimedos/api:build: cache hit, replaying logs 842aaa447e79ce31
+@amisimedos/api:build: 
+@amisimedos/api:build: > @amisimedos/api@1.0.0 build /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/apps/api
+@amisimedos/api:build: > tsc
+@amisimedos/api:build: 
+@amisimedos/desktop:build: cache hit, replaying logs ac8974e3a9b28c2a
+@amisimedos/desktop:build: 
+@amisimedos/desktop:build: > @amisimedos/desktop@1.0.0 build /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/apps/desktop
+@amisimedos/desktop:build: > tsc
+@amisimedos/desktop:build: 
+@amisimedos/mobile:build: cache hit, replaying logs f2be512462517bd1
+@amisimedos/mobile:build: 
+@amisimedos/mobile:build: > @amisimedos/mobile@0.1.0 build /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/apps/mobile
+@amisimedos/mobile:build: > flutter build web
+@amisimedos/mobile:build: 
+@amisimedos/mobile:build: Compiling lib/main.dart for the Web...                          
+@amisimedos/mobile:build: Wasm dry run succeeded. Consider building and testing your application with the `--wasm` flag. See docs for more info: https://docs.flutter.dev/platform-integration/web/wasm
+@amisimedos/mobile:build: Use --no-wasm-dry-run to disable these warnings.
+@amisimedos/mobile:build: Font asset "lucide.ttf" was tree-shaken, reducing it from 413764 to 395792 bytes (4.3% reduction). Tree-shaking can be disabled by providing the --no-tree-shake-icons flag when building your app.
+@amisimedos/mobile:build: Font asset "CupertinoIcons.ttf" was tree-shaken, reducing it from 257628 to 1472 bytes (99.4% reduction). Tree-shaking can be disabled by providing the --no-tree-shake-icons flag when building your app.
+@amisimedos/mobile:build: Font asset "MaterialIcons-Regular.otf" was tree-shaken, reducing it from 1645184 to 7892 bytes (99.5% reduction). Tree-shaking can be disabled by providing the --no-tree-shake-icons flag when building your app.
+@amisimedos/mobile:build: Compiling lib/main.dart for the Web...                             55.6s
+@amisimedos/mobile:build: ✓ Built build/web
+@amisimedos/local-node:build: 
+@amisimedos/local-node:build: > @amisimedos/local-node@1.0.0 build /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/apps/local-node
+@amisimedos/local-node:build: > next build
+@amisimedos/local-node:build: 
+@amisimedos/local-node:build:   ▲ Next.js 15.0.0
+@amisimedos/local-node:build:   - Environments: .env
+@amisimedos/local-node:build: 
+@amisimedos/local-node:build:    Creating an optimized production build ...
+@amisimedos/web:build: cache hit, replaying logs f1cf836268194210
+@amisimedos/web:build: 
+@amisimedos/web:build: > @amisimedos/web@4.0.0 build /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/apps/web
+@amisimedos/web:build: > pnpm --filter @amisimedos/db build && pnpm --filter @amisimedos/auth build && pnpm --filter @amisimedos/billing build && pnpm --filter @amisimedos/ui build && pnpm --filter @amisimedos/sync build && pnpm --filter @amisimedos/chat build && node scripts/vercel-engine-hack.js && next build --webpack
+@amisimedos/web:build: 
+@amisimedos/web:build: 
+@amisimedos/web:build: > @amisimedos/db@1.0.0 build /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/packages/db
+@amisimedos/web:build: > pnpm generate && tsc
+@amisimedos/web:build: 
+@amisimedos/web:build: 
+@amisimedos/web:build: > @amisimedos/db@1.0.0 generate /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/packages/db
+@amisimedos/web:build: > prisma generate --schema=./prisma/control.prisma && prisma generate --schema=./prisma/tenant.prisma
+@amisimedos/web:build: 
+@amisimedos/web:build: Environment variables loaded from .env
+@amisimedos/web:build: Prisma schema loaded from prisma/control.prisma
+@amisimedos/web:build: 
+@amisimedos/web:build: ✔ Generated Prisma Client (v5.22.0) to ./generated/control-client in 311ms
+@amisimedos/web:build: 
+@amisimedos/web:build: Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+@amisimedos/web:build: 
+@amisimedos/web:build: Tip: Curious about the SQL queries Prisma ORM generates? Optimize helps you enhance your visibility: https://pris.ly/tip-2-optimize
+@amisimedos/web:build: 
+@amisimedos/web:build: Environment variables loaded from .env
+@amisimedos/web:build: Prisma schema loaded from prisma/tenant.prisma
+@amisimedos/web:build: 
+@amisimedos/web:build: ✔ Generated Prisma Client (v5.22.0) to ./generated/tenant-client in 1.38s
+@amisimedos/web:build: 
+@amisimedos/web:build: Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+@amisimedos/web:build: 
+@amisimedos/web:build: Help us improve the Prisma ORM for everyone. Share your feedback in a short 2-min survey: https://pris.ly/orm/survey/release-5-22
+@amisimedos/web:build: 
+@amisimedos/web:build: 
+@amisimedos/web:build: > @amisimedos/auth@1.0.0 build /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/packages/auth
+@amisimedos/web:build: > tsc
+@amisimedos/web:build: 
+@amisimedos/web:build: 
+@amisimedos/web:build: > @amisimedos/billing@1.0.0 build /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/packages/billing
+@amisimedos/web:build: > tsc
+@amisimedos/web:build: 
+@amisimedos/web:build: 
+@amisimedos/web:build: > @amisimedos/ui@1.0.0 build /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/packages/ui
+@amisimedos/web:build: > tsc
+@amisimedos/web:build: 
+@amisimedos/web:build: 
+@amisimedos/web:build: > @amisimedos/sync@1.0.0 build /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/packages/sync
+@amisimedos/web:build: > tsc
+@amisimedos/web:build: 
+@amisimedos/web:build: 
+@amisimedos/web:build: > @amisimedos/chat@1.0.0 build /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/packages/chat
+@amisimedos/web:build: > tsc
+@amisimedos/web:build: 
+@amisimedos/web:build: [Vercel Engine Hack] Copied libquery_engine-debian-openssl-3.0.x.so.node -> /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/control-client/libquery_engine-debian-openssl-3.0.x.so.node
+@amisimedos/web:build: [Vercel Engine Hack] Copied libquery_engine-rhel-openssl-3.0.x.so.node -> /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/control-client/libquery_engine-rhel-openssl-3.0.x.so.node
+@amisimedos/web:build: [Vercel Engine Hack] Copied query_engine-windows.dll.node -> /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/control-client/query_engine-windows.dll.node
+@amisimedos/web:build: [Vercel Engine Hack] Copied package.json -> /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/control-client/package.json
+@amisimedos/web:build: [Vercel Engine Hack] Copied index.js -> /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/control-client/index.js
+@amisimedos/web:build: [Vercel Engine Hack] Copied index.d.ts -> /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/control-client/index.d.ts
+@amisimedos/web:build: [Vercel Engine Hack] Copied libquery_engine-debian-openssl-3.0.x.so.node -> /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/tenant-client/libquery_engine-debian-openssl-3.0.x.so.node
+@amisimedos/web:build: [Vercel Engine Hack] Copied libquery_engine-rhel-openssl-3.0.x.so.node -> /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/tenant-client/libquery_engine-rhel-openssl-3.0.x.so.node
+@amisimedos/web:build: [Vercel Engine Hack] Copied query_engine-windows.dll.node -> /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/tenant-client/query_engine-windows.dll.node
+@amisimedos/web:build: [Vercel Engine Hack] Copied package.json -> /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/tenant-client/package.json
+@amisimedos/web:build: [Vercel Engine Hack] Copied index.js -> /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/tenant-client/index.js
+@amisimedos/web:build: [Vercel Engine Hack] Copied index.d.ts -> /home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/tenant-client/index.d.ts
+@amisimedos/web:build: [Vercel Engine Hack] Complete.
+@amisimedos/web:build: ▲ Next.js 16.1.6 (webpack)
+@amisimedos/web:build: - Environments: .env.local
+@amisimedos/web:build: 
+@amisimedos/web:build:   Creating an optimized production build ...
+@amisimedos/web:build: ✓ Compiled successfully in 11.5s
+@amisimedos/web:build:   Running TypeScript ...
+@amisimedos/web:build:   Collecting page data using 11 workers ...
+@amisimedos/web:build: [EventBus] Initializing Patient-Centric Reactive Listeners...
+@amisimedos/web:build: [EventBus] Initializing Patient-Centric Reactive Listeners...
+@amisimedos/web:build: [EventBus] Initializing Patient-Centric Reactive Listeners...
+@amisimedos/web:build: [EventBus] Initializing Patient-Centric Reactive Listeners...
+@amisimedos/web:build: [EventBus] Initializing Patient-Centric Reactive Listeners...
+@amisimedos/web:build: [EventBus] Initializing Patient-Centric Reactive Listeners...
+@amisimedos/web:build: [EventBus] Initializing Patient-Centric Reactive Listeners...
+@amisimedos/web:build: [EventBus] Initializing Patient-Centric Reactive Listeners...
+@amisimedos/web:build: [EventBus] Initializing Patient-Centric Reactive Listeners...
+@amisimedos/web:build: [EventBus] Initializing Patient-Centric Reactive Listeners...
+@amisimedos/web:build: [EventBus] Initializing Patient-Centric Reactive Listeners...
+@amisimedos/web:build:   Generating static pages using 11 workers (0/2) ...
+@amisimedos/web:build: ✓ Generating static pages using 11 workers (2/2) in 222.4ms
+@amisimedos/web:build:   Finalizing page optimization ...
+@amisimedos/web:build:   Collecting build traces ...
+@amisimedos/web:build: 
+@amisimedos/web:build: Route (app)
+@amisimedos/web:build: ┌ ƒ /
+@amisimedos/web:build: ├ ƒ /_not-found
+@amisimedos/web:build: ├ ƒ /[slug]/[[...module]]
+@amisimedos/web:build: ├ ƒ /[slug]/unauthorized
+@amisimedos/web:build: ├ ƒ /admin/[[...action]]
+@amisimedos/web:build: ├ ƒ /admin/events
+@amisimedos/web:build: ├ ƒ /api/[[...path]]
+@amisimedos/web:build: ├ ƒ /api/realtime
+@amisimedos/web:build: ├ ƒ /api/trpc/[trpc]
+@amisimedos/web:build: ├ ƒ /checkout
+@amisimedos/web:build: ├ ƒ /checkout/success
+@amisimedos/web:build: ├ ƒ /hospitals/[[...action]]
+@amisimedos/web:build: ├ ƒ /lockout
+@amisimedos/web:build: ├ ƒ /login
+@amisimedos/web:build: ├ ƒ /pricing
+@amisimedos/web:build: ├ ƒ /privacy
+@amisimedos/web:build: ├ ƒ /request
+@amisimedos/web:build: ├ ƒ /setup
+@amisimedos/web:build: ├ ƒ /suspended
+@amisimedos/web:build: ├ ƒ /system/[[...action]]
+@amisimedos/web:build: └ ƒ /terms
+@amisimedos/web:build: 
+@amisimedos/web:build: 
+@amisimedos/web:build: ƒ Proxy (Middleware)
+@amisimedos/web:build: 
+@amisimedos/web:build: ƒ  (Dynamic)  server-rendered on demand
+@amisimedos/web:build: 
+@amisimedos/local-node:build:  ✓ Compiled successfully
+@amisimedos/local-node:build:    Linting and checking validity of types ...
+@amisimedos/local-node:build:    Collecting page data ...
+@amisimedos/local-node:build:    Generating static pages (0/4) ...
+@amisimedos/local-node:build:    Generating static pages (1/4) 
+@amisimedos/local-node:build:    Generating static pages (2/4) 
+@amisimedos/local-node:build:    Generating static pages (3/4) 
+@amisimedos/local-node:build:  ✓ Generating static pages (4/4)
+@amisimedos/local-node:build:    Finalizing page optimization ...
+@amisimedos/local-node:build:    Collecting build traces ...
+@amisimedos/local-node:build:  ⚠ Statically exporting a Next.js application via `next export` disables API routes and middleware.
+@amisimedos/local-node:build: This command is meant for static-only hosts, and is not necessary to make your application static.
+@amisimedos/local-node:build: Pages in your application without server-side data dependencies will be automatically statically exported by `next build`, including pages powered by `getStaticProps`.
+@amisimedos/local-node:build: Learn more: https://nextjs.org/docs/messages/api-routes-static-export
+@amisimedos/local-node:build:    Exporting (0/3) ...
+@amisimedos/local-node:build:  ✓ Exporting (3/3)
+@amisimedos/local-node:build: 
+@amisimedos/local-node:build: Route (app)                              Size     First Load JS
+@amisimedos/local-node:build: ┌ ○ /                                    878 B           100 kB
+@amisimedos/local-node:build: └ ○ /_not-found                          896 B           100 kB
+@amisimedos/local-node:build: + First Load JS shared by all            99.2 kB
+@amisimedos/local-node:build:   ├ chunks/601-46080bcdc7446a4e.js       44.7 kB
+@amisimedos/local-node:build:   ├ chunks/b8504f10-fbf19c3dd3f3035b.js  52.6 kB
+@amisimedos/local-node:build:   └ other shared chunks (total)          1.86 kB
+@amisimedos/local-node:build: 
+@amisimedos/local-node:build: 
+@amisimedos/local-node:build: ƒ Middleware                             32.1 kB
+@amisimedos/local-node:build: 
+@amisimedos/local-node:build: ○  (Static)  prerendered as static content
+@amisimedos/local-node:build: 
+
+ Tasks:    11 successful, 11 total
+Cached:    10 cached, 11 total
+  Time:    15.307s 
+
