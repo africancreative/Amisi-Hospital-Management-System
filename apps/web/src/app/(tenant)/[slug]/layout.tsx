@@ -46,23 +46,31 @@ export default async function TenantLayout({
     const user = await getServerUser();
     const role = user.role;
 
-    const controlDb = getControlDb();
-    const tenant = await controlDb.tenant.findUnique({
-        where: { slug }
-    });
-
-    if (!tenant || tenant.status !== 'active') {
-        redirect('/system/suspended');
-    }
-
     // Fetch enabled modules from TenantModule relation
     let activeModCodes: string[] = [];
+    let tenantName = slug;
+    let tenantTier = 'UNKNOWN';
+
     try {
-        const moduleSet = await getTenantModules(tenant.id);
+        const moduleSet = await getTenantModules(slug);
         activeModCodes = Array.from(moduleSet);
+
+        // Get tenant details separately (non-blocking)
+        const { getControlDb } = await import('@/lib/db');
+        const controlDb = getControlDb();
+        const tenant = await controlDb.tenant.findUnique({
+            where: { slug },
+            select: { name: true, tier: true, status: true }
+        });
+
+        if (!tenant || tenant.status !== 'active') {
+            redirect('/system/suspended');
+        }
+        tenantName = tenant.name;
+        tenantTier = tenant.tier;
     } catch (error) {
-        console.error('[TenantLayout] Failed to load modules:', error);
-        // Continue with empty modules - user will see "No modules assigned"
+        console.error('[TenantLayout] Failed to load tenant data:', error);
+        // Continue with defaults - user will see error boundary if critical
     }
 
     // Map internal module codes to UI registry keys
@@ -86,11 +94,11 @@ export default async function TenantLayout({
         <aside className="w-64 border-r border-white/5 bg-black/40 flex flex-col shrink-0">
             <div className="h-20 flex items-center px-6 border-b border-white/5 gap-3">
                 <div className="h-8 w-8 bg-blue-600 rounded-lg flex items-center justify-center font-black">
-                    {tenant.name.charAt(0)}
+                    {tenantName.charAt(0)}
                 </div>
                 <div className="flex flex-col min-w-0">
-                    <span className="font-bold text-sm truncate">{tenant.name}</span>
-                    <span className="text-[10px] text-blue-400 font-mono">[{tenant.tier}]</span>
+                    <span className="font-bold text-sm truncate">{tenantName}</span>
+                    <span className="text-[10px] text-blue-400 font-mono">[{tenantTier}]</span>
                 </div>
             </div>
 
