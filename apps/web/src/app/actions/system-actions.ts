@@ -24,37 +24,36 @@ export async function createTenantWithModules(data: {
     await ensureSuperAdmin();
     
     // 1. Automate Database Creation via Neon
-    const { createTenantDatabase } = await import('@amisimedos/db/neon' as any);
+    const { createTenantDatabase } = await import('@amisimedos/db/neon');
     const { dbUrl } = await createTenantDatabase(data.slug);
     
-    // 2. Fetch Module Details to pass proper structure if needed
-    // In this system, provisionTenant expects enabledModules as a mapping or list
-    // Based on tenant-actions.ts, it's often a boolean mapping.
+    // 2. Create Hospital Record First
     const db = getControlDb();
-        const hospital = await db.tenant.create({
-            data: {
-                name: data.name,
-                slug: data.slug,
-                dbUrl: dbUrl || undefined,
-                encryptionKeyReference: data.slug,
-                region: data.region,
-                tier: data.tier as DeploymentTier,
-                status: 'active',
-                enabledModules: {},
-            }
-        });
-
-        // Dynamic import to prevent Node.js module leaks
-        const { provisionTenant } = await import('@amisimedos/db/management' as any);
-
-        await provisionTenant({
-            tenantId: hospital.id,
+    const hospital = await db.tenant.create({
+        data: {
+            name: data.name,
             slug: data.slug,
             dbUrl: dbUrl || undefined,
-            tier: data.tier,
-            settings: {},
-            enabledModules: {}
-        });
+            encryptionKeyReference: data.slug,
+            region: data.region,
+            tier: data.tier as DeploymentTier,
+            status: 'active',
+            enabledModules: {},
+        }
+    });
+
+    // 3. Provision Tenant Database via provisionTenant from management
+    const { provisionTenant } = await import('@amisimedos/db/management');
+
+    await provisionTenant(
+        data.name,
+        data.slug,
+        data.region,
+        dbUrl || '',
+        data.tier,
+        undefined,
+        {}
+    );
 
     revalidatePath('/system/hospitals');
     revalidatePath('/system/dashboard');
