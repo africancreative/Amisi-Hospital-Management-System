@@ -1837,7 +1837,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/packages/db/generated/tenant-client",
+      "value": "/vercel/share/v0-project/packages/db/generated/tenant-client",
       "fromEnvVar": null
     },
     "config": {
@@ -1855,12 +1855,11 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/packages/db/prisma/tenant.prisma",
+    "sourceFilePath": "/vercel/share/v0-project/packages/db/prisma/tenant.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null,
-    "schemaEnvPath": "../../.env"
+    "rootEnvPath": null
   },
   "relativePath": "../../prisma",
   "clientVersion": "5.22.0",
@@ -1869,7 +1868,6 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
-  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {

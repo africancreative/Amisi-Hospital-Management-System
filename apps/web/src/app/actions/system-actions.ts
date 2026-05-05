@@ -45,7 +45,7 @@ export async function createTenantWithModules(data: {
         });
 
         // Dynamic import to prevent Node.js module leaks
-        const { provisionTenant } = await import('@amisimedos/db/management' as any);
+        const { provisionTenant } = await import('@amisimedos/db' as any);
 
         await provisionTenant({
             tenantId: hospital.id,

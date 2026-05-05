@@ -2,6 +2,7 @@ export * from './config';
 export * from './client';
 export * from './neon';
 export * from './update';
+export * from './provision';
 export * from './lib/kms';
 export * from './lib/crypto';
 export * from './lib/cda';
