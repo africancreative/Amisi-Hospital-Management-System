@@ -16,7 +16,7 @@ export const systemRouter: any = router({
         return db.tenant.findMany({
             orderBy: { createdAt: 'desc' },
             include: {
-                _count: { select: { entitlements: true } }
+                _count: { select: { tenantModules: true } }
             }
         });
     }),
@@ -28,7 +28,7 @@ export const systemRouter: any = router({
             return db.tenant.findUnique({
                 where: { id: input.id },
                 include: {
-                    entitlements: { include: { module: true } },
+                    tenantModules: { include: { module: true } },
                     configAuditLogs: { orderBy: { timestamp: 'desc' }, take: 50 }
                 }
             });

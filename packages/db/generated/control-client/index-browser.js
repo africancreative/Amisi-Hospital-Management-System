@@ -337,6 +337,61 @@ exports.Prisma.TenantFeatureFlagScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.SystemUserScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  email: 'email',
+  role: 'role',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.LeadScalarFieldEnum = {
+  id: 'id',
+  hospitalName: 'hospitalName',
+  contactName: 'contactName',
+  contactEmail: 'contactEmail',
+  contactPhone: 'contactPhone',
+  source: 'source',
+  status: 'status',
+  facilityType: 'facilityType',
+  potentialValue: 'potentialValue',
+  customConfig: 'customConfig',
+  requestedModules: 'requestedModules',
+  message: 'message',
+  tags: 'tags',
+  lostReason: 'lostReason',
+  nextFollowUp: 'nextFollowUp',
+  convertedTenantId: 'convertedTenantId',
+  assignedAgentId: 'assignedAgentId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CommunicationLogScalarFieldEnum = {
+  id: 'id',
+  leadId: 'leadId',
+  type: 'type',
+  direction: 'direction',
+  subject: 'subject',
+  content: 'content',
+  timestamp: 'timestamp',
+  userId: 'userId',
+  duration: 'duration'
+};
+
+exports.Prisma.TaskScalarFieldEnum = {
+  id: 'id',
+  leadId: 'leadId',
+  type: 'type',
+  dueDate: 'dueDate',
+  status: 'status',
+  notes: 'notes',
+  assignedToId: 'assignedToId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -396,6 +451,42 @@ exports.BillingCycle = exports.$Enums.BillingCycle = {
   YEARLY: 'YEARLY'
 };
 
+exports.LeadSource = exports.$Enums.LeadSource = {
+  Website: 'Website',
+  WhatsApp: 'WhatsApp',
+  Email: 'Email',
+  SalesAgent: 'SalesAgent'
+};
+
+exports.PipelineStage = exports.$Enums.PipelineStage = {
+  NewLead: 'NewLead',
+  Qualified: 'Qualified',
+  ProposalSent: 'ProposalSent',
+  Negotiation: 'Negotiation',
+  Won: 'Won',
+  Lost: 'Lost'
+};
+
+exports.CommunicationType = exports.$Enums.CommunicationType = {
+  CALL: 'CALL',
+  EMAIL: 'EMAIL',
+  WHATSAPP: 'WHATSAPP',
+  MEETING: 'MEETING',
+  NOTE: 'NOTE'
+};
+
+exports.TaskType = exports.$Enums.TaskType = {
+  CALL: 'CALL',
+  EMAIL: 'EMAIL',
+  DEMO: 'DEMO'
+};
+
+exports.TaskStatus = exports.$Enums.TaskStatus = {
+  PENDING: 'PENDING',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED'
+};
+
 exports.Prisma.ModelName = {
   Tenant: 'Tenant',
   Module: 'Module',
@@ -411,7 +502,11 @@ exports.Prisma.ModelName = {
   FeatureFlag: 'FeatureFlag',
   FeatureFlagOverride: 'FeatureFlagOverride',
   TenantConfigAuditLog: 'TenantConfigAuditLog',
-  TenantFeatureFlag: 'TenantFeatureFlag'
+  TenantFeatureFlag: 'TenantFeatureFlag',
+  SystemUser: 'SystemUser',
+  Lead: 'Lead',
+  CommunicationLog: 'CommunicationLog',
+  Task: 'Task'
 };
 
 /**

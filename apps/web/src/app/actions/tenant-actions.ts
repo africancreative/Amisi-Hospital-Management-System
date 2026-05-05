@@ -95,19 +95,74 @@ export async function updateTenantStatus(id: string, status: 'active' | 'suspend
 export async function updateEnabledModules(id: string, modules: any): Promise<any> {
     await ensureSuperAdmin();
     const db = getControlDb();
+    
+    // Get current tenant to check dependencies
+    const tenant = await db.tenant.findUnique({
+        where: { id },
+        include: { tenantModules: true }
+    });
+    
+    if (!tenant) throw new Error('Tenant not found');
+
+    // Validate dependencies before updating
+    const modulesArray = Array.isArray(modules) ? modules : Object.entries(modules).map(([key, enabled]) => ({ code: key, enabled }));
+    const enabledCodes = new Set(modulesArray.filter((m: any) => m.enabled).map((m: any) => m.code));
+    
+    // Get all modules with dependencies
+    const allModules = await db.module.findMany();
+    
+    // Check if all dependencies are satisfied
+    for (const mod of modulesArray) {
+        if (mod.enabled) {
+            const moduleDef = allModules.find(m => m.code === mod.code);
+            if (moduleDef?.dependencies) {
+                const deps = JSON.parse(moduleDef.dependencies as string) as string[];
+                for (const dep of deps) {
+                    if (!enabledCodes.has(dep)) {
+                        throw new Error(`Cannot enable ${mod.code}: missing dependency ${dep}`);
+                    }
+                }
+            }
+        }
+    }
+    
+    // Update tenant's enabledModules JSON
     await db.tenant.update({
         where: { id },
-        data: { enabledModules: modules },
+        data: { enabledModules: modules }
     });
 
+    // Update entitlements
+    for (const mod of modulesArray) {
+        const existing = tenant.tenantModules.find((e: any) => e.moduleId === mod.code);
+        if (existing) {
+            await db.tenantModule.update({
+                where: { id: existing.id },
+                data: { isEnabled: mod.enabled }
+            });
+        }
+    }
+
     revalidatePath(`/hospitals/${id}`);
+    revalidatePath(`/tenants/${id}`);
 }
 
 export async function getTenants(): Promise<any> {
     await ensureSuperAdmin();
     const db = getControlDb();
     return db.tenant.findMany({
-        orderBy: { createdAt: 'desc' }
+        orderBy: { createdAt: 'desc' },
+        include: {
+            tenantModules: true,
+            subscriptions: true,
+            payments: true,
+            usages: true,
+            featureFlags: true,
+            configAuditLogs: {
+                take: 5,
+                orderBy: { timestamp: 'desc' }
+            }
+        }
     });
 }
 

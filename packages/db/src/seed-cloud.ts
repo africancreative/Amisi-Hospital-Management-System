@@ -332,45 +332,56 @@ async function seedCloud() {
             };
         }
 
-        // 5b. Upsert tenant record in control DB
-        const tenant = await controlDb.tenant.upsert({
-            where:  { id: t.id },
-            update: {
-                name: t.name,
-                dbUrl: t.dbUrl,
-                status: 'active',
-                facilityType: t.facilityType,
-                enabledModules: t.modules,
-                moduleConfig: moduleConfig,
-                workflowCustomization: {
-                    queue_logic: { triage_levels: ['Critical', 'Urgent', 'Routine'], routing_rules: [] },
-                    billing_rules: { currency: 'USD', tax_rate: 0, payment_methods: ['CASH', 'CARD', 'MPESA'] },
-                    staff_roles: {},
-                },
-                complianceIsolation: { isolation_policy: 'logical', data_residency: t.region, byok_enabled: false },
-                subscriptionQuotas: { seat_limit: 50, storage_mb: 10000 },
-            },
-            create: {
-                id:                   t.id,
-                name:                 t.name,
-                slug:                 t.slug,
-                dbUrl:                t.dbUrl,
-                encryptionKeyReference: 'demo-key-ref',
-                region:               t.region,
-                tier:                 t.tier,
-                facilityType:         t.facilityType,
-                status:               'active',
-                enabledModules:       t.modules,
-                moduleConfig:         moduleConfig,
-                workflowCustomization: {
-                    queue_logic: { triage_levels: ['Critical', 'Urgent', 'Routine'], routing_rules: [] },
-                    billing_rules: { currency: 'USD', tax_rate: 0, payment_methods: ['CASH', 'CARD', 'MPESA'] },
-                    staff_roles: {},
-                },
-                complianceIsolation: { isolation_policy: 'logical', data_residency: t.region, byok_enabled: false },
-                subscriptionQuotas: { seat_limit: 50, storage_mb: 10000 },
-            },
+        // 5b. Upsert tenant record in control DB (check by slug to avoid conflicts)
+        let tenant = await controlDb.tenant.findFirst({
+            where: { slug: t.slug }
         });
+
+        if (tenant) {
+            // Update existing tenant
+            tenant = await controlDb.tenant.update({
+                where: { id: tenant.id },
+                data: {
+                    name: t.name,
+                    dbUrl: t.dbUrl,
+                    status: 'active',
+                    facilityType: t.facilityType,
+                    enabledModules: t.modules,
+                    moduleConfig: moduleConfig,
+                    workflowCustomization: {
+                        queue_logic: { triage_levels: ['Critical', 'Urgent', 'Routine'], routing_rules: [] },
+                        billing_rules: { currency: 'USD', tax_rate: 0, payment_methods: ['CASH', 'CARD', 'MPESA'] },
+                        staff_roles: {},
+                    },
+                    complianceIsolation: { isolation_policy: 'logical', data_residency: t.region, byok_enabled: false },
+                    subscriptionQuotas: { seat_limit: 50, storage_mb: 10000 },
+                },
+            });
+        } else {
+            // Create new tenant
+            tenant = await controlDb.tenant.create({
+                data: {
+                    id:                   t.id,
+                    name:                 t.name,
+                    slug:                 t.slug,
+                    dbUrl:                t.dbUrl,
+                    encryptionKeyReference: 'demo-key-ref',
+                    region:               t.region,
+                    tier:                 t.tier,
+                    facilityType:         t.facilityType,
+                    status:               'active',
+                    enabledModules:       t.modules,
+                    moduleConfig:         moduleConfig,
+                    workflowCustomization: {
+                        queue_logic: { triage_levels: ['Critical', 'Urgent', 'Routine'], routing_rules: [] },
+                        billing_rules: { currency: 'USD', tax_rate: 0, payment_methods: ['CASH', 'CARD', 'MPESA'] },
+                        staff_roles: {},
+                    },
+                    complianceIsolation: { isolation_policy: 'logical', data_residency: t.region, byok_enabled: false },
+                    subscriptionQuotas: { seat_limit: 50, storage_mb: 10000 },
+                },
+            });
+        }
         console.log(`    ✔ Control DB record — slug: ${tenant.slug} (${t.facilityType})`);
 
         // 5c. Link all modules to this tenant

@@ -68,7 +68,7 @@ export default function HospitalModules() {
             <div className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
                     <Link 
-                        href="/admin/hospitals"
+                        href="/system/tenants"
                         className="flex items-center gap-2 text-slate-500 hover:text-white transition-colors text-xs font-bold uppercase tracking-widest mb-4"
                     >
                         <ArrowLeft size={14} />

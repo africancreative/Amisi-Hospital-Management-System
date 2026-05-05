@@ -33,10 +33,10 @@ Usage:
 
         if (command === 'list-tenants') {
             const tenants = await controlDb.tenant.findMany({
-                include: { entitlements: { include: { module: true } } }
+                include: { tenantModules: true }
             });
             tenants.forEach((t: any) => {
-                const modules = t.entitlements.filter((e: any) => e.isEnabled).map((e: any) => e.module.code).join(', ');
+                const modules = t.tenantModules.filter((e: any) => e.isEnabled).map((e: any) => e.moduleId).join(', ');
                 console.log(`[${t.id}] ${t.name} - Enabled: ${modules || 'None'}`);
             });
         }

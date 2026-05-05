@@ -4,6 +4,9 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   outputFileTracingRoot: path.join(__dirname, "../../"),
   output: process.env.STANDALONE_BUILD === 'true' ? 'standalone' : undefined,
+  turbopack: {
+    // Turbopack configuration
+  },
   // Prevent webpack from bundling Prisma client — bundling breaks __dirname-based
   // engine path resolution, causing the rhel-openssl-3.0.x binary to not be found
   // on Vercel's Lambda runtime. Keeping these as server externals preserves the
@@ -69,6 +72,7 @@ const nextConfig: NextConfig = {
             tls: false,
             dns: false,
             readline: false,
+            async_hooks: false,
         };
     }
     return config;

@@ -34,8 +34,30 @@ const DOMAIN_ROLE_MAP: Record<string, string[]> = {
                     'OT_MANAGER', 'ADMIN', 'SUPER_ADMIN'],
 };
 
+const ADMIN_REDIRECT_MAP: Record<string, string> = {
+  '/admin/analytics': '/system/analytics',
+  '/admin/security': '/system/settings',
+  '/admin/settings': '/system/settings',
+  '/admin/hospitals': '/system/tenants',
+  '/admin/hospitals/onboard': '/system/tenants/new',
+  '/admin/events': '/system/audit',
+  '/admin/users': '/system/users',
+};
+
 export function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl;
+
+    // 0. Redirect legacy /admin routes to /system
+    if (pathname === '/admin' || pathname === '/admin/') {
+        return NextResponse.redirect(new URL('/system/dashboard', request.url));
+    }
+    if (ADMIN_REDIRECT_MAP[pathname]) {
+        return NextResponse.redirect(new URL(ADMIN_REDIRECT_MAP[pathname], request.url));
+    }
+    if (pathname.startsWith('/admin/')) {
+        const subpath = pathname.replace('/admin/', '');
+        return NextResponse.redirect(new URL(`/system/${subpath}`, request.url));
+    }
 
     // 1. Resolve Tenant context from path or session
     const pathParts = pathname.split('/').filter(Boolean);

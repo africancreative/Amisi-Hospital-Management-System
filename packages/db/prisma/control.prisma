@@ -40,12 +40,13 @@ model Tenant {
   subscriptionQuotas     Json                   @default("{\"seat_limit\": 5, \"storage_mb\": 5000}") @map("subscription_quotas")
   workflowCustomization  Json                   @default("{\"queue_logic\": {\"routing_rules\": [], \"triage_levels\": [\"Critical\", \"Urgent\", \"Routine\"]}, \"staff_roles\": {}, \"billing_rules\": {\"currency\": \"USD\", \"tax_rate\": 0, \"payment_methods\": [\"CASH\", \"CARD\", \"MPESA\"]}}") @map("workflow_customization")
   featureFlagOverrides   FeatureFlagOverride[]
-  subscriptions          Subscription[]
-  payments               SystemPayment[]
-  configAuditLogs        TenantConfigAuditLog[]
-  tenantFeatureFlags     TenantFeatureFlag[]
-  entitlements           TenantModule[]
-  usages                 TenantUsage[]
+  leads                Lead[]              @relation("leadConvertedTenant")
+  tenantModules        TenantModule[]      @relation("tenantModules")
+  subscriptions       Subscription[]      @relation("tenantSubscriptions")
+  usages              TenantUsage[]       @relation("tenantUsages")
+  configAuditLogs      TenantConfigAuditLog[] @relation("tenantConfigAuditLogs")
+  featureFlags         TenantFeatureFlag[] @relation("tenantFeatureFlags")
+  payments             SystemPayment[]     @relation("tenantPayments")
 
   @@map("tenants")
 }
@@ -76,7 +77,7 @@ model TenantModule {
   createdAt  DateTime  @default(now()) @map("created_at")
   updatedAt  DateTime  @updatedAt @map("updated_at")
   module     Module    @relation(fields: [moduleId], references: [id])
-  tenant     Tenant    @relation(fields: [tenantId], references: [id])
+  tenant     Tenant    @relation("tenantModules", fields: [tenantId], references: [id])
 
   @@unique([tenantId, moduleId])
   @@map("tenant_modules")
@@ -137,7 +138,7 @@ model SystemPayment {
   customerName  String   @map("customer_name")
   description   String?
   createdAt     DateTime @default(now()) @map("created_at")
-  tenant        Tenant?  @relation(fields: [tenantId], references: [id])
+  tenant        Tenant?  @relation("tenantPayments", fields: [tenantId], references: [id])
 
   @@map("system_payments")
 }
@@ -174,7 +175,7 @@ model Subscription {
   createdAt   DateTime      @default(now()) @map("created_at")
   updatedAt   DateTime      @updatedAt @map("updated_at")
   plan        Plan          @relation(fields: [planId], references: [id])
-  tenant      Tenant        @relation(fields: [tenantId], references: [id])
+  tenant      Tenant        @relation("tenantSubscriptions", fields: [tenantId], references: [id])
   usages      TenantUsage[]
 
   @@map("subscriptions")
@@ -205,7 +206,7 @@ model TenantUsage {
   createdAt      DateTime     @default(now()) @map("created_at")
   updatedAt      DateTime     @updatedAt @map("updated_at")
   subscription   Subscription @relation(fields: [subscriptionId], references: [id])
-  tenant         Tenant       @relation(fields: [tenantId], references: [id])
+  tenant         Tenant       @relation("tenantUsages", fields: [tenantId], references: [id])
 
   @@unique([tenantId, date])
   @@index([subscriptionId])
@@ -268,7 +269,7 @@ model TenantConfigAuditLog {
   ipAddress String?  @map("ip_address")
   userAgent String?  @map("user_agent")
   timestamp DateTime @default(now()) @map("timestamp")
-  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant    Tenant   @relation("tenantConfigAuditLogs", fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId, timestamp])
   @@map("tenant_config_audit_logs")
@@ -282,7 +283,7 @@ model TenantFeatureFlag {
   createdAt DateTime    @default(now()) @map("created_at")
   updatedAt DateTime    @updatedAt @map("updated_at")
   flag      FeatureFlag @relation(fields: [flagId], references: [id])
-  tenant    Tenant      @relation(fields: [tenantId], references: [id])
+  tenant    Tenant      @relation("tenantFeatureFlags", fields: [tenantId], references: [id])
 
   @@unique([tenantId, flagId])
   @@map("tenant_feature_flags")
@@ -316,4 +317,116 @@ enum FacilityType {
 enum BillingCycle {
   MONTHLY
   YEARLY
+}
+
+enum LeadSource {
+  Website
+  WhatsApp
+  Email
+  SalesAgent
+}
+
+enum PipelineStage {
+  NewLead
+  Qualified
+  ProposalSent
+  Negotiation
+  Won
+  Lost
+}
+
+enum CommunicationType {
+  CALL
+  EMAIL
+  WHATSAPP
+  MEETING
+  NOTE
+}
+
+enum TaskType {
+  CALL
+  EMAIL
+  DEMO
+}
+
+enum TaskStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
+}
+
+model SystemUser {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  role      String   @default("agent") // agent | admin
+  leads     Lead[]   @relation("userAssignedLeads")
+  assignedTasks Task[]  @relation("taskAssignedTo")
+  communications CommunicationLog[] @relation("userCommunications")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("system_users")
+}
+
+model Lead {
+  id                  String        @id @default(uuid())
+  hospitalName        String        @map("hospital_name")
+  contactName         String        @map("contact_name")
+  contactEmail        String        @map("contact_email")
+  contactPhone        String?       @map("contact_phone")
+  source              LeadSource
+  status              PipelineStage  @default(NewLead) @map("pipeline_status")
+  facilityType        FacilityType  @map("facility_type")
+  potentialValue       Decimal?      @db.Decimal(10, 2) @map("potential_value")
+  customConfig        Json?         @map("custom_config")
+  requestedModules   String[]      @default([]) @map("requested_modules")
+  message             String?
+  tags                String[]      @default([]) @map("tags")
+  lostReason          String?       @map("lost_reason")
+  nextFollowUp        DateTime?     @map("next_follow_up")
+  convertedTenantId   String?       @map("converted_tenant_id")
+  assignedAgentId     String?       @map("assigned_agent_id")
+  
+  tenant              Tenant?       @relation("leadConvertedTenant", fields: [convertedTenantId], references: [id])
+  assignedAgent       SystemUser?   @relation("userAssignedLeads", fields: [assignedAgentId], references: [id])
+  communications     CommunicationLog[]
+  tasks               Task[]
+  
+  createdAt           DateTime      @default(now()) @map("created_at")
+  updatedAt           DateTime      @updatedAt @map("updated_at")
+
+  @@map("leads")
+}
+
+model CommunicationLog {
+  id          String            @id @default(uuid())
+  leadId      String            @map("lead_id")
+  lead        Lead              @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  type        CommunicationType
+  direction   String?           @map("direction") // 'INBOUND' | 'OUTBOUND'
+  subject     String?
+  content     String?
+  timestamp   DateTime          @default(now()) @map("timestamp")
+  userId      String?            @map("user_id")
+  user        SystemUser?        @relation("userCommunications", fields: [userId], references: [id])
+  duration    Int?               // in minutes for calls
+  
+  @@map("communication_logs")
+}
+
+model Task {
+  id           String      @id @default(uuid())
+  leadId       String      @map("lead_id")
+  lead         Lead        @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  type         TaskType
+  dueDate      DateTime    @map("due_date")
+  status       TaskStatus  @default(PENDING)
+  notes        String?
+  assignedToId String?     @map("assigned_to_id")
+  assignedTo   SystemUser? @relation("taskAssignedTo", fields: [assignedToId], references: [id])
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
+
+  @@map("tasks")
 }

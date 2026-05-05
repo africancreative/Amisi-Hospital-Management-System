@@ -10,7 +10,16 @@ export type Permission =
   | 'reports:read' | 'reports:export'
   | 'admin:full' | 'admin:users' | 'admin:settings'
   | 'chat:read' | 'chat:write'
-  | 'audit:read';
+  | 'audit:read'
+  // System Admin Permissions
+  | 'system:full'
+  | 'system:tenants:read' | 'system:tenants:write' | 'system:tenants:suspend' | 'system:tenants:terminate'
+  | 'system:modules:read' | 'system:modules:write' | 'system:modules:flags'
+  | 'system:billing:read' | 'system:billing:write' | 'system:billing:refund'
+  | 'system:health:read' | 'system:health:manage'
+  | 'system:audit:read' | 'system:audit:export'
+  | 'system:settings:read' | 'system:settings:write'
+  | 'system:admins:read' | 'system:admins:write';
 
 export interface RolePermissions {
   roleName: string;
@@ -106,6 +115,53 @@ export const ROLE_PERMISSIONS: Record<string, RolePermissions> = {
       'inventory:read',
       'reports:read',
       'chat:read', 'chat:write'
+    ]
+  },
+  // System Admin Roles
+  SUPER_ADMIN: {
+    roleName: 'SUPER_ADMIN',
+    permissions: [
+      'system:full',
+      'system:tenants:read', 'system:tenants:write', 'system:tenants:suspend', 'system:tenants:terminate',
+      'system:modules:read', 'system:modules:write', 'system:modules:flags',
+      'system:billing:read', 'system:billing:write', 'system:billing:refund',
+      'system:health:read', 'system:health:manage',
+      'system:audit:read', 'system:audit:export',
+      'system:settings:read', 'system:settings:write',
+      'system:admins:read', 'system:admins:write',
+      'audit:read'
+    ]
+  },
+  OPERATIONS_ADMIN: {
+    roleName: 'OPERATIONS_ADMIN',
+    permissions: [
+      'system:tenants:read', 'system:tenants:write', 'system:tenants:suspend',
+      'system:modules:read', 'system:modules:write',
+      'system:health:read', 'system:health:manage',
+      'system:audit:read',
+      'system:settings:read',
+      'audit:read'
+    ]
+  },
+  FINANCE_ADMIN: {
+    roleName: 'FINANCE_ADMIN',
+    permissions: [
+      'system:tenants:read',
+      'system:billing:read', 'system:billing:write', 'system:billing:refund',
+      'system:audit:read', 'system:audit:export',
+      'reports:read', 'reports:export',
+      'audit:read'
+    ]
+  },
+  SUPPORT_ENGINEER: {
+    roleName: 'SUPPORT_ENGINEER',
+    permissions: [
+      'system:tenants:read',
+      'system:modules:read',
+      'system:health:read',
+      'system:audit:read',
+      'system:settings:read',
+      'audit:read'
     ]
   }
 };

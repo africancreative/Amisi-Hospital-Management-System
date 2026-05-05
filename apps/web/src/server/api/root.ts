@@ -16,6 +16,9 @@ import { systemRouter } from './routers/system';
 import { auditRouter } from './routers/audit';
 import { authRouter } from './routers/auth';
 import { hrRouter } from './routers/hr';
+import { adminAnalyticsRouter } from './routers/admin-analytics';
+import { adminSettingsRouter } from './routers/admin-settings';
+import { adminAlertsRouter } from './routers/admin-alerts';
 
 /**
  * Root tRPC Router
@@ -38,6 +41,9 @@ export const appRouter: any = router({
   clinical: clinicalRouter,
   audit: auditRouter,
   hr: hrRouter,
+  adminAnalytics: adminAnalyticsRouter,
+  adminSettings: adminSettingsRouter,
+  adminAlerts: adminAlertsRouter,
 });
 
 
