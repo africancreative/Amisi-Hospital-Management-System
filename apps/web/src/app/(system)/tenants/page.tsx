@@ -25,7 +25,7 @@ import {
   Pencil,
 } from 'lucide-react';
 import Link from 'next/link';
-import { getTenants } from '@/app/actions/tenant-actions';
+import { getTenants } from '@/app/actions/core-actions';
 
 interface Tenant {
   id: string;

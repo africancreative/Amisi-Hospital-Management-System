@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { User, Search, Calendar, ChevronRight, UserPlus } from 'lucide-react';
-import { getPatients } from '@/app/actions/ehr-actions';
+import { getPatients } from '@/app/actions/clinical-actions';
 
 export default async function PatientsModule({ params, searchParams }: { params: { slug: string }, searchParams?: { q?: string } }) {
     const { slug } = params;

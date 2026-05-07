@@ -8,7 +8,7 @@ import RoleSwitcher from '@/components/RoleSwitcher';
 import { TrpcProvider } from '@/trpc/Provider';
 import InternalChatSidebar from '@/components/InternalChatSidebar';
 import PWARegistration from '@/components/PWARegistration';
-import { getTenantLicense } from './actions/system-actions';
+import { getTenantLicense } from './actions/core-actions';
 import { TenantLockout } from '@/components/TenantLockout';
 import Navbar from '@/components/Navbar';
 import ConnectionStatus from '@/components/ConnectionStatus';

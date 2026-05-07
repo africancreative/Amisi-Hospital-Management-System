@@ -1,4 +1,4 @@
-import { getTenantById } from "@/app/actions/tenant-actions";
+import { getTenantById } from "@/app/actions/core-actions";
 import { HospitalEditForm } from "@/components/system/HospitalEditForm";
 import { cookies } from "next/headers";
 import { redirect, notFound } from "next/navigation";

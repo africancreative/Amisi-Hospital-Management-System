@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { TrendingUp, CreditCard, Users, Activity, ExternalLink, ShieldAlert, BadgeInfo } from 'lucide-react';
-import { getSystemAccountingData } from '@/app/actions/system-actions';
+import { getSystemAccountingData } from '@/app/actions/core-actions';
 import { RevenueChart } from './RevenueChart';
 
 export function SystemAccounting() {

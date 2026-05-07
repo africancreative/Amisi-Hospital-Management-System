@@ -28,7 +28,7 @@ import {
     Key,
     Globe
 } from 'lucide-react';
-import { createTenant } from '@/app/actions/tenant-actions';
+import { createTenant } from '@/app/actions/core-actions';
 import { PayPalCheckoutButton } from '@/components/billing/PayPalCheckoutButton';
 
 const DOMAINS = [

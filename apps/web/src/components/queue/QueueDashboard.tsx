@@ -13,7 +13,7 @@ import {
     ArrowRightCircle,
     CheckCircle2
 } from 'lucide-react';
-import { registerAndCheckIn, updateEncounterStatus, getActiveQueue } from '@/app/actions/queue-actions';
+import { registerAndCheckIn, updateEncounterStatus, getActiveQueue } from '@/app/actions/ui-actions';
 
 interface QueueItem {
     id: string;

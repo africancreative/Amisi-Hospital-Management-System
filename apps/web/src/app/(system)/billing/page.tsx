@@ -19,7 +19,7 @@ import {
   ArrowDownRight,
 } from 'lucide-react';
 import Link from 'next/link';
-import { getSystemAccountingData } from '@/app/actions/system-actions';
+import { getSystemAccountingData } from '@/app/actions/core-actions';
 
 interface Subscription {
   id: string;

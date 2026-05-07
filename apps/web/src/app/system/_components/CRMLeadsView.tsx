@@ -8,7 +8,7 @@ import {
     MoreVertical,
     Loader2
 } from 'lucide-react';
-import { getCRMLeads } from '@/app/actions/crm-actions';
+import { getCRMLeads } from '@/app/actions/ui-actions';
 
 export function CRMLeadsView() {
     const [leads, setLeads] = useState<any[]>([]);

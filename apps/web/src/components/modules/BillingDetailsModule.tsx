@@ -15,8 +15,8 @@ import {
     ShieldCheck,
     Clock
 } from "lucide-react";
-import { getInvoiceById, recordServiceLevelPayment } from "@/app/actions/billing-actions";
-import { getHospitalSettings } from "@/app/actions/hospital-actions";
+import { getInvoiceById, recordServiceLevelPayment } from "@/app/actions/operations-actions";
+import { getHospitalSettings } from "@/app/actions/core-actions";
 import ExportInvoiceButton from "@/components/ExportInvoiceButton";
 
 export default function BillingDetailsModule({ id }: { id: string }) {

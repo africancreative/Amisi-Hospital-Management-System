@@ -11,7 +11,7 @@ import {
     Search
 } from 'lucide-react';
 import Link from 'next/link';
-import { getPendingLabOrders } from '@/app/actions/lab-actions';
+import { getPendingLabOrders } from '@/app/actions/clinical-actions';
 
 export default async function LabModule({ params }: { params: { slug: string } }) {
     const { slug } = params;

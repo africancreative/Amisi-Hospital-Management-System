@@ -6,7 +6,7 @@ import {
   Baby, Bone, Layers3, Server, Download, RefreshCw, Stethoscope as ClinicIcon
 } from "lucide-react";
 import Link from "next/link";
-import { getGlobalSettings } from "../actions/system-actions";
+import { getGlobalSettings } from "../actions/core-actions";
 import { cookies } from "next/headers";
 import { getControlDb } from "@/lib/db";
 

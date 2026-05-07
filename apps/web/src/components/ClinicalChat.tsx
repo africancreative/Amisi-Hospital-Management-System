@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { MessageSquare, Send, User, Clock, ChevronDown, ChevronUp, Paperclip, Mic, X, FileText, Music, Play, Pause } from 'lucide-react';
-import { sendClinicalMessage, getClinicalMessages, ChatMessage, sendClinicalMedia } from '@/app/actions/chat-actions';
+import { sendClinicalMessage, getClinicalMessages, ChatMessage, sendClinicalMedia } from '@/app/actions/ui-actions';
 import { format } from 'date-fns';
 
 export default function ClinicalChat({ patientId, authorName, authorRole }: { patientId: string, authorName: string, authorRole: string }) {

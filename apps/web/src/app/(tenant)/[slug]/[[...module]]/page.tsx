@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic';
 import React from 'react';
 import { notFound, redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
-import { getTenantDashboardStats } from '@/app/actions/dashboard-actions';
+import { getTenantDashboardStats } from '@/app/actions/ui-actions';
 
 // Import the Client Dispatcher
 import ModuleClientDispatcher from '@/components/modules/ModuleClientDispatcher';

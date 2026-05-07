@@ -24,7 +24,7 @@ import {
     Beaker
 } from 'lucide-react';
 import Image from 'next/image';
-import { saveTriageIntake } from '@/app/actions/queue-actions';
+import { saveTriageIntake } from '@/app/actions/ui-actions';
 
 interface Patient {
     id: string;

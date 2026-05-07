@@ -23,7 +23,7 @@ import {
     Search,
     CheckCircle2
 } from 'lucide-react';
-import { getTenantById, updateTenantStatus, updateEnabledModules } from '@/app/actions/tenant-actions';
+import { getTenantById, updateTenantStatus, updateEnabledModules } from '@/app/actions/core-actions';
 
 const DOMAINS = [
     {

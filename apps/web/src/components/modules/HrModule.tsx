@@ -14,7 +14,7 @@ import {
     DollarSign
 } from 'lucide-react';
 import Link from 'next/link';
-import { getEmployees } from '@/app/actions/hr-actions';
+import { getEmployees } from '@/app/actions/operations-actions';
 
 export default async function HrModule({ params }: { params: { slug: string } }) {
     const { slug } = params;

@@ -10,7 +10,7 @@ import {
 import { 
     getGlobalSettings, 
     updateGlobalSettings 
-} from '@/app/actions/system-actions';
+} from '@/app/actions/core-actions';
 
 export function LandingContentCMS() {
     const [loading, setLoading] = useState(true);

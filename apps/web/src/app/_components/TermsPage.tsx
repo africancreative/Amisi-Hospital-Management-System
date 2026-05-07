@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { ArrowLeft, FileText } from 'lucide-react';
-import { getGlobalSettings } from '../actions/system-actions';
+import { getGlobalSettings } from '../actions/core-actions';
 
 export default async function TermsPage() {
   const settings = await getGlobalSettings();

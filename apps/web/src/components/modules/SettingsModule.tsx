@@ -1,5 +1,5 @@
 import React from 'react';
-import { getHospitalSettings } from '@/app/actions/hospital-actions';
+import { getHospitalSettings } from '@/app/actions/core-actions';
 import HospitalBrandingForm from '@/components/HospitalBrandingForm';
 import { Settings, ShieldCheck } from 'lucide-react';
 

@@ -3,7 +3,7 @@ import { router, publicProcedure } from '@/server/trpc/trpc';
 import { getControlDb } from '@amisimedos/db/client';
 import { DeploymentTier, FacilityType } from '@amisimedos/constants';
 import { hashPassword } from '@amisimedos/db/lib/crypto';
-import { notifyPaymentSuccess } from '@/app/actions/system-actions';
+import { notifyPaymentSuccess } from '@/app/actions/core-actions';
 
 /**
  * Public Router

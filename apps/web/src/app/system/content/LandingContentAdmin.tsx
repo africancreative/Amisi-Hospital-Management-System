@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { uploadHeroImage } from '@/app/actions/upload-actions';
-import { updateGlobalSettings } from '@/app/actions/system-actions';
+import { uploadHeroImage } from '@/app/actions/core-actions';
+import { updateGlobalSettings } from '@/app/actions/core-actions';
 import { Button } from '@amisimedos/ui';
 import { ImagePlus, Save, Loader2, Link as LinkIcon, CheckCircle2 } from 'lucide-react';
 

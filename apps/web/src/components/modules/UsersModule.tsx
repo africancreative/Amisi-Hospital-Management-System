@@ -1,5 +1,5 @@
 import React from 'react';
-import { getEmployees } from '@/app/actions/user-actions';
+import { getEmployees } from '@/app/actions/core-actions';
 import { Card, CardContent, CardHeader, CardTitle, Button, Input, Label } from '@amisimedos/ui';
 import { Users, UserPlus, Trash2, Shield, Briefcase, Mail } from 'lucide-react';
 

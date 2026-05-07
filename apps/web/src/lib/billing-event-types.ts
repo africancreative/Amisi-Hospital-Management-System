@@ -72,7 +72,6 @@ export const DEFAULT_SERVICE_CATALOG: ServicePrice[] = [
   // Ward charges
   { id: 'svc-ward-general', name: 'General Ward (per day)', category: 'WARD', price: 3000, description: 'General ward bed charge' },
   { id: 'svc-ward-private', name: 'Private Ward (per day)', category: 'WARD', price: 8000, description: 'Private room charge' },
-  { id: 'svc-ward-icu', name: 'ICU (per day)', category: 'WARD', price: 15000, description: 'Intensive care unit charge' },
 ];
 
 // ─── Price Lookup Helpers ───────────────────────────────────────────────

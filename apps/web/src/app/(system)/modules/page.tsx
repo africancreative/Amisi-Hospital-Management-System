@@ -24,7 +24,7 @@ import {
 } from 'lucide-react';
 import { ModuleCard } from '@/components/system-admin/ModuleCard';
 import { DependencyMap } from '@/components/system-admin/DependencyMap';
-import { getTenants, updateEnabledModules } from '@/app/actions/tenant-actions';
+import { getTenants, updateEnabledModules } from '@/app/actions/core-actions';
 
 // Module definitions with dependencies
 interface ModuleConfig {

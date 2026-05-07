@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Plus, Building2, MapPin, Activity, ShieldCheck, AlertCircle } from 'lucide-react';
-import { getTenants } from '@/app/actions/tenant-actions';
+import { getTenants } from '@/app/actions/core-actions';
 
 export default async function HospitalsPage() {
     const tenants = await getTenants();

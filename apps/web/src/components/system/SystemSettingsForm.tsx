@@ -19,7 +19,7 @@ import {
     updateGlobalSettings, 
     testPayPalConnection, 
     testMpesaConnection 
-} from '@/app/actions/system-actions';
+} from '@/app/actions/core-actions';
 
 export function SystemSettingsForm() {
     const [loading, setLoading] = useState(true);

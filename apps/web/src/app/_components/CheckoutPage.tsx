@@ -23,7 +23,7 @@ import {
   CheckCircle2
 } from 'lucide-react';
 import Link from 'next/link';
-import { getPayPalClientId, notifyCheckoutAttempt } from '@/app/actions/system-actions';
+import { getPayPalClientId, notifyCheckoutAttempt } from '@/app/actions/core-actions';
 import { trpc } from '@/trpc/client';
 import { DeploymentTier, FacilityType } from '@amisimedos/constants';
 

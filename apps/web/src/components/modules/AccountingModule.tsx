@@ -14,7 +14,7 @@ import {
     Layers
 } from 'lucide-react';
 import Link from 'next/link';
-import { getRecentJournalEntries, getTrialBalance } from '@/app/actions/accounting-actions';
+import { getRecentJournalEntries, getTrialBalance } from '@/app/actions/operations-actions';
 
 export default async function AccountingModule({ params }: { params: { slug: string } }) {
     const { slug } = params;

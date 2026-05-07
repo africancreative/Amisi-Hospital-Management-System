@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { ArrowRight, Building2, CheckCircle2, ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
-import { submitHospitalInquiry } from '@/app/actions/email-actions';
+import { submitHospitalInquiry } from '@/app/actions/core-actions';
 
 export default function RequestAccessPage() {
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');

@@ -1,5 +1,5 @@
 import { ensureSuperAdmin } from '@/lib/auth-utils';
-import { getGlobalSettings } from '@/app/actions/system-actions';
+import { getGlobalSettings } from '@/app/actions/core-actions';
 import LandingContentAdmin from './LandingContentAdmin';
 
 export const dynamic = 'force-dynamic';

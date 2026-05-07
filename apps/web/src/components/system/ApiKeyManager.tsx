@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { Key, Plus, Copy, Trash2, CheckCircle2, Eye, EyeOff, Loader2, Building2 } from 'lucide-react';
-import { generateApiKey, revokeApiKey } from '@/app/actions/system-actions';
+import { generateApiKey, revokeApiKey } from '@/app/actions/core-actions';
 
 interface ApiKey {
     key: string;

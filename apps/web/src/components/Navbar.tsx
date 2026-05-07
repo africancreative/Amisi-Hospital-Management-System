@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
-import { getGlobalSettings } from '@/app/actions/system-actions';
+import { getGlobalSettings } from '@/app/actions/core-actions';
 
 export default async function Navbar() {
   const settings = await getGlobalSettings();

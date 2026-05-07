@@ -22,7 +22,7 @@ import {
     MessageCircle
 } from 'lucide-react';
 import Image from 'next/image';
-import { getDynamicQueue, updateEncounterStatus } from '@/app/actions/queue-actions';
+import { getDynamicQueue, updateEncounterStatus } from '@/app/actions/ui-actions';
 
 interface Patient {
     id: string;

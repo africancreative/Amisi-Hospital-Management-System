@@ -14,7 +14,7 @@ import {
   Download,
   Loader2,
 } from 'lucide-react';
-import { getPlatformAnalytics } from '@/app/actions/dashboard-actions';
+import { getPlatformAnalytics } from '@/app/actions/ui-actions';
 
 export default function AnalyticsPage() {
   const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d' | '1y'>('30d');

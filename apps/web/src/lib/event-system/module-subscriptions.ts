@@ -63,15 +63,6 @@ export const billingSubscriptions: ModuleSubscriptionDef[] = [
       console.log(`[Billing] Admission bill triggered for patient ${event.patientId}`);
     },
   },
-  {
-    module: 'billing',
-    filter: {
-      types: ['SURGERY_SCHEDULED'],
-    },
-    handler: async (event) => {
-      console.log(`[Billing] Surgery bill triggered for surgery ${event.entityId}`);
-    },
-  },
 ];
 
 // ─── Pharmacy Module Subscriptions ───────────────────────────────────────
@@ -225,101 +216,6 @@ export const adtSubscriptions: ModuleSubscriptionDef[] = [
   },
 ];
 
-// ─── ICU Module Subscriptions ────────────────────────────────────────────
-
-export const icuSubscriptions: ModuleSubscriptionDef[] = [
-  {
-    module: 'icu',
-    filter: {
-      types: ['ICU_ADMISSION'],
-    },
-    handler: async (event) => {
-      console.log(`[ICU] Patient admitted to ICU: ${event.entityId}`);
-    },
-  },
-  {
-    module: 'icu',
-    filter: {
-      types: ['ICU_DISCHARGE'],
-    },
-    handler: async (event) => {
-      console.log(`[ICU] Patient discharged from ICU: ${event.entityId}`);
-    },
-  },
-  {
-    module: 'icu',
-    filter: {
-      types: ['ICU_ALARM', 'VENTILATOR_STARTED', 'VENTILATOR_STOPPED'],
-    },
-    handler: async (event) => {
-      console.warn(`[ICU] Alert: ${event.type} for ${event.entityId}`);
-    },
-  },
-];
-
-// ─── Surgery Module Subscriptions ────────────────────────────────────────
-
-export const surgerySubscriptions: ModuleSubscriptionDef[] = [
-  {
-    module: 'surgery',
-    filter: {
-      types: ['SURGERY_REQUESTED'],
-    },
-    handler: async (event) => {
-      console.log(`[Surgery] Surgery request received: ${event.entityId}`);
-    },
-  },
-  {
-    module: 'surgery',
-    filter: {
-      types: ['SURGERY_PRE_OP_CLEARED'],
-    },
-    handler: async (event) => {
-      console.log(`[Surgery] Pre-op clearance granted: ${event.entityId}`);
-    },
-  },
-  {
-    module: 'surgery',
-    filter: {
-      types: ['SURGERY_STARTED', 'SURGERY_COMPLETED'],
-    },
-    handler: async (event) => {
-      console.log(`[Surgery] Surgery ${event.type}: ${event.entityId}`);
-    },
-  },
-];
-
-// ─── Maternity Module Subscriptions ──────────────────────────────────────
-
-export const maternitySubscriptions: ModuleSubscriptionDef[] = [
-  {
-    module: 'maternity',
-    filter: {
-      types: ['ANC_BOOKING', 'ANC_VISIT_COMPLETED'],
-    },
-    handler: async (event) => {
-      console.log(`[Maternity] ANC event: ${event.type} for ${event.patientId}`);
-    },
-  },
-  {
-    module: 'maternity',
-    filter: {
-      types: ['LABOUR_STARTED', 'DELIVERY_COMPLETE'],
-    },
-    handler: async (event) => {
-      console.log(`[Maternity] Labour event: ${event.type} for ${event.patientId}`);
-    },
-  },
-  {
-    module: 'maternity',
-    filter: {
-      types: ['PARTOGRAM_ALERT', 'FOETAL_DISTRESS', 'HIGH_RISK_PREGNANCY'],
-    },
-    handler: async (event) => {
-      console.warn(`[Maternity] Critical alert: ${event.type} for ${event.patientId}`);
-    },
-  },
-];
 
 // ─── HR Module Subscriptions ─────────────────────────────────────────────
 
@@ -391,7 +287,7 @@ export const notificationSubscriptions: ModuleSubscriptionDef[] = [
   {
     module: 'notifications',
     filter: {
-      types: ['LAB_RESULT_CRITICAL', 'ICU_ALARM', 'FOETAL_DISTRESS', 'ONCOLOGY_EMERGENCY', 'PARTOGRAM_ALERT'],
+      types: ['LAB_RESULT_CRITICAL'],
     },
     handler: async (event) => {
       // Send push notification / SMS for critical events
@@ -426,9 +322,6 @@ const allSubscriptions: ModuleSubscriptionDef[][] = [
   inventorySubscriptions,
   labSubscriptions,
   adtSubscriptions,
-  icuSubscriptions,
-  surgerySubscriptions,
-  maternitySubscriptions,
   hrSubscriptions,
   systemSubscriptions,
   notificationSubscriptions,
@@ -457,11 +350,8 @@ export function getModuleEventMap(): Record<string, EventType[]> {
     inventory: ['PRESCRIPTION_DISPENSED', 'STOCK_EXPIRED', 'STOCK_ADJUSTED', 'PURCHASE_ORDER_APPROVED', 'GOODS_RECEIVED'],
     lab: ['LAB_SAMPLE_COLLECTED', 'LAB_RESULT_READY', 'LAB_RESULT_CRITICAL', 'LAB_REPORT_GENERATED'],
     adt: ['PATIENT_ADMITTED', 'PATIENT_TRANSFERRED', 'PATIENT_DISCHARGED', 'BED_STATUS_CHANGED'],
-    icu: ['ICU_ADMISSION', 'ICU_DISCHARGE', 'ICU_ALARM', 'VENTILATOR_STARTED', 'VENTILATOR_STOPPED'],
-    surgery: ['SURGERY_REQUESTED', 'SURGERY_PRE_OP_CLEARED', 'SURGERY_STARTED', 'SURGERY_COMPLETED'],
-    maternity: ['ANC_BOOKING', 'ANC_VISIT_COMPLETED', 'LABOUR_STARTED', 'DELIVERY_COMPLETE', 'PARTOGRAM_ALERT', 'FOETAL_DISTRESS', 'HIGH_RISK_PREGNANCY'],
     hr: ['LEAVE_REQUESTED', 'LEAVE_APPROVED', 'LEAVE_REJECTED', 'SHIFT_ASSIGNED', 'SHIFT_SWAPPED', 'CREDENTIAL_EXPIRING'],
     system: ['SYNC_COMPLETED', 'SYNC_FAILED', 'MODULE_ENABLED', 'MODULE_DISABLED'],
-    notifications: ['LAB_RESULT_CRITICAL', 'ICU_ALARM', 'FOETAL_DISTRESS', 'ONCOLOGY_EMERGENCY', 'PARTOGRAM_ALERT', 'PAYMENT_RECORDED', 'BILL_PAID_IN_FULL', 'PRESCRIPTION_RECEIVED'],
+    notifications: ['LAB_RESULT_CRITICAL', 'PAYMENT_RECORDED', 'BILL_PAID_IN_FULL', 'PRESCRIPTION_RECEIVED'],
   };
 }

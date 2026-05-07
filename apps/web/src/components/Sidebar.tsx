@@ -29,7 +29,7 @@ import {
 } from 'lucide-react';
 import { BillingResilienceWidget } from './BillingResilienceWidget';
 import { api } from '@/trpc/react';
-import { logout } from '@/app/actions/auth-actions';
+import { logout } from '@/app/actions/core-actions';
 
 const tenantNavigation = [
     { name: 'Dashboard', href: '/', icon: LayoutDashboard },

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Server, ShieldAlert, CheckCircle2, Box, Activity, DollarSign } from 'lucide-react';
-import { createTenantWithModules } from '@/app/actions/system-actions';
+import { createTenantWithModules } from '@/app/actions/core-actions';
 import { useRouter } from 'next/navigation';
 
 export default function OnboardingForm({ availableModules }: { availableModules: any[] }) {

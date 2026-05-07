@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { getTenants } from "../../actions/tenant-actions";
-import { getPlatformAnalytics } from "../../actions/dashboard-actions";
+import { getTenants } from "../../actions/core-actions";
+import { getPlatformAnalytics } from "../../actions/ui-actions";
 import Link from "next/link";
 import { 
   Building2, 

@@ -11,7 +11,7 @@ import {
     Plus,
     Loader2
 } from 'lucide-react';
-import { getCRMTasks } from '@/app/actions/crm-actions';
+import { getCRMTasks } from '@/app/actions/ui-actions';
 
 export function CRMAutomationsView() {
     const [tasks, setTasks] = useState<any[]>([]);

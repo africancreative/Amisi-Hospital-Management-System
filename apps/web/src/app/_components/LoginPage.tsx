@@ -1,7 +1,7 @@
 'use client';
 
 import { useActionState, useTransition } from 'react';
-import { loginHospitalUser, type AuthActionState } from '../actions/auth-actions';
+import { loginHospitalUser, type AuthActionState } from '../actions/core-actions';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Button, Label } from '@amisimedos/ui';
 import { Hospital, ShieldAlert, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';

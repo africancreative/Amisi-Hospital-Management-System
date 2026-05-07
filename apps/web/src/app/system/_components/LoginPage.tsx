@@ -1,7 +1,7 @@
 'use server';
 
-import { loginSystemAdmin } from '../../actions/auth-actions';
-import { getGlobalSettings } from '../../actions/system-actions';
+import { loginSystemAdmin } from '../../actions/core-actions';
+import { getGlobalSettings } from '../../actions/core-actions';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Button, Label } from '@amisimedos/ui';
 import { ShieldCheck } from 'lucide-react';
 

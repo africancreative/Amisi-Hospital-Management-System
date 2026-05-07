@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Building2, Mail, Phone, MapPin, Tag, Palette, Globe, Save } from 'lucide-react';
-import { updateHospitalBranding } from '@/app/actions/hospital-actions';
+import { updateHospitalBranding } from '@/app/actions/core-actions';
 
 interface HospitalBrandingFormProps {
     initialSettings: {

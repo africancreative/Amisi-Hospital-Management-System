@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Plus, Trash2, Calculator, Receipt, ShieldCheck } from 'lucide-react';
-import { createInvoice } from '@/app/actions/billing-actions';
+import { createInvoice } from '@/app/actions/operations-actions';
 
 interface ServiceInvoiceFormProps {
     patients: any[];

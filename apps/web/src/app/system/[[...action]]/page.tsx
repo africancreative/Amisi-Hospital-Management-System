@@ -34,7 +34,7 @@ export default async function SystemRouter(props: { params: Promise<{ action?: s
   const userRole = 'SYSTEM_ADMIN';
   
   // Need to dynamically import getPlatformAnalytics from actions to pass stats to layout
-  const { getPlatformAnalytics, getPlatformDashboardStats } = await import('@/app/actions/dashboard-actions');
+  const { getPlatformAnalytics, getPlatformDashboardStats } = await import('@/app/actions/ui-actions');
   const [analytics, basicStats] = await Promise.all([
     getPlatformAnalytics(),
     getPlatformDashboardStats()

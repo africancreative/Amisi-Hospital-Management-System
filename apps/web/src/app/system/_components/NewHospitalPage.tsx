@@ -1,4 +1,4 @@
-import { fetchModules } from '@/app/actions/system-actions';
+import { fetchModules } from '@/app/actions/core-actions';
 import OnboardingForm from './OnboardingForm';
 
 export default async function NewHospitalPage() {

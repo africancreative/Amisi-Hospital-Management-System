@@ -2,7 +2,7 @@
 
 import { ShieldAlert, LogOut, ExternalLink } from 'lucide-react';
 import { Button } from '@amisimedos/ui';
-import { logout } from '@/app/actions/auth-actions';
+import { logout } from '@/app/actions/core-actions';
 
 export function TenantLockout({ 
     reason 

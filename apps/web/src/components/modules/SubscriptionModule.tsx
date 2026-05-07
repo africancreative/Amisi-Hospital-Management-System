@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { CreditCard, CheckCircle2, Zap, ArrowRight, ShieldCheck, HelpCircle } from 'lucide-react';
-import { getTenantSubscription } from '@/app/actions/dashboard-actions';
+import { getTenantSubscription } from '@/app/actions/ui-actions';
 
 export default function SubscriptionModule({ params }: { params: { slug: string } }) {
     const { slug } = params;

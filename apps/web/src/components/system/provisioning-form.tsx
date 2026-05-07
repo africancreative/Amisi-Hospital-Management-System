@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { createTenant } from '../../app/actions/tenant-actions';
+import { createTenant } from '../../app/actions/core-actions';
 import { Button, Input, Card, CardContent, CardHeader, CardTitle, Label } from '@amisimedos/ui';
 import { CheckCircle2, Loader2, Globe, Shield, Activity, ChevronRight, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';

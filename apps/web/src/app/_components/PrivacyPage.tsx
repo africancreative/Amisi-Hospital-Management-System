@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { ArrowLeft, Shield } from 'lucide-react';
-import { getGlobalSettings } from '../actions/system-actions';
+import { getGlobalSettings } from '../actions/core-actions';
 
 export default async function PrivacyPage() {
   const settings = await getGlobalSettings();

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Building2, Save, Trash2, Globe, Shield, Database, LayoutGrid, AlertTriangle, Copy, Power, PowerOff, Loader2 } from 'lucide-react';
-import { updateTenantFull, updateTenantStatus, deleteTenant, cloneTenant } from '@/app/actions/tenant-actions';
+import { updateTenantFull, updateTenantStatus, deleteTenant, cloneTenant } from '@/app/actions/core-actions';
 import { useRouter } from 'next/navigation';
 
 interface HospitalEditFormProps {
