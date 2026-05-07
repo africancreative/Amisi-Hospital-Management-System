@@ -1,254 +1,246 @@
 import { cookies } from "next/headers";
-import { Plus, Users, Building2, Activity, TrendingUp, ShieldAlert, Monitor, Globe, ChevronRight, Key } from "lucide-react";
-import { getPlatformDashboardStats } from "../../actions/dashboard-actions";
-import { getTenants } from "../../actions/tenant-actions";
-import { getGlobalSettings, listApiKeys } from "../../actions/system-actions";
-import { AuditMonitoring } from "@/components/system/audit-monitoring";
-import { SystemAccounting } from "@/components/system/SystemAccounting";
-import { SystemSettingsForm } from "@/components/system/SystemSettingsForm";
-import { ApiKeyManager } from "@/components/system/ApiKeyManager";
-import Link from "next/link";
 import { redirect } from "next/navigation";
+import { getTenants } from "../../actions/tenant-actions";
+import { getPlatformAnalytics } from "../../actions/dashboard-actions";
+import Link from "next/link";
+import { 
+  Building2, 
+  Activity, 
+  TrendingUp, 
+  ShieldAlert, 
+  CreditCard,
+  Puzzle,
+  MoreVertical,
+  Play,
+  Pause,
+  ArrowUpRight,
+  Database,
+  Globe
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export default async function SystemDashboardPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ tab?: string }>;
-}) {
+export default async function SystemDashboardPage() {
   const cookieStore = await cookies();
   const isSystemAdmin = cookieStore.get('amisi-is-system-admin')?.value === 'true';
-  const { tab = 'overview' } = await searchParams;
 
   if (!isSystemAdmin) {
     redirect('/system/login');
   }
 
-  const [stats, settings, tenants, allApiKeys] = await Promise.all([
-    getPlatformDashboardStats(),
-    getGlobalSettings(),
+  const [tenants, analytics] = await Promise.all([
     getTenants(),
-    listApiKeys()
+    getPlatformAnalytics()
   ]);
 
   return (
-    <div className="flex-1 overflow-y-auto p-12 bg-gray-50 dark:bg-[#060607]">
-      <div className="mx-auto max-w-7xl">
-        <header className="flex justify-between items-start mb-16 relative">
-          <div className="absolute -top-12 -left-12 h-64 w-64 bg-blue-500/10 rounded-full blur-[120px] pointer-events-none" />
-          <div className="relative z-10">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 shadow-lg shadow-emerald-500/5">
-                <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Platform Status: Optimal</span>
-              </div>
-              <span className="text-[10px] font-black text-neutral-600 uppercase tracking-widest">Global Core v4.2.0</span>
-            </div>
-            <h1 className="text-7xl font-black text-white uppercase italic tracking-tighter leading-[0.8] mb-4">
-                {settings.platformName || 'COSMOS'}
-            </h1>
-            <p className="text-neutral-500 text-xl font-bold italic tracking-tight max-w-2xl border-l-2 border-blue-600/50 pl-6 py-1">
-              {settings.platformSlogan || 'Distributed clinical orchestration and HIPAA security monitoring.'}
-            </p>
-          </div>
-          <div className="flex flex-col items-end gap-6 relative z-10">
-             <div className="flex items-center gap-2 p-1 bg-neutral-900/80 backdrop-blur-xl border border-white/5 rounded-2xl shadow-2xl flex-wrap">
-                <Link href="?tab=overview" className={`px-5 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all ${tab === 'overview' ? 'bg-blue-600 text-white shadow-xl shadow-blue-600/20' : 'text-neutral-500 hover:text-white'}`}>
-                    Live Overview
-                </Link>
-                <Link href="?tab=accounting" className={`px-5 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center gap-2 ${tab === 'accounting' ? 'bg-blue-600 text-white shadow-xl shadow-blue-600/20' : 'text-neutral-500 hover:text-white'}`}>
-                    Network Ledger
-                </Link>
-                <Link href="?tab=security" className={`px-5 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center gap-2 ${tab === 'security' ? 'bg-blue-600 text-white shadow-xl shadow-blue-600/20' : 'text-neutral-500 hover:text-white'}`}>
-                    Security Hub
-                </Link>
-                <Link href="?tab=keys" className={`px-5 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center gap-2 ${tab === 'keys' ? 'bg-amber-500 text-black shadow-xl shadow-amber-500/20' : 'text-neutral-500 hover:text-white'}`}>
-                    <Key className="h-3 w-3" /> API Keys
-                </Link>
-                <Link href="?tab=settings" className={`px-5 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center gap-2 ${tab === 'settings' ? 'bg-blue-600 text-white shadow-xl shadow-blue-600/20' : 'text-neutral-500 hover:text-white'}`}>
-                    Platform Config
-                </Link>
-             </div>
-             <Link href="/system/hospitals/create" className="group flex items-center gap-4 rounded-3xl bg-white p-2 pr-8 font-black text-xs text-black shadow-2xl shadow-white/10 hover:bg-neutral-100 transition-all hover:scale-[1.05] active:scale-[0.95]">
-                <div className="h-10 w-10 rounded-2xl bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-600/40 group-hover:rotate-90 transition-transform duration-500">
-                    <Plus className="h-5 w-5" />
-                </div>
-                <span className="uppercase tracking-widest italic">Onboard Enterprise Hospital</span>
-              </Link>
-          </div>
-        </header>
+    <div className="space-y-8 pb-12 animate-in fade-in slide-in-from-bottom-8 duration-1000">
 
-        {tab === 'overview' ? (
-          <div className="space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-1000">
-            {/* Real-time Stats Grid */}
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              <StatCard title="Active Clusters" value={stats.hospitalCount.toString()} icon={Building2} trend="Deployment Stable" color="blue" />
-              <StatCard title="Provider Network" value={stats.totalUsers.toString()} icon={Users} trend="Active Sessions" color="indigo" />
-              <StatCard title="ARR Projection" value={`$${(Number(stats.activeSubscriptions) * 1250).toLocaleString()}`} icon={TrendingUp} trend="Scale Revenue" color="emerald" />
-              <StatCard title="Cluster Health" value="99.9%" icon={Activity} trend="Zero Latency" color="rose" />
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-12">
-              <div className="lg:col-span-2 rounded-[2.5rem] border border-white/5 bg-neutral-900/40 p-10 backdrop-blur-3xl shadow-2xl relative overflow-hidden group">
-                <div className="absolute top-0 right-0 p-10 opacity-[0.03] group-hover:opacity-10 transition-opacity duration-1000">
-                    <Monitor className="h-48 w-48" />
-                </div>
-                <div className="flex items-center justify-between mb-10">
-                    <h2 className="text-2xl font-black text-white italic flex items-center gap-4 uppercase tracking-tighter">
-                        <div className="h-8 w-1 bg-blue-600 rounded-full" />
-                        Infrastructure Nodes
-                    </h2>
-                    <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest bg-white/5 px-3 py-1 rounded-lg">Real-time Heartbeat Monitoring</span>
-                </div>
-                
-                <div className="grid gap-4">
-                  {tenants.map((tenant: any) => (
-                    <div key={tenant.id} className="flex items-center gap-6 p-6 rounded-[2rem] bg-white/[0.03] border border-white/5 group hover:border-blue-500/30 transition-all hover:bg-blue-600/[0.03] hover:translate-x-2">
-                       <div 
-                         className="h-14 w-14 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-xl overflow-hidden tenant-brand-bg"
-                         style={{ '--tenant-primary-color-alpha': `${tenant.primaryColor || '#2563EB'}20` } as any}
-                       >
-                         {tenant.logoUrl ? (
-                             <img src={tenant.logoUrl} alt={tenant.name} className="h-10 w-10 object-contain" />
-                         ) : (
-                             <Building2 className="h-7 w-7 tenant-brand-text" style={{ '--tenant-primary-color': tenant.primaryColor || '#2563EB' } as any} />
-                         )}
-                       </div>
-                       <div className="flex-1">
-                         <div className="flex items-center gap-3 mb-1">
-                             <p className="text-xl font-black text-white tracking-widest uppercase italic">{tenant.name}</p>
-                             <span className="h-1 w-1 rounded-full bg-neutral-800" />
-                             <span className="text-[8px] font-black uppercase tracking-widest tenant-brand-text" style={{ '--tenant-primary-color': tenant.primaryColor || '#2563EB' } as any}>{tenant.tier}</span>
-                         </div>
-
-                        <div className="flex items-center gap-4">
-                            <p className="text-[10px] text-neutral-500 uppercase tracking-[0.2em] font-bold">
-                                amisi.health/{tenant.slug}
-                            </p>
-                            <span className="text-[10px] text-neutral-600 font-bold uppercase tracking-widest flex items-center gap-2">
-                                <Globe className="h-3 w-3" />
-                                {tenant.region.replace(/-/g, ' ')}
-                            </span>
+      {/* DASHBOARD HEADER */}
+      <div className="flex items-center justify-between pb-8 border-b border-gray-800">
+        <div>
+          <h1 className="text-3xl font-black text-white tracking-tight uppercase italic flex items-center gap-3">
+            <Activity className="w-8 h-8 text-blue-500" />
+            Platform Overview
+          </h1>
+          <p className="text-gray-400 mt-2 text-sm">Real-time status of your hospital nodes and system health.</p>
+        </div>
+      </div>
+      
+      {/* SECTION 1: TENANT OVERVIEW */}
+      <section className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-bold text-white flex items-center gap-2">
+            <Building2 className="w-5 h-5 text-blue-500" />
+            Tenant Overview
+          </h2>
+          <Link href="/system/tenants/new" className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors shadow-lg shadow-blue-500/20">
+            Create Tenant
+          </Link>
+        </div>
+        
+        <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-gray-800/50 text-gray-400">
+                <tr>
+                  <th className="px-6 py-4 font-medium">Hospital Name</th>
+                  <th className="px-6 py-4 font-medium">Region</th>
+                  <th className="px-6 py-4 font-medium">Status</th>
+                  <th className="px-6 py-4 font-medium">Plan Tier</th>
+                  <th className="px-6 py-4 text-right font-medium">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-800">
+                {tenants.map((tenant: any) => (
+                  <tr key={tenant.id} className="hover:bg-gray-800/20 transition-colors">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded bg-gray-800 flex items-center justify-center shrink-0">
+                          <span className="font-bold text-gray-400">{tenant.name.charAt(0)}</span>
+                        </div>
+                        <div>
+                          <p className="font-medium text-gray-200">{tenant.name}</p>
+                          <p className="text-xs text-gray-500">{tenant.slug}.amisimedos.com</p>
                         </div>
                       </div>
-                      <div className="flex items-center gap-6">
-                         <div className="text-right">
-                            <div className="flex items-center gap-2 justify-end mb-1">
-                                <div className={cn(
-                                    "h-1.5 w-1.5 rounded-full shadow-lg",
-                                    tenant.status === 'active' ? "bg-emerald-500 shadow-emerald-500/50" : "bg-rose-500 shadow-rose-500/50"
-                                )} />
-                                <span className={cn(
-                                    "text-[10px] font-black uppercase tracking-widest",
-                                    tenant.status === 'active' ? "text-emerald-500" : "text-rose-500"
-                                )}>
-                                    {tenant.status}
-                                </span>
-                            </div>
-                            {tenant.trialEndsAt && (
-                                <p className="text-[8px] text-neutral-500 font-bold uppercase tracking-widest">
-                                    Trial Ends: {new Date(tenant.trialEndsAt).toLocaleDateString()}
-                                </p>
-                            )}
-                         </div>
-                         <div className="flex items-center gap-2">
-                             <Link 
-                                href={`/${tenant.slug}`}
-                                target="_blank"
-                                className="bg-neutral-800 hover:bg-emerald-600 text-[10px] font-black uppercase tracking-widest py-4 px-6 rounded-2xl text-neutral-400 hover:text-white transition-all active:scale-95 border border-white/5 shadow-xl"
-                              >
-                                View Portal
-                              </Link>
-                             <Link 
-                                href={`/system/hospitals/${tenant.id}/edit`}
-                                className="bg-neutral-800 hover:bg-blue-600 text-[10px] font-black uppercase tracking-widest py-4 px-6 rounded-2xl text-neutral-400 hover:text-white transition-all active:scale-95 border border-white/5 shadow-xl"
-                              >
-                                Manage Node
-                              </Link>
-                         </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="space-y-8">
-                  <div className="rounded-[2.5rem] border border-white/5 bg-gradient-to-br from-blue-600 to-indigo-700 p-10 shadow-2xl flex flex-col justify-between group overflow-hidden relative min-h-[440px]">
-                    <div className="absolute -bottom-10 -right-10 p-8 opacity-20 group-hover:scale-110 group-hover:-rotate-12 transition-transform duration-1000">
-                        <ShieldAlert className="h-64 w-64" />
-                    </div>
-                    <div className="relative z-10">
-                        <div className="h-20 w-20 rounded-3xl bg-white/20 backdrop-blur-2xl flex items-center justify-center text-white mb-8 font-black text-3xl italic shadow-2xl">
-                            {settings.platformName?.[0] || 'A'}
-                        </div>
-                        <h2 className="text-4xl font-black text-white leading-[0.9] uppercase italic tracking-tighter mb-4">
-                            Platform<br/>Intelligence
-                        </h2>
-                        <p className="text-white/60 text-base font-bold italic tracking-tight leading-relaxed max-w-[220px]">
-                            Advanced telemetry and distributed cluster management for enterprise healthcare.
-                        </p>
-                    </div>
-                    <div className="space-y-4 relative z-10 mt-12">
-                        <button className="w-full py-5 bg-white rounded-3xl text-blue-600 font-black text-xs uppercase tracking-widest hover:scale-[1.02] hover:shadow-2xl transition-all shadow-xl shadow-blue-900/40 active:scale-95">
-                            Launch Health Monitor
+                    </td>
+                    <td className="px-6 py-4 text-gray-400">{tenant.region.replace(/-/g, ' ')}</td>
+                    <td className="px-6 py-4">
+                      <span className={cn(
+                        "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium",
+                        tenant.status === 'active' ? "bg-green-500/10 text-green-400" :
+                        tenant.status === 'trial' ? "bg-blue-500/10 text-blue-400" :
+                        "bg-red-500/10 text-red-400"
+                      )}>
+                        {tenant.status.toUpperCase()}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="text-gray-300 font-medium">{tenant.tier}</span>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <Link href={`/system/tenants/${tenant.slug}`} className="p-2 text-gray-400 hover:text-blue-400 hover:bg-blue-400/10 rounded-lg transition-colors">
+                          <ArrowUpRight className="w-4 h-4" />
+                        </Link>
+                        <button className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors">
+                          <Pause className="w-4 h-4" />
                         </button>
-                        <p className="text-[9px] text-center font-black text-white/40 uppercase tracking-[0.3em]">Authorized Session: System root</p>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 2: REVENUE ANALYTICS */}
+      <section className="space-y-4">
+        <h2 className="text-xl font-bold text-white flex items-center gap-2">
+          <TrendingUp className="w-5 h-5 text-emerald-500" />
+          Revenue Analytics
+        </h2>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="bg-gray-900 border border-gray-800 p-6 rounded-xl flex flex-col justify-center">
+            <h3 className="text-gray-400 text-sm font-medium mb-1">Monthly Recurring Revenue</h3>
+            <p className="text-4xl font-bold text-white mb-4">{analytics.kpis.monthlyRevenue}</p>
+            <div className="flex items-center gap-2 text-sm">
+              <span className="text-emerald-400 font-medium">{analytics.kpis.revenueGrowth}</span>
+              <span className="text-gray-500">vs last month</span>
+            </div>
+          </div>
+          
+          <div className="bg-gray-900 border border-gray-800 p-6 rounded-xl">
+            <h3 className="text-gray-400 text-sm font-medium mb-4">Payment Trends</h3>
+            <div className="h-32 flex items-end gap-2">
+              {analytics.revenueByMonth.map((point: any, i: number) => {
+                const maxRev = Math.max(...analytics.revenueByMonth.map((r: any) => r.revenue));
+                const height = maxRev > 0 ? `${(point.revenue / maxRev) * 100}%` : '0%';
+                return (
+                  <div key={i} className="flex-1 flex flex-col justify-end group relative">
+                    <div 
+                      className="bg-emerald-500/20 hover:bg-emerald-500/40 rounded-t-sm transition-all"
+                      style={{ height }}
+                    />
+                    <div className="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-xs px-2 py-1 rounded text-white whitespace-nowrap z-10 transition-opacity">
+                      ${point.revenue}
                     </div>
                   </div>
+                );
+              })}
+            </div>
+            <div className="flex justify-between mt-2 text-xs text-gray-500">
+              {analytics.revenueByMonth.map((point: any, i: number) => (
+                <span key={i}>{point.month.slice(5)}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
 
-                  <div className="rounded-[2.5rem] border border-white/5 bg-neutral-900/40 p-8 backdrop-blur-3xl shadow-2xl flex items-center justify-between group cursor-pointer hover:border-blue-500/30 transition-all">
-                      <div className="flex items-center gap-4">
-                          <div className="h-12 w-12 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-transform">
-                              <ShieldAlert className="h-6 w-6" />
-                          </div>
-                          <div>
-                              <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest mb-1">Security Audit</p>
-                              <p className="text-lg font-black text-white uppercase italic tracking-tighter underline decoration-amber-500/50 decoration-2 underline-offset-4">0 Threats Detected</p>
-                          </div>
-                      </div>
-                      <ChevronRight className="h-6 w-6 text-neutral-700 group-hover:translate-x-1 group-hover:text-amber-500 transition-all" />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* SECTION 3: SYSTEM HEALTH */}
+        <section className="space-y-4">
+          <h2 className="text-xl font-bold text-white flex items-center gap-2">
+            <Activity className="w-5 h-5 text-rose-500" />
+            System Health
+          </h2>
+          <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-400">API Uptime (30d)</p>
+                  <p className="text-2xl font-bold text-white">{analytics.kpis.uptime}</p>
+                </div>
+                <div className="w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center">
+                  <Activity className="w-6 h-6 text-green-500" />
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4 pt-6 border-t border-gray-800">
+                <div>
+                  <p className="text-xs text-gray-500 mb-1">Avg Response Time</p>
+                  <p className="text-lg font-semibold text-gray-200">{analytics.kpis.avgResponseTime}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 mb-1">Error Rate</p>
+                  <p className="text-lg font-semibold text-gray-200">{analytics.usageStats.errorRate}</p>
+                </div>
+              </div>
+
+              <div className="pt-6 border-t border-gray-800">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-sm font-medium text-gray-300">Database Sync Status</h3>
+                  <span className="text-xs text-green-400 bg-green-500/10 px-2 py-1 rounded-full">All Synced</span>
+                </div>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-400 flex items-center gap-2">
+                      <Database className="w-4 h-4" /> Control Plane
+                    </span>
+                    <span className="text-gray-200">Optimal</span>
                   </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-400 flex items-center gap-2">
+                      <Database className="w-4 h-4" /> Tenant Databases (42)
+                    </span>
+                    <span className="text-gray-200">100% Synced</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        ) : tab === 'accounting' ? (
-           <SystemAccounting />
-        ) : tab === 'keys' ? (
-           <ApiKeyManager tenants={tenants as any} allKeys={allApiKeys} />
-        ) : tab === 'settings' ? (
-           <SystemSettingsForm />
-        ) : (
-           <AuditMonitoring />
-        )}
-      </div>
-    </div>
-  );
-}
+        </section>
 
-function StatCard({ title, value, icon: Icon, trend, color }: { title: string; value: string; icon: any; trend: string; color: string; }) {
-  const bgColors: any = {
-    blue: "bg-blue-500/10 text-blue-400",
-    emerald: "bg-emerald-500/10 text-emerald-400",
-    amber: "bg-amber-500/10 text-amber-400",
-    rose: "bg-rose-500/10 text-rose-400",
-    indigo: "bg-indigo-500/10 text-indigo-400",
-  };
+        {/* SECTION 4: MODULE USAGE */}
+        <section className="space-y-4">
+          <h2 className="text-xl font-bold text-white flex items-center gap-2">
+            <Puzzle className="w-5 h-5 text-amber-500" />
+            Module Usage
+          </h2>
+          <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+            <div className="space-y-6">
+              {analytics.moduleAdoption.slice(0, 5).map((mod: any, i: number) => (
+                <div key={i}>
+                  <div className="flex justify-between text-sm mb-2">
+                    <span className="text-gray-300 font-medium capitalize">{mod.module.replace(/_/g, ' ').toLowerCase()}</span>
+                    <span className="text-gray-400">{mod.percentage}% ({mod.tenants})</span>
+                  </div>
+                  <div className="w-full bg-gray-800 rounded-full h-2">
+                    <div 
+                      className="bg-amber-500 h-2 rounded-full transition-all duration-1000"
+                      style={{ width: `${mod.percentage}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      </div>
 
-  return (
-    <div className="rounded-3xl border border-white/5 bg-neutral-900/50 p-7 backdrop-blur-xl shadow-2xl flex flex-col justify-between group transition-all hover:border-white/10 hover:shadow-blue-500/5">
-      <div className="flex items-center justify-between">
-        <p className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">{title}</p>
-        <div className={`p-3 rounded-2xl ${bgColors[color]} group-hover:scale-110 transition-transform`}>
-          <Icon className="h-6 w-6" />
-        </div>
-      </div>
-      <div className="mt-10">
-        <p className="text-5xl font-black text-white tracking-tighter italic">{value}</p>
-        <div className="flex items-center gap-2 mt-4">
-          <TrendingUp className="h-4 w-4 text-emerald-500" />
-          <p className="text-xs font-bold text-neutral-500 uppercase tracking-widest">{trend}</p>
-        </div>
-      </div>
     </div>
   );
 }

@@ -19,18 +19,6 @@ export default async function SystemRouter(props: { params: Promise<{ action?: s
     redirect('/system/dashboard');
   }
 
-  if (action.length === 1 && action[0] === 'dashboard') {
-    return <DashboardPage searchParams={props.searchParams} />;
-  }
-
-  if (action.length === 1 && action[0] === 'billing') {
-    return <BillingDashboard />;
-  }
-
-  if (action.length === 1 && action[0] === 'analytics') {
-    return <AnalyticsPage />;
-  }
-
   if (action.length === 1 && action[0] === 'login') {
     const cookieStore = await cookies();
     const isSystemAdmin = cookieStore.get('amisi-is-system-admin')?.value === 'true';
@@ -41,64 +29,73 @@ export default async function SystemRouter(props: { params: Promise<{ action?: s
     return <LoginPage searchParams={props.searchParams} params={Promise.resolve({})} />;
   }
 
-  if (action.length === 1 && action[0] === 'settings') {
-    const cookieStore = await cookies();
-    const userName = cookieStore.get('amisi-user-name')?.value || 'System Admin';
-    const userRole = 'SYSTEM_ADMIN';
+  const cookieStore = await cookies();
+  const userName = cookieStore.get('amisi-user-name')?.value || 'System Admin';
+  const userRole = 'SYSTEM_ADMIN';
+  
+  // Need to dynamically import getPlatformAnalytics from actions to pass stats to layout
+  const { getPlatformAnalytics, getPlatformDashboardStats } = await import('@/app/actions/dashboard-actions');
+  const [analytics, basicStats] = await Promise.all([
+    getPlatformAnalytics(),
+    getPlatformDashboardStats()
+  ]);
+  const combinedStats = { ...analytics, ...basicStats };
 
-    return (
-      <SystemAdminLayout userName={userName} userRole={userRole}>
-        <SystemSettingsForm />
-      </SystemAdminLayout>
+  let content = null;
+
+  if (action.length === 1 && action[0] === 'dashboard') {
+    content = <DashboardPage />;
+  } else if (action.length === 1 && action[0] === 'billing') {
+    content = <BillingDashboard />;
+  } else if (action.length === 1 && action[0] === 'analytics') {
+    content = <AnalyticsPage />;
+  } else if (action.length === 1 && action[0] === 'security') {
+    content = (
+        <div className="p-6">
+          <h1 className="text-2xl font-bold">Platform Security</h1>
+          <p className="text-muted-foreground mt-2">Security audits, firewall settings, and access control coming soon.</p>
+        </div>
     );
-  }
-
-  if (action.length === 1 && action[0] === 'users') {
-    const cookieStore = await cookies();
-    const userName = cookieStore.get('amisi-user-name')?.value || 'System Admin';
-    const userRole = 'SYSTEM_ADMIN';
-
-    return (
-      <SystemAdminLayout userName={userName} userRole={userRole}>
+  } else if (action.length === 1 && action[0] === 'settings') {
+    content = <SystemSettingsForm />;
+  } else if (action.length === 1 && action[0] === 'users') {
+    content = (
         <div className="p-6">
           <h1 className="text-2xl font-bold">System Users</h1>
           <p className="text-muted-foreground mt-2">User management coming soon.</p>
         </div>
-      </SystemAdminLayout>
     );
-  }
-
-  if (action.length === 1 && action[0] === 'tenants') {
-    return <HospitalsPage />;
-  }
-
-  if (action.length === 2 && action[0] === 'tenants' && action[1] === 'new') {
-    return <NewHospitalPage />;
-  }
-
-  if (action.length === 2 && action[0] === 'tenants' && action[1] !== 'new') {
-    // Tenant detail page: /system/tenants/[slug]
+  } else if (action.length === 1 && action[0] === 'tenants') {
+    content = <HospitalsPage />;
+  } else if (action.length === 2 && action[0] === 'tenants' && action[1] === 'new') {
+    content = <NewHospitalPage />;
+  } else if (action.length === 2 && action[0] === 'tenants' && action[1] !== 'new') {
     const { default: TenantDetailPage } = await import('@/app/tenants/[slug]/page');
-    return <TenantDetailPage params={Promise.resolve({ slug: action[1] })} />;
+    content = <TenantDetailPage params={Promise.resolve({ slug: action[1] })} />;
+  } else if (action.length === 3 && action[0] === 'tenants' && action[2] === 'edit') {
+    content = <EditHospitalPage params={Promise.resolve({ id: action[1] })} />;
+  } else if (action.length === 2 && action[0] === 'hospitals' && action[1] === 'new') {
+    content = <NewHospitalPage />;
+  } else if (action.length === 2 && action[0] === 'hospitals' && action[1] === 'create') {
+    content = <CreateHospitalPage />;
+  } else if (action.length === 3 && action[0] === 'hospitals' && action[2] === 'edit') {
+    content = <EditHospitalPage params={Promise.resolve({ id: action[1] })} />;
+  } else if (action[0] === 'content') {
+    const { LandingContentCMS } = await import('../_components/LandingContentCMS');
+    content = <LandingContentCMS />;
+  } else if (action[0] === 'web') {
+    const { WebAdminDashboard } = await import('../_components/WebAdminDashboard');
+    content = <WebAdminDashboard feature={action[1] || 'dashboard'} />;
+  } else if (action[0] === 'crm') {
+    const { CRMDashboard } = await import('../_components/CRMDashboard');
+    content = <CRMDashboard feature={action[1] || 'dashboard'} />;
+  } else {
+    notFound();
   }
 
-  if (action.length === 3 && action[0] === 'tenants' && action[2] === 'edit') {
-    // Tenant edit page: /system/tenants/[slug]/edit
-    return <EditHospitalPage params={Promise.resolve({ id: action[1] })} />;
-  }
-
-  if (action.length === 2 && action[0] === 'hospitals' && action[1] === 'new') {
-    return <NewHospitalPage />;
-  }
-
-  if (action.length === 2 && action[0] === 'hospitals' && action[1] === 'create') {
-    return <CreateHospitalPage />;
-  }
-
-  if (action.length === 3 && action[0] === 'hospitals' && action[2] === 'edit') {
-    // Pass the params exactly as Next.js would have passed them to the dynamic route
-    return <EditHospitalPage params={Promise.resolve({ id: action[1] })} />;
-  }
-
-  notFound();
+  return (
+    <SystemAdminLayout userName={userName} userRole={userRole} stats={combinedStats}>
+      {content}
+    </SystemAdminLayout>
+  );
 }

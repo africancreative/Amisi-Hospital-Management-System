@@ -170,7 +170,18 @@ export async function getTenantById(id: string): Promise<any> {
     await ensureSuperAdmin();
     const db = getControlDb();
     return db.tenant.findUnique({
-        where: { id }
+        where: { id },
+        include: {
+            usages: {
+                orderBy: { date: 'desc' },
+                take: 1
+            },
+            subscriptions: {
+                where: { status: 'ACTIVE' },
+                include: { plan: true },
+                take: 1
+            }
+        }
     });
 }
 

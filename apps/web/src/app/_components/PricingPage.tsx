@@ -66,7 +66,7 @@ export default function PricingPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild size="lg" className="rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-bold h-14 px-8">
               <Link href="/checkout?plan=ESSENTIAL&period=yearly">
-                Start Free Trial
+                Create Your Account
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="rounded-2xl border-white/10 bg-white/5 hover:bg-white/10 text-white font-bold h-14 px-8">
@@ -99,7 +99,7 @@ export default function PricingPage() {
               "Offline Mode (Local Server)",
               "Basic Reports"
             ]}
-            cta="Get Started"
+            cta="Create Your Account"
             href={`/checkout?plan=ESSENTIAL&period=${isAnnual ? 'yearly' : 'monthly'}`}
             color="neutral"
           />
@@ -123,7 +123,7 @@ export default function PricingPage() {
               "Advanced Reports",
               "Hybrid Cloud + Local Sync"
             ]}
-            cta="Start Free Trial"
+            cta="Create Your Account"
             href={`/checkout?plan=PROFESSIONAL&period=${isAnnual ? 'yearly' : 'monthly'}`}
             highlight={true}
             color="blue"
@@ -253,7 +253,7 @@ export default function PricingPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild size="lg" className="rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-bold h-16 px-10 text-lg shadow-xl shadow-blue-600/20">
               <Link href="/checkout?plan=ESSENTIAL&period=yearly">
-                🚀 Start Free Trial
+                🚀 Create Your Account
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="rounded-2xl border-white/10 bg-white/5 hover:bg-white/10 text-white font-bold h-16 px-10 text-lg">

@@ -15,9 +15,10 @@ interface Alert {
 interface SystemTopBarProps {
   userName: string;
   userRole: string;
+  stats?: any;
 }
 
-export default function SystemTopBar({ userName, userRole }: SystemTopBarProps) {
+export default function SystemTopBar({ userName, userRole, stats }: SystemTopBarProps) {
   const [showAlerts, setShowAlerts] = useState(false);
 
   // Mock alerts - in production, these would come from API
@@ -48,10 +49,10 @@ export default function SystemTopBar({ userName, userRole }: SystemTopBarProps) 
   const warningCount = alerts.filter(a => a.type === 'warning').length;
 
   const systemStats = {
-    totalTenants: 42,
-    activeTenants: 38,
-    totalRevenue: '$124,500',
-    systemHealth: 98.5,
+    totalTenants: stats?.kpis?.totalTenants || 0,
+    activeSubscriptions: stats?.activeSubscriptions || 0,
+    totalRevenue: stats?.kpis?.monthlyRevenue || '$0',
+    systemHealth: stats?.kpis?.uptime || '99.9%',
   };
 
   return (
@@ -67,9 +68,10 @@ export default function SystemTopBar({ userName, userRole }: SystemTopBarProps) 
 
       {/* Center: Quick Stats */}
       <div className="hidden md:flex items-center gap-6">
-        <StatBadge icon={<Building2 className="w-4 h-4" />} label="Tenants" value={systemStats.totalTenants.toString()} />
-        <StatBadge icon={<Activity className="w-4 h-4" />} label="Health" value={`${systemStats.systemHealth}%`} status={systemStats.systemHealth > 95 ? 'good' : 'warning'} />
-        <StatBadge icon={<CreditCard className="w-4 h-4" />} label="Revenue" value={systemStats.totalRevenue} />
+        <StatBadge icon={<Building2 className="w-4 h-4" />} label="Total Tenants" value={systemStats.totalTenants.toString()} />
+        <StatBadge icon={<CreditCard className="w-4 h-4" />} label="Active Subs" value={systemStats.activeSubscriptions.toString()} />
+        <StatBadge icon={<CreditCard className="w-4 h-4" />} label="Monthly Rev (MRR)" value={systemStats.totalRevenue} />
+        <StatBadge icon={<Activity className="w-4 h-4" />} label="Uptime" value={systemStats.systemHealth} status={parseFloat(systemStats.systemHealth) > 95 ? 'good' : 'warning'} />
       </div>
 
       {/* Right: Alerts & User */}

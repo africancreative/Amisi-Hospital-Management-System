@@ -19,11 +19,13 @@ import { hrRouter } from './routers/hr';
 import { adminAnalyticsRouter } from './routers/admin-analytics';
 import { adminSettingsRouter } from './routers/admin-settings';
 import { adminAlertsRouter } from './routers/admin-alerts';
+import { publicRouter } from './routers/public';
 
 /**
  * Root tRPC Router
  */
 export const appRouter: any = router({
+  public: publicRouter,
   system: systemRouter,
   auth: authRouter,
   patient: patientRouter,

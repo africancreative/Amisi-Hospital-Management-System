@@ -241,13 +241,41 @@ export function HospitalEditForm({ tenant }: HospitalEditFormProps) {
                 </div>
             </section>
 
-            {/* Infrastructure Section */}
+            {/* Infrastructure & Usage Section */}
             <section className="rounded-3xl border border-white/5 bg-neutral-900/40 p-8 backdrop-blur-xl">
-                <div className="flex items-center gap-3 mb-8">
-                    <div className="h-10 w-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-500">
-                        <Database className="h-5 w-5" />
+                <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-500">
+                            <Database className="h-5 w-5" />
+                        </div>
+                        <h2 className="text-xl font-bold text-white tracking-tight">Infrastructure & Usage</h2>
                     </div>
-                    <h2 className="text-xl font-bold text-white tracking-tight">Infrastructure & Sync</h2>
+                    <button 
+                        type="button"
+                        onClick={() => window.open(`/${tenant.slug}`, '_blank')}
+                        className="px-4 py-2 bg-blue-600/20 hover:bg-blue-600 text-blue-400 hover:text-white transition-colors rounded-xl text-xs font-black uppercase tracking-widest flex items-center gap-2"
+                    >
+                        <Globe className="w-4 h-4" />
+                        Impersonate Tenant
+                    </button>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+                    <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
+                        <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Active Plan</p>
+                        <p className="text-xl text-white font-black italic">{tenant.subscriptions?.[0]?.plan?.name || 'No Active Plan'}</p>
+                        <p className="text-xs text-gray-400 mt-1">Tier: {formData.tier}</p>
+                    </div>
+                    <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
+                        <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Storage Used</p>
+                        <p className="text-xl text-white font-black italic">{tenant.usages?.[0]?.storageUsedMb || 0} MB</p>
+                        <p className="text-xs text-gray-400 mt-1">Data allocated locally</p>
+                    </div>
+                    <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
+                        <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">API Calls (24h)</p>
+                        <p className="text-xl text-white font-black italic">{tenant.usages?.[0]?.apiCallsCount || 0}</p>
+                        <p className="text-xs text-gray-400 mt-1">Network traffic</p>
+                    </div>
                 </div>
 
                 <div className="space-y-6">

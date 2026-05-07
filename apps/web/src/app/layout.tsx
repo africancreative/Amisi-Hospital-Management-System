@@ -19,8 +19,30 @@ import { RealtimeProvider } from '@/lib/realtime-provider';
 
 
 export const metadata: Metadata = {
-  title: 'AmisiMedOS | Hospital Management System',
-  description: 'Enterprise Hybrid-Cloud Hospital Management System',
+  title: 'AmisiMedOS | Enterprise Hospital Management for Africa',
+  description: 'AmisiMedOS is a hybrid-cloud hospital operating system built for African healthcare providers. Cloud-first, offline-resilient, SOP-compliant.',
+  keywords: ['Hospital Management System', 'EMR Africa', 'Healthcare OS', 'Offline-first Clinic', 'AmisiMedOS', 'Pharmacy Management', 'Lab Management'],
+  openGraph: {
+    title: 'AmisiMedOS | Enterprise Hospital Management for Africa',
+    description: 'A cloud-first platform with optional on-premise local nodes — ensuring clinical continuity even when the internet goes down.',
+    url: 'https://amisigenuine.com',
+    siteName: 'AmisiMedOS',
+    images: [
+      {
+        url: '/logo.png',
+        width: 800,
+        height: 600,
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'AmisiMedOS | Enterprise Hospital Management for Africa',
+    description: 'Hybrid-cloud hospital operating system built for African healthcare providers.',
+    images: ['/logo.png'],
+  },
   icons: {
     icon: [{ url: '/logo.png', type: 'image/png' }],
     shortcut: [{ url: '/logo.png', type: 'image/png' }],

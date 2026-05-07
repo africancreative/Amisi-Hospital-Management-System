@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import SystemSidebar from './SystemSidebar';
 import SystemTopBar from './SystemTopBar';
 import SystemContextPanel from './SystemContextPanel';
 
@@ -9,22 +8,20 @@ interface SystemAdminLayoutProps {
   children: React.ReactNode;
   userName: string;
   userRole: string;
+  stats?: any;
 }
 
-export default function SystemAdminLayout({ children, userName, userRole }: SystemAdminLayoutProps) {
+export default function SystemAdminLayout({ children, userName, userRole, stats }: SystemAdminLayoutProps) {
   const [contextPanelOpen, setContextPanelOpen] = useState(true);
   const [contextPanelContent, setContextPanelContent] = useState<'actions' | 'logs' | 'insights'>('insights');
 
   return (
     <div className="h-screen flex flex-col bg-gray-950">
       {/* Top Bar - Global Status & Alerts */}
-      <SystemTopBar userName={userName} userRole={userRole} />
+      <SystemTopBar userName={userName} userRole={userRole} stats={stats} />
 
       {/* Main Content Area */}
       <div className="flex-1 flex overflow-hidden">
-        {/* Left: System Navigation */}
-        <SystemSidebar userRole={userRole} />
-
         {/* Center: Workspace */}
         <main className="flex-1 overflow-y-auto bg-gray-950 p-6">
           {children}

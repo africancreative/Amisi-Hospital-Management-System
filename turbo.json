@@ -37,7 +37,9 @@
             "cache": false,
             "inputs": [
                 "apps/mobile/**"
-            ]
+            ],
+            "outputs": [],
+            "env": []
         },
         "lint": {
             "dependsOn": [

@@ -1837,7 +1837,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/packages/db/generated/tenant-client",
+      "value": "/home/danielamisi/Documents/GitHub/Amisi-Hospital-Management-System/packages/db/generated/tenant-client",
       "fromEnvVar": null
     },
     "config": {
@@ -1846,7 +1846,7 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "rhel-openssl-3.0.x",
+        "value": "debian-openssl-3.0.x",
         "native": true
       },
       {
@@ -1855,7 +1855,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/home/amisi/Documents/GitHub/Amisi-Hospital-Management-System/packages/db/prisma/tenant.prisma",
+    "sourceFilePath": "/home/danielamisi/Documents/GitHub/Amisi-Hospital-Management-System/packages/db/prisma/tenant.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {

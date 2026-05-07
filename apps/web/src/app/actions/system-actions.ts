@@ -348,3 +348,67 @@ export async function notifyCheckoutAttempt(data: any, plan: any): Promise<any> 
         return { success: false };
     }
 }
+
+export async function notifyPaymentSuccess(tenant: any, payment: any, input: any): Promise<any> {
+    const resendApiKey = process.env.RESEND_API_KEY;
+
+    if (!resendApiKey) {
+        console.log('\n[MOCK EMAIL SYSTEM - PAYMENT SUCCESS] ==================');
+        console.log(`[To: amisi@amisigenuine.com] New Payment: ${tenant.name}`);
+        console.log(`[To: ${input.adminEmail}] Welcome to AmisiMedOS`);
+        console.log('========================================================\n');
+        return { success: true, mocked: true };
+    }
+
+    try {
+        const { Resend } = await import('resend');
+        const resend = new Resend(resendApiKey);
+
+        // 1. Alert System Admin
+        await resend.emails.send({
+            from: 'system@amisigenuine.com',
+            to: 'amisi@amisigenuine.com',
+            subject: `🎉 New Payment Received: ${tenant.name}`,
+            html: `<p>A new hospital has successfully paid and provisioned their node.</p>
+                   <p><strong>Hospital:</strong> ${tenant.name} (${tenant.slug})</p>
+                   <p><strong>Amount:</strong> $${payment.amount}</p>
+                   <p><strong>Tier:</strong> ${tenant.tier}</p>
+                   <p><strong>Admin Name:</strong> ${input.adminName}</p>
+                   <p><strong>Admin Email:</strong> ${input.adminEmail}</p>
+                   <p><strong>PayPal Order ID:</strong> ${payment.reference}</p>
+                   <p><a href="https://amisimedos.amisigenuine.com/system/hospitals">View in Dashboard</a></p>`
+        });
+
+        // 2. Welcome Email to the Customer
+        await resend.emails.send({
+            from: 'sales@amisigenuine.com',
+            to: input.adminEmail,
+            subject: `Welcome to AmisiMedOS! Your System is Ready`,
+            html: `<p>Hello ${input.adminName},</p>
+                   <p>Thank you for choosing AmisiMedOS for <strong>${tenant.name}</strong>!</p>
+                   <p>Your payment of <strong>$${payment.amount}</strong> was successful.</p>
+                   <p>Your dedicated hospital network is now provisioned and ready.</p>
+                   <p><a href="https://amisimedos.amisigenuine.com/${tenant.slug}">Launch Your System Dashboard</a></p>
+                   <p>Best Regards,<br/>The AmisiMedOS Team</p>`
+        });
+
+        return { success: true, mocked: false };
+    } catch (e) {
+        console.error("Failed to send payment success notification emails", e);
+        return { success: false };
+    }
+}
+
+export async function getRecentSignups(): Promise<any> {
+    const db = getControlDb();
+    
+    // Fetch the 5 most recent payments that are completed
+    const payments = await db.systemPayment.findMany({
+        where: { status: 'COMPLETED' },
+        orderBy: { createdAt: 'desc' },
+        take: 5,
+        include: { tenant: true }
+    });
+
+    return payments;
+}
