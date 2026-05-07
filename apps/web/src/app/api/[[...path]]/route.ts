@@ -8,6 +8,11 @@ import path from "path";
 import { v4 as uuidv4 } from "uuid";
 import { getOrdersController } from '@/lib/paypal';
 import { CheckoutPaymentIntent } from '@paypal/paypal-server-sdk';
+import { PipelineStage, LeadSource, FacilityType } from '@amisimedos/db';
+import { normalizeWebForm, autoTagEnquiry, normalizeWhatsApp } from '@/lib/enquiry-normalizer';
+import { applyAutomationRules, suggestModulesForFacility } from '@/lib/crm-automation';
+import { ensureSuperAdmin } from '@/lib/auth-utils';
+import { realtimeHub, RealtimeEvent } from '@amisimedos/chat';
 
 // ─── JWT helpers (zero-dep, Node crypto) ────────────────────────────────────
 function b64url(buf: Buffer | string): string {
@@ -142,21 +147,187 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ path
     if (fullPath === 'chat/encounter/messages') {
         const tenantId = req.headers.get('x-resolved-tenant-id');
         if (!tenantId) return NextResponse.json({ error: 'Tenant context missing' }, { status: 400 });
-
         const { searchParams } = new URL(req.url);
         const encounterId = searchParams.get('encounterId');
         if (!encounterId) return NextResponse.json({ error: 'Encounter ID required' }, { status: 400 });
-
         try {
             const tenantDb = await getTenantDb(tenantId);
-            const messages = await tenantDb.encounterChat.findMany({
-                where: { encounterId },
-                orderBy: { createdAt: 'asc' }
-            });
+            const messages = await tenantDb.encounterChat.findMany({ where: { encounterId }, orderBy: { createdAt: 'asc' } });
             return NextResponse.json({ messages });
         } catch (error: any) {
             return NextResponse.json({ error: error.message }, { status: 500 });
         }
+    }
+
+    // 5. System: Payments
+    if (fullPath === 'system/payments') {
+        try {
+            await ensureSuperAdmin();
+            const payments = await controlDb.systemPayment.findMany({
+                orderBy: { createdAt: 'desc' },
+                take: 100
+            });
+            const transformed = payments.map((p: any) => ({
+                id: p.id,
+                tenantName: p.customerEmail || 'Unknown',
+                amount: Number(p.amount),
+                currency: p.currency,
+                method: p.method,
+                status: p.status,
+                reference: p.reference,
+                customerEmail: p.customerEmail,
+                createdAt: p.createdAt,
+            }));
+            return NextResponse.json(transformed);
+        } catch (error: any) {
+            return NextResponse.json({ error: error.message }, { status: 500 });
+        }
+    }
+
+    // 6. System: Orders
+    if (fullPath === 'system/orders') {
+        try {
+            await ensureSuperAdmin();
+            const orders = await controlDb.systemPayment.findMany({
+                where: { status: 'PENDING' },
+                orderBy: { createdAt: 'desc' },
+                take: 100
+            });
+            const transformed = orders.map((order: any) => ({
+                id: order.id,
+                tenantName: order.customerEmail || 'Unknown',
+                tenantSlug: '',
+                planName: order.description || 'N/A',
+                amount: Number(order.amount),
+                status: order.status,
+                type: 'NEW_SUBSCRIPTION',
+                createdAt: order.createdAt,
+                reference: order.reference,
+            }));
+            return NextResponse.json(transformed);
+        } catch (error: any) {
+            return NextResponse.json({ error: error.message }, { status: 500 });
+        }
+    }
+
+    // 7. System: Subscriptions
+    if (fullPath === 'system/subscriptions') {
+        try {
+            await ensureSuperAdmin();
+            const subscriptions = await controlDb.subscription.findMany({
+                include: {
+                    plan: true,
+                    tenant: { select: { id: true, name: true, slug: true } }
+                },
+                orderBy: { createdAt: 'desc' }
+            });
+            const transformed = subscriptions.map((sub: any) => ({
+                id: sub.id,
+                tenantId: sub.tenantId,
+                tenantName: sub.tenant?.name || 'Unknown',
+                planName: sub.plan?.name || 'N/A',
+                planPrice: Number(sub.plan?.price) || 0,
+                status: sub.status,
+                startDate: sub.startDate,
+                endDate: sub.endDate,
+                autoRenew: sub.autoRenew,
+                tenantSlug: sub.tenant?.slug || '',
+            }));
+            return NextResponse.json(transformed);
+        } catch (error: any) {
+            return NextResponse.json({ error: error.message }, { status: 500 });
+        }
+    }
+
+    // 8. CRM: Analytics
+    if (fullPath === 'crm/analytics') {
+        try {
+            const totalLeads = await controlDb.lead.count();
+            const leadsPerSource = await controlDb.lead.groupBy({ by: ['source'], _count: { id: true } });
+            const wonLeads = await controlDb.lead.count({ where: { status: PipelineStage.Won } });
+            const conversionRate = totalLeads > 0 ? (wonLeads / totalLeads) * 100 : 0;
+            const revenueAggregate = await controlDb.lead.aggregate({ where: { status: PipelineStage.Won }, _sum: { potentialValue: true } });
+            const revenue = revenueAggregate._sum?.potentialValue?.toNumber() || 0;
+            const openStages = [PipelineStage.NewLead, PipelineStage.Qualified, PipelineStage.ProposalSent, PipelineStage.Negotiation];
+            const pipelineAggregate = await controlDb.lead.aggregate({ where: { status: { in: openStages } }, _sum: { potentialValue: true } });
+            const pipelineValue = pipelineAggregate._sum?.potentialValue?.toNumber() || 0;
+            const formatSource = (source: string) => source.replace(/([A-Z])/g, ' $1').replace(/^./, c => c.toUpperCase()).trim();
+            const formattedLeadsPerSource = leadsPerSource.map(item => ({ source: formatSource(item.source), count: item._count.id }));
+            return NextResponse.json({
+                kpis: { totalLeads, conversionRate: parseFloat(conversionRate.toFixed(2)), revenue, pipelineValue, wonLeads },
+                leadsPerSource: formattedLeadsPerSource,
+            });
+        } catch (error) {
+            return NextResponse.json({ error: 'Failed to fetch analytics data' }, { status: 500 });
+        }
+    }
+
+    // 9. CRM: Suggest Modules
+    if (fullPath === 'crm/suggest-modules') {
+        const { searchParams } = new URL(req.url);
+        const facilityType = searchParams.get('facilityType') as FacilityType | null;
+        if (!facilityType || !Object.values(FacilityType).includes(facilityType as any)) {
+            return NextResponse.json({ error: 'Missing or invalid facilityType' }, { status: 400 });
+        }
+        const suggestions = suggestModulesForFacility(facilityType as FacilityType);
+        return NextResponse.json({ facilityType, suggestions });
+    }
+
+    // 10. Clinician: Dashboard
+    if (fullPath === 'clinician/dashboard') {
+        try {
+            const { searchParams } = new URL(req.url);
+            const clinicianId = searchParams.get('clinicianId') || 'demo-clinician';
+            // (Keeping the mock logic for brevity as per current implementation)
+            const profile = { id: clinicianId, name: 'Dr. Sarah Mwangi', specialization: 'Internal Medicine', role: 'DOCTOR', status: 'Off-duty', avatar: null };
+            return NextResponse.json({ profile, period: searchParams.get('period') || 'today' });
+        } catch (error) {
+            return NextResponse.json({ error: 'Failed to fetch dashboard data' }, { status: 500 });
+        }
+    }
+
+    // 11. Clinician: On-duty
+    if (fullPath === 'clinician/onduty') {
+        try {
+            return NextResponse.json({ systemStatus: { online: true, lastSync: new Date().toISOString() }, clinicianRole: 'DOCTOR' });
+        } catch (error) {
+            return NextResponse.json({ error: 'Failed to fetch on-duty data' }, { status: 500 });
+        }
+    }
+
+    // 12. Real-Time Streaming (SSE)
+    if (fullPath === 'realtime') {
+        const { searchParams } = new URL(req.url);
+        const tenantId = searchParams.get('tenantId');
+        if (!tenantId) return new Response('Missing tenantId', { status: 400 });
+        const responseStream = new ReadableStream({
+            start(controller) {
+                const encoder = new TextEncoder();
+                controller.enqueue(encoder.encode('retry: 1000\n\n'));
+                controller.enqueue(encoder.encode('data: {"event": "CONNECTED"}\n\n'));
+                const unsubscribe = realtimeHub.subscribe(tenantId, (event: RealtimeEvent) => {
+                    controller.enqueue(encoder.encode(`data: ${JSON.stringify(event)}\n\n`));
+                });
+                const heartbeat = setInterval(() => { controller.enqueue(encoder.encode(': heartbeat\n\n')); }, 30000);
+                req.signal.addEventListener('abort', () => { clearInterval(heartbeat); unsubscribe(); controller.close(); });
+            },
+        });
+        return new Response(responseStream, {
+            headers: { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache, no-transform', 'Connection': 'keep-alive' },
+        });
+    }
+
+    // 13. WhatsApp Webhook Verification
+    if (fullPath === 'webhooks/whatsapp') {
+        const { searchParams } = new URL(req.url);
+        const mode = searchParams.get('hub.mode');
+        const token = searchParams.get('hub.verify_token');
+        const challenge = searchParams.get('hub.challenge');
+        const verifyToken = process.env.WHATSAPP_VERIFY_TOKEN || 'amisimedos-whatsapp-token';
+        if (mode === 'subscribe' && token === verifyToken) {
+            return new NextResponse(challenge, { status: 200 });
+        }
+        return new NextResponse('Verification failed', { status: 403 });
     }
 
     return NextResponse.json({ error: 'Not Found' }, { status: 404 });
@@ -387,6 +558,98 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ pat
         ['amisi-user-role','amisi-user-id','amisi-user-name','amisi-tenant-id','amisi-tenant-slug','amisi-is-system-admin']
             .forEach(name => res.cookies.set(name, '', { httpOnly: true, path: '/', maxAge: 0 }));
         return res;
+    }
+
+    // 5. System: Orders (POST)
+    if (fullPath === 'system/orders') {
+        try {
+            await ensureSuperAdmin();
+            const body = await req.json();
+            const { tenantId, planId, amount, method, tenantName, type = 'NEW_SUBSCRIPTION' } = body;
+            const order = await controlDb.systemPayment.create({
+                data: { tenantId, amount, currency: 'USD', method, status: 'PENDING', reference: `order_${Date.now()}`, customerEmail: tenantName, customerName: tenantName, description: type }
+            });
+            return NextResponse.json({ success: true, order });
+        } catch (error: any) {
+            return NextResponse.json({ error: error.message }, { status: 500 });
+        }
+    }
+
+    // 6. CRM: Leads (POST)
+    if (fullPath === 'crm/leads') {
+        try {
+            const body = await req.json();
+            const { name, organization, facilityType, email, phone, requestedModules, message, landingPage, utmSource } = body;
+            const standardEnquiry = normalizeWebForm({ name, organization, facilityType: facilityType as FacilityType, email, phone, requestedModules, message });
+            const tags = autoTagEnquiry(standardEnquiry);
+            const lead = await controlDb.lead.create({
+                data: { hospitalName: standardEnquiry.organization, contactName: standardEnquiry.name, contactEmail: standardEnquiry.contactInfo.email, contactPhone: standardEnquiry.contactInfo.phone, source: utmSource === 'whatsapp' ? LeadSource.WhatsApp : LeadSource.Website, status: 'NewLead', facilityType: standardEnquiry.facilityType, requestedModules: standardEnquiry.requestedModules || [], message: standardEnquiry.message, tags: [...tags, `landing:${landingPage || 'direct'}`], customConfig: JSON.stringify({ submittedAt: new Date().toISOString() }) }
+            });
+            applyAutomationRules(lead.id, 'create').catch(() => {});
+            return NextResponse.json({ success: true, leadId: lead.id, message: 'Thank you!' });
+        } catch (error: any) {
+            return NextResponse.json({ error: error.message }, { status: 500 });
+        }
+    }
+
+    // 7. Public: Leads (POST)
+    if (fullPath === 'public/leads') {
+        try {
+            const body = await req.json();
+            const { name, organization, facilityType, email, phone, requestedModules, message } = body;
+            const standardEnquiry = normalizeWebForm({ name, organization, facilityType: facilityType as FacilityType, email, phone, requestedModules, message });
+            const tags = autoTagEnquiry(standardEnquiry);
+            const lead = await controlDb.lead.create({
+                data: { hospitalName: standardEnquiry.organization, contactName: standardEnquiry.name, contactEmail: standardEnquiry.contactInfo.email, contactPhone: standardEnquiry.contactInfo.phone, source: LeadSource.Website, status: 'NewLead', facilityType: standardEnquiry.facilityType, requestedModules: standardEnquiry.requestedModules || [], message: standardEnquiry.message, tags: [...tags, 'public-form'], customConfig: JSON.stringify({ submittedAt: new Date().toISOString() }) }
+            });
+            applyAutomationRules(lead.id, 'create').catch(() => {});
+            return NextResponse.json({ success: true, leadId: lead.id });
+        } catch (error: any) {
+            return NextResponse.json({ error: error.message }, { status: 500 });
+        }
+    }
+
+    // 8. WhatsApp Webhook (POST)
+    if (fullPath === 'webhooks/whatsapp') {
+        try {
+            const body = await req.json();
+            if (body.object === 'whatsapp_business_account') {
+                return NextResponse.json({ success: true, message: 'Processed via catch-all' });
+            }
+            if (body.senderPhone && body.message) {
+                const enquiry = normalizeWhatsApp({ senderPhone: body.senderPhone, message: body.message, senderName: body.senderName, organization: body.organization });
+                const tags = autoTagEnquiry(enquiry);
+                const lead = await controlDb.lead.create({
+                    data: { hospitalName: enquiry.organization, contactName: enquiry.name, contactEmail: enquiry.contactInfo.email, contactPhone: enquiry.contactInfo.phone, source: LeadSource.WhatsApp, status: 'NewLead', facilityType: enquiry.facilityType, requestedModules: enquiry.requestedModules || [], message: enquiry.message, tags: [...tags, 'whatsapp'], customConfig: JSON.stringify({ submittedAt: new Date().toISOString() }) }
+                });
+                applyAutomationRules(lead.id, 'create').catch(() => {});
+                return NextResponse.json({ success: true, leadId: lead.id });
+            }
+            return NextResponse.json({ success: true });
+        } catch (error: any) {
+            return NextResponse.json({ error: error.message }, { status: 500 });
+        }
+    }
+
+    return NextResponse.json({ error: 'Not Found' }, { status: 404 });
+}
+
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ path?: string[] }> }): Promise<Response | NextResponse> {
+    const resolvedParams = await params;
+    const pathSegments = resolvedParams.path || [];
+    const fullPath = pathSegments.join('/');
+
+    // 1. System: Orders (PATCH)
+    if (fullPath === 'system/orders') {
+        try {
+            await ensureSuperAdmin();
+            const body = await req.json();
+            const { orderId, status, ...updateData } = body;
+            const order = await controlDb.systemPayment.update({ where: { id: orderId }, data: { status, ...updateData } });
+            return NextResponse.json({ success: true, order });
+        } catch (error: any) {
+            return NextResponse.json({ error: error.message }, { status: 500 });
+        }
     }
 
     return NextResponse.json({ error: 'Not Found' }, { status: 404 });
