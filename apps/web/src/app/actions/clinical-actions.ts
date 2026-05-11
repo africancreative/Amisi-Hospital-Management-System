@@ -64,6 +64,25 @@ export async function createEncounter(patientId: string, formData: FormData): Pr
     return encounter;
 }
 
+export async function triagePatient(encounterId: string, formData: FormData): Promise<any> {
+    await ensureRole(['DOCTOR', 'NURSE', 'ADMIN']);
+    const db = await getTenantDb();
+    const encounter = await db.encounter.update({
+        where: { id: encounterId },
+        data: { esiLevel: parseInt(formData.get('esiLevel') as string), triageNotes: formData.get('triageNotes') as string, type: 'EMERGENCY' }
+    });
+    revalidatePath(`/patients/${encounter.patientId}`);
+    return encounter;
+}
+
+export async function completeMSE(encounterId: string): Promise<any> {
+    await ensureRole(['DOCTOR', 'ADMIN']);
+    const db = await getTenantDb();
+    const encounter = await db.encounter.update({ where: { id: encounterId }, data: { mseCompletedAt: new Date() } });
+    revalidatePath(`/patients/${encounter.patientId}`);
+    return encounter;
+}
+
 // ─── ADT ACTIONS (Admission, Discharge, Transfer) ────────────────────────────
 
 export async function admitPatient(data: { encounterId: string; bedId: string; attendingPhysicianId?: string; admissionReason?: string; }): Promise<any> {
@@ -106,4 +125,18 @@ export async function orderDiagnostic(formData: FormData): Promise<any> {
     if (tenantId) realtimeHub.broadcast(tenantId, 'DIAGNOSTIC_ORDERED', 'Patient', patientId);
     revalidatePath(`/patients/${patientId}`);
     return order;
+}
+
+// ─── LAB MODULE ACTIONS ───────────────────────────────────────────────────────
+
+export async function getPendingLabOrders(): Promise<any[]> {
+    await ensureRole(['LAB_TECH', 'DOCTOR', 'ADMIN']);
+    const db = await getTenantDb();
+    return db.labOrder.findMany({
+        where: { status: 'pending' },
+        include: {
+            patient: { select: { firstName: true, lastName: true, mrn: true } },
+        },
+        orderBy: { createdAt: 'desc' },
+    });
 }

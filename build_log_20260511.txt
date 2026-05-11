@@ -1,0 +1,130 @@
+
+> @amisimedos/web@4.0.0 build /home/danielamisi/Documents/GitHub/Amisi-Hospital-Management-System/apps/web
+> pnpm --filter @amisimedos/db build && pnpm --filter @amisimedos/auth build && pnpm --filter @amisimedos/billing build && pnpm --filter @amisimedos/ui build && pnpm --filter @amisimedos/sync build && pnpm --filter @amisimedos/chat build && node scripts/vercel-engine-hack.js && next build --webpack
+
+
+> @amisimedos/db@1.0.0 build /home/danielamisi/Documents/GitHub/Amisi-Hospital-Management-System/packages/db
+> pnpm generate && tsc
+
+
+> @amisimedos/db@1.0.0 generate /home/danielamisi/Documents/GitHub/Amisi-Hospital-Management-System/packages/db
+> prisma generate --schema=./prisma/control.prisma && prisma generate --schema=./prisma/tenant.prisma
+
+Environment variables loaded from .env
+Prisma schema loaded from prisma/control.prisma
+
+✔ Generated Prisma Client (v5.22.0) to ./generated/control-client in 134ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Interested in query caching in just a few lines of code? Try Accelerate today! https://pris.ly/tip-3-accelerate
+
+Environment variables loaded from .env
+Prisma schema loaded from prisma/tenant.prisma
+
+✔ Generated Prisma Client (v5.22.0) to ./generated/tenant-client in 755ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Easily identify and fix slow SQL queries in your app. Optimize helps you enhance your visibility: https://pris.ly/--optimize
+
+
+> @amisimedos/auth@1.0.0 build /home/danielamisi/Documents/GitHub/Amisi-Hospital-Management-System/packages/auth
+> tsc
+
+
+> @amisimedos/billing@1.0.0 build /home/danielamisi/Documents/GitHub/Amisi-Hospital-Management-System/packages/billing
+> tsc
+
+
+> @amisimedos/ui@1.0.0 build /home/danielamisi/Documents/GitHub/Amisi-Hospital-Management-System/packages/ui
+> tsc
+
+
+> @amisimedos/sync@1.0.0 build /home/danielamisi/Documents/GitHub/Amisi-Hospital-Management-System/packages/sync
+> tsc
+
+
+> @amisimedos/chat@1.0.0 build /home/danielamisi/Documents/GitHub/Amisi-Hospital-Management-System/packages/chat
+> tsc
+
+[Vercel Engine Hack] Copied libquery_engine-debian-openssl-3.0.x.so.node -> /home/danielamisi/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/control-client/libquery_engine-debian-openssl-3.0.x.so.node
+[Vercel Engine Hack] Copied libquery_engine-rhel-openssl-3.0.x.so.node -> /home/danielamisi/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/control-client/libquery_engine-rhel-openssl-3.0.x.so.node
+[Vercel Engine Hack] Copied query_engine-windows.dll.node -> /home/danielamisi/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/control-client/query_engine-windows.dll.node
+[Vercel Engine Hack] Copied package.json -> /home/danielamisi/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/control-client/package.json
+[Vercel Engine Hack] Copied index.js -> /home/danielamisi/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/control-client/index.js
+[Vercel Engine Hack] Copied index.d.ts -> /home/danielamisi/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/control-client/index.d.ts
+[Vercel Engine Hack] Copied libquery_engine-debian-openssl-3.0.x.so.node -> /home/danielamisi/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/tenant-client/libquery_engine-debian-openssl-3.0.x.so.node
+[Vercel Engine Hack] Copied libquery_engine-rhel-openssl-3.0.x.so.node -> /home/danielamisi/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/tenant-client/libquery_engine-rhel-openssl-3.0.x.so.node
+[Vercel Engine Hack] Copied query_engine-windows.dll.node -> /home/danielamisi/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/tenant-client/query_engine-windows.dll.node
+[Vercel Engine Hack] Copied package.json -> /home/danielamisi/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/tenant-client/package.json
+[Vercel Engine Hack] Copied index.js -> /home/danielamisi/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/tenant-client/index.js
+[Vercel Engine Hack] Copied index.d.ts -> /home/danielamisi/Documents/GitHub/Amisi-Hospital-Management-System/apps/web/generated/tenant-client/index.d.ts
+[Vercel Engine Hack] Complete.
+▲ Next.js 16.1.6 (webpack)
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 11.1s
+  Running TypeScript ...
+  Collecting page data using 11 workers ...
+[EventBus] Initializing Patient-Centric Reactive Listeners...
+[EventBus] Initializing Patient-Centric Reactive Listeners...
+[EventBus] Initializing Patient-Centric Reactive Listeners...
+[EventBus] Initializing Patient-Centric Reactive Listeners...
+[EventBus] Initializing Patient-Centric Reactive Listeners...
+[EventBus] Initializing Patient-Centric Reactive Listeners...
+[EventBus] Initializing Patient-Centric Reactive Listeners...
+[EventBus] Initializing Patient-Centric Reactive Listeners...
+[EventBus] Initializing Patient-Centric Reactive Listeners...
+[EventBus] Initializing Patient-Centric Reactive Listeners...
+[EventBus] Initializing Patient-Centric Reactive Listeners...
+  Generating static pages using 11 workers (0/1) ...
+✓ Generating static pages using 11 workers (1/1) in 320.8ms
+  Finalizing page optimization ...
+  Collecting build traces ...
+
+Route (app)
+┌ ƒ /
+├ ƒ /_not-found
+├ ƒ /[slug]/[[...module]]
+├ ƒ /[slug]/unauthorized
+├ ƒ /admin/events
+├ ƒ /alerts
+├ ƒ /analytics
+├ ƒ /api/[[...path]]
+├ ƒ /api/trpc/[trpc]
+├ ƒ /audit
+├ ƒ /billing
+├ ƒ /checkout
+├ ƒ /checkout/success
+├ ƒ /clinician/dashboard
+├ ƒ /clinician/onduty
+├ ƒ /crm/analytics
+├ ƒ /crm/automation
+├ ƒ /dashboard
+├ ƒ /health
+├ ƒ /hospitals/[[...action]]
+├ ƒ /integrations
+├ ƒ /landing/demo
+├ ƒ /lockout
+├ ƒ /login
+├ ƒ /modules
+├ ƒ /pricing
+├ ƒ /privacy
+├ ƒ /request
+├ ƒ /settings
+├ ƒ /setup
+├ ƒ /suspended
+├ ƒ /sync
+├ ƒ /system/[[...action]]
+├ ƒ /system/content
+├ ƒ /tenants
+├ ƒ /tenants/[slug]
+├ ƒ /terms
+└ ƒ /users
+
+
+ƒ Proxy (Middleware)
+
+ƒ  (Dynamic)  server-rendered on demand
+

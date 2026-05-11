@@ -88,7 +88,7 @@ export async function logout(): Promise<any> {
     redirect('/login');
 }
 
-// ─── USER ACTIONS ────────────────────────────────────────────────────────────
+// ─── USER & STAFF ACTIONS ────────────────────────────────────────────────────
 
 export async function getEmployees(): Promise<any> {
     await ensureRole(['ADMIN']);
@@ -139,6 +139,16 @@ export async function updateGlobalSettings(data: any): Promise<any> {
     revalidatePath('/system/dashboard');
 }
 
+export async function getTenants(): Promise<any> {
+    await ensureSuperAdmin();
+    return getControlDb().tenant.findMany({ orderBy: { createdAt: 'desc' }, include: { tenantModules: true } });
+}
+
+export async function getTenantById(id: string): Promise<any> {
+    await ensureSuperAdmin();
+    return getControlDb().tenant.findUnique({ where: { id } });
+}
+
 export async function createTenant(formData: FormData): Promise<any> {
     await ensureSuperAdmin();
     const name = formData.get('name') as string;
@@ -155,26 +165,83 @@ export async function createTenant(formData: FormData): Promise<any> {
     revalidatePath('/hospitals');
 }
 
+export async function createTenantWithModules(data: any): Promise<any> {
+    await ensureSuperAdmin();
+    const { createTenantDatabase, provisionTenant } = await import('@amisimedos/db/management' as any);
+    const { dbUrl } = await createTenantDatabase(data.slug);
+    const hospital = await getControlDb().tenant.create({
+        data: { name: data.name, slug: data.slug, dbUrl, encryptionKeyReference: data.slug, region: data.region, tier: data.tier, status: 'active', enabledModules: {} }
+    });
+    await provisionTenant({ tenantId: hospital.id, slug: data.slug, dbUrl, tier: data.tier });
+    revalidatePath('/system/hospitals');
+}
+
 export async function updateTenantStatus(id: string, status: 'active' | 'suspended' | 'terminated'): Promise<any> {
     await ensureSuperAdmin();
     await getControlDb().tenant.update({ where: { id }, data: { status } });
     revalidatePath('/hospitals');
 }
 
-// ─── UPLOAD ACTIONS ──────────────────────────────────────────────────────────
-
-export async function uploadFile(formData: FormData): Promise<{ url: string }> {
-    const file = formData.get("file") as File;
-    if (!file) throw new Error("No file");
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    const filename = `${uuidv4()}${path.extname(file.name)}`;
-    const uploadDir = path.join(process.cwd(), "public/uploads");
-    await writeFile(path.join(uploadDir, filename), buffer);
-    return { url: `/uploads/${filename}` };
+export async function updateEnabledModules(id: string, modules: any): Promise<any> {
+    await ensureSuperAdmin();
+    await getControlDb().tenant.update({ where: { id }, data: { enabledModules: modules } });
+    revalidatePath(`/hospitals/${id}`);
 }
 
-// ─── SYSTEM MANAGEMENT ───────────────────────────────────────────────────────
+export async function updateTenantFull(id: string, data: any): Promise<any> {
+    await ensureSuperAdmin();
+    await getControlDb().tenant.update({ where: { id }, data });
+    revalidatePath(`/hospitals/${id}`);
+}
+
+export async function deleteTenant(id: string): Promise<any> {
+    await ensureSuperAdmin();
+    await getControlDb().tenant.delete({ where: { id } });
+    revalidatePath('/system/hospitals');
+}
+
+export async function cloneTenant(id: string, payload: {
+    name: string;
+    slug: string;
+    region?: string;
+    dbUrl?: string;
+    adminName?: string;
+    adminEmail?: string;
+    adminPassword?: string;
+}): Promise<any> {
+    await ensureSuperAdmin();
+    const source = await getControlDb().tenant.findUnique({ where: { id } });
+    if (!source) throw new Error('Source not found');
+    return createTenantWithModules({
+        ...source,
+        id: undefined,
+        name: payload.name,
+        slug: payload.slug,
+        region: payload.region ?? source.region,
+        dbUrl: payload.dbUrl ?? source.dbUrl,
+    });
+}
+
+// ─── HOSPITAL & BRANDING ACTIONS ─────────────────────────────────────────────
+
+export async function getHospitalSettings(): Promise<any> {
+    const db = await getTenantDb();
+    return db.hospitalSettings.findFirst() || { name: 'Amisi Hospital' };
+}
+
+export async function updateHospitalBranding(data: any): Promise<any> {
+    await ensureRole(['ADMIN']);
+    const db = await getTenantDb();
+    await db.hospitalSettings.upsert({ where: { id: 'singleton' }, update: data, create: { id: 'singleton', ...data } });
+    revalidatePath('/settings');
+}
+
+export async function uploadHeroImage(formData: FormData): Promise<any> {
+    await ensureSuperAdmin();
+    return uploadFile(formData);
+}
+
+// ─── SYSTEM MANAGEMENT & EXTERNAL ────────────────────────────────────────────
 
 export async function getSystemAccountingData(): Promise<any> {
     await ensureSuperAdmin();
@@ -182,6 +249,21 @@ export async function getSystemAccountingData(): Promise<any> {
     const transactions = await db.systemPayment.findMany({ orderBy: { createdAt: 'desc' }, include: { tenant: true }, take: 50 });
     const aggregates = await db.systemPayment.aggregate({ _sum: { amount: true }, _count: { id: true } });
     return { transactions, totalRevenue: aggregates._sum.amount || 0, totalCount: aggregates._count.id || 0 };
+}
+
+export async function getPayPalClientId(): Promise<string> {
+    const settings = await getControlDb().globalSettings.findUnique({ where: { id: 'singleton' } });
+    return settings?.paypalClientId || process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || 'test';
+}
+
+export async function testPayPalConnection(credentials: any): Promise<any> {
+    await ensureSuperAdmin();
+    return { success: true, message: 'PayPal connection simulated.' };
+}
+
+export async function testMpesaConnection(credentials: any): Promise<any> {
+    await ensureSuperAdmin();
+    return { success: true, message: 'M-Pesa connection simulated.' };
 }
 
 export async function generateApiKey(tenantId: string, label: string): Promise<any> {
@@ -198,4 +280,50 @@ export async function generateApiKey(tenantId: string, label: string): Promise<a
     await db.globalSettings.update({ where: { id: 'singleton' }, data: { apiKeys: existing } as any });
     revalidatePath('/system/dashboard');
     return { key: apiKey, label };
+}
+
+export async function revokeApiKey(tenantId: string, key: string): Promise<void> {
+    await ensureSuperAdmin();
+    const db = getControlDb();
+    const settings = await db.globalSettings.findUnique({ where: { id: 'singleton' } });
+    const existing = (settings as any)?.apiKeys || {};
+    existing[tenantId] = (existing[tenantId] || []).filter((k: any) => k.key !== key);
+    await db.globalSettings.update({ where: { id: 'singleton' }, data: { apiKeys: existing } as any });
+    revalidatePath('/system/dashboard');
+}
+
+export async function getTenantLicense(tenantId: string): Promise<any> {
+    const tenant = await getControlDb().tenant.findUnique({ where: { id: tenantId } });
+    if (!tenant) return null;
+    return { ...tenant, isBlocked: tenant.status === 'suspended' };
+}
+
+// ─── EMAIL & NOTIFICATION ACTIONS ────────────────────────────────────────────
+
+export async function submitHospitalInquiry(data: any): Promise<any> {
+    console.log('[EMAIL] Inquiry received:', data);
+    return { success: true };
+}
+
+export async function notifyCheckoutAttempt(data: any, plan: any): Promise<any> {
+    console.log('[EMAIL] Checkout attempt:', data.name, plan.name);
+    return { success: true };
+}
+
+export async function notifyPaymentSuccess(tenant: any, payment: any, input: any): Promise<any> {
+    console.log('[EMAIL] Payment success:', tenant.name, payment.amount);
+    return { success: true };
+}
+
+// ─── UPLOAD ACTIONS ──────────────────────────────────────────────────────────
+
+export async function uploadFile(formData: FormData): Promise<{ url: string }> {
+    const file = formData.get("file") as File;
+    if (!file) throw new Error("No file");
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+    const filename = `${uuidv4()}${path.extname(file.name)}`;
+    const uploadDir = path.join(process.cwd(), "public/uploads");
+    await writeFile(path.join(uploadDir, filename), buffer);
+    return { url: `/uploads/${filename}` };
 }

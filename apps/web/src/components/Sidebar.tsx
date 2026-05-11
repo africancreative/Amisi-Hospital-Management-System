@@ -9,7 +9,6 @@ import {
     Settings,
     Activity,
     Building2,
-    FileText,
     DollarSign,
     CreditCard,
     Microscope,
@@ -27,6 +26,7 @@ import {
     ChevronRight,
     ArrowRight
 } from 'lucide-react';
+import FileText from 'lucide-react/dist/esm/icons/file-text';
 import { BillingResilienceWidget } from './BillingResilienceWidget';
 import { api } from '@/trpc/react';
 import { logout } from '@/app/actions/core-actions';
