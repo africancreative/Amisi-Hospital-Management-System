@@ -1,0 +1,50 @@
+appId: com.amisimedos.desktop
+productName: AmisiMedOS
+executableName: amisimedos
+copyright: Copyright © 2026 Amisi Genuine
+
+artifactName: "${productName}-${version}-${os}-${arch}.${ext}"
+
+directories:
+  output: dist/installers
+  buildResources: src/assets
+
+files:
+  - dist/**/*
+  - "!dist/installers"
+  - package.json
+
+asar: true
+
+publish:
+  provider: github
+  owner: amisi-hospital-management
+  repo: Amisi-Hospital-Management-System
+
+win:
+  target:
+    - nsis
+    - portable
+  icon: src/assets/icon.ico
+
+mac:
+  target:
+    - dmg
+    - pkg
+  icon: src/assets/icon.icns
+  category: public.app-category.healthcare
+  hardenedRuntime: true
+
+linux:
+  target:
+    - AppImage
+    - deb
+  icon: src/assets/icons
+  category: MedicalSoftware
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  installerIcon: src/assets/icon.ico
+  uninstallerIcon: src/assets/icon.ico

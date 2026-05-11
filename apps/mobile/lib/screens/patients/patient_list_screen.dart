@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../services/patient_service.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'patient_detail_screen.dart';
+import '../../core/theme/app_theme.dart';
+import '../../services/database_service.dart';
 
 class PatientListScreen extends StatefulWidget {
   const PatientListScreen({super.key});
@@ -11,10 +11,9 @@ class PatientListScreen extends StatefulWidget {
 }
 
 class _PatientListScreenState extends State<PatientListScreen> {
-  final _patientService = PatientService();
-  final _searchController = TextEditingController();
-  List<Patient> _patients = [];
-  bool _isLoading = false;
+  String _searchQuery = '';
+  List<Map<String, dynamic>> _patients = [];
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -22,118 +21,144 @@ class _PatientListScreenState extends State<PatientListScreen> {
     _loadPatients();
   }
 
-  Future<void> _loadPatients([String query = '']) async {
-    setState(() => _isLoading = true);
-    final results = await _patientService.searchPatients(query);
+  Future<void> _loadPatients() async {
+    final patients = await DatabaseService().getCachedPatients();
     setState(() {
-      _patients = results;
+      _patients = patients;
       _isLoading = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final filteredPatients = _patients.where((p) {
+      final name = p['firstName'] + ' ' + p['lastName'];
+      final mrn = p['mrn'] ?? '';
+      return name.toLowerCase().contains(_searchQuery.toLowerCase()) || 
+             mrn.toLowerCase().contains(_searchQuery.toLowerCase());
+    }).toList();
+
     return Scaffold(
-      backgroundColor: const Color(0xFF0F172A),
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: const Text('PATIENT REGISTRY', style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w900, letterSpacing: 2)),
-        centerTitle: true,
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Container(
+        title: const Text('Patients'),
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: Container(
+              padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.05),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                color: AppTheme.primaryBlue,
+                borderRadius: BorderRadius.circular(12),
               ),
-              child: TextField(
-                controller: _searchController,
-                style: const TextStyle(color: Colors.white),
-                onChanged: (val) => _loadPatients(val),
-                decoration: InputDecoration(
-                  hintText: 'Search by Name or MRN...',
-                  hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
-                  prefixIcon: const Icon(LucideIcons.search, color: Color(0xFF2563EB), size: 20),
-                  border: InputBorder.none,
-                  contentPadding: const EdgeInsets.all(20),
-                ),
-              ),
+              child: const Icon(LucideIcons.userPlus, size: 20, color: Colors.white),
             ),
           ),
-          Expanded(
-            child: _isLoading
-                ? const Center(child: CircularProgressIndicator(color: Color(0xFF2563EB)))
-                : _patients.isEmpty
-                    ? Center(child: Text('NO PATIENTS FOUND', style: TextStyle(color: Colors.white.withValues(alpha: 0.5), letterSpacing: 1)))
-                    : ListView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 24),
-                        itemCount: _patients.length,
-                        itemBuilder: (context, index) {
-                          final patient = _patients[index];
-                          return _buildPatientCard(patient);
-                        },
-                      ),
-          ),
+          const SizedBox(width: 16),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        backgroundColor: const Color(0xFF2563EB),
-        child: const Icon(LucideIcons.plus, color: Colors.white),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Column(
+          children: [
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    onChanged: (value) => setState(() => _searchQuery = value),
+                    decoration: const InputDecoration(
+                      hintText: 'Search by MRN or Name',
+                      prefixIcon: Icon(LucideIcons.search, size: 20),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Container(
+                  width: 56,
+                  height: 56,
+                  decoration: BoxDecoration(
+                    color: AppTheme.cardDark,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: const Color(0xFF1F2937)),
+                  ),
+                  child: const Icon(LucideIcons.filter, color: AppTheme.textGray, size: 20),
+                ),
+              ],
+            ),
+            const SizedBox(height: 32),
+            Expanded(
+              child: _isLoading 
+                ? const Center(child: CircularProgressIndicator())
+                : ListView.builder(
+                    itemCount: filteredPatients.length,
+                    itemBuilder: (context, index) {
+                      final patient = filteredPatients[index];
+                      return _buildPatientListItem(patient);
+                    },
+                  ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildPatientCard(Patient patient) {
-    return GestureDetector(
-      onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => PatientDetailScreen(patient: patient)),
+  Widget _buildPatientListItem(Map<String, dynamic> patient) {
+    final fullName = '${patient['firstName']} ${patient['lastName']}';
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppTheme.cardDark,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: const Color(0xFF1F2937)),
       ),
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 16),
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.05),
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 50,
-              height: 50,
-              decoration: BoxDecoration(
-                color: const Color(0xFF2563EB).withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: const Icon(LucideIcons.user, color: Color(0xFF2563EB)),
+      child: Row(
+        children: [
+          Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              color: AppTheme.primaryBlue.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: AppTheme.primaryBlue.withOpacity(0.2)),
             ),
-            const SizedBox(width: 20),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    patient.fullName.toUpperCase(),
-                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'MRN: ${patient.mrn}',
-                    style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1),
-                  ),
-                ],
+            child: Center(
+              child: Text(
+                fullName[0],
+                style: const TextStyle(color: AppTheme.primaryBlue, fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
-            const Icon(LucideIcons.chevronRight, color: Colors.white24),
-          ],
-        ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  fullName,
+                  style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    Text(patient['mrn'] ?? 'N/A', style: TextStyle(color: AppTheme.textGray, fontSize: 14)),
+                    const SizedBox(width: 8),
+                    Container(width: 4, height: 4, decoration: const BoxDecoration(color: Color(0xFF374151), shape: BoxShape.circle)),
+                    const SizedBox(width: 8),
+                    Text('${patient['gender'] ?? '?'}, ${patient['age'] ?? '?' }y', style: TextStyle(color: AppTheme.textGray, fontSize: 14)),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Last visit: ${patient['lastVisit'] ?? 'N/A'}',
+                  style: const TextStyle(color: AppTheme.successGreen, fontSize: 12, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ),
+          const Icon(LucideIcons.chevronRight, color: Color(0xFF374151)),
+        ],
       ),
     );
   }

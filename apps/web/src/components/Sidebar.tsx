@@ -26,7 +26,7 @@ import {
     ChevronRight,
     ArrowRight
 } from 'lucide-react';
-import FileText from 'lucide-react/dist/esm/icons/file-text';
+import { FileText } from 'lucide-react';
 import { BillingResilienceWidget } from './BillingResilienceWidget';
 import { api } from '@/trpc/react';
 import { logout } from '@/app/actions/core-actions';
