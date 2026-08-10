@@ -35,8 +35,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   borderRadius: BorderRadius.circular(32),
                   border: Border.all(color: AppTheme.primaryBlue.withOpacity(0.2)),
                 ),
-                child: const Center(
-                  child: Icon(LucideIcons.shieldCheck, size: 48, color: AppTheme.primaryBlue),
+                child: Center(
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.all(Radius.circular(20)),
+                    child: Image.asset(
+                      'assets/logo.png',
+                      width: 64,
+                      height: 64,
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(height: 32),

@@ -44,7 +44,7 @@ class DashboardScreen extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: _buildBottomNavBar(),
+      bottomNavigationBar: _buildBottomNavBar(context),
     );
   }
 
@@ -90,7 +90,7 @@ class DashboardScreen extends StatelessWidget {
         border: Border.all(color: const Color(0xFF1F2937)),
       ),
       child: Stack(
-        alignment: Center,
+        alignment: Alignment.center,
         children: [
           Icon(icon, size: 20, color: AppTheme.textGray),
           if (hasBadge)
@@ -328,7 +328,7 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBottomNavBar() {
+  Widget _buildBottomNavBar(BuildContext context) {
     return Container(
       height: 90,
       decoration: const BoxDecoration(

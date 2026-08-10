@@ -38,7 +38,11 @@ class _SetupScreenState extends State<SetupScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 40),
-              const Icon(LucideIcons.hospital, size: 56, color: AppTheme.primaryBlue),
+              Image.asset(
+                'assets/logo.png',
+                width: 72,
+                height: 72,
+              ),
               const SizedBox(height: 24),
               const Text(
                 'Welcome to\nAmisiMedOS',

@@ -127,4 +127,38 @@ class SyncService extends ChangeNotifier {
     );
     notifyListeners();
   }
+
+  Future<void> recordMAR({
+    required String patientId,
+    required Map<String, dynamic> data,
+  }) async {
+    await performAction(
+      actionType: 'MAR_ADMINISTER',
+      endpoint: '/api/trpc/mar.administer',
+      payload: {'patientId': patientId, ...data},
+    );
+  }
+
+  Future<void> recordRounds({
+    required String patientId,
+    required Map<String, dynamic> data,
+  }) async {
+    await performAction(
+      actionType: 'ROUNDS',
+      endpoint: '/api/trpc/rounds.record',
+      payload: {'patientId': patientId, ...data},
+    );
+  }
+
+  Future<void> recordBillItem({
+    required String patientId,
+    required String visitId,
+    required Map<String, dynamic> data,
+  }) async {
+    await performAction(
+      actionType: 'BILL_ITEM',
+      endpoint: '/api/trpc/billing.createBillItem',
+      payload: {'patientId': patientId, 'visitId': visitId, ...data},
+    );
+  }
 }
