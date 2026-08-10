@@ -10,10 +10,10 @@
   "private": true,
   "main": "dist/main.js",
   "scripts": {
-    "dev": "PORT=5000 ts-node-dev --respawn src/index.ts",
+    "dev": "ts-node-dev --respawn src/index.ts",
     "electron:dev": "concurrently \"npm run dev\" \"wait-on http://localhost:5000/api/health && electron .\"",
     "build": "tsc",
-    "postbuild": "cp -r src/assets dist/ 2>/dev/null || :",
+    "postbuild": "node postbuild.js",
     "dist": "npm run build && electron-builder",
     "dist:win": "npm run build && electron-builder --win",
     "dist:mac": "npm run build && electron-builder --mac",

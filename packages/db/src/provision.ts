@@ -76,59 +76,71 @@ export async function provisionTenant(
 
     console.log(`[Provision] Tenant created with ID: ${tenant.id}`);
 
-    // Apply Prisma schema manually to the new isolated DB URL
-    console.log(`[Provision] Pushing Tenant Prisma schema to isolated edge database...`);
+    // Apply Prisma schema manually to the new isolated DB URL.
+    // In the exclusively-online SaaS setup the edge node provisions its own
+    // clinical database locally and registers/authenticates with the control
+    // plane remotely — so no isolated URL is known at signup time.
+    if (isolatedDbUrl) {
+        console.log(`[Provision] Pushing Tenant Prisma schema to isolated edge database...`);
 
-    try {
-        const pkgRoot = path.join(__dirname, '..');
-        execSync(`cmd.exe /c npx prisma db push --schema ./prisma/tenant.prisma`, {
-            env: {
-                ...process.env,
-                LOCAL_EDGE_DATABASE_URL: isolatedDbUrl
-            },
-            cwd: pkgRoot,
-            stdio: 'inherit'
-        });
-        console.log(`[Provision] Validation: Schema successfully pushed to ${name}'s DB.`);
+        try {
+            const pkgRoot = path.join(__dirname, '..');
+            execSync(`cmd.exe /c npx prisma db push --schema ./prisma/tenant.prisma`, {
+                env: {
+                    ...process.env,
+                    LOCAL_EDGE_DATABASE_URL: isolatedDbUrl
+                },
+                cwd: pkgRoot,
+                stdio: 'inherit'
+            });
+            console.log(`[Provision] Validation: Schema successfully pushed to ${name}'s DB.`);
 
-        // Seed Initial Settings
-        console.log(`[Provision] Seeding initial Hospital Settings...`);
-        const isolatedClient = new TenantClient({
-            datasourceUrl: isolatedDbUrl
-        });
+            // Seed Initial Settings
+            console.log(`[Provision] Seeding initial Hospital Settings...`);
+            const isolatedClient = new TenantClient({
+                datasourceUrl: isolatedDbUrl
+            });
 
-        await isolatedClient.$connect();
+            await isolatedClient.$connect();
 
-        await isolatedClient.hospitalSettings.create({
-            data: {
-                hospitalName: name,
-                systemStatus: 'ACTIVE',
-                contactEmail: settings?.contactEmail,
-                phone: settings?.phone,
-                detailedAddress: settings?.detailedAddress,
-                taxId: settings?.taxId,
-                logoUrl: settings?.logoUrl,
-                marketingSlogan: settings?.marketingSlogan,
+            await isolatedClient.hospitalSettings.create({
+                data: {
+                    hospitalName: name,
+                    systemStatus: 'ACTIVE',
+                    contactEmail: settings?.contactEmail,
+                    phone: settings?.phone,
+                    detailedAddress: settings?.detailedAddress,
+                    taxId: settings?.taxId,
+                    logoUrl: settings?.logoUrl,
+                    marketingSlogan: settings?.marketingSlogan,
+                }
+            });
+
+            // Seed Clinical Baseline (Departments, Services, Welcome Patient)
+            console.log(`[Provision] Seeding Clinical Baseline (ER, Lab, Pharmacy)...`);
+            await seedClinicalBaseline(isolatedClient);
+
+            await isolatedClient.$disconnect();
+            console.log(`[Provision] Hospital Settings & Clinical Baseline Seeded successfully.`);
+
+            // Seed Admin User
+            if (admin) {
+                console.log(`[Provision] Seeding initial Admin User: ${admin.email}...`);
+                await seedAdminUser(isolatedDbUrl, admin);
             }
-        });
 
-        // Seed Clinical Baseline (Departments, Services, Welcome Patient)
-        console.log(`[Provision] Seeding Clinical Baseline (ER, Lab, Pharmacy)...`);
-        await seedClinicalBaseline(isolatedClient);
-
-        await isolatedClient.$disconnect();
-        console.log(`[Provision] Hospital Settings & Clinical Baseline Seeded successfully.`);
-
-        // Seed Admin User
-        if (admin) {
-            console.log(`[Provision] Seeding initial Admin User: ${admin.email}...`);
-            await seedAdminUser(isolatedDbUrl, admin);
+        } catch (err: any) {
+            console.error(`[Provision Error] Critical failure for tenant ${tenant.id}.`);
+            await controlDb.tenant.delete({ where: { id: tenant.id } });
+            throw new Error('Tenant provisioning failed: ' + err.message);
         }
-
-    } catch (err: any) {
-        console.error(`[Provision Error] Critical failure for tenant ${tenant.id}.`);
-        await controlDb.tenant.delete({ where: { id: tenant.id } });
-        throw new Error('Tenant provisioning failed: ' + err.message);
+    } else {
+        console.warn(
+            `[Provision] No isolated edge DB URL provided for "${name}". ` +
+            `Registering the tenant in the control plane as PENDING — the offline ` +
+            `edge node will provision its own clinical database and sync with the ` +
+            `control plane, which manages activation/suspension remotely.`
+        );
     }
 
     console.log(`[Provision] SUCCESS. Tenant ready. KMS Ref: ${keyRef}`);

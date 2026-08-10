@@ -63,7 +63,13 @@ export default async function TenantLayout({
             select: { name: true, tier: true, status: true }
         });
 
-        if (!tenant || tenant.status !== 'active') {
+        if (!tenant) {
+            redirect('/system/suspended');
+        }
+        if (tenant.status === 'pending') {
+            redirect('/pending');
+        }
+        if (tenant.status !== 'active') {
             redirect('/system/suspended');
         }
         tenantName = tenant.name;

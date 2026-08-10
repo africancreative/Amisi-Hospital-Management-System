@@ -3,8 +3,8 @@
   "private": true,
   "version": "0.1.0",
   "scripts": {
-    "dev": "flutter run",
-    "build": "command -v flutter >/dev/null 2>&1 && flutter build web || echo 'Flutter not installed, skipping mobile build'",
+    "dev": "node dev.js",
+    "build": "node build.js",
     "build:android": "flutter build apk",
     "test": "flutter test",
     "lint": "flutter analyze"

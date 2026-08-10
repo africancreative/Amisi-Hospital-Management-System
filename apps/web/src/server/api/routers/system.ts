@@ -37,7 +37,7 @@ export const systemRouter: any = router({
     toggleTenantStatus: superAdminProcedure
         .input(z.object({
             id: z.string(),
-            status: z.enum(['active', 'suspended']),
+            status: z.enum(['active', 'suspended', 'pending']),
             reason: z.string().optional()
         }))
         .mutation(async ({ input }: any) => {

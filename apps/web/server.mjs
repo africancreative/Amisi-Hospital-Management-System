@@ -1,9 +1,9 @@
 import { createServer } from 'http';
 import { parse } from 'url';
 import next from 'next';
-import Bonjour from 'bonjour-service';
+import { Bonjour } from 'bonjour-service';
 
-const dev = process.env.NODE_VALUE !== 'production';
+const dev = process.env.NODE_ENV !== 'production';
 const hostname = '0.0.0.0'; // BIND TO ALL INTERFACES for multi-device support
 const port = parseInt(process.env.PORT || '3000', 10);
 

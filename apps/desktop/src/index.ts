@@ -48,7 +48,7 @@ if (savedConfig) {
 }
 
 const app = express();
-const PORT      = parseInt(process.env.PORT || '8080');
+const PORT      = parseInt(process.env.PORT || '5000');
 const API_KEY   = process.env.LOCAL_API_KEY || 'amisimedos-local-key';
 const JWT_SECRET = process.env.JWT_SECRET   || 'demo-secret-key-change-me';
 const TRUSTED_IPS = (process.env.TRUSTED_IPS || '127.0.0.1,::1').split(',');

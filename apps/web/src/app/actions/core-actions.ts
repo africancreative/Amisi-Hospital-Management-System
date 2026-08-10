@@ -31,6 +31,8 @@ export async function loginHospitalUser(prevState: AuthActionState, formData: Fo
         const controlDb = getControlDb();
         const tenant = await controlDb.tenant.findUnique({ where: { slug: tenantSlug } });
         if (!tenant) return { error: 'Hospital not found' };
+        if (tenant.status === 'pending') return { error: 'Your account is awaiting activation by the platform administrator.' };
+        if (tenant.status !== 'active') return { error: 'Hospital account is not active' };
 
         const tenantDb = await getTenantDb(tenant.id);
         const user = await tenantDb.employee.findUnique({ where: { email } });
@@ -176,10 +178,57 @@ export async function createTenantWithModules(data: any): Promise<any> {
     revalidatePath('/system/hospitals');
 }
 
-export async function updateTenantStatus(id: string, status: 'active' | 'suspended' | 'terminated'): Promise<any> {
+export async function updateTenantStatus(id: string, status: 'active' | 'suspended' | 'terminated' | 'pending'): Promise<any> {
     await ensureSuperAdmin();
     await getControlDb().tenant.update({ where: { id }, data: { status } });
     revalidatePath('/hospitals');
+}
+
+export async function activateTenant(id: string): Promise<any> {
+    await ensureSuperAdmin();
+    await getControlDb().tenant.update({ where: { id }, data: { status: 'active' } });
+    revalidatePath('/hospitals');
+    revalidatePath('/system/tenants');
+    return { success: true };
+}
+
+export async function getPlans(): Promise<any> {
+    await ensureSuperAdmin();
+    return getControlDb().plan.findMany({ orderBy: { price: 'asc' } });
+}
+
+export async function setTenantSubscription(
+    tenantId: string,
+    data: { planId: string; startDate?: string; endDate?: string; status?: string; slug?: string }
+): Promise<any> {
+    await ensureSuperAdmin();
+    const db = getControlDb();
+    const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { id: true, slug: true } });
+    if (!tenant) throw new Error('Hospital not found');
+    const plan = await db.plan.findUnique({ where: { id: data.planId }, select: { id: true } });
+    if (!plan) throw new Error('Plan not found');
+
+    await db.$transaction([
+        db.subscription.updateMany({
+            where: { tenantId, status: 'ACTIVE' },
+            data: { status: 'INACTIVE' },
+        }),
+        db.subscription.create({
+            data: {
+                tenantId,
+                planId: data.planId,
+                status: data.status || 'ACTIVE',
+                startDate: data.startDate ? new Date(data.startDate) : new Date(),
+                endDate: data.endDate ? new Date(data.endDate) : null,
+                signedToken: `manual-${Date.now()}`,
+            },
+        }),
+    ]);
+
+    const slug = data.slug || tenant.slug;
+    revalidatePath(`/system/tenants/${slug}`);
+    revalidatePath('/system/tenants');
+    return { success: true };
 }
 
 export async function updateEnabledModules(id: string, modules: any): Promise<any> {

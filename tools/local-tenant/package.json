@@ -1,0 +1,14 @@
+{
+  "name": "@amisimedos/local-tenant",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AmisiMedOS Local Tenant — Windows provisioning engine for a single-hospital on-premises deployment on local PostgreSQL",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json && node scripts/copy-sql.js",
+    "sql:generate": "node scripts/generate-sql.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

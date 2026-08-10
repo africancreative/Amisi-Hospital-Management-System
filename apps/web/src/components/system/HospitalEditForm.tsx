@@ -95,7 +95,7 @@ export function HospitalEditForm({ tenant }: HospitalEditFormProps) {
     };
 
     const handleStatusToggle = async () => {
-        const newStatus = tenant.status === 'active' ? 'suspended' : 'active';
+        const newStatus = tenant.status === 'pending' || tenant.status === 'suspended' ? 'active' : 'suspended';
         if (confirm(`Are you sure you want to ${newStatus} this hospital?`)) {
             await updateTenantStatus(tenant.id, newStatus);
             router.refresh();

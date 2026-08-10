@@ -32,6 +32,7 @@ import {
 import { getControlDb } from '@amisimedos/db/client';
 import { revalidatePath } from 'next/cache';
 import { ensureSuperAdmin } from '@/lib/auth-utils';
+import { setTenantSubscription } from '@/app/actions/core-actions';
 
 const MODULES = [
   { id: 'pmi', name: 'PMI', description: 'Patient Master Index', icon: Hospital },
@@ -75,6 +76,8 @@ export default async function TenantDetailPage(props: { params: Promise<{ slug: 
     notFound();
   }
 
+  const plans = await db.plan.findMany({ orderBy: { price: 'asc' } });
+
   const computedStatus = tenant.status === 'active' && tenant.trialEndsAt && new Date(tenant.trialEndsAt) > new Date()
     ? 'trial'
     : tenant.status;
@@ -115,28 +118,48 @@ export default async function TenantDetailPage(props: { params: Promise<{ slug: 
               <Pencil className="h-4 w-4" />
               Edit
             </Link>
-            <form action={async () => {
-              'use server';
-              await ensureSuperAdmin();
-              const newStatus = tenant.status === 'suspended' ? 'active' : 'suspended';
-              await db.tenant.update({
-                where: { id: tenant.id },
-                data: { status: newStatus },
-              });
-              revalidatePath(`/system/tenants/${tenant.slug}`);
-              revalidatePath('/system/tenants');
-            }}>
-              <button
-                className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  tenant.status === 'suspended'
-                    ? 'bg-green-600 hover:bg-green-700 text-white'
-                    : 'bg-yellow-600 hover:bg-yellow-700 text-white'
-                }`}
-              >
-                {tenant.status === 'suspended' ? <Unlock className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
-                {tenant.status === 'suspended' ? 'Activate' : 'Suspend'}
-              </button>
-            </form>
+            {tenant.status === 'pending' ? (
+              <form action={async () => {
+                'use server';
+                await ensureSuperAdmin();
+                await db.tenant.update({
+                  where: { id: tenant.id },
+                  data: { status: 'active' },
+                });
+                revalidatePath(`/system/tenants/${tenant.slug}`);
+                revalidatePath('/system/tenants');
+              }}>
+                <button
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm rounded-lg transition-colors"
+                >
+                  <CheckCircle className="h-4 w-4" />
+                  Activate
+                </button>
+              </form>
+            ) : (
+              <form action={async () => {
+                'use server';
+                await ensureSuperAdmin();
+                const newStatus = tenant.status === 'suspended' ? 'active' : 'suspended';
+                await db.tenant.update({
+                  where: { id: tenant.id },
+                  data: { status: newStatus },
+                });
+                revalidatePath(`/system/tenants/${tenant.slug}`);
+                revalidatePath('/system/tenants');
+              }}>
+                <button
+                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    tenant.status === 'suspended'
+                      ? 'bg-green-600 hover:bg-green-700 text-white'
+                      : 'bg-yellow-600 hover:bg-yellow-700 text-white'
+                  }`}
+                >
+                  {tenant.status === 'suspended' ? <Unlock className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
+                  {tenant.status === 'suspended' ? 'Activate' : 'Suspend'}
+                </button>
+              </form>
+            )}
             <form action={async () => {
               'use server';
               await ensureSuperAdmin();
@@ -283,7 +306,7 @@ export default async function TenantDetailPage(props: { params: Promise<{ slug: 
             <section className="bg-gray-800 border border-gray-700 rounded-xl p-6">
               <h3 className="text-xs font-black uppercase tracking-widest text-gray-400 mb-4">Subscription</h3>
               {tenant.subscriptions && tenant.subscriptions.length > 0 ? (
-                <div className="space-y-3">
+                <div className="space-y-3 mb-4">
                   <div>
                     <p className="text-gray-500 text-xs">Plan</p>
                     <p className="text-white text-sm font-medium">{tenant.subscriptions[0].plan?.name}</p>
@@ -296,6 +319,18 @@ export default async function TenantDetailPage(props: { params: Promise<{ slug: 
                     <p className="text-gray-500 text-xs">Billing Cycle</p>
                     <p className="text-white text-sm">{tenant.subscriptions[0].plan?.billingCycle}</p>
                   </div>
+                  {tenant.subscriptions[0].startDate && (
+                    <div>
+                      <p className="text-gray-500 text-xs">Start Date</p>
+                      <p className="text-white text-sm">{new Date(tenant.subscriptions[0].startDate).toLocaleDateString()}</p>
+                    </div>
+                  )}
+                  {tenant.subscriptions[0].endDate && (
+                    <div>
+                      <p className="text-gray-500 text-xs">End Date</p>
+                      <p className="text-white text-sm">{new Date(tenant.subscriptions[0].endDate).toLocaleDateString()}</p>
+                    </div>
+                  )}
                   {tenant.trialEndsAt && new Date(tenant.trialEndsAt) > new Date() && (
                     <div>
                       <p className="text-gray-500 text-xs">Trial Ends</p>
@@ -304,8 +339,78 @@ export default async function TenantDetailPage(props: { params: Promise<{ slug: 
                   )}
                 </div>
               ) : (
-                <p className="text-gray-500 text-sm">No active subscription</p>
+                <p className="text-gray-500 text-sm mb-4">No subscription yet</p>
               )}
+
+              <form
+                action={async (formData: FormData) => {
+                  'use server';
+                  await setTenantSubscription(tenant.id, {
+                    planId: formData.get('planId') as string,
+                    startDate: (formData.get('startDate') as string) || undefined,
+                    endDate: (formData.get('endDate') as string) || undefined,
+                    status: (formData.get('status') as string) || 'ACTIVE',
+                    slug: tenant.slug,
+                  });
+                }}
+                className="space-y-3"
+              >
+                <div>
+                  <label className="block text-gray-500 text-[10px] uppercase tracking-widest mb-1">Plan</label>
+                  <select
+                    name="planId"
+                    defaultValue={tenant.subscriptions && tenant.subscriptions.length > 0 ? tenant.subscriptions[0].planId : plans[0]?.id}
+                    className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white"
+                  >
+                    {plans.map((plan: any) => (
+                      <option key={plan.id} value={plan.id}>
+                        {plan.name} ({plan.billingCycle})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-gray-500 text-[10px] uppercase tracking-widest mb-1">Start Date</label>
+                    <input
+                      type="date"
+                      name="startDate"
+                      defaultValue={tenant.subscriptions && tenant.subscriptions.length > 0
+                        ? new Date(tenant.subscriptions[0].startDate).toISOString().split('T')[0]
+                        : undefined}
+                      className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-500 text-[10px] uppercase tracking-widest mb-1">End Date</label>
+                    <input
+                      type="date"
+                      name="endDate"
+                      defaultValue={tenant.subscriptions && tenant.subscriptions.length > 0 && tenant.subscriptions[0].endDate
+                        ? new Date(tenant.subscriptions[0].endDate).toISOString().split('T')[0]
+                        : undefined}
+                      className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-gray-500 text-[10px] uppercase tracking-widest mb-1">Status</label>
+                  <select
+                    name="status"
+                    defaultValue={tenant.subscriptions && tenant.subscriptions.length > 0 ? tenant.subscriptions[0].status : 'ACTIVE'}
+                    className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white"
+                  >
+                    <option value="ACTIVE">ACTIVE</option>
+                    <option value="INACTIVE">INACTIVE</option>
+                  </select>
+                </div>
+                <button
+                  type="submit"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 px-4 rounded-lg transition-colors"
+                >
+                  Save Subscription
+                </button>
+              </form>
             </section>
 
             {/* Quick Stats */}
@@ -356,6 +461,7 @@ function StatusBadge({ status, trialEndsAt }: { status: string; trialEndsAt?: Da
 
   const config = {
     active: { bg: 'bg-green-500/10', text: 'text-green-400', icon: CheckCircle },
+    pending: { bg: 'bg-amber-500/10', text: 'text-amber-400', icon: Clock },
     suspended: { bg: 'bg-yellow-500/10', text: 'text-yellow-400', icon: Pause },
     terminated: { bg: 'bg-red-500/10', text: 'text-red-400', icon: XCircle },
     trial: { bg: 'bg-blue-500/10', text: 'text-blue-400', icon: Clock },

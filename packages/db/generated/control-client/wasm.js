@@ -435,7 +435,8 @@ exports.DeploymentTier = exports.$Enums.DeploymentTier = {
 exports.TenantStatus = exports.$Enums.TenantStatus = {
   active: 'active',
   suspended: 'suspended',
-  terminated: 'terminated'
+  terminated: 'terminated',
+  pending: 'pending'
 };
 
 exports.FacilityType = exports.$Enums.FacilityType = {

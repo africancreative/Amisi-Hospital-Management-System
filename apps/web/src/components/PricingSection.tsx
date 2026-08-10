@@ -126,7 +126,7 @@ export function PricingSection() {
             </div>
             
             <Link 
-              href={p.cta === 'Contact Sales' ? 'mailto:sales@amisigenuine.com' : '/request'}
+              href={p.cta === 'Contact Sales' ? 'mailto:sales@amisigenuine.com' : `/checkout?plan=${p.name.split(' ')[0].toUpperCase()}`}
               className={`w-full py-4 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all active:scale-95 mb-10 ${p.featured ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-xl shadow-blue-600/30' : 'bg-white/5 hover:bg-white/10 text-white border border-white/10'}`}
             >
               {p.cta} <ArrowRight className="h-4 w-4" />
@@ -256,7 +256,7 @@ export function PricingSection() {
       <section className="max-w-4xl mx-auto px-6 py-32 text-center">
          <h2 className="text-5xl font-black mb-8 uppercase italic">Ready to Digitize Your Hospital?</h2>
          <div className="flex flex-col sm:flex-row justify-center gap-6">
-            <Link href="/request" className="px-10 py-5 rounded-2xl bg-blue-600 text-white font-black text-xl shadow-2xl shadow-blue-600/40 hover:bg-blue-500 transition-all hover:scale-105">🚀 Start Free Trial</Link>
+            <Link href="/checkout?plan=PROFESSIONAL" className="px-10 py-5 rounded-2xl bg-blue-600 text-white font-black text-xl shadow-2xl shadow-blue-600/40 hover:bg-blue-500 transition-all hover:scale-105">🚀 Start Free Trial</Link>
             <button className="px-10 py-5 rounded-2xl bg-white/5 border border-white/10 text-white font-black text-xl hover:bg-white/10 transition-all">📞 Book a Demo</button>
          </div>
       </section>

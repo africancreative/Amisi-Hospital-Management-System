@@ -125,16 +125,22 @@ export default async function HospitalDetailPage(
                     <div className="flex gap-3">
                         <form action={async () => {
                             'use server';
-                            await updateTenantStatus(tenant.id, tenant.status === 'suspended' ? 'active' : 'suspended');
+                            await updateTenantStatus(tenant.id, tenant.status === 'pending' || tenant.status === 'suspended' ? 'active' : 'suspended');
                         }}>
                             <button
-                                className={`inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-black text-xs uppercase tracking-widest transition-all ${tenant.status === 'suspended'
-                                    ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20'
-                                    : 'bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300'
+                                className={`inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-black text-xs uppercase tracking-widest transition-all ${
+                                    tenant.status === 'pending' || tenant.status === 'suspended'
+                                        ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20'
+                                        : 'bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300'
                                     }`}
                             >
-                                {tenant.status === 'suspended' ? <Unlock className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
-                                {tenant.status === 'suspended' ? 'Reactivate' : 'Suspend'}
+                                {tenant.status === 'pending' ? (
+                                    <><CheckCircle2 className="h-4 w-4" /> Activate</>
+                                ) : tenant.status === 'suspended' ? (
+                                    <><Unlock className="h-4 w-4" /> Reactivate</>
+                                ) : (
+                                    <><Lock className="h-4 w-4" /> Suspend</>
+                                )}
                             </button>
                         </form>
                     </div>
@@ -243,10 +249,15 @@ function TierBadge({ tier }: { tier: string }) {
 }
 
 function StatusBadge({ status }: { status: string }) {
+    const isPending = status === 'pending';
     const isSuspended = status === 'suspended';
     return (
-        <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${isSuspended ? 'bg-orange-100 text-orange-700' : 'bg-emerald-100 text-emerald-700'}`}>
-            <div className={`h-1.5 w-1.5 rounded-full ${isSuspended ? 'bg-orange-500' : 'bg-emerald-500 animate-pulse'}`} />
+        <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
+            isSuspended ? 'bg-orange-100 text-orange-700' : isPending ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'
+        }`}>
+            <div className={`h-1.5 w-1.5 rounded-full ${
+                isSuspended ? 'bg-orange-500' : isPending ? 'bg-amber-500' : 'bg-emerald-500 animate-pulse'
+            }`} />
             {status}
         </span>
     );

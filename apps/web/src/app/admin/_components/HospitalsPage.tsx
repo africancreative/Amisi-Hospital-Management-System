@@ -11,7 +11,7 @@ import {
     Activity, 
     ShieldCheck, 
     AlertTriangle,
-    CreditCard,
+    Clock,
     Layers,
     ArrowUpRight,
     Power
@@ -63,8 +63,8 @@ export default function HospitalsDashboard() {
                 {[
                     { label: 'Total Hospitals', value: hospitals?.length || 0, icon: Building2, color: 'text-blue-400' },
                     { label: 'Active Nodes', value: (hospitals as any[])?.filter((h: any) => h.status === 'active').length || 0, icon: ShieldCheck, color: 'text-emerald-400' },
-                    { label: 'Suspended', value: (hospitals as any[])?.filter((h: any) => h.status === 'suspended').length || 0, icon: AlertTriangle, color: 'text-amber-400' },
-                    { label: 'Total Revenue', value: '$128.4k', icon: CreditCard, color: 'text-indigo-400' },
+                    { label: 'Pending Activation', value: (hospitals as any[])?.filter((h: any) => h.status === 'pending').length || 0, icon: Clock, color: 'text-amber-400' },
+                    { label: 'Suspended', value: (hospitals as any[])?.filter((h: any) => h.status === 'suspended').length || 0, icon: AlertTriangle, color: 'text-red-400' },
                 ].map((stat: any, i: any) => (
                     <div key={i} className="p-6 rounded-[2rem] bg-slate-900/40 border border-slate-800 backdrop-blur-sm group hover:border-slate-700 transition-all">
                         <div className="flex items-start justify-between mb-4">
@@ -160,6 +160,8 @@ export default function HospitalsDashboard() {
                                         <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
                                             hospital.status === 'active' 
                                                 ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' 
+                                                : hospital.status === 'pending'
+                                                ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
                                                 : 'bg-red-500/10 text-red-400 border border-red-500/20'
                                         }`}>
                                             {hospital.status}

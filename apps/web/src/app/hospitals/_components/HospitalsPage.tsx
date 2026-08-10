@@ -104,6 +104,11 @@ function StatusBadge({ status }: { status: string }) {
             text: 'text-emerald-800 dark:text-emerald-400',
             icon: Activity
         },
+        pending: {
+            bg: 'bg-amber-100 dark:bg-amber-900/30',
+            text: 'text-amber-800 dark:text-amber-400',
+            icon: AlertCircle
+        },
         suspended: {
             bg: 'bg-yellow-100 dark:bg-yellow-900/30',
             text: 'text-yellow-800 dark:text-yellow-400',

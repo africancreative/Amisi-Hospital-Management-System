@@ -1,8 +1,7 @@
 'use client';
 
 import React from 'react';
-import { CheckCircle2, ArrowRight, Building2, Globe } from 'lucide-react';
-import Link from 'next/link';
+import { CheckCircle2, Building2, Globe } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 
 export default function CheckoutSuccessPage() {
@@ -21,12 +20,12 @@ export default function CheckoutSuccessPage() {
         </div>
 
         <h1 className="text-4xl font-black italic uppercase tracking-tighter mb-4 leading-tight">
-          Your system<br />
-          <span className="text-emerald-500">Is Ready</span>
+          Your account<br />
+          <span className="text-emerald-500">Is Created</span>
         </h1>
         
         <p className="text-neutral-400 mb-8 leading-relaxed max-w-sm mx-auto">
-          Welcome to the AmisiMedOS network. Your hospital infrastructure has been provisioned. You will receive an email with your dedicated access credentials shortly.
+          Welcome to the AmisiMedOS network. Your hospital has been registered on the Amisi Cloud platform. Our team will activate your account shortly — you will receive an email with your access credentials once it goes live.
         </p>
 
         <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 mb-10 text-left">
@@ -45,15 +44,9 @@ export default function CheckoutSuccessPage() {
         </div>
 
         <div className="space-y-4">
-          <Link 
-            href={`https://amisimedos.amisigenuine.com/${slug}`}
-            className="w-full py-5 rounded-2xl bg-blue-600 text-white font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-blue-500 transition-all shadow-xl shadow-blue-600/20 active:scale-[0.98]"
-          >
-            Launch System Dashboard <ArrowRight className="h-4 w-4" />
-          </Link>
           <div className="flex items-center justify-center gap-2 text-xs text-neutral-500 font-bold uppercase tracking-widest mt-6">
              <Building2 className="h-4 w-4" />
-             Infrastructure Readiness: Active
+             Status: Pending Activation
           </div>
         </div>
 

@@ -284,6 +284,7 @@ function StatusBadge({ status }: { status: string }) {
   return (
     <span className={`text-xs px-2 py-1 rounded-full ${
       status === 'active' ? 'bg-green-900/30 text-green-400' :
+      status === 'pending' ? 'bg-amber-900/30 text-amber-400' :
       status === 'suspended' ? 'bg-red-900/30 text-red-400' :
       'bg-gray-800 text-gray-400'
     }`}>

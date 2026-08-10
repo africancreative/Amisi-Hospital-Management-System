@@ -22,10 +22,11 @@ export const publicRouter: any = router({
             adminName: z.string().min(2),
             adminEmail: z.string().email(),
             adminPassword: z.string().min(8),
-            // Payment info
-            paypalOrderId: z.string(),
-            amountPaid: z.number(),
-            isAnnual: z.boolean(),
+            // Payment info (optional for 14-day free trial)
+            paypalOrderId: z.string().optional().default('FREE_TRIAL'),
+            amountPaid: z.number().optional().default(0),
+            isAnnual: z.boolean().optional().default(false),
+            isTrial: z.boolean().optional().default(false),
         }))
         .mutation(async ({ input }: any) => {
             const db = getControlDb();
@@ -57,6 +58,13 @@ export const publicRouter: any = router({
             const tenant = await db.tenant.findUnique({ where: { slug: input.slug } });
             
             if (tenant) {
+                // Tenant is created in PENDING state - activation and subscription are
+                // controlled manually by the SaaS Admin (not auto-activated at signup).
+                await db.tenant.update({
+                    where: { id: tenant.id },
+                    data: { status: 'pending' }
+                });
+
                 // Attach Module Entitlements
                 await db.tenantModule.createMany({
                     data: modules.map(m => ({
@@ -80,18 +88,21 @@ export const publicRouter: any = router({
                     }
                 });
 
-                // 3. Log the Payment to SystemPayment table
+                // 3. Log the Payment or Trial Activation to SystemPayment table
+                const isFreeTrial = input.paypalOrderId === 'FREE_TRIAL' || input.amountPaid === 0 || input.isTrial;
                 const payment = await db.systemPayment.create({
                     data: {
                         tenantId: tenant.id,
-                        amount: input.amountPaid,
+                        amount: isFreeTrial ? 0 : input.amountPaid,
                         currency: 'USD',
-                        method: 'PAYPAL',
+                        method: isFreeTrial ? 'FREE_TRIAL' : 'PAYPAL',
                         status: 'COMPLETED',
-                        reference: input.paypalOrderId,
+                        reference: input.paypalOrderId || 'FREE_TRIAL_14_DAYS',
                         customerEmail: input.adminEmail,
                         customerName: input.adminName,
-                        description: `AmisiMedOS ${input.tier} (${input.isAnnual ? 'Yearly' : 'Monthly'})`,
+                        description: isFreeTrial 
+                            ? `AmisiMedOS 14-Day Free Trial - ${input.tier} (No Card Required)` 
+                            : `AmisiMedOS ${input.tier} (${input.isAnnual ? 'Yearly' : 'Monthly'})`,
                     }
                 });
 

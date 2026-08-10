@@ -130,7 +130,8 @@ export type DeploymentTier = (typeof DeploymentTier)[keyof typeof DeploymentTier
 export const TenantStatus: {
   active: 'active',
   suspended: 'suspended',
-  terminated: 'terminated'
+  terminated: 'terminated',
+  pending: 'pending'
 };
 
 export type TenantStatus = (typeof TenantStatus)[keyof typeof TenantStatus]

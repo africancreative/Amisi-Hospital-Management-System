@@ -353,20 +353,28 @@ export default function NewHospitalPage() {
                     </div>
 
                     <div className="flex flex-col gap-4">
+                        <button
+                            type="submit"
+                            className="w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-600 px-6 py-4 font-black text-white shadow-xl shadow-emerald-600/20 hover:bg-emerald-500 transition-all active:scale-95 text-lg"
+                        >
+                            <Shield className="h-5 w-5" />
+                            Provision Hospital with 14-Day Free Trial (No Card Required)
+                        </button>
+
                         {!showPayment ? (
                             <button
                                 type="button"
                                 onClick={() => setShowPayment(true)}
-                                className="flex-1 inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-500 px-6 py-4 font-black text-white shadow-xl shadow-emerald-500/20 hover:bg-emerald-600 transition-all active:scale-95"
+                                className="w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-white/5 border border-white/10 px-6 py-3 font-bold text-gray-400 hover:text-white hover:bg-white/10 transition-all text-sm"
                             >
-                                <Globe className="h-5 w-5" />
-                                Proceed to Payment & Provisioning
+                                <Globe className="h-4 w-4" />
+                                Or Settle Upfront Setup Fee via PayPal
                             </button>
                         ) : (
                             <div className="space-y-6 theme-dark bg-gray-900 p-8 rounded-3xl border border-gray-800 shadow-2xl">
                                 <div className="text-center space-y-2">
-                                    <h3 className="text-xl font-black text-white">Payment Required</h3>
-                                    <p className="text-sm text-gray-400">Please settle the setup fee for the <span className="text-emerald-500 font-bold">{tier}</span> tier.</p>
+                                    <h3 className="text-xl font-black text-white">Upfront Payment Option</h3>
+                                    <p className="text-sm text-gray-400">Optionally settle the setup fee for the <span className="text-emerald-500 font-bold">{tier}</span> tier via PayPal.</p>
                                 </div>
                                 
                                 <PayPalCheckoutButton 
@@ -382,7 +390,7 @@ export default function NewHospitalPage() {
                                         className="w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-500 px-6 py-4 font-black text-white shadow-xl shadow-emerald-500/20 hover:bg-emerald-600 animate-bounce"
                                     >
                                         <Save className="h-5 w-5" />
-                                        Complete Provisioning
+                                        Complete Paid Provisioning
                                     </button>
                                 )}
                             </div>

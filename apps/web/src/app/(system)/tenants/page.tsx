@@ -25,13 +25,13 @@ import {
   Pencil,
 } from 'lucide-react';
 import Link from 'next/link';
-import { getTenants } from '@/app/actions/core-actions';
+import { getTenants, activateTenant } from '@/app/actions/core-actions';
 
 interface Tenant {
   id: string;
   name: string;
   slug: string;
-  status: 'active' | 'suspended' | 'terminated';
+  status: 'active' | 'suspended' | 'terminated' | 'pending';
   tier: string;
   region: string;
   createdAt: Date;
@@ -73,18 +73,19 @@ export default function TenantsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchTenants() {
-      try {
-        const data = await getTenants();
-        setTenants(data);
-      } catch (error) {
-        console.error('Failed to fetch tenants:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
     fetchTenants();
   }, []);
+
+  async function fetchTenants() {
+    try {
+      const data = await getTenants();
+      setTenants(data);
+    } catch (error) {
+      console.error('Failed to fetch tenants:', error);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   const filteredTenants = tenants.filter(t => {
     const matchesSearch = t.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -121,13 +122,24 @@ export default function TenantsPage() {
       </div>
 
       {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
           <div className="flex items-center gap-3">
             <Building2 className="w-5 h-5 text-blue-400" />
             <div>
               <p className="text-gray-500 text-xs">Total Tenants</p>
               <p className="text-gray-100 text-xl font-semibold">{tenants.length}</p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
+          <div className="flex items-center gap-3">
+            <Clock className="w-5 h-5 text-amber-400" />
+            <div>
+              <p className="text-gray-500 text-xs">Pending</p>
+              <p className="text-gray-100 text-xl font-semibold">
+                {tenants.filter(t => t.status === 'pending').length}
+              </p>
             </div>
           </div>
         </div>
@@ -185,6 +197,7 @@ export default function TenantsPage() {
         >
           <option value="all">All Status</option>
           <option value="active">Active</option>
+          <option value="pending">Pending</option>
           <option value="suspended">Suspended</option>
           <option value="trial">Trial</option>
           <option value="terminated">Terminated</option>
@@ -306,6 +319,17 @@ export default function TenantsPage() {
                            >
                              <Pause className="w-4 h-4" />
                            </button>
+                         ) : tenant.status === 'pending' ? (
+                           <button
+                             onClick={async () => {
+                               await activateTenant(tenant.id);
+                               fetchTenants();
+                             }}
+                             className="p-1.5 text-gray-500 hover:text-green-400 hover:bg-gray-800 rounded transition-colors"
+                             title="Activate"
+                           >
+                             <Play className="w-4 h-4" />
+                           </button>
                          ) : tenant.status === 'suspended' ? (
                            <button className="p-1.5 text-gray-500 hover:text-green-400 hover:bg-gray-800 rounded transition-colors" title="Activate">
                              <Play className="w-4 h-4" />
@@ -347,6 +371,7 @@ function StatusBadge({ status, trialEndsAt }: { status: string; trialEndsAt?: Da
 
   const config = {
     active: { bg: 'bg-green-900/30', text: 'text-green-400', icon: CheckCircle },
+    pending: { bg: 'bg-amber-900/30', text: 'text-amber-400', icon: Clock },
     suspended: { bg: 'bg-yellow-900/30', text: 'text-yellow-400', icon: Pause },
     terminated: { bg: 'bg-red-900/30', text: 'text-red-400', icon: XCircle },
     trial: { bg: 'bg-blue-900/30', text: 'text-blue-400', icon: Clock },

@@ -28,7 +28,11 @@ export default function SetupWizard() {
                 throw new Error(data.error || 'Failed to validate hospital');
             }
             const data = await res.json();
-            if (data.status !== 'active') throw new Error('Hospital is suspended.');
+            if (data.status !== 'active') {
+                throw new Error(data.status === 'pending'
+                    ? 'Your account is awaiting activation by the platform administrator. Please contact support.'
+                    : 'Hospital is suspended.');
+            }
             setHospitalName(data.name);
             setStep(2);
         } catch (err: any) {

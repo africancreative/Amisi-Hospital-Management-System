@@ -90,22 +90,33 @@ export default function CheckoutPage() {
           router.push(`/checkout/success?slug=${data.tenant?.slug || formData.slug}`);
       },
       onError: (err: any) => {
-          alert(`Provisioning failed: ${err.message}`);
+          const msg = err?.data?.message || err?.message || 'Unknown error';
+          alert(`Provisioning failed: ${msg}`);
           setIsProcessing(false);
       }
   });
 
   useEffect(() => {
-    getPayPalClientId().then(setClientId);
+    getPayPalClientId().then(id => setClientId(id || 'test')).catch(() => setClientId('test'));
   }, []);
 
-  if (!clientId) {
-    return (
-      <div className="min-h-screen bg-[#07070a] flex items-center justify-center">
-        <Loader2 className="h-8 w-8 text-blue-500 animate-spin" />
-      </div>
-    );
-  }
+  const handleStartFreeTrial = () => {
+    setIsProcessing(true);
+    onboard.mutate({
+      name: formData.name,
+      slug: formData.slug,
+      region: formData.country || 'AFRICA',
+      tier: plan.tier,
+      facilityType: formData.facilityType,
+      adminName: formData.adminName,
+      adminEmail: formData.adminEmail,
+      adminPassword: formData.adminPassword,
+      paypalOrderId: 'FREE_TRIAL',
+      amountPaid: 0,
+      isAnnual: false,
+      isTrial: true
+    });
+  };
 
   const handleNext = () => setStep(s => s + 1);
   const handlePrev = () => setStep(s => s - 1);
@@ -407,6 +418,38 @@ export default function CheckoutPage() {
                     </div>
                 )}
 
+                {/* Free Trial Activation Box */}
+                <div className="bg-gradient-to-br from-emerald-950/40 via-slate-900/60 to-slate-950 border border-emerald-500/30 rounded-3xl p-8 mb-8 relative z-10 space-y-6 shadow-2xl shadow-emerald-500/5">
+                    <div className="flex items-center justify-between">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/10 border border-emerald-500/30 rounded-full text-emerald-400 text-[10px] font-black uppercase tracking-widest">
+                            <CheckCircle2 size={14} />
+                            No Credit Card or PayPal Required
+                        </div>
+                        <span className="text-xs font-bold text-emerald-400">14-Day Trial</span>
+                    </div>
+
+                    <div>
+                        <h4 className="text-2xl font-black text-white italic uppercase tracking-tight">Start Your Free Trial</h4>
+                        <p className="text-xs text-neutral-400 mt-1">Register your hospital now with no payment. The Amisi Cloud team will approve your 14-day trial and set up your subscription. Or pay immediately below to skip the queue.</p>
+                    </div>
+
+                    <button
+                        onClick={handleStartFreeTrial}
+                        disabled={isProcessing}
+                        className="w-full group flex items-center justify-center gap-3 px-8 py-5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-2xl font-black text-lg transition-all shadow-xl shadow-emerald-600/30 active:scale-95 disabled:opacity-50"
+                    >
+                        <ShieldCheck size={22} />
+                        Start Free Trial - No Payment
+                        <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                    </button>
+                </div>
+
+                <div className="flex items-center gap-4 my-6 relative z-10">
+                    <div className="flex-1 h-px bg-white/10" />
+                    <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">Or Pay Immediately</span>
+                    <div className="flex-1 h-px bg-white/10" />
+                </div>
+
                 <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 mb-8 relative z-10 flex justify-between items-center">
                     <div>
                         <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-widest mb-1">Total Due Today</p>
@@ -420,51 +463,57 @@ export default function CheckoutPage() {
 
                 {/* PayPal Integration */}
                 <div className="space-y-6 relative z-10">
-                    <PayPalScriptProvider options={{ clientId, currency: "USD" }}>
-                        <PayPalButtons 
-                        style={{ layout: "vertical", shape: "pill", label: "pay" }}
-                        disabled={isProcessing}
-                        createOrder={(data, actions) => {
-                            return actions.order.create({
-                            intent: 'CAPTURE',
-                            purchase_units: [{
-                                amount: {
-                                currency_code: "USD",
-                                value: price.toString(),
-                                },
-                                description: `AmisiMedOS ${plan.name} (${formData.isAnnual ? 'Yearly' : 'Monthly'})`
-                            }],
-                            });
-                        }}
-                        onApprove={async (data, actions) => {
-                            setIsProcessing(true);
-                            try {
-                                const details = await actions.order?.capture();
-                                if (details?.status === 'COMPLETED') {
-                                    // Payment successful! Now provision the hospital.
-                                    onboard.mutate({
-                                        name: formData.name,
-                                        slug: formData.slug,
-                                        region: formData.country || 'AFRICA',
-                                        tier: plan.tier,
-                                        facilityType: formData.facilityType,
-                                        adminName: formData.adminName,
-                                        adminEmail: formData.adminEmail,
-                                        adminPassword: formData.adminPassword,
-                                        paypalOrderId: details.id,
-                                        amountPaid: price,
-                                        isAnnual: formData.isAnnual
-                                    });
-                                } else {
+                    {clientId && clientId !== 'test' ? (
+                        <PayPalScriptProvider options={{ clientId, currency: "USD" }}>
+                            <PayPalButtons 
+                            style={{ layout: "vertical", shape: "pill", label: "pay" }}
+                            disabled={isProcessing}
+                            createOrder={(data, actions) => {
+                                return actions.order.create({
+                                intent: 'CAPTURE',
+                                purchase_units: [{
+                                    amount: {
+                                    currency_code: "USD",
+                                    value: price.toString(),
+                                    },
+                                    description: `AmisiMedOS ${plan.name} (${formData.isAnnual ? 'Yearly' : 'Monthly'})`
+                                }],
+                                });
+                            }}
+                            onApprove={async (data, actions) => {
+                                setIsProcessing(true);
+                                try {
+                                    const details = await actions.order?.capture();
+                                    if (details?.status === 'COMPLETED') {
+                                        // Payment successful! Now provision the hospital.
+                                        onboard.mutate({
+                                            name: formData.name,
+                                            slug: formData.slug,
+                                            region: formData.country || 'AFRICA',
+                                            tier: plan.tier,
+                                            facilityType: formData.facilityType,
+                                            adminName: formData.adminName,
+                                            adminEmail: formData.adminEmail,
+                                            adminPassword: formData.adminPassword,
+                                            paypalOrderId: details.id,
+                                            amountPaid: price,
+                                            isAnnual: formData.isAnnual
+                                        });
+                                    } else {
+                                        setIsProcessing(false);
+                                    }
+                                } catch (error) {
+                                    console.error('Payment/Provisioning failed', error);
                                     setIsProcessing(false);
                                 }
-                            } catch (error) {
-                                console.error('Payment/Provisioning failed', error);
-                                setIsProcessing(false);
-                            }
-                        }}
-                        />
-                    </PayPalScriptProvider>
+                            }}
+                            />
+                        </PayPalScriptProvider>
+                    ) : (
+                        <div className="text-center p-4 bg-slate-900/40 rounded-xl border border-slate-800">
+                            <p className="text-xs text-neutral-400">PayPal integration is in sandbox/testing mode. Use the <strong>Start 14-Day Free Trial</strong> button above to activate immediately.</p>
+                        </div>
+                    )}
 
                     <div className="flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-600 mt-8">
                         <Lock className="h-3 w-3" />
