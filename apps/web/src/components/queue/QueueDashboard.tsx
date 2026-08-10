@@ -141,7 +141,7 @@ export default function QueueDashboard() {
                                         <div className="flex items-center justify-between mt-2 pt-4 border-t border-white/5">
                                             <div className="flex items-center gap-2 text-gray-500 text-[10px] font-bold">
                                                 <Clock className="h-3 w-3" />
-                                                WAITING: {Math.floor((Date.now() - new Date(item.createdAt).getTime()) / 60000)} MINS
+                                                WAITING: <span suppressHydrationWarning>{Math.floor((Date.now() - new Date(item.createdAt).getTime()) / 60000)}</span> MINS
                                             </div>
                                             
                                             <div className="flex gap-2">

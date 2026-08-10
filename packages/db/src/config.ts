@@ -15,7 +15,10 @@ function loadEnv() {
         const candidates = [
             path.join(process.cwd(), '.env.local'),
             path.join(process.cwd(), '.env'),
+            path.join(process.cwd(), 'apps/web/.env.local'), // monorepo root → apps/web
+            path.join(process.cwd(), 'apps/web/.env'),
             path.join(process.cwd(), '../../.env'), // Root from apps/x
+            path.join(process.cwd(), '../../.env.local'), // apps/web from within monorepo
             path.join(process.cwd(), '../../../.env'), // Root from apps/x/y
             path.join(__dirname, '../.env'), // Relative to this package's dist or src
             path.join(__dirname, '../../.env'), // Relative to root from this package

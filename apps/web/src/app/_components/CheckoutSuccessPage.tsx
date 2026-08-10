@@ -25,28 +25,34 @@ export default function CheckoutSuccessPage() {
         </h1>
         
         <p className="text-neutral-400 mb-8 leading-relaxed max-w-sm mx-auto">
-          Welcome to the AmisiMedOS network. Your hospital has been registered on the Amisi Cloud platform. Our team will activate your account shortly — you will receive an email with your access credentials once it goes live.
+          Welcome to the AmisiMedOS network! Your hospital infrastructure has been automatically provisioned and activated. You can log in to your dedicated portal immediately using your administrator credentials.
         </p>
 
         <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 mb-10 text-left">
             <p className="text-[10px] font-black uppercase tracking-widest text-emerald-500 mb-2">Your Dedicated Portal</p>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 mb-4">
                 <Globe className="text-slate-500 shrink-0" size={20} />
                 <a 
-                    href={`https://amisimedos.amisigenuine.com/${slug}`} 
+                    href={`/${slug}`} 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="text-lg font-mono font-bold text-blue-400 hover:text-blue-300 transition-colors break-all"
                 >
-                    amisimedos.amisigenuine.com/{slug}
+                    /{slug}
                 </a>
             </div>
+            <a
+              href={`/${slug}`}
+              className="w-full inline-flex items-center justify-center gap-2 py-3 px-6 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl text-sm transition-all shadow-lg shadow-emerald-600/20"
+            >
+              🚀 Launch Hospital Portal Now
+            </a>
         </div>
 
         <div className="space-y-4">
-          <div className="flex items-center justify-center gap-2 text-xs text-neutral-500 font-bold uppercase tracking-widest mt-6">
+          <div className="flex items-center justify-center gap-2 text-xs text-emerald-400 font-bold uppercase tracking-widest mt-6">
              <Building2 className="h-4 w-4" />
-             Status: Pending Activation
+             Status: Active & Provisioned 🚀
           </div>
         </div>
 

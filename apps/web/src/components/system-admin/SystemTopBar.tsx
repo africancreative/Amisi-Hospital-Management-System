@@ -27,21 +27,21 @@ export default function SystemTopBar({ userName, userRole, stats }: SystemTopBar
       id: '1',
       type: 'critical',
       message: 'Tenant "City Hospital" database connection failed',
-      timestamp: new Date(),
+      timestamp: new Date(0),
       link: '/system/tenants/city-hospital',
     },
     {
       id: '2',
       type: 'warning',
       message: '3 tenants approaching storage quota limit',
-      timestamp: new Date(Date.now() - 3600000),
+      timestamp: new Date(0),
       link: '/system/billing/quotas',
     },
     {
       id: '3',
       type: 'info',
       message: 'System update scheduled for tonight at 2AM UTC',
-      timestamp: new Date(Date.now() - 7200000),
+      timestamp: new Date(0),
     },
   ]);
 

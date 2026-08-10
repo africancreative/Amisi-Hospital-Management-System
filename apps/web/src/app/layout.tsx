@@ -84,8 +84,8 @@ export default async function RootLayout({
         // 3. License Check (Skip for System Admins)
         if (!isSystemAdmin && license && license.isBlocked) {
           return (
-            <html lang="en" className="dark">
-              <body>
+            <html lang="en" className="dark" suppressHydrationWarning>
+              <body suppressHydrationWarning>
                 <TenantLockout reason={license.isSuspended ? 'SUSPENDED' : 'DEMO_EXPIRED'} />
               </body>
             </html>
@@ -138,8 +138,8 @@ export default async function RootLayout({
     console.error('[RootLayout Critical Failure]:', error);
     // Ultimate Fallback - High Reliability Shell
     return (
-      <html lang="en" className="dark">
-        <body className="font-sans bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 flex min-h-screen">
+      <html lang="en" className="dark" suppressHydrationWarning>
+        <body className="font-sans bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 flex min-h-screen" suppressHydrationWarning>
           <TrpcProvider>
             <main className="flex-1 flex flex-col h-screen overflow-hidden">
               {children}

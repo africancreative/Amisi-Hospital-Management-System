@@ -293,10 +293,11 @@ export const systemRouter: any = router({
                     }),
                 });
 
-                // Update tenant with facility type and module config
+                // Auto-activate tenant upon provisioning
                 await db.tenant.update({
                     where: { id: tenant.id },
                     data: {
+                        status: 'active',
                         facilityType: input.facilityType,
                         moduleConfig: moduleConfig as any,
                         workflowCustomization: {
@@ -306,6 +307,26 @@ export const systemRouter: any = router({
                         }
                     }
                 });
+
+                // Attach Subscription
+                try {
+                    const plan = await db.plan.findFirst({
+                        where: { OR: [{ code: input.tier }, { name: { contains: input.tier, mode: 'insensitive' } }] }
+                    });
+                    if (plan) {
+                        await db.subscription.create({
+                            data: {
+                                tenantId: tenant.id,
+                                planId: plan.id,
+                                status: 'ACTIVE',
+                                startDate: new Date(),
+                                autoRenew: true
+                            }
+                        });
+                    }
+                } catch (subErr) {
+                    console.warn('[AutoProvision] Subscription auto-attach warning:', subErr);
+                }
             }
 
             revalidatePath('/admin/hospitals');

@@ -165,6 +165,8 @@ export async function createTenant(formData: FormData): Promise<any> {
 
     await provisionTenant(name, slug, region, dbUrl, 'CLINIC', {}, {}, { name: formData.get('adminName') as string, email: adminEmail, passwordHash });
     revalidatePath('/hospitals');
+    revalidatePath('/system/hospitals');
+    revalidatePath('/system/tenants');
 }
 
 export async function createTenantWithModules(data: any): Promise<any> {
@@ -175,7 +177,9 @@ export async function createTenantWithModules(data: any): Promise<any> {
         data: { name: data.name, slug: data.slug, dbUrl, encryptionKeyReference: data.slug, region: data.region, tier: data.tier, status: 'active', enabledModules: {} }
     });
     await provisionTenant({ tenantId: hospital.id, slug: data.slug, dbUrl, tier: data.tier });
+    revalidatePath('/hospitals');
     revalidatePath('/system/hospitals');
+    revalidatePath('/system/tenants');
 }
 
 export async function updateTenantStatus(id: string, status: 'active' | 'suspended' | 'terminated' | 'pending'): Promise<any> {

@@ -60,9 +60,10 @@ export default function OnDutyPage() {
   const [selectedMeds, setSelectedMeds] = useState<string[]>([]);
   const [selectedLabs, setSelectedLabs] = useState<string[]>([]);
   const [alerts, setAlerts] = useState<Alert[]>([]);
-  const [currentTime, setCurrentTime] = useState(new Date());
+  const [currentTime, setCurrentTime] = useState<Date | null>(null);
 
   useEffect(() => {
+    setCurrentTime(new Date());
     fetch('/api/clinician/onduty')
       .then(res => res.json())
       .then((d: ApiData) => {
@@ -122,7 +123,7 @@ export default function OnDutyPage() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <h1 style={{ fontSize: '16px', fontWeight: 700, color: '#dc2626', margin: 0 }}>⚡ ON-DUTY MODE</h1>
           <span style={{ fontSize: '14px', color: '#475569' }}>
-            {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            {currentTime ? currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '--:--'}
           </span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>

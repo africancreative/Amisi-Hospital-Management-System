@@ -58,11 +58,23 @@ export const publicRouter: any = router({
             const tenant = await db.tenant.findUnique({ where: { slug: input.slug } });
             
             if (tenant) {
-                // Tenant is created in PENDING state - activation and subscription are
-                // controlled manually by the SaaS Admin (not auto-activated at signup).
+                const isFreeTrial = input.paypalOrderId === 'FREE_TRIAL' || input.amountPaid === 0 || input.isTrial;
+                const trialEndsAt = isFreeTrial ? new Date(Date.now() + 14 * 24 * 60 * 60 * 1000) : null;
+
+                // Auto-activate tenant immediately upon automatic onboarding & provisioning
                 await db.tenant.update({
                     where: { id: tenant.id },
-                    data: { status: 'pending' }
+                    data: { 
+                        status: 'active',
+                        trialEndsAt,
+                        facilityType: input.facilityType,
+                        moduleConfig: moduleConfig as any,
+                        workflowCustomization: {
+                            queue_logic: { triage_levels: ['Critical', 'Urgent', 'Routine'] },
+                            billing_rules: { currency: 'USD', tax_rate: 0 },
+                            staff_roles: {}
+                        }
+                    }
                 });
 
                 // Attach Module Entitlements
@@ -74,22 +86,28 @@ export const publicRouter: any = router({
                     }))
                 });
 
-                // Update configuration
-                await db.tenant.update({
-                    where: { id: tenant.id },
-                    data: {
-                        facilityType: input.facilityType,
-                        moduleConfig: moduleConfig as any,
-                        workflowCustomization: {
-                            queue_logic: { triage_levels: ['Critical', 'Urgent', 'Routine'] },
-                            billing_rules: { currency: 'USD', tax_rate: 0 },
-                            staff_roles: {}
-                        }
+                // Auto-create Subscription record if matching plan exists
+                try {
+                    const plan = await db.plan.findFirst({
+                        where: { OR: [{ code: input.tier }, { name: { contains: input.tier, mode: 'insensitive' } }] }
+                    });
+                    if (plan) {
+                        await db.subscription.create({
+                            data: {
+                                tenantId: tenant.id,
+                                planId: plan.id,
+                                status: 'ACTIVE',
+                                startDate: new Date(),
+                                endDate: trialEndsAt,
+                                autoRenew: !isFreeTrial
+                            }
+                        });
                     }
-                });
+                } catch (subErr) {
+                    console.warn('[AutoProvision] Subscription auto-attach warning:', subErr);
+                }
 
                 // 3. Log the Payment or Trial Activation to SystemPayment table
-                const isFreeTrial = input.paypalOrderId === 'FREE_TRIAL' || input.amountPaid === 0 || input.isTrial;
                 const payment = await db.systemPayment.create({
                     data: {
                         tenantId: tenant.id,
