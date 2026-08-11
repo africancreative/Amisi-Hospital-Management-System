@@ -370,6 +370,19 @@ model SystemUser {
   @@map("system_users")
 }
 
+model AutomationRule {
+  id          String    @id @default(uuid())
+  name        String
+  description String?
+  trigger     String    // e.g., 'Lead Created', 'Task (Demo) Completed', 'No Contact > 14 Days'
+  action      String    // e.g., 'Send Intro Email', 'Send Proposal', 'Create Call Task'
+  enabled     Boolean   @default(true)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@map("automation_rules")
+}
+
 model Lead {
   id                  String        @id @default(uuid())
   hospitalName        String        @map("hospital_name")

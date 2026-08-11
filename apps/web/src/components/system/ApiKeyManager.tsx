@@ -214,7 +214,7 @@ export function ApiKeyManager({ tenants, allKeys: initialKeys }: ApiKeyManagerPr
                                         <p className="font-mono text-xs text-neutral-500 truncate">
                                             {isVisible ? k.key : maskKey(k.key)}
                                         </p>
-                                        <p className="text-[9px] text-neutral-700 font-bold uppercase tracking-widest mt-1">
+                                        <p className="text-[9px] text-neutral-700 font-bold uppercase tracking-widest mt-1" suppressHydrationWarning>
                                             Created {new Date(k.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
                                         </p>
                                     </div>

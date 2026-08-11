@@ -94,6 +94,11 @@ export type TenantFeatureFlag = $Result.DefaultSelection<Prisma.$TenantFeatureFl
  */
 export type SystemUser = $Result.DefaultSelection<Prisma.$SystemUserPayload>
 /**
+ * Model AutomationRule
+ * 
+ */
+export type AutomationRule = $Result.DefaultSelection<Prisma.$AutomationRulePayload>
+/**
  * Model Lead
  * 
  */
@@ -526,6 +531,16 @@ export class PrismaClient<
     * ```
     */
   get systemUser(): Prisma.SystemUserDelegate<ExtArgs>;
+
+  /**
+   * `prisma.automationRule`: Exposes CRUD operations for the **AutomationRule** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more AutomationRules
+    * const automationRules = await prisma.automationRule.findMany()
+    * ```
+    */
+  get automationRule(): Prisma.AutomationRuleDelegate<ExtArgs>;
 
   /**
    * `prisma.lead`: Exposes CRUD operations for the **Lead** model.
@@ -1013,6 +1028,7 @@ export namespace Prisma {
     TenantConfigAuditLog: 'TenantConfigAuditLog',
     TenantFeatureFlag: 'TenantFeatureFlag',
     SystemUser: 'SystemUser',
+    AutomationRule: 'AutomationRule',
     Lead: 'Lead',
     CommunicationLog: 'CommunicationLog',
     Task: 'Task'
@@ -1031,7 +1047,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "tenant" | "module" | "tenantModule" | "systemAdmin" | "globalSettings" | "systemPayment" | "plan" | "subscription" | "patientIndex" | "tenantUsage" | "syncNode" | "featureFlag" | "featureFlagOverride" | "tenantConfigAuditLog" | "tenantFeatureFlag" | "systemUser" | "lead" | "communicationLog" | "task"
+      modelProps: "tenant" | "module" | "tenantModule" | "systemAdmin" | "globalSettings" | "systemPayment" | "plan" | "subscription" | "patientIndex" | "tenantUsage" | "syncNode" | "featureFlag" | "featureFlagOverride" | "tenantConfigAuditLog" | "tenantFeatureFlag" | "systemUser" | "automationRule" | "lead" | "communicationLog" | "task"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2152,6 +2168,76 @@ export namespace Prisma {
           count: {
             args: Prisma.SystemUserCountArgs<ExtArgs>
             result: $Utils.Optional<SystemUserCountAggregateOutputType> | number
+          }
+        }
+      }
+      AutomationRule: {
+        payload: Prisma.$AutomationRulePayload<ExtArgs>
+        fields: Prisma.AutomationRuleFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AutomationRuleFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AutomationRulePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AutomationRuleFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AutomationRulePayload>
+          }
+          findFirst: {
+            args: Prisma.AutomationRuleFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AutomationRulePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AutomationRuleFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AutomationRulePayload>
+          }
+          findMany: {
+            args: Prisma.AutomationRuleFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AutomationRulePayload>[]
+          }
+          create: {
+            args: Prisma.AutomationRuleCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AutomationRulePayload>
+          }
+          createMany: {
+            args: Prisma.AutomationRuleCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AutomationRuleCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AutomationRulePayload>[]
+          }
+          delete: {
+            args: Prisma.AutomationRuleDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AutomationRulePayload>
+          }
+          update: {
+            args: Prisma.AutomationRuleUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AutomationRulePayload>
+          }
+          deleteMany: {
+            args: Prisma.AutomationRuleDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AutomationRuleUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.AutomationRuleUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AutomationRulePayload>
+          }
+          aggregate: {
+            args: Prisma.AutomationRuleAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAutomationRule>
+          }
+          groupBy: {
+            args: Prisma.AutomationRuleGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AutomationRuleGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AutomationRuleCountArgs<ExtArgs>
+            result: $Utils.Optional<AutomationRuleCountAggregateOutputType> | number
           }
         }
       }
@@ -19262,6 +19348,920 @@ export namespace Prisma {
 
 
   /**
+   * Model AutomationRule
+   */
+
+  export type AggregateAutomationRule = {
+    _count: AutomationRuleCountAggregateOutputType | null
+    _min: AutomationRuleMinAggregateOutputType | null
+    _max: AutomationRuleMaxAggregateOutputType | null
+  }
+
+  export type AutomationRuleMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    description: string | null
+    trigger: string | null
+    action: string | null
+    enabled: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type AutomationRuleMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    description: string | null
+    trigger: string | null
+    action: string | null
+    enabled: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type AutomationRuleCountAggregateOutputType = {
+    id: number
+    name: number
+    description: number
+    trigger: number
+    action: number
+    enabled: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type AutomationRuleMinAggregateInputType = {
+    id?: true
+    name?: true
+    description?: true
+    trigger?: true
+    action?: true
+    enabled?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type AutomationRuleMaxAggregateInputType = {
+    id?: true
+    name?: true
+    description?: true
+    trigger?: true
+    action?: true
+    enabled?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type AutomationRuleCountAggregateInputType = {
+    id?: true
+    name?: true
+    description?: true
+    trigger?: true
+    action?: true
+    enabled?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type AutomationRuleAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AutomationRule to aggregate.
+     */
+    where?: AutomationRuleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AutomationRules to fetch.
+     */
+    orderBy?: AutomationRuleOrderByWithRelationInput | AutomationRuleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AutomationRuleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AutomationRules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AutomationRules.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned AutomationRules
+    **/
+    _count?: true | AutomationRuleCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AutomationRuleMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AutomationRuleMaxAggregateInputType
+  }
+
+  export type GetAutomationRuleAggregateType<T extends AutomationRuleAggregateArgs> = {
+        [P in keyof T & keyof AggregateAutomationRule]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAutomationRule[P]>
+      : GetScalarType<T[P], AggregateAutomationRule[P]>
+  }
+
+
+
+
+  export type AutomationRuleGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AutomationRuleWhereInput
+    orderBy?: AutomationRuleOrderByWithAggregationInput | AutomationRuleOrderByWithAggregationInput[]
+    by: AutomationRuleScalarFieldEnum[] | AutomationRuleScalarFieldEnum
+    having?: AutomationRuleScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AutomationRuleCountAggregateInputType | true
+    _min?: AutomationRuleMinAggregateInputType
+    _max?: AutomationRuleMaxAggregateInputType
+  }
+
+  export type AutomationRuleGroupByOutputType = {
+    id: string
+    name: string
+    description: string | null
+    trigger: string
+    action: string
+    enabled: boolean
+    createdAt: Date
+    updatedAt: Date
+    _count: AutomationRuleCountAggregateOutputType | null
+    _min: AutomationRuleMinAggregateOutputType | null
+    _max: AutomationRuleMaxAggregateOutputType | null
+  }
+
+  type GetAutomationRuleGroupByPayload<T extends AutomationRuleGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AutomationRuleGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AutomationRuleGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AutomationRuleGroupByOutputType[P]>
+            : GetScalarType<T[P], AutomationRuleGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AutomationRuleSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    trigger?: boolean
+    action?: boolean
+    enabled?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["automationRule"]>
+
+  export type AutomationRuleSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    trigger?: boolean
+    action?: boolean
+    enabled?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["automationRule"]>
+
+  export type AutomationRuleSelectScalar = {
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    trigger?: boolean
+    action?: boolean
+    enabled?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+
+  export type $AutomationRulePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "AutomationRule"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      description: string | null
+      trigger: string
+      action: string
+      enabled: boolean
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["automationRule"]>
+    composites: {}
+  }
+
+  type AutomationRuleGetPayload<S extends boolean | null | undefined | AutomationRuleDefaultArgs> = $Result.GetResult<Prisma.$AutomationRulePayload, S>
+
+  type AutomationRuleCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<AutomationRuleFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: AutomationRuleCountAggregateInputType | true
+    }
+
+  export interface AutomationRuleDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['AutomationRule'], meta: { name: 'AutomationRule' } }
+    /**
+     * Find zero or one AutomationRule that matches the filter.
+     * @param {AutomationRuleFindUniqueArgs} args - Arguments to find a AutomationRule
+     * @example
+     * // Get one AutomationRule
+     * const automationRule = await prisma.automationRule.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AutomationRuleFindUniqueArgs>(args: SelectSubset<T, AutomationRuleFindUniqueArgs<ExtArgs>>): Prisma__AutomationRuleClient<$Result.GetResult<Prisma.$AutomationRulePayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one AutomationRule that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {AutomationRuleFindUniqueOrThrowArgs} args - Arguments to find a AutomationRule
+     * @example
+     * // Get one AutomationRule
+     * const automationRule = await prisma.automationRule.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AutomationRuleFindUniqueOrThrowArgs>(args: SelectSubset<T, AutomationRuleFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AutomationRuleClient<$Result.GetResult<Prisma.$AutomationRulePayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first AutomationRule that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AutomationRuleFindFirstArgs} args - Arguments to find a AutomationRule
+     * @example
+     * // Get one AutomationRule
+     * const automationRule = await prisma.automationRule.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AutomationRuleFindFirstArgs>(args?: SelectSubset<T, AutomationRuleFindFirstArgs<ExtArgs>>): Prisma__AutomationRuleClient<$Result.GetResult<Prisma.$AutomationRulePayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first AutomationRule that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AutomationRuleFindFirstOrThrowArgs} args - Arguments to find a AutomationRule
+     * @example
+     * // Get one AutomationRule
+     * const automationRule = await prisma.automationRule.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AutomationRuleFindFirstOrThrowArgs>(args?: SelectSubset<T, AutomationRuleFindFirstOrThrowArgs<ExtArgs>>): Prisma__AutomationRuleClient<$Result.GetResult<Prisma.$AutomationRulePayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more AutomationRules that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AutomationRuleFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all AutomationRules
+     * const automationRules = await prisma.automationRule.findMany()
+     * 
+     * // Get first 10 AutomationRules
+     * const automationRules = await prisma.automationRule.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const automationRuleWithIdOnly = await prisma.automationRule.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends AutomationRuleFindManyArgs>(args?: SelectSubset<T, AutomationRuleFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AutomationRulePayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a AutomationRule.
+     * @param {AutomationRuleCreateArgs} args - Arguments to create a AutomationRule.
+     * @example
+     * // Create one AutomationRule
+     * const AutomationRule = await prisma.automationRule.create({
+     *   data: {
+     *     // ... data to create a AutomationRule
+     *   }
+     * })
+     * 
+     */
+    create<T extends AutomationRuleCreateArgs>(args: SelectSubset<T, AutomationRuleCreateArgs<ExtArgs>>): Prisma__AutomationRuleClient<$Result.GetResult<Prisma.$AutomationRulePayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many AutomationRules.
+     * @param {AutomationRuleCreateManyArgs} args - Arguments to create many AutomationRules.
+     * @example
+     * // Create many AutomationRules
+     * const automationRule = await prisma.automationRule.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AutomationRuleCreateManyArgs>(args?: SelectSubset<T, AutomationRuleCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many AutomationRules and returns the data saved in the database.
+     * @param {AutomationRuleCreateManyAndReturnArgs} args - Arguments to create many AutomationRules.
+     * @example
+     * // Create many AutomationRules
+     * const automationRule = await prisma.automationRule.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many AutomationRules and only return the `id`
+     * const automationRuleWithIdOnly = await prisma.automationRule.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AutomationRuleCreateManyAndReturnArgs>(args?: SelectSubset<T, AutomationRuleCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AutomationRulePayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a AutomationRule.
+     * @param {AutomationRuleDeleteArgs} args - Arguments to delete one AutomationRule.
+     * @example
+     * // Delete one AutomationRule
+     * const AutomationRule = await prisma.automationRule.delete({
+     *   where: {
+     *     // ... filter to delete one AutomationRule
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AutomationRuleDeleteArgs>(args: SelectSubset<T, AutomationRuleDeleteArgs<ExtArgs>>): Prisma__AutomationRuleClient<$Result.GetResult<Prisma.$AutomationRulePayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one AutomationRule.
+     * @param {AutomationRuleUpdateArgs} args - Arguments to update one AutomationRule.
+     * @example
+     * // Update one AutomationRule
+     * const automationRule = await prisma.automationRule.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AutomationRuleUpdateArgs>(args: SelectSubset<T, AutomationRuleUpdateArgs<ExtArgs>>): Prisma__AutomationRuleClient<$Result.GetResult<Prisma.$AutomationRulePayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more AutomationRules.
+     * @param {AutomationRuleDeleteManyArgs} args - Arguments to filter AutomationRules to delete.
+     * @example
+     * // Delete a few AutomationRules
+     * const { count } = await prisma.automationRule.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AutomationRuleDeleteManyArgs>(args?: SelectSubset<T, AutomationRuleDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AutomationRules.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AutomationRuleUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many AutomationRules
+     * const automationRule = await prisma.automationRule.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AutomationRuleUpdateManyArgs>(args: SelectSubset<T, AutomationRuleUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one AutomationRule.
+     * @param {AutomationRuleUpsertArgs} args - Arguments to update or create a AutomationRule.
+     * @example
+     * // Update or create a AutomationRule
+     * const automationRule = await prisma.automationRule.upsert({
+     *   create: {
+     *     // ... data to create a AutomationRule
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the AutomationRule we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AutomationRuleUpsertArgs>(args: SelectSubset<T, AutomationRuleUpsertArgs<ExtArgs>>): Prisma__AutomationRuleClient<$Result.GetResult<Prisma.$AutomationRulePayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of AutomationRules.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AutomationRuleCountArgs} args - Arguments to filter AutomationRules to count.
+     * @example
+     * // Count the number of AutomationRules
+     * const count = await prisma.automationRule.count({
+     *   where: {
+     *     // ... the filter for the AutomationRules we want to count
+     *   }
+     * })
+    **/
+    count<T extends AutomationRuleCountArgs>(
+      args?: Subset<T, AutomationRuleCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AutomationRuleCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a AutomationRule.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AutomationRuleAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AutomationRuleAggregateArgs>(args: Subset<T, AutomationRuleAggregateArgs>): Prisma.PrismaPromise<GetAutomationRuleAggregateType<T>>
+
+    /**
+     * Group by AutomationRule.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AutomationRuleGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AutomationRuleGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AutomationRuleGroupByArgs['orderBy'] }
+        : { orderBy?: AutomationRuleGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AutomationRuleGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAutomationRuleGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the AutomationRule model
+   */
+  readonly fields: AutomationRuleFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for AutomationRule.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AutomationRuleClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the AutomationRule model
+   */ 
+  interface AutomationRuleFieldRefs {
+    readonly id: FieldRef<"AutomationRule", 'String'>
+    readonly name: FieldRef<"AutomationRule", 'String'>
+    readonly description: FieldRef<"AutomationRule", 'String'>
+    readonly trigger: FieldRef<"AutomationRule", 'String'>
+    readonly action: FieldRef<"AutomationRule", 'String'>
+    readonly enabled: FieldRef<"AutomationRule", 'Boolean'>
+    readonly createdAt: FieldRef<"AutomationRule", 'DateTime'>
+    readonly updatedAt: FieldRef<"AutomationRule", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * AutomationRule findUnique
+   */
+  export type AutomationRuleFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AutomationRule
+     */
+    select?: AutomationRuleSelect<ExtArgs> | null
+    /**
+     * Filter, which AutomationRule to fetch.
+     */
+    where: AutomationRuleWhereUniqueInput
+  }
+
+  /**
+   * AutomationRule findUniqueOrThrow
+   */
+  export type AutomationRuleFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AutomationRule
+     */
+    select?: AutomationRuleSelect<ExtArgs> | null
+    /**
+     * Filter, which AutomationRule to fetch.
+     */
+    where: AutomationRuleWhereUniqueInput
+  }
+
+  /**
+   * AutomationRule findFirst
+   */
+  export type AutomationRuleFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AutomationRule
+     */
+    select?: AutomationRuleSelect<ExtArgs> | null
+    /**
+     * Filter, which AutomationRule to fetch.
+     */
+    where?: AutomationRuleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AutomationRules to fetch.
+     */
+    orderBy?: AutomationRuleOrderByWithRelationInput | AutomationRuleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AutomationRules.
+     */
+    cursor?: AutomationRuleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AutomationRules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AutomationRules.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AutomationRules.
+     */
+    distinct?: AutomationRuleScalarFieldEnum | AutomationRuleScalarFieldEnum[]
+  }
+
+  /**
+   * AutomationRule findFirstOrThrow
+   */
+  export type AutomationRuleFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AutomationRule
+     */
+    select?: AutomationRuleSelect<ExtArgs> | null
+    /**
+     * Filter, which AutomationRule to fetch.
+     */
+    where?: AutomationRuleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AutomationRules to fetch.
+     */
+    orderBy?: AutomationRuleOrderByWithRelationInput | AutomationRuleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AutomationRules.
+     */
+    cursor?: AutomationRuleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AutomationRules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AutomationRules.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AutomationRules.
+     */
+    distinct?: AutomationRuleScalarFieldEnum | AutomationRuleScalarFieldEnum[]
+  }
+
+  /**
+   * AutomationRule findMany
+   */
+  export type AutomationRuleFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AutomationRule
+     */
+    select?: AutomationRuleSelect<ExtArgs> | null
+    /**
+     * Filter, which AutomationRules to fetch.
+     */
+    where?: AutomationRuleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AutomationRules to fetch.
+     */
+    orderBy?: AutomationRuleOrderByWithRelationInput | AutomationRuleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing AutomationRules.
+     */
+    cursor?: AutomationRuleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AutomationRules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AutomationRules.
+     */
+    skip?: number
+    distinct?: AutomationRuleScalarFieldEnum | AutomationRuleScalarFieldEnum[]
+  }
+
+  /**
+   * AutomationRule create
+   */
+  export type AutomationRuleCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AutomationRule
+     */
+    select?: AutomationRuleSelect<ExtArgs> | null
+    /**
+     * The data needed to create a AutomationRule.
+     */
+    data: XOR<AutomationRuleCreateInput, AutomationRuleUncheckedCreateInput>
+  }
+
+  /**
+   * AutomationRule createMany
+   */
+  export type AutomationRuleCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many AutomationRules.
+     */
+    data: AutomationRuleCreateManyInput | AutomationRuleCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AutomationRule createManyAndReturn
+   */
+  export type AutomationRuleCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AutomationRule
+     */
+    select?: AutomationRuleSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many AutomationRules.
+     */
+    data: AutomationRuleCreateManyInput | AutomationRuleCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AutomationRule update
+   */
+  export type AutomationRuleUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AutomationRule
+     */
+    select?: AutomationRuleSelect<ExtArgs> | null
+    /**
+     * The data needed to update a AutomationRule.
+     */
+    data: XOR<AutomationRuleUpdateInput, AutomationRuleUncheckedUpdateInput>
+    /**
+     * Choose, which AutomationRule to update.
+     */
+    where: AutomationRuleWhereUniqueInput
+  }
+
+  /**
+   * AutomationRule updateMany
+   */
+  export type AutomationRuleUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update AutomationRules.
+     */
+    data: XOR<AutomationRuleUpdateManyMutationInput, AutomationRuleUncheckedUpdateManyInput>
+    /**
+     * Filter which AutomationRules to update
+     */
+    where?: AutomationRuleWhereInput
+  }
+
+  /**
+   * AutomationRule upsert
+   */
+  export type AutomationRuleUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AutomationRule
+     */
+    select?: AutomationRuleSelect<ExtArgs> | null
+    /**
+     * The filter to search for the AutomationRule to update in case it exists.
+     */
+    where: AutomationRuleWhereUniqueInput
+    /**
+     * In case the AutomationRule found by the `where` argument doesn't exist, create a new AutomationRule with this data.
+     */
+    create: XOR<AutomationRuleCreateInput, AutomationRuleUncheckedCreateInput>
+    /**
+     * In case the AutomationRule was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AutomationRuleUpdateInput, AutomationRuleUncheckedUpdateInput>
+  }
+
+  /**
+   * AutomationRule delete
+   */
+  export type AutomationRuleDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AutomationRule
+     */
+    select?: AutomationRuleSelect<ExtArgs> | null
+    /**
+     * Filter which AutomationRule to delete.
+     */
+    where: AutomationRuleWhereUniqueInput
+  }
+
+  /**
+   * AutomationRule deleteMany
+   */
+  export type AutomationRuleDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AutomationRules to delete
+     */
+    where?: AutomationRuleWhereInput
+  }
+
+  /**
+   * AutomationRule without action
+   */
+  export type AutomationRuleDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AutomationRule
+     */
+    select?: AutomationRuleSelect<ExtArgs> | null
+  }
+
+
+  /**
    * Model Lead
    */
 
@@ -22794,6 +23794,20 @@ export namespace Prisma {
   export type SystemUserScalarFieldEnum = (typeof SystemUserScalarFieldEnum)[keyof typeof SystemUserScalarFieldEnum]
 
 
+  export const AutomationRuleScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    description: 'description',
+    trigger: 'trigger',
+    action: 'action',
+    enabled: 'enabled',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type AutomationRuleScalarFieldEnum = (typeof AutomationRuleScalarFieldEnum)[keyof typeof AutomationRuleScalarFieldEnum]
+
+
   export const LeadScalarFieldEnum: {
     id: 'id',
     hospitalName: 'hospitalName',
@@ -24527,6 +25541,73 @@ export namespace Prisma {
     role?: StringWithAggregatesFilter<"SystemUser"> | string
     createdAt?: DateTimeWithAggregatesFilter<"SystemUser"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"SystemUser"> | Date | string
+  }
+
+  export type AutomationRuleWhereInput = {
+    AND?: AutomationRuleWhereInput | AutomationRuleWhereInput[]
+    OR?: AutomationRuleWhereInput[]
+    NOT?: AutomationRuleWhereInput | AutomationRuleWhereInput[]
+    id?: StringFilter<"AutomationRule"> | string
+    name?: StringFilter<"AutomationRule"> | string
+    description?: StringNullableFilter<"AutomationRule"> | string | null
+    trigger?: StringFilter<"AutomationRule"> | string
+    action?: StringFilter<"AutomationRule"> | string
+    enabled?: BoolFilter<"AutomationRule"> | boolean
+    createdAt?: DateTimeFilter<"AutomationRule"> | Date | string
+    updatedAt?: DateTimeFilter<"AutomationRule"> | Date | string
+  }
+
+  export type AutomationRuleOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrderInput | SortOrder
+    trigger?: SortOrder
+    action?: SortOrder
+    enabled?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type AutomationRuleWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: AutomationRuleWhereInput | AutomationRuleWhereInput[]
+    OR?: AutomationRuleWhereInput[]
+    NOT?: AutomationRuleWhereInput | AutomationRuleWhereInput[]
+    name?: StringFilter<"AutomationRule"> | string
+    description?: StringNullableFilter<"AutomationRule"> | string | null
+    trigger?: StringFilter<"AutomationRule"> | string
+    action?: StringFilter<"AutomationRule"> | string
+    enabled?: BoolFilter<"AutomationRule"> | boolean
+    createdAt?: DateTimeFilter<"AutomationRule"> | Date | string
+    updatedAt?: DateTimeFilter<"AutomationRule"> | Date | string
+  }, "id">
+
+  export type AutomationRuleOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrderInput | SortOrder
+    trigger?: SortOrder
+    action?: SortOrder
+    enabled?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: AutomationRuleCountOrderByAggregateInput
+    _max?: AutomationRuleMaxOrderByAggregateInput
+    _min?: AutomationRuleMinOrderByAggregateInput
+  }
+
+  export type AutomationRuleScalarWhereWithAggregatesInput = {
+    AND?: AutomationRuleScalarWhereWithAggregatesInput | AutomationRuleScalarWhereWithAggregatesInput[]
+    OR?: AutomationRuleScalarWhereWithAggregatesInput[]
+    NOT?: AutomationRuleScalarWhereWithAggregatesInput | AutomationRuleScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"AutomationRule"> | string
+    name?: StringWithAggregatesFilter<"AutomationRule"> | string
+    description?: StringNullableWithAggregatesFilter<"AutomationRule"> | string | null
+    trigger?: StringWithAggregatesFilter<"AutomationRule"> | string
+    action?: StringWithAggregatesFilter<"AutomationRule"> | string
+    enabled?: BoolWithAggregatesFilter<"AutomationRule"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"AutomationRule"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"AutomationRule"> | Date | string
   }
 
   export type LeadWhereInput = {
@@ -26446,6 +27527,83 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type AutomationRuleCreateInput = {
+    id?: string
+    name: string
+    description?: string | null
+    trigger: string
+    action: string
+    enabled?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type AutomationRuleUncheckedCreateInput = {
+    id?: string
+    name: string
+    description?: string | null
+    trigger: string
+    action: string
+    enabled?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type AutomationRuleUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    trigger?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AutomationRuleUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    trigger?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AutomationRuleCreateManyInput = {
+    id?: string
+    name: string
+    description?: string | null
+    trigger: string
+    action: string
+    enabled?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type AutomationRuleUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    trigger?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AutomationRuleUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    trigger?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type LeadCreateInput = {
     id?: string
     hospitalName: string
@@ -27967,6 +29125,39 @@ export namespace Prisma {
     name?: SortOrder
     email?: SortOrder
     role?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type AutomationRuleCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    trigger?: SortOrder
+    action?: SortOrder
+    enabled?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type AutomationRuleMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    trigger?: SortOrder
+    action?: SortOrder
+    enabled?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type AutomationRuleMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    trigger?: SortOrder
+    action?: SortOrder
+    enabled?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -34185,6 +35376,10 @@ export namespace Prisma {
      * @deprecated Use SystemUserDefaultArgs instead
      */
     export type SystemUserArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = SystemUserDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use AutomationRuleDefaultArgs instead
+     */
+    export type AutomationRuleArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = AutomationRuleDefaultArgs<ExtArgs>
     /**
      * @deprecated Use LeadDefaultArgs instead
      */

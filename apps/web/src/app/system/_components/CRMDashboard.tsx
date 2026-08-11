@@ -1,29 +1,49 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { 
-    Users, 
-    Activity, 
-    TrendingUp, 
-    PhoneCall, 
-    MessageSquare, 
+import {
+    Users,
+    Activity,
+    TrendingUp,
+    PhoneCall,
+    MessageSquare,
     Calendar,
-    Target
+    Target,
+    Loader2
 } from 'lucide-react';
+import { CRMLeadsView } from './CRMLeadsView';
+import { CRMAutomationsView } from './CRMAutomationsView';
+import { CRMAnalyticsView } from './CRMAnalyticsView';
+
+interface CRMAnalytics {
+    kpis: {
+        totalLeads: number;
+        conversionRate: number;
+        revenue: number;
+        pipelineValue: number;
+        wonLeads: number;
+        lostLeads: number;
+        openTasks: number;
+    };
+    leadsPerSource: { source: string; count: number }[];
+    pipelineFunnel: { stage: string; count: number; width: number }[];
+    recentLeads: { id: string; hospitalName: string; contactName: string; status: string }[];
+    recentActivity: { id: string; type: string; leadName: string; notes: string; dueDate: string; agent: string }[];
+}
+
+const formatCurrency = (value: number) =>
+    new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value);
 
 export function CRMDashboard({ feature }: { feature: string }) {
     if (feature === 'leads') {
-        const CRMLeadsView = require('./CRMLeadsView').CRMLeadsView;
         return <CRMLeadsView />;
     }
     
     if (feature === 'automation') {
-        const CRMAutomationsView = require('./CRMAutomationsView').CRMAutomationsView;
         return <CRMAutomationsView />;
     }
     
     if (feature === 'analytics') {
-        const CRMAnalyticsView = require('./CRMAnalyticsView').CRMAnalyticsView;
         return <CRMAnalyticsView />;
     }
 
@@ -36,6 +56,49 @@ export function CRMDashboard({ feature }: { feature: string }) {
         );
     }
 
+    return <DashboardContent />;
+}
+
+function DashboardContent() {
+    const [data, setData] = useState<CRMAnalytics | null>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        fetch('/api/crm/analytics')
+            .then(res => res.json())
+            .then(setData)
+            .catch(() => setData(null))
+            .finally(() => setLoading(false));
+    }, []);
+
+    const getStatusColor = (status: string) => {
+        const colors: Record<string, string> = {
+            'NewLead': 'bg-blue-500/10 text-blue-400',
+            'Qualified': 'bg-indigo-500/10 text-indigo-400',
+            'ProposalSent': 'bg-amber-500/10 text-amber-400',
+            'Negotiation': 'bg-purple-500/10 text-purple-400',
+            'Won': 'bg-emerald-500/10 text-emerald-400',
+            'Lost': 'bg-rose-500/10 text-rose-400'
+        };
+        return colors[status] || 'bg-gray-500/10 text-gray-400';
+    };
+
+    const getActivityIcon = (type: string) => {
+        if (type === 'CALL') return <PhoneCall className="w-4 h-4" />;
+        if (type === 'EMAIL') return <MessageSquare className="w-4 h-4" />;
+        return <Calendar className="w-4 h-4" />;
+    };
+
+    const getActivityColor = (type: string) => {
+        if (type === 'CALL') return 'bg-emerald-500/10 text-emerald-500';
+        if (type === 'EMAIL') return 'bg-blue-500/10 text-blue-500';
+        return 'bg-purple-500/10 text-purple-500';
+    };
+
+    const kpis = data?.kpis;
+    const recentLeads = data?.recentLeads || [];
+    const recentActivity = data?.recentActivity || [];
+
     return (
         <div className="space-y-8 pb-12 animate-in fade-in slide-in-from-bottom-8 duration-1000">
             {/* DASHBOARD HEADER */}
@@ -47,6 +110,12 @@ export function CRMDashboard({ feature }: { feature: string }) {
                     </h1>
                     <p className="text-gray-400 mt-2 text-sm">Real-time overview of leads, agents, and pipeline automation.</p>
                 </div>
+                {loading && (
+                    <div className="flex items-center gap-2 text-gray-500 text-sm">
+                        <Loader2 className="w-4 h-4 animate-spin text-indigo-500" />
+                        Syncing pipeline...
+                    </div>
+                )}
             </div>
             
             {/* 3-COLUMN METRICS GRID */}
@@ -56,10 +125,10 @@ export function CRMDashboard({ feature }: { feature: string }) {
                         <Users className="w-24 h-24" />
                     </div>
                     <h3 className="text-gray-400 text-sm font-medium mb-1">Total Active Leads</h3>
-                    <p className="text-4xl font-bold text-white mb-2">124</p>
+                    <p className="text-4xl font-bold text-white mb-2">{kpis ? kpis.totalLeads : '-'}</p>
                     <div className="flex items-center gap-2 text-sm">
-                        <span className="text-emerald-400 font-medium">+12%</span>
-                        <span className="text-gray-500">vs last month</span>
+                        <span className="text-emerald-400 font-medium">{kpis ? `${kpis.wonLeads} won` : '—'}</span>
+                        <span className="text-gray-500">in pipeline</span>
                     </div>
                 </div>
 
@@ -68,10 +137,10 @@ export function CRMDashboard({ feature }: { feature: string }) {
                         <Activity className="w-24 h-24" />
                     </div>
                     <h3 className="text-gray-400 text-sm font-medium mb-1">Pipeline Conversion</h3>
-                    <p className="text-4xl font-bold text-white mb-2">18.5%</p>
+                    <p className="text-4xl font-bold text-white mb-2">{kpis ? `${kpis.conversionRate}%` : '-'}</p>
                     <div className="flex items-center gap-2 text-sm">
-                        <span className="text-emerald-400 font-medium">+2.1%</span>
-                        <span className="text-gray-500">vs last month</span>
+                        <span className="text-emerald-400 font-medium">{kpis ? formatCurrency(kpis.pipelineValue) : '—'}</span>
+                        <span className="text-gray-500">pipeline value</span>
                     </div>
                 </div>
 
@@ -80,10 +149,10 @@ export function CRMDashboard({ feature }: { feature: string }) {
                         <TrendingUp className="w-24 h-24" />
                     </div>
                     <h3 className="text-gray-400 text-sm font-medium mb-1">Open Tasks</h3>
-                    <p className="text-4xl font-bold text-white mb-2">42</p>
+                    <p className="text-4xl font-bold text-white mb-2">{kpis ? kpis.openTasks : '-'}</p>
                     <div className="flex items-center gap-2 text-sm">
-                        <span className="text-rose-400 font-medium">+5</span>
-                        <span className="text-gray-500">needs attention</span>
+                        <span className="text-emerald-400 font-medium">{kpis ? formatCurrency(kpis.revenue) : '—'}</span>
+                        <span className="text-gray-500">won revenue</span>
                     </div>
                 </div>
             </section>
@@ -96,23 +165,22 @@ export function CRMDashboard({ feature }: { feature: string }) {
                         Recent Leads
                     </h3>
                     <div className="space-y-4">
-                        {[
-                            { name: 'City Central Hospital', contact: 'Dr. Sarah Jenkins', status: 'NewLead' },
-                            { name: 'Westside Clinic', contact: 'Mark Thompson', status: 'Qualified' },
-                            { name: 'Sunrise Pharmacy', contact: 'Emily Chen', status: 'ProposalSent' },
-                            { name: 'Global Health Network', contact: 'Dr. Robert Cole', status: 'Negotiation' },
-                        ].map((lead, i) => (
-                            <div key={i} className="flex items-center justify-between p-4 rounded-lg bg-gray-800/50 hover:bg-gray-800 transition-colors">
+                        {loading ? (
+                            <div className="p-8 text-center text-gray-500">
+                                <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2 text-indigo-500" />
+                                <span className="text-xs font-bold uppercase tracking-widest">Loading Leads...</span>
+                            </div>
+                        ) : recentLeads.length === 0 ? (
+                            <div className="p-8 text-center text-gray-500 font-bold uppercase tracking-widest text-xs">
+                                No leads yet. They will appear here as they come in.
+                            </div>
+                        ) : recentLeads.map(lead => (
+                            <div key={lead.id} className="flex items-center justify-between p-4 rounded-lg bg-gray-800/50 hover:bg-gray-800 transition-colors">
                                 <div>
-                                    <p className="font-bold text-gray-200">{lead.name}</p>
-                                    <p className="text-xs text-gray-400">{lead.contact}</p>
+                                    <p className="font-bold text-gray-200">{lead.hospitalName}</p>
+                                    <p className="text-xs text-gray-400">{lead.contactName}</p>
                                 </div>
-                                <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                                    lead.status === 'NewLead' ? 'bg-blue-500/10 text-blue-400' :
-                                    lead.status === 'Qualified' ? 'bg-indigo-500/10 text-indigo-400' :
-                                    lead.status === 'ProposalSent' ? 'bg-amber-500/10 text-amber-400' :
-                                    'bg-emerald-500/10 text-emerald-400'
-                                }`}>
+                                <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${getStatusColor(lead.status)}`}>
                                     {lead.status.replace(/([A-Z])/g, ' $1').trim()}
                                 </span>
                             </div>
@@ -123,32 +191,28 @@ export function CRMDashboard({ feature }: { feature: string }) {
                 <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
                     <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
                         <PhoneCall className="w-5 h-5 text-indigo-500" />
-                        Recent Communications
+                        Recent Activity
                     </h3>
                     <div className="space-y-4">
-                        {[
-                            { type: 'CALL', desc: 'Outbound call to City Central', time: '10 mins ago', agent: 'Agent Smith' },
-                            { type: 'EMAIL', desc: 'Proposal sent to Sunrise', time: '1 hour ago', agent: 'Agent Doe' },
-                            { type: 'WHATSAPP', desc: 'Follow-up message sent', time: '3 hours ago', agent: 'Agent Smith' },
-                            { type: 'MEETING', desc: 'Demo session completed', time: 'Yesterday', agent: 'Agent Johnson' },
-                        ].map((log, i) => (
-                            <div key={i} className="flex items-start gap-4 p-4 rounded-lg bg-gray-800/50">
-                                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
-                                    log.type === 'CALL' ? 'bg-emerald-500/10 text-emerald-500' :
-                                    log.type === 'EMAIL' ? 'bg-blue-500/10 text-blue-500' :
-                                    log.type === 'WHATSAPP' ? 'bg-green-500/10 text-green-500' :
-                                    'bg-purple-500/10 text-purple-500'
-                                }`}>
-                                    {log.type === 'CALL' ? <PhoneCall className="w-4 h-4" /> :
-                                     log.type === 'EMAIL' ? <MessageSquare className="w-4 h-4" /> :
-                                     log.type === 'WHATSAPP' ? <MessageSquare className="w-4 h-4" /> :
-                                     <Calendar className="w-4 h-4" />}
+                        {loading ? (
+                            <div className="p-8 text-center text-gray-500">
+                                <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2 text-indigo-500" />
+                                <span className="text-xs font-bold uppercase tracking-widest">Loading Activity...</span>
+                            </div>
+                        ) : recentActivity.length === 0 ? (
+                            <div className="p-8 text-center text-gray-500 font-bold uppercase tracking-widest text-xs">
+                                No tasks scheduled yet. Automation will populate this queue.
+                            </div>
+                        ) : recentActivity.map(log => (
+                            <div key={log.id} className="flex items-start gap-4 p-4 rounded-lg bg-gray-800/50">
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${getActivityColor(log.type)}`}>
+                                    {getActivityIcon(log.type)}
                                 </div>
                                 <div className="flex-1">
-                                    <p className="text-sm font-medium text-gray-200">{log.desc}</p>
+                                    <p className="text-sm font-medium text-gray-200">{log.leadName}</p>
                                     <p className="text-xs text-gray-500 mt-1">{log.agent}</p>
                                 </div>
-                                <span className="text-[10px] text-gray-500 uppercase font-bold tracking-widest">{log.time}</span>
+                                <span className="text-[10px] text-gray-500 uppercase font-bold tracking-widest">{log.type}</span>
                             </div>
                         ))}
                     </div>

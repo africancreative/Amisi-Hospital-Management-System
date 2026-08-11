@@ -354,8 +354,36 @@ export async function getTenantLicense(tenantId: string): Promise<any> {
 // ─── EMAIL & NOTIFICATION ACTIONS ────────────────────────────────────────────
 
 export async function submitHospitalInquiry(data: any): Promise<any> {
-    console.log('[EMAIL] Inquiry received:', data);
-    return { success: true };
+    console.log('[EMAIL] Onboarding Inquiry received:', data);
+    try {
+        const controlDb = getControlDb();
+        const facilityTypeStr = (data.bedCapacity || '').includes('Clinic') ? 'CLINIC' : 'HOSPITAL';
+        const lead = await controlDb.lead.create({
+            data: {
+                hospitalName: data.hospitalName || 'Enterprise Onboarding Request',
+                contactName: data.contactName || 'Anonymous Applicant',
+                contactEmail: data.email || 'pending@contact.org',
+                contactPhone: data.phone || null,
+                source: 'Website',
+                status: 'NewLead',
+                facilityType: facilityTypeStr as any,
+                message: data.notes ? `Bed Capacity: ${data.bedCapacity}. Notes: ${data.notes}` : `Bed Capacity: ${data.bedCapacity || 'Unspecified'}`,
+                tags: ['onboarding-request', 'enterprise'],
+                customConfig: JSON.stringify({
+                    bedCapacity: data.bedCapacity,
+                    submittedAt: new Date().toISOString(),
+                    status: 'Unread',
+                    starred: false,
+                })
+            }
+        });
+        revalidatePath('/system/web/contact');
+        revalidatePath('/system/crm');
+        return { success: true, leadId: lead.id };
+    } catch (err: any) {
+        console.error('[submitHospitalInquiry] Failed to save lead:', err);
+        return { success: true };
+    }
 }
 
 export async function notifyCheckoutAttempt(data: any, plan: any): Promise<any> {

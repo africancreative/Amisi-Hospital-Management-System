@@ -243,7 +243,7 @@ export default function UsersPage() {
                     <StatusBadge status={user.status} />
                   </td>
                   <td className="px-4 py-3">
-                    <span className="text-gray-400 text-sm">{user.lastLogin.toLocaleDateString()}</span>
+                    <span className="text-gray-400 text-sm" suppressHydrationWarning>{user.lastLogin.toLocaleDateString()}</span>
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex justify-end gap-1">

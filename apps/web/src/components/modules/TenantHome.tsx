@@ -26,7 +26,7 @@ const PAYMENT_METHODS = [
 export function TenantDashboard({ stats, slug, userRole, initialDate }: { stats: any, slug: string, userRole: string, initialDate?: string }) {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const [selectedDate, setSelectedDate] = useState(initialDate || new Date().toISOString().split('T')[0]);
+    const [selectedDate, setSelectedDate] = useState(initialDate ?? '');
     const [showExport, setShowExport] = useState(false);
 
     const handleDateChange = (newDate: string) => {
@@ -194,7 +194,7 @@ export function TenantDashboard({ stats, slug, userRole, initialDate }: { stats:
                                         <div className="flex-1">
                                             <div className="flex justify-between text-sm">
                                                 <span className="text-neutral-300">{label}</span>
-                                                <span className="text-white font-bold">KES {amount.toLocaleString()}</span>
+                                                <span className="text-white font-bold" suppressHydrationWarning>KES {amount.toLocaleString()}</span>
                                             </div>
                                             <div className="mt-1 h-1.5 rounded-full bg-neutral-800 overflow-hidden">
                                                 <div className={`h-full rounded-full ${color.replace('text', 'bg')}`} style={{ width: `${pct}%` }} />

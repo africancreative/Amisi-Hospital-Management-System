@@ -54,7 +54,11 @@ export async function ensureRole(allowedRoles: string[]): Promise<any> {
 
 /**
  * Check if the user is a Super Admin (Platform level).
+ * Accepts both tenant 'ADMIN' and the platform-level 'SYSTEM_ADMIN' role.
  */
 export async function ensureSuperAdmin(): Promise<any> {
-    return ensureRole(['ADMIN']);
+    const role = (await getServerRole()) as string;
+    if (role !== 'ADMIN' && role !== 'SYSTEM_ADMIN') {
+        throw new Error('Unauthorized: Access restricted to system admins');
+    }
 }

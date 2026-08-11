@@ -199,7 +199,7 @@ export default function AuditPage() {
               {filteredLogs.map((log) => (
                 <tr key={log.id} className="border-b border-gray-800/50 hover:bg-gray-800/30">
                   <td className="px-4 py-3">
-                    <span className="text-gray-400 text-xs">
+                    <span className="text-gray-400 text-xs" suppressHydrationWarning>
                       {log.timestamp.toLocaleString()}
                     </span>
                   </td>
