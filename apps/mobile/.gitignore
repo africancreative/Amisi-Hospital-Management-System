@@ -46,5 +46,6 @@ app.*.map.json
 
 # Leftovers from previous RN app (keep ignored)
 node_modules/
+src/
 metro.config.js
 app.json
