@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   RefreshCw,
   CheckCircle,
@@ -77,13 +77,6 @@ const SYNC_QUEUES: SyncQueue[] = [
 export default function SyncPage() {
   const [activeTab, setActiveTab] = useState<'queues' | 'jobs' | 'failed'>('queues');
   const [search, setSearch] = useState('');
-  const [now, setNow] = useState<number | null>(null);
-
-  useEffect(() => {
-    setNow(Date.now());
-    const interval = setInterval(() => setNow(Date.now()), 30000);
-    return () => clearInterval(interval);
-  }, []);
 
   const failedJobs = SYNC_JOBS.filter(j => j.status === 'FAILED');
   const healthyQueues = SYNC_QUEUES.filter(q => q.status === 'healthy').length;
@@ -179,7 +172,7 @@ export default function SyncPage() {
                   </td>
                   <td className="px-4 py-3">
                     <span className="text-gray-500 text-xs">
-                      {now === null ? '—' : `${Math.floor((now - queue.oldestItem.getTime()) / 60000)} min ago`}
+                      {Math.floor((Date.now() - queue.oldestItem.getTime()) / 60000)} min ago
                     </span>
                   </td>
                   <td className="px-4 py-3">

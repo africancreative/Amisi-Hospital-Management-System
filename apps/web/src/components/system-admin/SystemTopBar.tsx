@@ -118,7 +118,7 @@ export default function SystemTopBar({ userName, userRole, stats }: SystemTopBar
                         {alert.type === 'info' && <CheckCircle className="w-4 h-4 text-blue-400 mt-0.5 shrink-0" />}
                         <div className="flex-1 min-w-0">
                           <p className="text-gray-300 text-sm">{alert.message}</p>
-                          <p className="text-gray-500 text-xs mt-1" suppressHydrationWarning>
+                          <p className="text-gray-500 text-xs mt-1">
                             {alert.timestamp.toLocaleTimeString()}
                           </p>
                         </div>

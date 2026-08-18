@@ -216,7 +216,7 @@ export default function IntegrationsPage() {
                     <span className="text-gray-400 text-sm">{key.tenantName}</span>
                   </td>
                   <td className="px-4 py-3">
-                    <span className="text-gray-500 text-xs" suppressHydrationWarning>
+                    <span className="text-gray-500 text-xs">
                       {key.lastUsed ? key.lastUsed.toLocaleDateString() : 'Never'}
                     </span>
                   </td>

@@ -69,9 +69,8 @@ export function RealtimeProvider({ children, tenantId, userId, roles, department
       transports: ['websocket', 'polling'],
       auth: { userId, tenantId, roles, department },
       reconnection: true,
-      reconnectionDelay: 2000,
-      reconnectionAttempts: 3,
-      timeout: 5000,
+      reconnectionDelay: 1000,
+      reconnectionAttempts: 10,
     });
 
     socketRef.current = socket;
@@ -87,7 +86,7 @@ export function RealtimeProvider({ children, tenantId, userId, roles, department
     });
 
     socket.on('connect_error', (err) => {
-      console.warn('[RealtimeProvider] Realtime connection unavailable:', err.message);
+      console.error('[RealtimeProvider] Connection error:', err.message);
       setState(prev => ({ ...prev, isConnected: false, isConnecting: false, connectionError: err.message }));
     });
 

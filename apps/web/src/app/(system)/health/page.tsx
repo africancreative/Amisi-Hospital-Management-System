@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Activity,
   Server,
@@ -58,13 +58,6 @@ const SYNC_NODES: SyncNode[] = [
 export default function HealthPage() {
   const [activeTab, setActiveTab] = useState<'overview' | 'nodes' | 'alerts'>('overview');
   const [autoRefresh, setAutoRefresh] = useState(true);
-  const [now, setNow] = useState<number | null>(null);
-
-  useEffect(() => {
-    setNow(Date.now());
-    const interval = setInterval(() => setNow(Date.now()), 30000);
-    return () => clearInterval(interval);
-  }, []);
 
   const healthyCount = HEALTH_METRICS.filter(m => m.status === 'healthy').length;
   const degradedCount = HEALTH_METRICS.filter(m => m.status === 'degraded').length;
@@ -246,7 +239,7 @@ export default function HealthPage() {
                     </td>
                     <td className="px-4 py-3">
                       <span className="text-gray-400 text-xs">
-                        {now === null ? '—' : `${Math.floor((now - node.lastHeartbeat.getTime()) / 1000)}s ago`}
+                        {Math.floor((Date.now() - node.lastHeartbeat.getTime()) / 1000)}s ago
                       </span>
                     </td>
                   </tr>

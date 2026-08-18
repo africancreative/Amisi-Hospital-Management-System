@@ -68,10 +68,6 @@ export default function CheckoutPage() {
   const [clientId, setClientId] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [step, setStep] = useState(1);
-  const [checkoutError, setCheckoutError] = useState<string | null>(null);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => { setMounted(true); }, []);
 
   const [formData, setFormData] = useState({
       adminName: '',
@@ -91,11 +87,11 @@ export default function CheckoutPage() {
 
   const onboard = trpc.public.checkoutTenant.useMutation({
       onSuccess: (data: any) => {
-          router.push(`/checkout/success?slug=${data.tenant?.slug || formData.slug}&status=${data.tenant?.status || 'pending'}`);
+          router.push(`/checkout/success?slug=${data.tenant?.slug || formData.slug}`);
       },
       onError: (err: any) => {
-          const msg = err?.data?.message || err?.message || 'An unexpected error occurred. Please try again.';
-          setCheckoutError(msg);
+          const msg = err?.data?.message || err?.message || 'Unknown error';
+          alert(`Provisioning failed: ${msg}`);
           setIsProcessing(false);
       }
   });
@@ -149,7 +145,7 @@ export default function CheckoutPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#07070a] text-white selection:bg-blue-500/30 py-12" suppressHydrationWarning>
+    <div className="min-h-screen bg-[#07070a] text-white selection:bg-blue-500/30 py-12">
       
       <main className="max-w-3xl mx-auto px-6">
         
@@ -410,20 +406,6 @@ export default function CheckoutPage() {
                     </div>
                 </div>
 
-                {/* Inline error display instead of browser alert */}
-                {checkoutError && (
-                    <div className="relative z-10 bg-red-950/40 border border-red-500/30 rounded-2xl p-4 flex items-start gap-3">
-                        <div className="h-5 w-5 rounded-full bg-red-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <span className="text-red-400 text-xs font-black">!</span>
-                        </div>
-                        <div className="flex-1">
-                            <p className="text-red-400 text-sm font-bold">Submission Error</p>
-                            <p className="text-red-300/70 text-xs mt-1">{checkoutError}</p>
-                        </div>
-                        <button onClick={() => setCheckoutError(null)} className="text-red-500/50 hover:text-red-400 text-xs">✕</button>
-                    </div>
-                )}
-
                 {isProcessing && (
                     <div className="absolute inset-0 z-20 bg-slate-950/80 backdrop-blur-md flex flex-col items-center justify-center rounded-[40px]">
                         <div className="h-24 w-24 relative mb-6">
@@ -431,8 +413,8 @@ export default function CheckoutPage() {
                             <div className="absolute inset-0 border-4 border-blue-500 rounded-full border-t-transparent animate-spin" />
                             <Activity className="absolute inset-0 m-auto text-blue-500" size={32} />
                         </div>
-                        <p className="text-blue-400 font-black tracking-[0.2em] uppercase text-sm animate-pulse">Submitting Request...</p>
-                        <p className="text-neutral-500 text-xs mt-2">Registering your hospital node...</p>
+                        <p className="text-blue-400 font-black tracking-[0.2em] uppercase text-sm animate-pulse">Provisioning System...</p>
+                        <p className="text-neutral-500 text-xs mt-2">Setting up cloud infrastructure...</p>
                     </div>
                 )}
 

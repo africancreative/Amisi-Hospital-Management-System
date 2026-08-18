@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Bell,
   AlertTriangle,
@@ -36,22 +36,14 @@ export default function AlertsPage() {
   const [filterSeverity, setFilterSeverity] = useState<'all' | 'critical' | 'warning' | 'info'>('all');
   const [filterCategory, setFilterCategory] = useState<'all' | 'system' | 'billing' | 'sync' | 'security'>('all');
   const [showAcknowledged, setShowAcknowledged] = useState(true);
-  const [now, setNow] = useState<number | null>(null);
 
-  useEffect(() => {
-    setNow(Date.now());
-    const interval = setInterval(() => setNow(Date.now()), 30000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const baseNow = now ?? 0;
   const alerts: Alert[] = [
     {
       id: '1',
       severity: 'critical',
       category: 'sync',
       message: 'Sync node ap-south-1 latency > 400ms for 15 minutes',
-      createdAt: new Date(baseNow - 600000),
+      createdAt: new Date(Date.now() - 600000),
       acknowledged: false,
       resolved: false,
     },
@@ -61,7 +53,7 @@ export default function AlertsPage() {
       category: 'billing',
       message: 'Tenant "Metro Lab Services" payment failed - 3 attempts',
       tenantName: 'Metro Lab Services',
-      createdAt: new Date(baseNow - 7200000),
+      createdAt: new Date(Date.now() - 7200000),
       acknowledged: false,
       resolved: false,
     },
@@ -70,7 +62,7 @@ export default function AlertsPage() {
       severity: 'warning',
       category: 'system',
       message: 'Database connection pool 80% utilized',
-      createdAt: new Date(baseNow - 1800000),
+      createdAt: new Date(Date.now() - 1800000),
       acknowledged: false,
       resolved: false,
     },
@@ -79,10 +71,10 @@ export default function AlertsPage() {
       severity: 'warning',
       category: 'billing',
       message: '3 tenants approaching storage quota (90%+)',
-      createdAt: new Date(baseNow - 3600000),
+      createdAt: new Date(Date.now() - 3600000),
       acknowledged: true,
       acknowledgedBy: 'ops_admin',
-      acknowledgedAt: new Date(baseNow - 1800000),
+      acknowledgedAt: new Date(Date.now() - 1800000),
       resolved: false,
     },
     {
@@ -91,7 +83,7 @@ export default function AlertsPage() {
       category: 'sync',
       message: 'Tenant "Sunset Clinic" sync queue > 100 items',
       tenantName: 'Sunset Clinic',
-      createdAt: new Date(baseNow - 1200000),
+      createdAt: new Date(Date.now() - 1200000),
       acknowledged: false,
       resolved: false,
     },
@@ -100,10 +92,10 @@ export default function AlertsPage() {
       severity: 'info',
       category: 'system',
       message: 'System backup completed successfully',
-      createdAt: new Date(baseNow - 7200000),
+      createdAt: new Date(Date.now() - 7200000),
       acknowledged: true,
       acknowledgedBy: 'system',
-      acknowledgedAt: new Date(baseNow - 6000000),
+      acknowledgedAt: new Date(Date.now() - 6000000),
       resolved: true,
     },
   ];
@@ -208,7 +200,7 @@ export default function AlertsPage() {
       {/* Alerts List */}
       <div className="space-y-3">
         {filteredAlerts.map(alert => (
-          <AlertCard key={alert.id} alert={alert} now={now} />
+          <AlertCard key={alert.id} alert={alert} />
         ))}
 
         {filteredAlerts.length === 0 && (
@@ -222,7 +214,7 @@ export default function AlertsPage() {
   );
 }
 
-function AlertCard({ alert, now }: { alert: Alert; now: number | null }) {
+function AlertCard({ alert }: { alert: Alert }) {
   const icon = {
     critical: <XCircle className="w-5 h-5 text-red-400" />,
     warning: <AlertTriangle className="w-5 h-5 text-yellow-400" />,
@@ -248,7 +240,7 @@ function AlertCard({ alert, now }: { alert: Alert; now: number | null }) {
           <div className="flex items-center gap-3 mt-1.5">
             <span className="text-gray-500 text-xs flex items-center gap-1">
               <Clock className="w-3 h-3" />
-              {now === null ? '—' : `${Math.floor((now - alert.createdAt.getTime()) / 60000)} min ago`}
+              {Math.floor((Date.now() - alert.createdAt.getTime()) / 60000)} min ago
             </span>
             {alert.tenantName && (
               <span className="text-gray-500 text-xs flex items-center gap-1">
@@ -260,7 +252,7 @@ function AlertCard({ alert, now }: { alert: Alert; now: number | null }) {
           </div>
           {alert.acknowledged && (
             <p className="text-gray-500 text-xs mt-1">
-              Acknowledged by {alert.acknowledgedBy} at {now === null ? '—' : alert.acknowledgedAt?.toLocaleTimeString()}
+              Acknowledged by {alert.acknowledgedBy} at {alert.acknowledgedAt?.toLocaleTimeString()}
             </p>
           )}
         </div>

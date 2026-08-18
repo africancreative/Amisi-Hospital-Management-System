@@ -50,7 +50,7 @@ export default async function ModuleDispatcher({ params: paramsPromise, searchPa
 
   // Handle /[slug] (Home)
   if (!module || module.length === 0) {
-    const selectedDate = (searchParams?.date as string) || new Date().toISOString().split('T')[0];
+    const selectedDate = (searchParams?.date as string) || undefined;
     const stats = await getTenantDashboardStats(selectedDate);
     return <TenantDashboard stats={stats} slug={slug} userRole={userRole} initialDate={selectedDate} />;
   }

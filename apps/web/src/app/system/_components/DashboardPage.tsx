@@ -125,9 +125,9 @@ export default async function SystemDashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="bg-gray-900 border border-gray-800 p-6 rounded-xl flex flex-col justify-center">
             <h3 className="text-gray-400 text-sm font-medium mb-1">Monthly Recurring Revenue</h3>
-            <p className="text-4xl font-bold text-white mb-4">{analytics?.kpis?.monthlyRevenue || '$0'}</p>
+            <p className="text-4xl font-bold text-white mb-4">{analytics.kpis.monthlyRevenue}</p>
             <div className="flex items-center gap-2 text-sm">
-              <span className="text-emerald-400 font-medium">{analytics?.kpis?.revenueGrowth || '0%'}</span>
+              <span className="text-emerald-400 font-medium">{analytics.kpis.revenueGrowth}</span>
               <span className="text-gray-500">vs last month</span>
             </div>
           </div>
@@ -182,11 +182,11 @@ export default async function SystemDashboardPage() {
               <div className="grid grid-cols-2 gap-4 pt-6 border-t border-gray-800">
                 <div>
                   <p className="text-xs text-gray-500 mb-1">Avg Response Time</p>
-                  <p className="text-lg font-semibold text-gray-200">{analytics?.kpis?.avgResponseTime || '142ms'}</p>
+                  <p className="text-lg font-semibold text-gray-200">{analytics.kpis.avgResponseTime}</p>
                 </div>
                 <div>
                   <p className="text-xs text-gray-500 mb-1">Error Rate</p>
-                  <p className="text-lg font-semibold text-gray-200">{analytics?.usageStats?.errorRate || analytics?.kpis?.errorRate || '0.01%'}</p>
+                  <p className="text-lg font-semibold text-gray-200">{analytics.usageStats.errorRate}</p>
                 </div>
               </div>
 

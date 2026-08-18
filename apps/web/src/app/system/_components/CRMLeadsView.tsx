@@ -1,63 +1,25 @@
 'use client';
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
     Users, 
     Search,
     Filter,
-    Loader2,
-    X,
-    Plus,
-    Trash2
+    MoreVertical,
+    Loader2
 } from 'lucide-react';
-
-const STAGES = ['NewLead', 'Qualified', 'ProposalSent', 'Negotiation', 'Won', 'Lost'];
-const SOURCES = ['Website', 'WhatsApp', 'Email', 'SalesAgent'];
-const FACILITY_TYPES = ['CLINIC', 'HOSPITAL', 'PHARMACY', 'LAB', 'SPECIALIST'];
-
-interface Lead {
-    id: string;
-    hospitalName: string;
-    contactName: string;
-    contactEmail: string;
-    facilityType: string;
-    status: string;
-    potentialValue: number | null;
-    source: string;
-}
+import { getCRMLeads } from '@/app/actions/ui-actions';
 
 export function CRMLeadsView() {
-    const [leads, setLeads] = useState<Lead[]>([]);
+    const [leads, setLeads] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
-    const [search, setSearch] = useState('');
-    const [status, setStatus] = useState('');
-    const [showForm, setShowForm] = useState(false);
-    const [saving, setSaving] = useState(false);
 
-    const fetchLeads = useCallback(async () => {
-        setLoading(true);
-        try {
-            const params = new URLSearchParams();
-            if (search) params.set('search', search);
-            if (status) params.set('status', status);
-            const res = await fetch(`/api/crm/leads?${params.toString()}`);
-            const data = await res.json();
-            setLeads(Array.isArray(data) ? data : []);
-        } catch {
-            setLeads([]);
-        } finally {
+    useEffect(() => {
+        getCRMLeads().then(data => {
+            setLeads(data);
             setLoading(false);
-        }
-    }, [search, status]);
-
-    useEffect(() => {
-        const t = setTimeout(fetchLeads, search ? 300 : 0);
-        return () => clearTimeout(t);
-    }, [fetchLeads, search]);
-
-    useEffect(() => {
-        fetchLeads();
-    }, [status, fetchLeads]);
+        });
+    }, []);
 
     const getStatusColor = (status: string) => {
         const colors: Record<string, string> = {
@@ -69,31 +31,6 @@ export function CRMLeadsView() {
             'Lost': 'bg-rose-500/10 text-rose-400 border-rose-500/20'
         };
         return colors[status] || 'bg-gray-500/10 text-gray-400 border-gray-500/20';
-    };
-
-    const handleDelete = async (id: string) => {
-        if (!confirm('Delete this lead? This cannot be undone.')) return;
-        await fetch(`/api/crm/leads/${id}`, { method: 'DELETE' });
-        fetchLeads();
-    };
-
-    const handleCreate = async (form: any) => {
-        setSaving(true);
-        try {
-            const res = await fetch('/api/crm/leads', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ _admin: true, ...form }),
-            });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error || 'Failed to create lead');
-            setShowForm(false);
-            fetchLeads();
-        } catch (e: any) {
-            alert(e.message);
-        } finally {
-            setSaving(false);
-        }
     };
 
     return (
@@ -111,28 +48,15 @@ export function CRMLeadsView() {
                         <Search className="w-4 h-4 text-gray-500 absolute left-3 top-1/2 -translate-y-1/2" />
                         <input 
                             placeholder="Search leads..." 
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
                             className="bg-gray-900 border border-gray-800 rounded-xl py-2 pl-10 pr-4 text-sm text-white focus:outline-none focus:border-indigo-500/50 w-64"
                         />
                     </div>
-                    <div className="relative">
-                        <Filter className="w-4 h-4 text-gray-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                        <select 
-                            value={status}
-                            onChange={(e) => setStatus(e.target.value)}
-                            className="bg-gray-900 border border-gray-800 rounded-xl py-2 pl-9 pr-4 text-sm text-white focus:outline-none focus:border-indigo-500/50 appearance-none cursor-pointer"
-                        >
-                            <option value="">All Stages</option>
-                            {STAGES.map(s => <option key={s} value={s}>{s.replace(/([A-Z])/g, ' $1').trim()}</option>)}
-                        </select>
-                    </div>
-                    <button 
-                        onClick={() => setShowForm(true)}
-                        className="px-6 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-bold transition-all shadow-lg shadow-indigo-600/20 flex items-center gap-2"
-                    >
-                        <Plus className="w-4 h-4" />
-                        New Lead
+                    <button className="flex items-center gap-2 px-4 py-2 bg-gray-900 border border-gray-800 hover:bg-gray-800 text-white rounded-xl text-sm font-bold transition-all">
+                        <Filter className="w-4 h-4" />
+                        Filters
+                    </button>
+                    <button className="px-6 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-bold transition-all shadow-lg shadow-indigo-600/20">
+                        + New Lead
                     </button>
                 </div>
             </div>
@@ -165,7 +89,7 @@ export function CRMLeadsView() {
                                     </td>
                                 </tr>
                             ) : leads.map(lead => (
-                                <tr key={lead.id} className="hover:bg-gray-800/50 transition-colors group">
+                                <tr key={lead.id} className="hover:bg-gray-800/50 transition-colors group cursor-pointer">
                                     <td className="p-4">
                                         <p className="font-bold text-white group-hover:text-indigo-400 transition-colors">{lead.hospitalName}</p>
                                         <p className="text-xs text-gray-500 mt-1">{lead.facilityType}</p>
@@ -188,121 +112,14 @@ export function CRMLeadsView() {
                                         </span>
                                     </td>
                                     <td className="p-4 text-right">
-                                        <button 
-                                            onClick={() => handleDelete(lead.id)}
-                                            className="p-2 hover:bg-rose-500/10 rounded-lg text-gray-400 hover:text-rose-400 transition-colors"
-                                            title="Delete lead"
-                                        >
-                                            <Trash2 className="w-4 h-4" />
+                                        <button className="p-2 hover:bg-gray-700 rounded-lg text-gray-400 hover:text-white transition-colors">
+                                            <MoreVertical className="w-4 h-4" />
                                         </button>
                                     </td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
-                </div>
-            </div>
-
-            {showForm && (
-                <LeadForm onCancel={() => setShowForm(false)} onSave={handleCreate} saving={saving} />
-            )}
-        </div>
-    );
-}
-
-function LeadForm({ onCancel, onSave, saving }: { onCancel: () => void; onSave: (form: any) => void; saving: boolean }) {
-    const [form, setForm] = useState({
-        hospitalName: '',
-        contactName: '',
-        contactEmail: '',
-        contactPhone: '',
-        facilityType: 'CLINIC',
-        source: 'Website',
-        status: 'NewLead',
-        potentialValue: '',
-        message: '',
-    });
-
-    const set = (key: string) => (e: any) => setForm({ ...form, [key]: e.target.value });
-
-    const submit = () => {
-        if (!form.hospitalName || !form.contactName) {
-            alert('Hospital name and contact name are required.');
-            return;
-        }
-        onSave({
-            ...form,
-            potentialValue: form.potentialValue ? Number(form.potentialValue) : undefined,
-            _admin: true,
-        });
-    };
-
-    const inputCls = "w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-indigo-500/50";
-    const labelCls = "block text-xs font-black uppercase tracking-widest text-gray-500 mb-2";
-
-    return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm" onClick={onCancel}>
-            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-8 w-full max-w-lg shadow-2xl" onClick={(e) => e.stopPropagation()}>
-                <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-xl font-black text-white uppercase italic">New Lead</h3>
-                    <button onClick={onCancel} className="p-2 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white transition-colors">
-                        <X className="w-5 h-5" />
-                    </button>
-                </div>
-                <div className="space-y-5">
-                    <div>
-                        <label className={labelCls}>Hospital Name *</label>
-                        <input className={inputCls} value={form.hospitalName} onChange={set('hospitalName')} placeholder="City Central Hospital" />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label className={labelCls}>Contact Name *</label>
-                            <input className={inputCls} value={form.contactName} onChange={set('contactName')} placeholder="Dr. Jane Smith" />
-                        </div>
-                        <div>
-                            <label className={labelCls}>Contact Email</label>
-                            <input className={inputCls} value={form.contactEmail} onChange={set('contactEmail')} placeholder="jane@hospital.com" />
-                        </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label className={labelCls}>Facility Type</label>
-                            <select className={inputCls} value={form.facilityType} onChange={set('facilityType')}>
-                                {FACILITY_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
-                            </select>
-                        </div>
-                        <div>
-                            <label className={labelCls}>Source</label>
-                            <select className={inputCls} value={form.source} onChange={set('source')}>
-                                {SOURCES.map(s => <option key={s} value={s}>{s}</option>)}
-                            </select>
-                        </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label className={labelCls}>Pipeline Stage</label>
-                            <select className={inputCls} value={form.status} onChange={set('status')}>
-                                {STAGES.map(s => <option key={s} value={s}>{s.replace(/([A-Z])/g, ' $1').trim()}</option>)}
-                            </select>
-                        </div>
-                        <div>
-                            <label className={labelCls}>Potential Value ($)</label>
-                            <input className={inputCls} value={form.potentialValue} onChange={set('potentialValue')} type="number" placeholder="250000" />
-                        </div>
-                    </div>
-                    <div>
-                        <label className={labelCls}>Notes</label>
-                        <textarea className={`${inputCls} resize-none`} rows={3} value={form.message} onChange={set('message')} placeholder="Lead context, requirements, next steps..." />
-                    </div>
-                </div>
-                <div className="flex justify-end gap-3 mt-8">
-                    <button onClick={onCancel} className="px-6 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-xl text-sm font-bold transition-all">
-                        Cancel
-                    </button>
-                    <button onClick={submit} disabled={saving} className="px-6 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-bold transition-all shadow-lg shadow-indigo-600/20 flex items-center gap-2 disabled:opacity-50">
-                        {saving && <Loader2 className="w-4 h-4 animate-spin" />}
-                        Create Lead
-                    </button>
                 </div>
             </div>
         </div>

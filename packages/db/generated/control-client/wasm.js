@@ -346,17 +346,6 @@ exports.Prisma.SystemUserScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
-exports.Prisma.AutomationRuleScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  description: 'description',
-  trigger: 'trigger',
-  action: 'action',
-  enabled: 'enabled',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
 exports.Prisma.LeadScalarFieldEnum = {
   id: 'id',
   hospitalName: 'hospitalName',
@@ -516,7 +505,6 @@ exports.Prisma.ModelName = {
   TenantConfigAuditLog: 'TenantConfigAuditLog',
   TenantFeatureFlag: 'TenantFeatureFlag',
   SystemUser: 'SystemUser',
-  AutomationRule: 'AutomationRule',
   Lead: 'Lead',
   CommunicationLog: 'CommunicationLog',
   Task: 'Task'
